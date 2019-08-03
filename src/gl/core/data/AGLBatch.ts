@@ -1,6 +1,6 @@
-import {IInterleavedData, InterleavedDataArray} from "../data/InterleavedData";
+import {IInterleavedData, InterleavedDataArray} from "../../data/InterleavedData";
 import {GLVao} from "./GLVao";
-import {AnyWebRenderingGLContext} from "./Helpers";
+import {AnyWebRenderingGLContext} from "../Helpers";
 import {GLBuffer} from "./GLBuffer";
 import {GLAttribute} from "./GLAttribute";
 

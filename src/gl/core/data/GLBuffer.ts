@@ -1,6 +1,6 @@
-import { GLConfig} from "./GLConfig";
-import {AnyWebRenderingGLContext} from "./Helpers";
-import {GLCore} from "./GLCore";
+import { GLConfig} from "../GLConfig";
+import {AnyWebRenderingGLContext} from "../Helpers";
+import {GLCore} from "../GLCore";
 
 export class GLBuffer extends GLCore{
 
@@ -20,7 +20,6 @@ export class GLBuffer extends GLCore{
         this._data = _data;
 
         this.bufferIndex = gl.createBuffer();
-        console.log('this.bufferIndex : ', this.bufferIndex);
 
         if(this._data !== undefined) this.bufferData(this._data);
 
@@ -58,7 +57,7 @@ export class GLBuffer extends GLCore{
             offset);
     }
 
-    
+
     bufferDataLength(byteLength: number){
         this.gl.bindBuffer(this._target, this.bufferIndex);
         this.gl.bufferData(this._target, byteLength, this._drawType);

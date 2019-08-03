@@ -1,7 +1,7 @@
-import {GLCore} from "./GLCore";
-import {AnyWebRenderingGLContext} from "./Helpers";
-import {GLSupport} from "./GLSupport";
-import {GLTexture} from "./GLTexture";
+import {GLCore} from "../GLCore";
+import {AnyWebRenderingGLContext} from "../Helpers";
+import {GLSupport} from "../GLSupport";
+import {GLTexture} from "../GLTexture";
 
 export class MRTFrameBuffer extends GLCore{
     private _isWebGL2: any;

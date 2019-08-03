@@ -1,7 +1,7 @@
-import {AnyWebRenderingGLContext} from "./Helpers";
+import {AnyWebRenderingGLContext} from "../Helpers";
 import {GLAttribute} from "./GLAttribute";
 import {GLBuffer} from "./GLBuffer";
-import {GLCore} from "./GLCore";
+import {GLCore} from "../GLCore";
 import {GLVao} from "./GLVao";
 
 export class GLMesh extends GLCore{

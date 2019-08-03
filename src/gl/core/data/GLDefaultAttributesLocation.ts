@@ -1,4 +1,3 @@
-import {AnyWebRenderingGLContext} from "./Helpers";
 
 export enum GLDefaultAttributesLocation {
     POSITION = 0,

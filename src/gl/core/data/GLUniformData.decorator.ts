@@ -1,6 +1,3 @@
-import {GLCore} from "./GLCore";
-import {AnyWebRenderingGLContext} from "./Helpers";
-
 export function glShaderUniformProp(uniformType: string,length: number = 1, name: string = '')
 
 {
@@ -40,7 +37,6 @@ export function glShaderUniforms() {
                     }
 
                     const funcUName = 'uniform' + prop.length.toString() + prop.uniformType + (prop.length > 1 ? 'v' : '');
-                    console.log('funcUName : ', funcUName,this.gl[funcUName]);
                     const funcU = this.gl[funcUName].bind(this.gl);
 
 
@@ -68,19 +64,5 @@ export function glShaderUniforms() {
 
             return construct;
         }
-    }
-}
-
-export default class GLUniformsData extends GLCore {
-    protected _uniforms: { [name: string]: WebGLUniformLocation };
-
-    constructor(gl: AnyWebRenderingGLContext, protected _program: WebGLProgram) {
-        super(gl);
-        this._uniforms = {};
-    }
-
-    sync(propertyName? :string){ throw new Error('Not implemented')}
-
-    destroy(): void {
     }
 }

@@ -1,6 +1,6 @@
 import {AnyWebRenderingGLContext} from "./Helpers";
 import {GLCore} from "./GLCore";
-import GLUniformsData from "./GLUniformsData";
+import {GLUniformsData} from "./data/GLUniformsData";
 
 
 

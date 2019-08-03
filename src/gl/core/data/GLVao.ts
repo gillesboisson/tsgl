@@ -1,6 +1,6 @@
 import {GLBuffer} from "./GLBuffer";
-import {GLCore} from "./GLCore";
-import {AnyWebRenderingGLContext} from "./Helpers";
+import {GLCore} from "../GLCore";
+import {AnyWebRenderingGLContext} from "../Helpers";
 import {GLAttribute} from "./GLAttribute";
 
 

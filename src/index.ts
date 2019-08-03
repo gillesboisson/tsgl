@@ -1,22 +1,26 @@
 import {GLRenderer, GLRendererType} from "./gl/core/GLRenderer";
 import {vec2, vec3, vec4} from "gl-matrix";
-import {GLBuffer} from "./gl/core/GLBuffer";
+import {GLBuffer} from "./gl/core/data/GLBuffer";
 import {GLShader} from "./gl/core/GLShader";
-import {getDefaultAttributeLocation, GLDefaultAttributesLocation} from "./gl/core/GLDefaultAttributesLocation";
+import {getDefaultAttributeLocation, GLDefaultAttributesLocation} from "./gl/core/data/GLDefaultAttributesLocation";
 import {
     IInterleavedData,
-    interleavedData,
     InterleavedDataArray,
-    interleavedProp
 } from "./gl/data/InterleavedData";
+import {
+    interleavedData,
+    interleavedProp
+} from "./gl/data/InterleavedData.decorator";
+
 import {GLTexture} from "./gl/core/GLTexture";
-import GLUniformsData, {glShaderUniformProp, glShaderUniforms} from "./gl/core/GLUniformsData";
-import {GLAttribute} from "./gl/core/GLAttribute";
-import {GLMesh} from "./gl/core/GLMesh";
-import {AGLBatch, GLBatchable, pullMethod} from "./gl/core/AGLBatch";
+import {GLUniformsData} from "./gl/core/data/GLUniformsData";
+import {glShaderUniformProp, glShaderUniforms} from "./gl/core/data/GLUniformData.decorator";
+import {GLAttribute} from "./gl/core/data/GLAttribute";
+import {GLMesh} from "./gl/core/data/GLMesh";
+import {AGLBatch, GLBatchable, pullMethod} from "./gl/core/data/AGLBatch";
 import {AnyWebRenderingGLContext} from "./gl/core/Helpers";
-import {GLFramebuffer} from "./gl/core/GLFramebuffer";
-import {glInterleavedAttributes} from "./gl/core/glInterleavedAttributes";
+import {GLFramebuffer} from "./gl/core/framebuffer/GLFramebuffer";
+import {GLInterleavedAttributesDecorator} from "./gl/core/data/GLInterleavedAttributes.decorator";
 
 var SPECTOR = require("spectorjs");
 
@@ -29,7 +33,7 @@ if(DEBUG){
 }
 
 
-@glInterleavedAttributes()
+@GLInterleavedAttributesDecorator()
 @interleavedData()
 class PosUv implements IInterleavedData{
 

@@ -1,7 +1,7 @@
-import {GLCore} from "./GLCore";
-import {AnyWebRenderingGLContext} from "./Helpers";
-import {GLTexture} from "./GLTexture";
-import {GLSupport} from "./GLSupport";
+import {GLCore} from "../GLCore";
+import {AnyWebRenderingGLContext} from "../Helpers";
+import {GLTexture} from "../GLTexture";
+import {GLSupport} from "../GLSupport";
 
 export class GLFramebuffer extends GLCore{
     get depthTexture(): GLTexture {
