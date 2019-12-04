@@ -1,4 +1,8 @@
-import {AnyWebRenderingGLContext} from "../core/Helpers";
+import {AnyWebRenderingGLContext} from "../core/GLHelpers";
+import {vec2, vec3, vec4} from "gl-matrix";
+import {Type} from "../../helpers/Type";
+import {GLBuffer} from "../core/data/GLBuffer";
+import {GLAttribute} from "../core/data/GLAttribute";
 
 export interface InterleavedProp {
     name?: string,
@@ -24,6 +28,14 @@ export interface IInterleavedData {
 
 }
 
+export interface InterleaveDataT<DataT extends IInterleavedData> extends Type<DataT>{
+    createAttributes?: (
+        gl: AnyWebRenderingGLContext,
+        buffer: GLBuffer,
+        stride: number
+    ) => GLAttribute[];
+}
+
 export class InterleavedDataArray<DataT extends IInterleavedData> {
 
     protected _arrayBuffer: ArrayBuffer;
@@ -32,7 +44,7 @@ export class InterleavedDataArray<DataT extends IInterleavedData> {
     protected _bufferView: Uint8Array;
 
     constructor(
-        protected DataClass: any, protected _length: number, protected _stride: number, arrayBuffer?: ArrayBuffer) {
+        protected DataClass: InterleaveDataT<DataT>, protected _length: number, protected _stride: number, arrayBuffer?: ArrayBuffer) {
         this._byteLength = _length * _stride;
 
         if (arrayBuffer === undefined) {
@@ -77,4 +89,16 @@ export class InterleavedDataArray<DataT extends IInterleavedData> {
         return this._bufferView;
     }
 
+}
+
+export interface WithUv {
+    uv: vec2;
+}
+
+export interface WithPosition {
+    position: vec3;
+}
+
+export interface WithColor {
+    color: vec4;
 }

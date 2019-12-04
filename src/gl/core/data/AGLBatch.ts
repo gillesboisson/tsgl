@@ -1,8 +1,9 @@
-import {IInterleavedData, InterleavedDataArray} from "../../data/InterleavedData";
+import {IInterleavedData, InterleaveDataT, InterleavedDataArray} from "../../data/InterleavedData";
 import {GLVao} from "./GLVao";
-import {AnyWebRenderingGLContext} from "../Helpers";
+import {AnyWebRenderingGLContext} from "../GLHelpers";
 import {GLBuffer} from "./GLBuffer";
 import {GLAttribute} from "./GLAttribute";
+import {Type} from "../../../helpers/Type";
 
 export type pullMethod<DataT extends IInterleavedData> = (
     points: DataT[],
@@ -33,7 +34,7 @@ export abstract class AGLBatch<DataT extends IInterleavedData> extends Interleav
 
     constructor(
         protected _gl: AnyWebRenderingGLContext,
-        DataClass: any,
+        DataClass: InterleaveDataT<DataT>,
         pointLength: number,
         stride: number,
         protected _indexLength: number = -1,
@@ -52,6 +53,7 @@ export abstract class AGLBatch<DataT extends IInterleavedData> extends Interleav
             this._indexBuffer = new GLBuffer(_gl, _gl.ELEMENT_ARRAY_BUFFER, drawType, this._indexArray);
         }
 
+        this._attributes = DataClass.createAttributes(_gl, this._buffer, this._stride) as GLAttribute[];
         this._attributes = DataClass.createAttributes(_gl, this._buffer, this._stride) as GLAttribute[];
         this._vao = new GLVao(_gl, this._attributes, this._indexBuffer);
     }

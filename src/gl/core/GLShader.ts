@@ -1,4 +1,4 @@
-import {AnyWebRenderingGLContext} from "./Helpers";
+import {AnyWebRenderingGLContext} from "./GLHelpers";
 import {GLCore} from "./GLCore";
 import {GLUniformsData} from "./data/GLUniformsData";
 

@@ -1,8 +1,12 @@
-import {AnyWebRenderingGLContext} from "../Helpers";
+import {AnyWebRenderingGLContext} from "../GLHelpers";
 import {GLAttribute} from "./GLAttribute";
 import {GLBuffer} from "./GLBuffer";
 import {GLCore} from "../GLCore";
 import {GLVao} from "./GLVao";
+import {GLFramebuffer} from "../framebuffer/GLFramebuffer";
+import {GLDefaultAttributesLocation} from "./GLDefaultAttributesLocation";
+
+
 
 export class GLMesh extends GLCore{
 
@@ -16,7 +20,6 @@ export class GLMesh extends GLCore{
             return 3;
         }
     }
-
 
     get vao(): GLVao {
         return this._vao;
@@ -52,8 +55,13 @@ export class GLMesh extends GLCore{
 
     }
 
-    destroy(): void {
+    destroy(destroyBuffers: boolean = true): void {
         this._vao.destroy();
+        if(destroyBuffers) {
+            for(let buffer of this.buffers) buffer.destroy();
+            if(this._indexBuffer !== undefined) this._indexBuffer.destroy();
+        }
+
     }
 
     setInstanced(nbInstances: number){

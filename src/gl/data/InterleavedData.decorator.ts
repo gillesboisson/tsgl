@@ -1,4 +1,4 @@
-import {AnyWebRenderingGLContext} from "../core/Helpers";
+import {AnyWebRenderingGLContext} from "../core/GLHelpers";
 import {IInterleavedData, InterleavedDataArray, InterleavedProp} from "./InterleavedData";
 
 export function interleavedProp(prop: InterleavedProp) {

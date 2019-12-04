@@ -27,6 +27,8 @@ export function glShaderUniforms() {
 
                 this.gl.useProgram(this._program);
 
+                const syncFuncs: {[name:string] : () => void} = {};
+
                 for (let prop of prototype.__arrayProps) {
                     const location = this._uniforms[prop.propName] = this.gl.getUniformLocation(this._program, prop.name);
                     if (this._uniforms[prop.name] === null) {
@@ -39,7 +41,7 @@ export function glShaderUniforms() {
                     const funcUName = 'uniform' + prop.length.toString() + prop.uniformType + (prop.length > 1 ? 'v' : '');
                     const funcU = this.gl[funcUName].bind(this.gl);
 
-
+                    syncFuncs[prop.propName] = function(){ funcU(location, this['__'+prop.propName]);};
 
                     const set = function(val: number){
 

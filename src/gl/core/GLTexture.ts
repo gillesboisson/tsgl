@@ -1,8 +1,19 @@
 import {GLCore} from "./GLCore";
-import {AnyWebRenderingGLContext} from "./Helpers";
+import {AnyWebRenderingGLContext} from "./GLHelpers";
 
 
 export class GLTexture extends GLCore {
+    get texture(): WebGLTexture {
+        return this._texture;
+    }
+
+    get width(): number {
+        return this._width;
+    }
+
+    get height(): number {
+        return this._height;
+    }
 
     private _texture: WebGLTexture;
 
@@ -97,9 +108,7 @@ export class GLTexture extends GLCore {
         this.gl.bindTexture(this._textureType, null);
     }
 
-    get texture(): WebGLTexture {
-        return this._texture;
-    }
+
 
 
 }

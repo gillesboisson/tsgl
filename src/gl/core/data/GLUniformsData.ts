@@ -1,5 +1,5 @@
 import {GLCore} from "../GLCore";
-import {AnyWebRenderingGLContext} from "../Helpers";
+import {AnyWebRenderingGLContext} from "../GLHelpers";
 
 
 
@@ -12,6 +12,8 @@ export class GLUniformsData extends GLCore {
     }
 
     sync(propertyName? :string){ throw new Error('Not implemented')}
+
+    syncFuncs:{[name: string]: () => void };
 
     destroy(): void {
     }

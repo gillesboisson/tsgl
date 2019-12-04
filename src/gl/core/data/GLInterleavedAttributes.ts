@@ -1,8 +1,8 @@
-import {AnyWebRenderingGLContext} from "../Helpers";
+import {AnyWebRenderingGLContext} from "../GLHelpers";
 import {GLBuffer} from "./GLBuffer";
 import {GLAttribute} from "./GLAttribute";
 
-export function GLInterleavedAttributesDecorator(){
+export function GLInterleavedAttributes(){
     return function (target: any) {
 
         if(target.prototype.__anPropsList) {

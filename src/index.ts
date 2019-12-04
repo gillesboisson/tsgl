@@ -1,5 +1,5 @@
 import {GLRenderer, GLRendererType} from "./gl/core/GLRenderer";
-import {vec2, vec3, vec4} from "gl-matrix";
+import {mat4, vec2, vec3, vec4} from "gl-matrix";
 import {GLBuffer} from "./gl/core/data/GLBuffer";
 import {GLShader} from "./gl/core/GLShader";
 import {getDefaultAttributeLocation, GLDefaultAttributesLocation} from "./gl/core/data/GLDefaultAttributesLocation";
@@ -18,9 +18,13 @@ import {glShaderUniformProp, glShaderUniforms} from "./gl/core/data/GLUniformDat
 import {GLAttribute} from "./gl/core/data/GLAttribute";
 import {GLMesh} from "./gl/core/data/GLMesh";
 import {AGLBatch, GLBatchable, pullMethod} from "./gl/core/data/AGLBatch";
-import {AnyWebRenderingGLContext} from "./gl/core/Helpers";
+import {AnyWebRenderingGLContext} from "./gl/core/GLHelpers";
 import {GLFramebuffer} from "./gl/core/framebuffer/GLFramebuffer";
-import {GLInterleavedAttributesDecorator} from "./gl/core/data/GLInterleavedAttributes.decorator";
+import {GLInterleavedAttributes} from "./gl/core/data/GLInterleavedAttributes";
+import {Transform3D} from "./geom/Transform3D";
+import {SceneInstance3D} from "./3d/SceneInstance3D";
+import {createQuadMesh} from "./geom/MeshHelpers";
+import { Camera3D } from "./3d/Camera3D";
 
 var SPECTOR = require("spectorjs");
 
@@ -32,8 +36,9 @@ if(DEBUG){
     spector = new SPECTOR.Spector();
 }
 
+// const node = new ASceneInstance(Transform3D);
 
-@GLInterleavedAttributesDecorator()
+@GLInterleavedAttributes()
 @interleavedData()
 class PosUv implements IInterleavedData{
 
@@ -58,7 +63,7 @@ class PosUv implements IInterleavedData{
 }
 
 class MyBatch extends AGLBatch<PosUv>{
-    constructor(
+        constructor(
         gl: AnyWebRenderingGLContext,
         pointLength: number,
         indexLength: number
@@ -127,29 +132,34 @@ window.addEventListener('load', () => {
         document.getElementById('test') as HTMLCanvasElement,
     );
 
+
+    const mat = mat4.create();
+
+    const node = new SceneInstance3D();
+    const snode = new SceneInstance3D();
+    node.addChild(snode);
+    node.transform.setPosition(5,5,5);
+    node.transform.setScale(2);
+    snode.transform.setPosition(1,2,3);
+
+    // node.calcWorldMat(mat);
+    // console.log('mat : ', mat);
+    // snode.calcWorldMat(mat);
+    // console.log('mat : ', mat);
+
+    node.resolveTransformTree();
+    console.log('mat : ', node.getCachedWorldMat());
+    console.log('mat : ', snode.getCachedWorldMat());
+
     document.body.append(renderer.canvas);
     const gl = renderer.getGL();
 
     const myFB = new GLFramebuffer(gl, 320,240, true, false);
     const myFBT = myFB.depthTexture;
-    const quadB = new GLBuffer(gl,gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    quadB.bufferData(new Float32Array([
-        -1,-1,0,    0,0,
-        1,-1,0,     1,0,
-        -1,1,0,      0,1,
-        1,1,0,      1,1,
-    ]));
+    const quadMesh = createQuadMesh(gl);
 
-    const quadIndex = new Uint16Array([0,1,2,1,3,2]);
-    const quadIndexB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER,gl.STATIC_DRAW);
-    quadIndexB.bufferData(quadIndex);
-
-    const attrs = [
-      new GLAttribute(gl, quadB,GLDefaultAttributesLocation.POSITION,'position',3,5 * 4),
-      new GLAttribute(gl, quadB,GLDefaultAttributesLocation.UV,'uv',2,5 * 4,3*4),
-    ];
-
-    const quadMesh = new GLMesh(gl,4,2,attrs,quadIndexB);
+    const cam = Camera3D.createPerspective(90, renderer.height / renderer.height);
+    
 
 
     if(DEBUG) {

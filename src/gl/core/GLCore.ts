@@ -1,4 +1,4 @@
-import {AnyWebRenderingGLContext} from "./Helpers";
+import {AnyWebRenderingGLContext} from "./GLHelpers";
 
 export abstract class GLCore {
     constructor(protected gl: AnyWebRenderingGLContext) {}

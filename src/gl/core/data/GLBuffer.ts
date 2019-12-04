@@ -1,5 +1,5 @@
 import { GLConfig} from "../GLConfig";
-import {AnyWebRenderingGLContext} from "../Helpers";
+import {AnyWebRenderingGLContext} from "../GLHelpers";
 import {GLCore} from "../GLCore";
 
 export class GLBuffer extends GLCore{

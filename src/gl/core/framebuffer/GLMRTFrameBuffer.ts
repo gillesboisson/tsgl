@@ -1,9 +1,14 @@
 import {GLCore} from "../GLCore";
-import {AnyWebRenderingGLContext} from "../Helpers";
+import {AnyWebRenderingGLContext} from "../GLHelpers";
 import {GLSupport} from "../GLSupport";
 import {GLTexture} from "../GLTexture";
+import {IGLFrameBuffer} from "./IGLFrameBuffer";
 
-export class MRTFrameBuffer extends GLCore{
+export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer{
+
+    get width(){ return this._width; }
+    get height(){ return this._height; }
+
     private _isWebGL2: any;
     private _frameBuffer: WebGLFramebuffer;
     private _textures: GLTexture[];

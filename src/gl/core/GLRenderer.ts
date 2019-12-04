@@ -1,5 +1,5 @@
 import {vec4} from "gl-matrix";
-import {AnyWebRenderingGLContext} from "./Helpers";
+import {AnyWebRenderingGLContext} from "./GLHelpers";
 import {GLCore} from "./GLCore";
 
 
@@ -10,6 +10,14 @@ export enum GLRendererType{
 
 
 export class GLRenderer extends GLCore{
+    
+    get width(): number{
+        return this._width;
+    }
+
+    get height(): number{
+        return this._height;
+    }
 
     static createFromCanvas(
         canvas: HTMLCanvasElement,
