@@ -68,11 +68,11 @@ export class GLRenderer extends GLCore{
     }
 
     setup() {
-        this.gl.enable(this.gl.CULL_FACE);                              // Active le test de profondeur
-        this.gl.enable(this.gl.DEPTH_TEST);                             // Active le test de profondeur
+        this.gl.disable(this.gl.CULL_FACE);                              // Active le test de profondeur
+        this.gl.disable(this.gl.DEPTH_TEST);                             // Active le test de profondeur
         this.gl.depthFunc(this.gl.LESS);                                // Les objets proches cachent les objets lointains
 
-        this.gl.enable(this.gl.BLEND);
+        this.gl.disable(this.gl.BLEND);
         this.gl.pixelStorei(this.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
         this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA); // premultiply alpha
     }

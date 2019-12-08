@@ -1,6 +1,6 @@
 import {AnyWebRenderingGLContext} from "./GLHelpers";
 import {GLCore} from "./GLCore";
-import {GLUniformsData} from "./data/GLUniformsData";
+import {GLUniformsData, GLUniformsDataType} from "./data/GLUniformsData";
 
 
 
@@ -87,7 +87,7 @@ export class GLShader<GLUniformsDataT extends GLUniformsData = GLUniformsData> e
         gl: AnyWebRenderingGLContext,
         protected vertexSrc: string,
         protected fragmentSrc: string,
-        UniformDataTClass?: any,
+        UniformDataTClass?: GLUniformsDataType<GLUniformsDataT>,
         attributesLocations? : {[name: string]: number}
     ){
         super(gl);

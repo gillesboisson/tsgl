@@ -1,3 +1,6 @@
+#version 150
+precision mediump float;
+
 uniform mat4 mvp;
 uniform sampler2D texture;
 

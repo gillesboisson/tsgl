@@ -45,7 +45,7 @@ export class GLBuffer extends GLCore{
         stride: number = 0,
         offset:number = 0
         ){
-
+        
         this.bind();
         this.gl.enableVertexAttribArray(attrLocation);
         this.gl.vertexAttribPointer(

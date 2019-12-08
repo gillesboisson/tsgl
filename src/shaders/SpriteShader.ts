@@ -5,8 +5,8 @@ import {getDefaultAttributeLocation} from "../gl/core/data/GLDefaultAttributesLo
 import {glShaderUniformProp, glShaderUniforms} from "../gl/core/data/GLUniformData.decorator";
 import {mat4} from "gl-matrix";
 
-const fragSrc = require('./glsl/sprite.frag');
-const vertSrc = require('./glsl/sprite.vert');
+const fragSrc = require('./glsl/sprite.frag').default;
+const vertSrc = require('./glsl/sprite.vert').default;
 
 @glShaderUniforms()
 export class SpriteUniformData extends GLUniformsData{

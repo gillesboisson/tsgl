@@ -28,8 +28,11 @@ export function interleavedData() {
 
         if (prototype.__anPropsList) {
             const allocate = prototype.allocate;
-
+            let length = 0;
             for (let prop of prototype.__anPropsList) {
+                const propOffset = prop.offset === -1 ? length : prop.offset;
+                const nLength = propOffset + prop.type.BYTES_PER_ELEMENT * prop.length;
+                if(nLength > length) length = nLength;
 
                 if(prop.useAccessor) {
 
@@ -55,6 +58,9 @@ export function interleavedData() {
                     Object.defineProperty(prototype, prop.name, {get, set});
                 }
             }
+
+            target.__byteLength = length;
+
 
             prototype.allocate = function (
                 array: InterleavedDataArray<IInterleavedData>,

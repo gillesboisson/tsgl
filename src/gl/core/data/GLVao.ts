@@ -61,7 +61,12 @@ export class GLVao extends GLCore{
 
                 this._supportMode = VaoSupportType.OES_VAO;
             }else {
-                throw new Error('Vao not supported');
+
+                this.activate = function(){};
+                this.bind = this.activeGeom;
+                this.unbind = this.unbindProxy;
+
+                //throw new Error('Vao not supported');
             }
 
         }
@@ -73,6 +78,7 @@ export class GLVao extends GLCore{
         return this._attributes;
     }
 
+    
     private bindExt(){
 
         this._vaoExt.bindVertexArrayOES(this._vao);
@@ -90,6 +96,9 @@ export class GLVao extends GLCore{
         (this.gl as WebGL2RenderingContext).bindVertexArray(null);
     }
 
+    private unbindProxy(){
+        if(this._indexBuffer) this._indexBuffer.unbind();
+    }
 
     private destroyExt(){
         this._vaoExt.deleteVertexArrayOES(this._vao);
