@@ -11,11 +11,18 @@ const vertSrc = require('./glsl/simpleColor.vert').default;
 
 @glShaderUniforms()
 export class SimpleColorUniformData extends GLUniformsData{
-
+    @glShaderUniformProp('i',1,'tex')
+    textureInd: number = 0;
 }
 
 export class SimpleColorShader extends GLShader<SimpleColorUniformData>{
     constructor(gl: AnyWebRenderingGLContext){
-        super(gl, vertSrc, fragSrc, SimpleColorUniformData, getDefaultAttributeLocation(['position','uv','color']) )
+        super(gl,
+            vertSrc,
+            fragSrc,
+            SimpleColorUniformData,
+            getDefaultAttributeLocation(['position','uv','color']),
+            {'SHADER_MODE':'3'},
+            )
     }
 }

@@ -65,28 +65,17 @@ class PosUvColor implements IInterleavedData{
     })
     public uv: vec2 ;
 
-    @interleavedProp({
-        type: Float32Array,
-        length: 4,
-        attributeLocation: GLDefaultAttributesLocation.COLOR,
+    // @interleavedProp({
+    //     type: Float32Array,
+    //     length: 4,
+    //     attributeLocation: GLDefaultAttributesLocation.COLOR,
 
-    })
-    public color: vec2 ;
+    // })
+    // public color: vec2 ;
 
     allocate(array: InterleavedDataArray<PosUvColor>, arrayBuffer: ArrayBuffer, offset: number, stride: number): void {}
 
 }
-
-@glShaderUniforms()
-class MyShaderUniforms extends GLUniformsData{
-
-    // @glShaderUniformProp('i',1,'tex')
-    // textureInd: number = 0;
-
-    // @glShaderUniformProp('f',3,'offset')
-    // offset: Float32Array = new Float32Array([0,0,0]);
-}
-
 
 window.addEventListener('load', () => {
 
@@ -97,10 +86,10 @@ window.addEventListener('load', () => {
     const gl = renderer.getGL();
     
     const data = new Float32Array([
-        -1,-1,0,    
-        1,-1,0,     
-        -1,1,0,               
-        1,1,0,
+        -1,-1,0,0,0,  
+        1,-1,0,1,0,   
+        -1,1,0,0,1,               
+        1,1,0,1,1,
     ]);
 
     const indices = new Uint16Array([
@@ -112,11 +101,10 @@ window.addEventListener('load', () => {
 
     const vertexB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, data);
     const indicesB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW,indices);
-    // const attributes = PosUvColor.createAttributes(gl, vertexB);
-    const attributes = [new GLAttribute(gl, vertexB, GLDefaultAttributesLocation.POSITION,'position',3,3*Float32Array.BYTES_PER_ELEMENT)];
+    const attributes = PosUvColor.createAttributes(gl, vertexB);
+    // const attributes = [new GLAttribute(gl, vertexB, GLDefaultAttributesLocation.POSITION,'position',3,3*Float32Array.BYTES_PER_ELEMENT)];
     const mesh = new GLMesh(gl, 4, 2, attributes, indicesB, gl.TRIANGLES);
     const myShader = new SimpleColorShader(gl);
-
 
     if(DEBUG) {
         spector.displayUI();
@@ -137,7 +125,13 @@ window.addEventListener('load', () => {
     const img = document.createElement('img') as HTMLImageElement;
 
     // setTimeout(() =>
-    img.addEventListener('load',() => render());
+    img.addEventListener('load',() => {
+        const texture = new GLTexture(gl, gl.TEXTURE_2D, img.width, img.height);
+        texture.uploadImage(img, gl.RGB);
+        texture.active(0);
+        myShader.getUniforms().textureInd = 0;
+        render()
+    });
     // }),3000);
 
     img.src='./images/bb.jpg';

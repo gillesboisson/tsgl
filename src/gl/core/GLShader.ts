@@ -2,9 +2,17 @@ import {AnyWebRenderingGLContext} from "./GLHelpers";
 import {GLCore} from "./GLCore";
 import {GLUniformsData, GLUniformsDataType} from "./data/GLUniformsData";
 
+export interface IGLShader<GLUniformsDataT extends GLUniformsData>{
+    // get uniforms(): GLUniformsDataT;
+    use(): void;
+    getUniforms(): GLUniformsDataT;
+}
 
+export type GLShaderPrecompileFlags = {
+    [key: string]: string,
+}
 
-export class GLShader<GLUniformsDataT extends GLUniformsData = GLUniformsData> extends GLCore{
+export class GLShader<GLUniformsDataT extends GLUniformsData = GLUniformsData> extends GLCore implements IGLShader<GLUniformsDataT>{
 
 
 
@@ -13,11 +21,12 @@ export class GLShader<GLUniformsDataT extends GLUniformsData = GLUniformsData> e
         vertexSrc: string,
         fragmentSrc: string,
         attributeLocations?: {[name: string]: number },
+        flags?: GLShaderPrecompileFlags,
         beforeLink?: (gl: AnyWebRenderingGLContext, program: WebGLProgram) => void
     ): WebGLProgram {
 
-        var glVertShader = this.compileShader(gl, gl.VERTEX_SHADER, vertexSrc);
-        var glFragShader = this.compileShader(gl, gl.FRAGMENT_SHADER, fragmentSrc);
+        var glVertShader = this.compileShader(gl, gl.VERTEX_SHADER, vertexSrc,flags);
+        var glFragShader = this.compileShader(gl, gl.FRAGMENT_SHADER, fragmentSrc, flags);
 
         var program = gl.createProgram();
 
@@ -63,10 +72,23 @@ export class GLShader<GLUniformsDataT extends GLUniformsData = GLUniformsData> e
     public static compileShader(
         gl: AnyWebRenderingGLContext,
         shaderType: GLenum,
-        src: string
+        src: string,
+        flags?: GLShaderPrecompileFlags,
     ): WebGLShader {
 
         const shader = gl.createShader(shaderType);
+        let defines = ``;
+        if(flags !== undefined){
+            for (const key in flags) {
+                if (flags.hasOwnProperty(key)) {
+                    defines += `#define ${key} ${flags[key]}\n`
+                }
+            }
+            const srcSPL = src.split("\n");
+            
+            srcSPL.splice(1,0,defines);
+            src = srcSPL.join("\n");
+        }
 
         gl.shaderSource(shader, src);
         gl.compileShader(shader);
@@ -88,10 +110,11 @@ export class GLShader<GLUniformsDataT extends GLUniformsData = GLUniformsData> e
         protected vertexSrc: string,
         protected fragmentSrc: string,
         UniformDataTClass?: GLUniformsDataType<GLUniformsDataT>,
-        attributesLocations? : {[name: string]: number}
+        attributesLocations? : {[name: string]: number},
+        protected flags?: GLShaderPrecompileFlags,
     ){
         super(gl);
-        this._program = GLShader.compileProgram(gl, vertexSrc, fragmentSrc, attributesLocations);
+        this._program = GLShader.compileProgram(gl, vertexSrc, fragmentSrc, attributesLocations, flags);
 
         if(UniformDataTClass !== undefined) {
             this._uniforms = new UniformDataTClass(gl, this._program) as GLUniformsDataT;
@@ -110,7 +133,7 @@ export class GLShader<GLUniformsDataT extends GLUniformsData = GLUniformsData> e
         return this._program;
     }
 
-    get uniforms(): GLUniformsDataT {
+    getUniforms(): GLUniformsDataT {
         return this._uniforms;
     }
 

@@ -24,7 +24,7 @@ export abstract class APostRenderingPass<
     ){
 
         super(gl);
-        this._uniformData = _shader.uniforms;
+        this._uniformData = _shader.getUniforms();
         this._quad = createQuadMesh(gl);
     }
 
