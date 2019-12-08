@@ -11,7 +11,7 @@ export function GLInterleavedAttributes(){
             target.createAttributes = function (
                 gl: AnyWebRenderingGLContext,
                 buffer: GLBuffer,
-                stride: number
+                stride: number = target.__byteLength,
             ) {
                 const attrs: GLAttribute[] = createAttributes ? createAttributes.apply(target, arguments) : [];
                 let length = 0;
