@@ -1,7 +1,8 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.ts',
+  context: path.resolve(__dirname, 'src'),
+  entry: './index.ts',
   devtool: 'inline-source-map',
   mode: 'development',
   module: {
@@ -9,20 +10,17 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.(glsl|vs|fs|vert|frag)$/,
         exclude: /node_modules/,
-        use: [
-          'raw-loader',
-          'glslify-loader'
-        ]
-      }
-    ]
+        use: ['raw-loader', 'glslify-loader'],
+      },
+    ],
   },
   resolve: {
-    extensions: ['.ts', '.js' ]
+    extensions: ['.ts', '.js'],
   },
   output: {
     filename: 'app.js',
