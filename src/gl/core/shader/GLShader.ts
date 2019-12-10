@@ -43,8 +43,4 @@ export class GLShader<ShaderStateT extends GLShaderState> extends GLCore
   }
 
   syncUniforms(): void {}
-
-  get program(): WebGLProgram {
-    return this._program;
-  }
 }
