@@ -4,9 +4,9 @@ import { GLShader } from './GLShader';
 import { getUniformsLocation } from './getUniformsLocation';
 import { IGLShader } from './IGLShader';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
-import { IUse, IShaderProgram } from './IShaderProgram';
+import { IUse, IShaderProgram, ISyncUniform } from './IShaderProgram';
 
-export interface IGLShaderState extends IGLCore, IShaderProgram {
+export interface IGLShaderState extends IGLCore, IShaderProgram, ISyncUniform {
   syncUniforms(): void;
   getProgram(): WebGLProgram;
 }
@@ -21,8 +21,9 @@ export abstract class GLShaderState extends GLCore implements IGLShaderState {
 
   constructor(protected _shader: GLShader<GLShaderState>) {
     super(_shader.getGL());
-    this._uniformsLocation = getUniformsLocation(this.gl, _shader.program);
-    this._program = _shader.program;
+    const program = _shader.getProgram();
+    this._uniformsLocation = getUniformsLocation(this.gl, program);
+    this._program = program;
   }
 
   use() {

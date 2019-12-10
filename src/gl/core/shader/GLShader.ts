@@ -3,13 +3,14 @@ import { GLCore } from '../GLCore';
 import { IGLShader } from './IGLShader';
 import { compileProgram } from './compileProgram';
 import { GLShaderState, GLShaderStateType } from './GLShaderState';
-import { IShaderProgram } from './IShaderProgram';
+import { IShaderProgram, ISyncUniform } from './IShaderProgram';
 
 export type GLShaderPrecompileFlags = {
   [key: string]: string;
 };
 
-export class GLShader<ShaderStateT extends GLShaderState> extends GLCore implements IGLShader, IShaderProgram {
+export class GLShader<ShaderStateT extends GLShaderState> extends GLCore
+  implements IGLShader, IShaderProgram, ISyncUniform {
   protected _program: WebGLProgram;
   protected _state: ShaderStateT;
 
@@ -40,6 +41,8 @@ export class GLShader<ShaderStateT extends GLShaderState> extends GLCore impleme
   destroy() {
     this.gl.deleteProgram(this._program);
   }
+
+  syncUniforms(): void {}
 
   get program(): WebGLProgram {
     return this._program;
