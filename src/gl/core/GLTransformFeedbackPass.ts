@@ -88,6 +88,16 @@ export class GLTransformFeedbackPass<DataT> extends GLCore {
     return vaoOut;
   }
   destroy(): void {
-    throw new Error('Method not implemented.');
+    this._vao1.destroy();
+    this._vao2.destroy();
+    (<WebGL2RenderingContext>this.gl).deleteTransformFeedback(this._transformFeedback);
+    if (this.__destroyBuffer1) this._buffer1.destroy();
+    if (this.__destroyBuffer2) this._buffer2.destroy();
+
+    delete this._vao1;
+    delete this._vao2;
+    delete this._buffer1;
+    delete this._buffer2;
+    delete this._transformFeedback;
   }
 }
