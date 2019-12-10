@@ -22,12 +22,12 @@ import { cpus } from 'os';
 import { SimpleColorShader } from './shaders/SimpleColorShader';
 import { GLVariantShader } from './gl/core/shader/variants/GLVariantShader';
 import { TestVariantShader, ColorMode } from './shaders/TestVariantShader';
-// import { TestVariantShader } from './shaders/TestVariantShader';
+import { TestUBOShader, TestUBOShaderState } from './shaders/TestUboShader';
 
 var SPECTOR = require('spectorjs');
 
 const DEBUG = true;
-const DEBUG_COMMANDS_START = false;
+const DEBUG_COMMANDS_START = true;
 let spector: any = null;
 
 if (DEBUG) {
@@ -53,27 +53,37 @@ class PosUvColor implements IInterleavedData {
   })
   public uv: vec2;
 
-  // @interleavedProp({
-  //     type: Float32Array,
-  //     length: 4,
-  //     attributeLocation: GLDefaultAttributesLocation.COLOR,
-
-  // })
-  // public color: vec2 ;
+  @interleavedProp({
+    type: Float32Array,
+    length: 4,
+    attributeLocation: GLDefaultAttributesLocation.COLOR,
+  })
+  public color: vec4;
 
   allocate(array: InterleavedDataArray<PosUvColor>, arrayBuffer: ArrayBuffer, offset: number, stride: number): void {}
 }
 
 window.addEventListener('load', () => {
-  const renderer = GLRenderer.createFromCanvas(document.getElementById('test') as HTMLCanvasElement);
+  const renderer = GLRenderer.createFromCanvas(
+    document.getElementById('test') as HTMLCanvasElement,
+    GLRendererType.WebGL2,
+  );
 
-  const gl = renderer.getGL();
+  const gl = renderer.getGL() as WebGL2RenderingContext;
 
   const data = new Float32Array([-1, -1, 0, 0, 0, 1, -1, 0, 1, 0, -1, 1, 0, 0, 1, 1, 1, 0, 1, 1]);
 
+  // prettier-ignore
+  const posUvColdata = new Float32Array([
+    -1, -1, 0,  0, 0,   1, 0, 0, 1,
+    1, -1, 0,   1, 0,   0, 1, 0, 1,
+    -1, 1, 0,   0, 1,   0, 0, 1, 1,
+    1, 1, 0,    1, 1,   1, 0, 1, 1,
+  ]);
+
   const indices = new Uint16Array([0, 1, 2, 1, 3, 2]);
 
-  const vertexB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, data);
+  const vertexB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, posUvColdata);
   const indicesB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW, indices);
   const attributes = PosUvColor.createAttributes(gl, vertexB);
   // const attributes = [new GLAttribute(gl, vertexB, GLDefaultAttributesLocation.POSITION,'position',3,3*Float32Array.BYTES_PER_ELEMENT)];
@@ -84,19 +94,23 @@ window.addEventListener('load', () => {
   const myVariantShader = new TestVariantShader(gl);
   const myVariantShaderState = myVariantShader.createState();
 
+  const testUboShader = new TestUBOShader(gl);
+  const testUboShaderState = testUboShader.createState();
+
   // const myVariantShader = new TestVariantShader(gl);
 
   if (DEBUG) {
     spector.displayUI();
 
-    if (DEBUG_COMMANDS_START) spector.captureContext(renderer.getGL(), 100);
+    if (DEBUG_COMMANDS_START) spector.captureContext(gl, 100);
   }
 
   function render() {
     window.requestAnimationFrame(render);
     renderer.clear();
 
-    myVariantShaderState.use();
+    testUboShaderState.use();
+    testUboShaderState.syncUniforms();
     //myVariantShaderState.syncUniforms();
 
     // myShader.use();

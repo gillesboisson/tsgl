@@ -1,8 +1,8 @@
-import { GLCore, IGLCore } from '../GLCore';
+import { GLCore } from '../GLCore';
+import { IGLCore } from '../IGLCore';
 import { GLShader } from './GLShader';
 import { getUniformsLocation } from './getUniformsLocation';
 import { IGLShader } from './IGLShader';
-import { ShaderUniformProp } from '../data/GLUniformData.decorator';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { IUse, IShaderProgram } from './IShaderProgram';
 

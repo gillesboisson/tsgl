@@ -1,16 +1,11 @@
-import {AnyWebRenderingGLContext} from "./GLHelpers";
-import { IDestroyable } from "../../pool/Pool";
+import { AnyWebRenderingGLContext } from './GLHelpers';
+import { IGLCore } from './IGLCore';
 
-export interface IGLCore extends IDestroyable{
-    getGL(): AnyWebRenderingGLContext;
-}
+export abstract class GLCore implements IGLCore {
+  constructor(protected gl: AnyWebRenderingGLContext) {}
+  getGL(): AnyWebRenderingGLContext {
+    return this.gl;
+  }
 
-export abstract class GLCore implements IGLCore{
-    constructor(protected gl: AnyWebRenderingGLContext) {}
-    getGL(): AnyWebRenderingGLContext {
-        return this.gl;
-    }
-
-    abstract destroy(): void;
-
+  abstract destroy(): void;
 }

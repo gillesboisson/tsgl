@@ -1,7 +1,6 @@
 import { GLShader } from '../gl/core/shader/GLShader';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
-import { glShaderUniformProp, glShaderUniforms } from '../gl/core/data/GLUniformData.decorator';
 import { mat4, vec4 } from 'gl-matrix';
 import { GLShaderState } from '../gl/core/shader/GLShaderState';
 

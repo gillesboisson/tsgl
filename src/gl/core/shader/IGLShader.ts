@@ -1,4 +1,4 @@
-import { IGLCore } from '../GLCore';
+import { IGLCore } from '../IGLCore';
 import { IGLShaderState } from './GLShaderState';
 import { IUse } from './IShaderProgram';
 

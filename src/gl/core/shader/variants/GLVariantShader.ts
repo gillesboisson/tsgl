@@ -1,5 +1,6 @@
 import { AnyWebRenderingGLContext } from '../../GLHelpers';
-import { GLCore, IGLCore } from '../../GLCore';
+import { GLCore } from '../../GLCore';
+import { IGLCore } from '../../IGLCore';
 
 import { IGLShader } from '../IGLShader';
 import { GLShaderPrecompileFlags, GLShader } from '../GLShader';
