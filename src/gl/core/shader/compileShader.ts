@@ -24,6 +24,7 @@ export function compileShader(
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     //console.log(gl.getShaderInfoLog(shader));
+    console.warn('shader src', src);
     throw new Error(gl.getShaderInfoLog(shader));
     return null;
   }

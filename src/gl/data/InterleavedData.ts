@@ -25,6 +25,10 @@ export interface IInterleavedData {
   ): void;
 }
 
+export type InterleaveAttributesType<DataT> = {
+  createAttributes?: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride: number) => GLAttribute[];
+  __byteLength: number;
+};
 export interface InterleaveDataT<DataT extends IInterleavedData> extends Type<DataT> {
   createAttributes?: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride: number) => GLAttribute[];
 }
@@ -68,6 +72,10 @@ export class InterleavedDataArray<DataT extends IInterleavedData> {
 
   get byteLength(): number {
     return this._byteLength;
+  }
+
+  get length() {
+    return this._length;
   }
 
   get collection(): DataT[] {

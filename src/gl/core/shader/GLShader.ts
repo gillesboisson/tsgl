@@ -1,8 +1,9 @@
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLCore } from '../GLCore';
-import { IGLShader } from './IGLShader';
+import { ICreateState } from './IGLShader';
 import { compileProgram } from './compileProgram';
-import { GLShaderState, GLShaderStateType } from './GLShaderState';
+import { GLShaderState } from './GLShaderState';
+import { GLShaderStateType } from './GLShaderStateType';
 import { IShaderProgram, ISyncUniform } from './IShaderProgram';
 
 export type GLShaderPrecompileFlags = {
@@ -10,7 +11,7 @@ export type GLShaderPrecompileFlags = {
 };
 
 export class GLShader<ShaderStateT extends GLShaderState> extends GLCore
-  implements IGLShader, IShaderProgram, ISyncUniform {
+  implements ICreateState, IShaderProgram, ISyncUniform {
   protected _program: WebGLProgram;
   protected _state: ShaderStateT;
 
@@ -18,7 +19,7 @@ export class GLShader<ShaderStateT extends GLShaderState> extends GLCore
     gl: AnyWebRenderingGLContext,
     protected vertexSrc: string,
     protected fragmentSrc: string,
-    protected _shaderTypeClass: GLShaderStateType<ShaderStateT>,
+    protected _shaderStateTypeClass: GLShaderStateType<ShaderStateT>,
     attributesLocations?: { [name: string]: number },
     protected flags?: GLShaderPrecompileFlags,
   ) {
@@ -27,7 +28,7 @@ export class GLShader<ShaderStateT extends GLShaderState> extends GLCore
   }
 
   createState(): ShaderStateT {
-    return new this._shaderTypeClass(this);
+    return new this._shaderStateTypeClass(this);
   }
 
   getProgram() {

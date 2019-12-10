@@ -23,11 +23,20 @@ import { SimpleColorShader } from './shaders/SimpleColorShader';
 import { GLVariantShader } from './gl/core/shader/variants/GLVariantShader';
 import { TestVariantShader, ColorMode } from './shaders/TestVariantShader';
 import { TestUBOShader, TestUBOShaderState } from './shaders/TestUboShader';
+import { TestTFShader } from './shaders/TestTFShader';
+import { generateTriangle } from './shaders/generateTriangle';
+import { generateRandomData } from './shaders/generateRandomData';
+import { TestTFdata } from './shaders/TestTFdata';
+import { TestTFShaderRender } from './shaders/TestTFShaderRender';
+import { GLVao } from './gl/core/data/GLVao';
+import { interceptMethod } from './core/helpers';
+import { compileTFProgram } from './gl/core/shader/compileProgram';
+import { GLTransformFeedbackPass } from './gl/core/GLTransformFeedbackPass';
 
 var SPECTOR = require('spectorjs');
 
-const DEBUG = true;
-const DEBUG_COMMANDS_START = true;
+const DEBUG = false;
+const DEBUG_COMMANDS_START = false;
 let spector: any = null;
 
 if (DEBUG) {
@@ -88,49 +97,102 @@ window.addEventListener('load', () => {
   const attributes = PosUvColor.createAttributes(gl, vertexB);
   // const attributes = [new GLAttribute(gl, vertexB, GLDefaultAttributesLocation.POSITION,'position',3,3*Float32Array.BYTES_PER_ELEMENT)];
   const mesh = new GLMesh(gl, 4, 2, attributes, indicesB, gl.TRIANGLES);
-  // const myShader = new SimpleColorShader(gl);
-  // const myShaderState = myShader.createState();
 
-  const myVariantShader = new TestVariantShader(gl);
-  const myVariantShaderState = myVariantShader.createState();
+  // const intData = generateRandomData();
+  // const buffer1 = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STREAM_DRAW, intData.bufferView);
+  // const buffer2 = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STREAM_DRAW);
+  // buffer2.bufferDataLength(intData.byteLength);
+  // const vao1 = new GLVao(gl, TestTFdata.createAttributes(gl, buffer1));
+  // const vao2 = new GLVao(gl, TestTFdata.createAttributes(gl, buffer2));
 
-  const testUboShader = new TestUBOShader(gl);
-  const testUboShaderState = testUboShader.createState();
+  // let bufferSwapped = false;
 
-  // const myVariantShader = new TestVariantShader(gl);
+  // const transformFeedback = gl.createTransformFeedback();
+
+  const shaderTFRender = new TestTFShaderRender(gl);
+  const testTFShader = new TestTFShader(gl);
+  const testTFShaderState = testTFShader.createState();
+
+  const transformPass = new GLTransformFeedbackPass<TestTFdata>(gl, TestTFdata, 2056);
+
+  const intData = generateRandomData(transformPass.length);
+
+  transformPass.getBufferIn().bufferSubData(intData.bufferView);
+
+  const tfTestVertSrc = require('./shaders/glsl/testTF.vert').default;
+
+  const tfShaderProgram = compileTFProgram(
+    gl,
+    tfTestVertSrc,
+    ['oposition', 'ovelocity'],
+    gl.INTERLEAVED_ATTRIBS,
+    getDefaultAttributeLocation(['iposition', 'ivelocity']),
+  );
 
   if (DEBUG) {
     spector.displayUI();
 
-    if (DEBUG_COMMANDS_START) spector.captureContext(gl, 100);
+    if (DEBUG_COMMANDS_START) spector.captureContext(gl, 33);
   }
+
+  gl.disable(gl.CULL_FACE);
+  gl.disable(gl.DEPTH_TEST);
 
   function render() {
     window.requestAnimationFrame(render);
     renderer.clear();
 
-    testUboShaderState.use();
-    testUboShaderState.syncUniforms();
+    /*
+    const vaoIn = bufferSwapped === true ? vao2 : vao1;
+    const bufferOut = bufferSwapped === true ? buffer1 : buffer2;
+
+    const vaoOut = bufferSwapped === false ? vao2 : vao1;
+
+    bufferSwapped = !bufferSwapped;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.enable(gl.RASTERIZER_DISCARD);
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback);
+    gl.useProgram(tfShaderProgram);
+    vaoIn.bind();
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, bufferOut.bufferIndex);
+    gl.beginTransformFeedback(gl.POINTS);
+
+    gl.drawArrays(gl.POINTS, 0, 16);
+    gl.endTransformFeedback();
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
+    gl.disable(gl.RASTERIZER_DISCARD);
+    */
+
+    const vaoOut = transformPass.applyPass(testTFShaderState);
+    shaderTFRender.use();
+    vaoOut.bind();
+    gl.drawArrays(gl.POINTS, 0, transformPass.length);
+
+    // testUboShaderState.use();
+    // testUboShaderState.syncUniforms();
     //myVariantShaderState.syncUniforms();
 
     // myShader.use();
     // myShaderState.use();
     // myShaderState.syncUniforms();
-    mesh.draw();
+    // mesh.draw();
   }
 
   const img = document.createElement('img') as HTMLImageElement;
 
-  // setTimeout(() =>
   img.addEventListener('load', () => {
+    // setTimeout(() => {
     const texture = new GLTexture(gl, gl.TEXTURE_2D, img.width, img.height);
     texture.uploadImage(img, gl.RGB);
     texture.active(0);
     // myShader.getUniforms().textureInd = 0;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
     render();
+    // }, 1000);
   });
-  // }),3000);
 
   img.src = './images/bb.jpg';
-  setTimeout(() => (myVariantShaderState.colorMode = ColorMode.Green), 3000);
+  // setTimeout(() => (myVariantShaderState.colorMode = ColorMode.Green), 3000);
 });

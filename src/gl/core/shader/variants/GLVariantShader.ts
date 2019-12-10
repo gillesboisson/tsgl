@@ -2,7 +2,7 @@ import { AnyWebRenderingGLContext } from '../../GLHelpers';
 import { GLCore } from '../../GLCore';
 import { IGLCore } from '../../IGLCore';
 
-import { IGLShader } from '../IGLShader';
+import { ICreateState } from '../IGLShader';
 import { GLShaderPrecompileFlags, GLShader } from '../GLShader';
 import { getDeclinaison } from './getDeclinaison';
 import { GLVariantShaderState, GLVariantShaderStateType } from './GLVariantShaderState';
@@ -30,7 +30,7 @@ export type VariantDeclinaison = {
   uniformsLocation: { [name: string]: WebGLUniformLocation };
 };
 
-export class GLVariantShader<VariantStateT extends GLVariantShaderState> extends GLCore implements IGLShader {
+export class GLVariantShader<VariantStateT extends GLVariantShaderState> extends GLCore implements ICreateState {
   public get possibleVariants() {
     return this._possibleVariants;
   }

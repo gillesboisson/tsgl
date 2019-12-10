@@ -16,6 +16,10 @@ export class GLVao extends GLCore {
     return this._indexBuffer;
   }
 
+  get indexVao(): WebGLVertexArrayObject | WebGLVertexArrayObjectOES {
+    return this._vao;
+  }
+
   private _vao: WebGLVertexArrayObject | WebGLVertexArrayObjectOES;
   private _supportMode: VaoSupportType;
   private _vaoExt: OES_vertex_array_object;

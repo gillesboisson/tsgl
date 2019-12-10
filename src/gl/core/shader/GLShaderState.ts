@@ -1,19 +1,10 @@
 import { GLCore } from '../GLCore';
-import { IGLCore } from '../IGLCore';
 import { GLShader } from './GLShader';
 import { getUniformsLocation } from './getUniformsLocation';
-import { IGLShader } from './IGLShader';
+import { ICreateState } from './IGLShader';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
-import { IUse, IShaderProgram, ISyncUniform } from './IShaderProgram';
-
-export interface IGLShaderState extends IGLCore, IShaderProgram, ISyncUniform {
-  syncUniforms(): void;
-  getProgram(): WebGLProgram;
-}
-
-export type GLShaderStateType<ShaderStateT extends GLShaderState> = {
-  new (shader: GLShader<ShaderStateT>): ShaderStateT;
-};
+import { IUse } from './IShaderProgram';
+import { IGLShaderState } from './IGLShaderState';
 
 export abstract class GLShaderState extends GLCore implements IGLShaderState {
   protected _uniformsLocation: { [name: string]: WebGLUniformLocation };
