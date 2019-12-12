@@ -13,10 +13,6 @@ import { AGLBatch, GLBatchable, pullMethod } from './gl/core/data/AGLBatch';
 import { AnyWebRenderingGLContext } from './gl/core/GLHelpers';
 import { GLFramebuffer } from './gl/core/framebuffer/GLFramebuffer';
 import { GLInterleavedAttributes } from './gl/core/data/GLInterleavedAttributes';
-import { Transform3D } from './geom/Transform3D';
-import { SceneInstance3D } from './3d/SceneInstance3D';
-import { createQuadMesh } from './geom/MeshHelpers';
-import { Camera3D } from './3d/Camera3D';
 import { GLAttributesCollection } from './gl/core/data/GLAttributesCollection';
 import { cpus } from 'os';
 import { SimpleColorShader } from './shaders/SimpleColorShader';
@@ -29,7 +25,6 @@ import { generateRandomData } from './shaders/generateRandomData';
 import { TestTFdata } from './shaders/TestTFdata';
 import { TestTFShaderRender } from './shaders/TestTFShaderRender';
 import { GLVao } from './gl/core/data/GLVao';
-import { interceptMethod } from './core/helpers';
 import { compileTFProgram } from './gl/core/shader/compileProgram';
 import { GLTransformFeedbackPass } from './gl/core/GLTransformFeedbackPass';
 
