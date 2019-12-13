@@ -8,5 +8,5 @@
     "allowJs": true,
     "experimentalDecorators": true
   },
-  "exclude": ["node_modules", "dist", "archive"]
+  "exclude": ["node_modules", "dist", "archive", "src", "obj", ".vscode"]
 }

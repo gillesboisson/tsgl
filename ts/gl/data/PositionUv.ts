@@ -1,32 +1,26 @@
-import {interleavedData, interleavedProp} from "./InterleavedData.decorator";
-import {GLDefaultAttributesLocation} from "../core/data/GLDefaultAttributesLocation";
-import {vec2, vec3} from "gl-matrix";
-import {IInterleavedData, InterleavedDataArray} from "./InterleavedData";
-import {GLInterleavedAttributes} from "../core/data/GLInterleavedAttributes";
+import { interleavedData } from './InterleavedData.decorator';
+import { GLDefaultAttributesLocation } from '../core/data/GLDefaultAttributesLocation';
+import { vec2, vec3 } from 'gl-matrix';
+import { IInterleavedData, InterleavedDataArray } from './InterleavedData';
+import { glInterleavedAttributes } from '../core/data/gLInterleavedAttributes';
+import { structAttr } from '../../core/decorators/StructAttribute';
 
-
-
-@GLInterleavedAttributes()
+@glInterleavedAttributes()
 @interleavedData()
-export class PositionUv implements IInterleavedData{
+export class PositionUv implements IInterleavedData {
+  @structAttr({
+    type: Float32Array,
+    length: 3,
+    gl: { location: GLDefaultAttributesLocation.POSITION },
+  })
+  public position: vec3;
 
+  @structAttr({
+    type: Float32Array,
+    length: 2,
+    gl: { location: GLDefaultAttributesLocation.UV },
+  })
+  public uv: vec2;
 
-    @interleavedProp({
-        type: Float32Array,
-        length: 3,
-        attributeLocation: GLDefaultAttributesLocation.POSITION,
-    })
-    public position: vec3;
-
-    @interleavedProp({
-        type: Float32Array,
-        length: 2,
-        attributeLocation: GLDefaultAttributesLocation.UV,
-
-    })
-    public uv: vec2 ;
-
-
-    allocate: (array: InterleavedDataArray<PositionUv>, arrayBuffer: ArrayBuffer, offset: number, stride: number) => void;
-
+  allocate: (array: InterleavedDataArray<PositionUv>, arrayBuffer: ArrayBuffer, offset: number, stride: number) => void;
 }

@@ -1,12 +1,13 @@
-import {WasmAllocatorI} from "../allocators/interfaces";
-import {WasmClass, WasmClassType} from "../WasmClass";
+import { WasmAllocatorI } from '../allocators/interfaces';
+import { WasmClass, WasmClassType } from '../WasmClass';
 
 export type WasmStructProp<T extends WasmClass = WasmClass> = {
-  methodsPrefix?: string,
-  allocator?: WasmAllocatorI<T>,
+  methodsPrefix?: string;
+  allocator?: WasmAllocatorI<T>;
   //indexElements?: boolean,
-}
+};
 
+/*
 export type WasmProp<T extends WasmClass = WasmClass> = {
   name?: string;
   offset?: number;
@@ -19,17 +20,13 @@ export type WasmProp<T extends WasmClass = WasmClass> = {
   useAccessor?: boolean;
   defined?: boolean;
 };
-
+*/
 export type WasmFunctionOut = {
   name?: string;
-  returnType: Emscripten.ValueType,
+  returnType: Emscripten.ValueType;
   argsType: Emscripten.ValueType[];
 };
-
-
-
-
-
+/*
 export const defaultWasmProp: WasmProp = {
   offset: -1,
   length: 1,
@@ -39,7 +36,6 @@ export const defaultWasmProp: WasmProp = {
   type: null,
   defined: false,
 };
-
 
 /*
 export type WasmClassProp<T extends WasmClass = WasmClass> = {

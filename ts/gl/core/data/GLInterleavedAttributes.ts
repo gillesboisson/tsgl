@@ -1,45 +1,47 @@
-import {AnyWebRenderingGLContext} from "../GLHelpers";
-import {GLBuffer} from "./GLBuffer";
-import {GLAttribute} from "./GLAttribute";
+import { AnyWebRenderingGLContext } from '../GLHelpers';
+import { GLBuffer } from './GLBuffer';
+import { GLAttribute } from './GLAttribute';
+import { StructAttributeProp } from '../../../core/decorators/StructAttribute';
 
-export function GLInterleavedAttributes(){
-    return function (target: any) {
+export function glInterleavedAttributes() {
+  return function(target: any) {
+    if (target.prototype.__anPropsList) {
+      const createAttributes = target.createAttributes;
 
-        if(target.prototype.__anPropsList) {
-            const createAttributes = target.createAttributes;
+      target.createAttributes = function(
+        gl: AnyWebRenderingGLContext,
+        buffer: GLBuffer,
+        stride: number = target.__byteLength,
+      ) {
+        const attrs: GLAttribute[] = createAttributes ? createAttributes.apply(target, arguments) : [];
+        let length = 0;
+        let prop: StructAttributeProp;
 
-            target.createAttributes = function (
-                gl: AnyWebRenderingGLContext,
-                buffer: GLBuffer,
-                stride: number = target.__byteLength,
-            ) {
-                const attrs: GLAttribute[] = createAttributes ? createAttributes.apply(target, arguments) : [];
-                let length = 0;
+        for (prop of target.prototype.__anPropsList) {
+          if (prop.gl === undefined) throw new Error('No vertex attribute defined in ' + target + '::' + prop.name);
+          if (prop.gl.location !== undefined) {
+            const propOffset = prop.offset === -1 ? length : prop.offset;
+            const nLength = propOffset + prop.type.BYTES_PER_ELEMENT * prop.length;
+            if (length < nLength) length = nLength;
 
-                for(const prop of target.prototype.__anPropsList) {
-                    if (prop.attributeLocation !== undefined) {
-                        const propOffset = prop.offset === -1 ? length : prop.offset;
-                        const nLength = propOffset + prop.type.BYTES_PER_ELEMENT * prop.length;
-                        if (length < nLength) length = nLength;
-
-                        attrs.push(new GLAttribute(
-                            gl,
-                            buffer,
-                            prop.attributeLocation,
-                            prop.attributeName,
-                            prop.length,
-                            stride,
-                            propOffset,
-                            prop.attributeType(gl),
-                            prop.attributeNormalize,
-                        ));
-                    }
-                }
-
-                return attrs;
-            }
-
+            attrs.push(
+              new GLAttribute(
+                gl,
+                buffer,
+                prop.gl.location,
+                prop.gl.name,
+                prop.length,
+                stride,
+                propOffset,
+                prop.gl.type(gl),
+                prop.gl.normalize,
+              ),
+            );
+          }
         }
 
+        return attrs;
+      };
     }
+  };
 }

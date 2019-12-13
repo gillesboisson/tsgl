@@ -1,13 +1,8 @@
-import {WasmProp, WasmStructProp} from "../types";
+import { WasmStructProp } from '../types';
+import { StructAttributeProp } from '../../../core/decorators/StructAttribute';
 
 function cppTypeToWrap(type: string) {
-  return type === 'string'
-    ? 'string' :
-    (
-      type === 'bool'
-        ? 'boolean'
-        : 'number'
-    )
+  return type === 'string' ? 'string' : type === 'bool' ? 'boolean' : 'number';
 }
 
 export function defineAllocate(target: any, structProps?: WasmStructProp) {
@@ -17,71 +12,52 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
   for (const prop of prototype.__anPropsList) {
     const propOffset = prop.offset === -1 ? classBLength : prop.offset;
     const byteLength = prop.wasmType ? prop.wasmType.byteLength : prop.type.BYTES_PER_ELEMENT * prop.length;
-    const nLength =
-      propOffset + byteLength;
+    const nLength = propOffset + byteLength;
     if (nLength > classBLength) classBLength = nLength;
   }
-
 
   target.byteLength = classBLength;
   target.prototype.__byteLength = classBLength;
 
-  prototype.allocate = function (
-    arrayBuffer: ArrayBuffer,
-    offset: number,
-  ) {
+  prototype.allocate = function(arrayBuffer: ArrayBuffer, offset: number) {
     let cBLength = 0;
-    let prop: WasmProp;
+    let prop: StructAttributeProp;
     // console.log('prototype.__anPropsList : ', prototype.__anPropsList);
 
     for (prop of prototype.__anPropsList) {
-
       const propName = '__' + prop.name;
       const propOffset = prop.offset === -1 ? cBLength : prop.offset;
-      const byteLength = prop.wasmType ? prop.wasmType.byteLength : prop.type.BYTES_PER_ELEMENT * prop.length;
+      const byteLength =
+        prop.wasm !== undefined && prop.wasm.wasmType !== undefined
+          ? prop.wasm.wasmType.byteLength
+          : prop.type.BYTES_PER_ELEMENT * prop.length;
       const nLength = propOffset + byteLength;
       if (nLength > cBLength) cBLength = nLength;
 
       if (prop.useAccessor === true) {
-
-        if (prop.wasmType !== undefined) {
-          const ptr = this[propName + 'Ptr'] = offset + propOffset;
-          this[propName] = new prop.wasmType(
-            this._module,
-            ptr,
-            true,
-          );
+        if (prop.wasm !== undefined && prop.wasm.wasmType !== undefined) {
+          const ptr = (this[propName + 'Ptr'] = offset + propOffset);
+          this[propName] = new prop.wasm.wasmType(this._module, ptr, true);
         } else {
-          this[propName] = new prop.type(
-            arrayBuffer,
-            offset + propOffset,
-            prop.length
-          );
+          this[propName] = new prop.type(arrayBuffer, offset + propOffset, prop.length);
         }
       } else {
-
-        this[prop.name] = new prop.type(
-          arrayBuffer,
-          offset + propOffset,
-          prop.length
-        );
+        this[prop.name] = new prop.type(arrayBuffer, offset + propOffset, prop.length);
       }
 
       // create prop relocate listener
-      if (prop.isPtr && prop.ptrCanRelocate) {
-        this[propName + "_relocate"] = (ptr: number, oldPtr: any) => this[propName][0] = ptr;
+      if (prop.wasm !== undefined && prop.wasm.isPtr && prop.wasm.ptrCanRelocate === true) {
+        this[propName + '_relocate'] = (ptr: number, oldPtr: any) => (this[propName][0] = ptr);
       }
     }
 
-    /*
-    if (classProps && prototype.__anMethodsOutList) for (const method of prototype.__anMethodsOutList) {
-      method.argsType.splice(0, 0, classProps.className + '*'); // add class ptr as first args
-      this["__" + method.name] = this._module.cwrap(classProps.className + '_' + method.name, cppTypeToWrap(method.returnType), method.argsType.map(cppTypeToWrap));
-    }
-     */
-
-    if (structProps && prototype.__anFunctionssOutList) for (const method of prototype.__anFunctionssOutList) {
-      this["__" + method.name] = this._module.cwrap(structProps.methodsPrefix + method.name, method.returnType, method.argsType);
-    }
+    if (structProps && prototype.__anFunctionssOutList)
+      for (const method of prototype.__anFunctionssOutList) {
+        this['__' + method.name] = this._module.cwrap(
+          structProps.methodsPrefix + method.name,
+          method.returnType,
+          method.argsType,
+        );
+      }
   };
 }

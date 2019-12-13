@@ -1,6 +1,6 @@
-import {defaultWasmProp, WasmProp} from "./types";
-import {WasmClass, WasmClassType} from "../WasmClass";
+import { WasmClass, WasmClassType } from '../WasmClass';
 
+/*
 function createOrAddPropList(prop: WasmProp, target: any) {
 
   if (!target.__anPropsList) {
@@ -71,3 +71,4 @@ export function wasmBoolProp(prop?: WasmProp) {
     createOrAddPropList(prop, target);
   };
 }
+*/

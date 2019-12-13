@@ -22,6 +22,9 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
+  watchOptions: {
+    ignored: /node_modules/,
+  },
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, 'dist/bundle'),

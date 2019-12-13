@@ -4,6 +4,7 @@ import { Type } from '../../core/Type';
 import { GLBuffer } from '../core/data/GLBuffer';
 import { GLAttribute } from '../core/data/GLAttribute';
 
+/*
 export interface InterleavedProp {
   name?: string;
   type: any;
@@ -15,6 +16,7 @@ export interface InterleavedProp {
   attributeNormalize?: boolean;
   useAccessor?: boolean;
 }
+*/
 
 export interface IInterleavedData {
   allocate(
@@ -29,6 +31,7 @@ export type InterleaveAttributesType<DataT> = {
   createAttributes?: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride: number) => GLAttribute[];
   __byteLength: number;
 };
+
 export interface InterleaveDataT<DataT extends IInterleavedData> extends Type<DataT> {
   createAttributes?: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride: number) => GLAttribute[];
 }

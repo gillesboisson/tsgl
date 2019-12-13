@@ -4,7 +4,7 @@ import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLShader } from './gl/core/shader/GLShader';
 import { getDefaultAttributeLocation, GLDefaultAttributesLocation } from './gl/core/data/GLDefaultAttributesLocation';
 import { IInterleavedData, InterleavedDataArray } from './gl/data/InterleavedData';
-import { interleavedData, interleavedProp } from './gl/data/InterleavedData.decorator';
+import { interleavedData } from './gl/data/InterleavedData.decorator';
 
 import { GLTexture } from './gl/core/GLTexture';
 import { GLAttribute } from './gl/core/data/GLAttribute';
@@ -12,7 +12,7 @@ import { GLMesh } from './gl/core/data/GLMesh';
 import { AGLBatch, GLBatchable, pullMethod } from './gl/core/data/AGLBatch';
 import { AnyWebRenderingGLContext } from './gl/core/GLHelpers';
 import { GLFramebuffer } from './gl/core/framebuffer/GLFramebuffer';
-import { GLInterleavedAttributes } from './gl/core/data/GLInterleavedAttributes';
+import { glInterleavedAttributes } from './gl/core/data/gLInterleavedAttributes';
 import { GLAttributesCollection } from './gl/core/data/GLAttributesCollection';
 import { cpus } from 'os';
 import { SimpleColorShader } from './shaders/SimpleColorShader';
@@ -27,6 +27,10 @@ import { TestTFShaderRender } from './shaders/TestTFShaderRender';
 import { GLVao } from './gl/core/data/GLVao';
 import { compileTFProgram } from './gl/core/shader/compileProgram';
 import { GLTransformFeedbackPass } from './gl/core/GLTransformFeedbackPass';
+import { WasmClass } from './wasm/WasmClass';
+import { structAttr } from './core/decorators/StructAttribute';
+
+let tr: WasmClass;
 
 var SPECTOR = require('spectorjs');
 
@@ -38,29 +42,29 @@ if (DEBUG) {
   spector = new SPECTOR.Spector();
 }
 
-@GLInterleavedAttributes()
+@glInterleavedAttributes()
 @interleavedData()
 class PosUvColor implements IInterleavedData {
   static createAttributes: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride?: number) => GLAttribute[];
 
-  @interleavedProp({
+  @structAttr({
     type: Float32Array,
     length: 3,
-    attributeLocation: GLDefaultAttributesLocation.POSITION,
+    gl: { location: GLDefaultAttributesLocation.POSITION },
   })
   public position: vec3;
 
-  @interleavedProp({
+  @structAttr({
     type: Float32Array,
     length: 2,
-    attributeLocation: GLDefaultAttributesLocation.UV,
+    gl: { location: GLDefaultAttributesLocation.UV },
   })
   public uv: vec2;
 
-  @interleavedProp({
+  @structAttr({
     type: Float32Array,
     length: 4,
-    attributeLocation: GLDefaultAttributesLocation.COLOR,
+    gl: { location: GLDefaultAttributesLocation.COLOR },
   })
   public color: vec4;
 
