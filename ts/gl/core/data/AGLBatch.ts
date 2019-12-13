@@ -1,11 +1,13 @@
-import { IInterleavedData, InterleaveDataT, InterleavedDataArray } from '../../data/InterleavedData';
+import { InterleavedDataArray } from '../../data/InterleavedDataArray';
+import { InterleaveGLDataType } from '../../data/InterleaveGLDataType';
+import { IInterleaveData } from '../../data/IInterleaveData';
 import { GLVao } from './GLVao';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLBuffer } from './GLBuffer';
 import { GLAttribute } from './GLAttribute';
 import { Type } from '../../../core/Type';
 
-export type pullMethod<DataT extends IInterleavedData> = (
+export type pullMethod<DataT extends IInterleaveData> = (
   points: DataT[],
   pointInd: number,
   indices?: Uint16Array,
@@ -13,13 +15,13 @@ export type pullMethod<DataT extends IInterleavedData> = (
   indiceStride?: number,
 ) => void;
 
-export interface GLBatchable<DataT extends IInterleavedData> {
+export interface GLBatchable<DataT extends IInterleaveData> {
   pullFromBatch: pullMethod<DataT>;
   pointLength: number;
   indexLength: number;
 }
 
-export abstract class AGLBatch<DataT extends IInterleavedData> extends InterleavedDataArray<DataT> {
+export abstract class AGLBatch<DataT extends IInterleaveData> extends InterleavedDataArray<DataT> {
   protected _vao: GLVao;
   protected _buffer: GLBuffer;
   protected _indexBuffer: GLBuffer;
@@ -34,7 +36,7 @@ export abstract class AGLBatch<DataT extends IInterleavedData> extends Interleav
 
   constructor(
     protected _gl: AnyWebRenderingGLContext,
-    DataClass: InterleaveDataT<DataT>,
+    DataClass: InterleaveGLDataType<DataT>,
     pointLength: number,
     stride: number,
     protected _indexLength: number = -1,

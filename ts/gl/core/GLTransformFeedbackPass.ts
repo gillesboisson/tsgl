@@ -1,11 +1,12 @@
 import { GLCore } from './GLCore';
-import { InterleaveAttributesType } from '../data/InterleavedData';
 import { GLVao } from './data/GLVao';
 import { GLBuffer } from './data/GLBuffer';
 import { GLTransformFeedbackShader, GLTransformFeedbackShaderState } from './data/GLTFShader';
 import { applyPointsTransformPass } from './applyPointsTransformPass';
+import { InterleaveGLDataType } from '../data/InterleaveGLDataType';
+import { IInterleaveData } from '../data/IInterleaveData';
 
-export class GLTransformFeedbackPass<DataT> extends GLCore {
+export class GLTransformFeedbackPass<DataT extends IInterleaveData> extends GLCore {
   protected _buffer1Ind: WebGLBuffer;
   protected _buffer2Ind: WebGLBuffer;
   protected _vao1: GLVao;
@@ -19,7 +20,7 @@ export class GLTransformFeedbackPass<DataT> extends GLCore {
 
   constructor(
     gl: WebGL2RenderingContext,
-    protected _interleavedDataType: InterleaveAttributesType<DataT>,
+    protected _interleavedDataType: InterleaveGLDataType<DataT>,
     protected _length: number,
     protected _type: GLenum = gl.TRANSFORM_FEEDBACK,
     protected _drawType: GLenum = gl.STREAM_DRAW,

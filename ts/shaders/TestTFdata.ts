@@ -1,4 +1,5 @@
-import { InterleavedDataArray, IInterleavedData } from '../gl/data/InterleavedData';
+import { InterleavedDataArray } from '../gl/data/InterleavedDataArray';
+import { IInterleaveData } from '../gl/data/IInterleaveData';
 import { interleavedData } from '../gl/data/InterleavedData.decorator';
 import { vec2 } from 'gl-matrix';
 import { glInterleavedAttributes } from '../gl/core/data/gLInterleavedAttributes';
@@ -8,7 +9,7 @@ import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributes
 import { structAttr } from '../core/decorators/StructAttribute';
 @glInterleavedAttributes()
 @interleavedData()
-export class TestTFdata implements IInterleavedData {
+export class TestTFdata implements IInterleaveData {
   static __byteLength: number;
   static createAttributes: (gl: WebGL2RenderingContext, buffer: GLBuffer, stride?: number) => GLAttribute[];
 
@@ -25,7 +26,7 @@ export class TestTFdata implements IInterleavedData {
   })
   public velocity: vec2;
   allocate(
-    array: InterleavedDataArray<IInterleavedData>,
+    array: InterleavedDataArray<IInterleaveData>,
     arrayBuffer: ArrayBuffer,
     offset: number,
     stride: number,

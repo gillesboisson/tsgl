@@ -1,5 +1,6 @@
 import { AnyWebRenderingGLContext } from '../core/GLHelpers';
-import { IInterleavedData, InterleavedDataArray } from './InterleavedData';
+import { InterleavedDataArray } from './InterleavedDataArray';
+import { IInterleaveData } from './IInterleaveData';
 
 /*
 export function interleavedProp(prop: InterleavedProp) {
@@ -64,7 +65,7 @@ export function interleavedData() {
       target.__byteLength = length;
 
       prototype.allocate = function(
-        array: InterleavedDataArray<IInterleavedData>,
+        array: InterleavedDataArray<IInterleaveData>,
         arrayBuffer: ArrayBuffer,
         offset: number,
         stride: number,
