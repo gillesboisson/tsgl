@@ -17,7 +17,8 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
   }
 
   target.byteLength = classBLength;
-  target.prototype.__byteLength = classBLength;
+
+  target.prototype.byteLength = classBLength;
 
   prototype.allocate = function(arrayBuffer: ArrayBuffer, offset: number) {
     let cBLength = 0;

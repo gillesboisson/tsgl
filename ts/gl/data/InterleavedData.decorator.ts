@@ -62,7 +62,7 @@ export function interleavedData() {
         }
       }
 
-      target.__byteLength = length;
+      target.byteLength = length;
 
       prototype.allocate = function(
         array: InterleavedDataArray<IInterleaveData>,

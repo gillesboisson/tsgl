@@ -6,7 +6,7 @@ import { applyPointsTransformPass } from './applyPointsTransformPass';
 import { InterleaveGLDataType } from '../data/InterleaveGLDataType';
 import { IInterleaveData } from '../data/IInterleaveData';
 
-export class GLTransformFeedbackPass<DataT extends IInterleaveData> extends GLCore {
+export class GLTransformFeedbackPass<DataT> extends GLCore {
   protected _buffer1Ind: WebGLBuffer;
   protected _buffer2Ind: WebGLBuffer;
   protected _vao1: GLVao;
@@ -31,7 +31,7 @@ export class GLTransformFeedbackPass<DataT extends IInterleaveData> extends GLCo
     this._transformFeedback = gl.createTransformFeedback();
     this.__destroyBuffer1 = _buffer1 === undefined;
     this.__destroyBuffer2 = _buffer1 === undefined;
-    const stride = _interleavedDataType.__byteLength;
+    const stride = _interleavedDataType.byteLength;
     if (_buffer1 === undefined) {
       this._buffer1 = new GLBuffer(gl, gl.ARRAY_BUFFER, _drawType);
       this._buffer1.bufferDataLength(_length * stride);

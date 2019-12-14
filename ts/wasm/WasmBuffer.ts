@@ -2,6 +2,7 @@ import { WasmClass, WasmClassType } from './WasmClass';
 import { allocateMultipleWasmClasses } from './utils';
 import { AWasmBuffer } from './AWasmBuffer';
 import { EmscriptenModuleExtended } from './EmscriptenModuleLoader';
+import { IInterleavedDataArray } from '../gl/data/InterleavedDataArray';
 
 export type WasmBufferOptions<T extends WasmClass> = {
   module?: EmscriptenModuleExtended;
@@ -10,7 +11,29 @@ export type WasmBufferOptions<T extends WasmClass> = {
   buffer?: WasmBuffer<T>;
 };
 
-export class WasmBuffer<T extends WasmClass> extends AWasmBuffer<T> {
+export class WasmBuffer<T extends WasmClass> extends AWasmBuffer<T> implements IInterleavedDataArray<T> {
+  private __byteLength: number;
+  private __typedArray: Uint8Array;
+  get byteLength(): number {
+    return this.__byteLength;
+  }
+
+  get stride(): number {
+    return this._stride;
+  }
+
+  get collection(): T[] {
+    return this._buffer;
+  }
+
+  get arrayBuffer(): ArrayBuffer {
+    return <ArrayBuffer>this._module.HEAP8.buffer;
+  }
+
+  get bufferView(): ArrayBufferView {
+    return this.__typedArray;
+  }
+
   constructor(options: WasmBufferOptions<T>) {
     super();
     if (options.buffer !== undefined) {
@@ -27,6 +50,11 @@ export class WasmBuffer<T extends WasmClass> extends AWasmBuffer<T> {
       this._stride = options.wasmType.byteLength;
       this.allocate();
     }
+
+    if (!this._module) this._module = <EmscriptenModuleExtended>window['Module'];
+
+    this.__byteLength = this._stride * this._length;
+    this.__typedArray = new Uint8Array(this._module.HEAP8.buffer, this._ptr, this.__byteLength);
   }
 
   allocate() {

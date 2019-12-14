@@ -2,8 +2,10 @@ import { WasmClass } from '../../WasmClass';
 import { WasmStructProp } from '../types';
 import { StructAttributeProp } from '../../../core/decorators/StructAttribute';
 
-export function defineProperties(prototype: any, props: WasmStructProp) {
+export function defineProperties(target: any, props: WasmStructProp) {
+  const prototype = target.prototype;
   let prop: StructAttributeProp;
+
   for (prop of prototype.__anPropsList)
     if (prop.defined === false) {
       // if (prop.wasm === undefined) throw new Error('Wasm not supported for ' + prototype + '::' + prop.name);

@@ -1,14 +1,12 @@
-import {WasmClass} from "./WasmClass";
+import { WasmClass } from './WasmClass';
 
 type RelocateListener = <T>(ptr: number, oldPtr: number) => void;
 
 export class WasmClassRelocatable extends WasmClass {
   private _relocateListeners: RelocateListener[];
 
-
   addRelocateListener(relocateListener: RelocateListener) {
-    if (this._relocateListeners.indexOf(relocateListener) === -1)
-      this._relocateListeners.push(relocateListener);
+    if (this._relocateListeners.indexOf(relocateListener) === -1) this._relocateListeners.push(relocateListener);
   }
 
   removeRelocateListener(relocateListener: RelocateListener) {
@@ -18,9 +16,9 @@ export class WasmClassRelocatable extends WasmClass {
 
   init(firstInit?: boolean): void {
     super.init(firstInit);
-    if(this._relocateListeners !== undefined){
+    if (this._relocateListeners !== undefined) {
       this._relocateListeners.splice(0);
-    }else{
+    } else {
       this._relocateListeners = [];
     }
   }
@@ -31,11 +29,9 @@ export class WasmClassRelocatable extends WasmClass {
     super.destroy(freePtr);
   }
 
-
   relocate(ptr: number) {
     for (let relocateListener of this._relocateListeners) relocateListener(this.ptr, this._ptr);
     this._ptr = ptr;
-    this._memoryRef = new Uint8Array(this._module.HEAP8,this._ptr, this.__byteLength);
+    this._memoryRef = new Uint8Array(this._module.HEAP8, this._ptr, this.byteLength);
   }
-
 }

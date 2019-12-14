@@ -33,5 +33,11 @@
     "ptrbuffer.h": "c",
     "helpers.h": "c",
     "bufferstack.h": "c"
+  },
+  "files.watcherExclude": {
+    "archive": true
+  },
+  "search.exclude": {
+    "archive": true
   }
 }

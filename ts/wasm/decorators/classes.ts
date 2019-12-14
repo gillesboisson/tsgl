@@ -1,21 +1,20 @@
-import {WasmStructProp} from "./types";
-import {defineProperties} from "./hooks/defineProperties";
-import {defineAllocate} from "./hooks/defineAllocates";
-import {WasmClass, WasmClassType} from "../WasmClass";
-import {WasmDynamicAllocator} from "../allocators/WasmDynamicAllocator";
-import {WasmBaseAllocator} from "../allocators/WasmBaseAllocator";
+import { WasmStructProp } from './types';
+import { defineProperties } from './hooks/defineProperties';
+import { defineAllocate } from './hooks/defineAllocates';
+import { WasmClass, WasmClassType } from '../WasmClass';
+import { WasmDynamicAllocator } from '../allocators/WasmDynamicAllocator';
+import { WasmBaseAllocator } from '../allocators/WasmBaseAllocator';
 
 const structs = [];
 
 export function wasmStruct(props?: WasmStructProp) {
-
   props = {
     methodsPrefix: '',
     // indexElements: false,
     ...props,
   };
 
-  return function (target: any) {
+  return function(target: any) {
     const prototype = target.prototype;
 
     prototype.__allocator = props.allocator ? props.allocator : new WasmBaseAllocator(target);
@@ -23,9 +22,8 @@ export function wasmStruct(props?: WasmStructProp) {
     target.allocator = prototype.__allocator;
 
     if (prototype.__anPropsList) {
-      
       structs.push(target);
-      defineProperties(prototype, props);
+      defineProperties(target, props);
       defineAllocate(target, props);
     }
     return target;

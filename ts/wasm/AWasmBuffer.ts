@@ -1,6 +1,6 @@
-import {WasmClass, WasmClassType} from "./WasmClass";
-import {IDestroy} from "../core/IDestroy";
-import {EmscriptenModuleExtended} from "./EmscriptenModuleLoader";
+import { WasmClass, WasmClassType } from './WasmClass';
+import { IDestroy } from '../core/IDestroy';
+import { EmscriptenModuleExtended } from './EmscriptenModuleLoader';
 
 export abstract class AWasmBuffer<T extends WasmClass> implements IDestroy {
   public _buffer: T[];
@@ -10,7 +10,6 @@ export abstract class AWasmBuffer<T extends WasmClass> implements IDestroy {
   protected _byteLength: number;
   protected _module?: EmscriptenModuleExtended = null;
   protected _stride: number;
-
 
   get ptr(): number {
     return this._ptr;
@@ -32,8 +31,7 @@ export abstract class AWasmBuffer<T extends WasmClass> implements IDestroy {
     return this._module;
   }
 
-  constructor() {
-  }
+  constructor() {}
 
   getElements(): T[] {
     return this._buffer;
@@ -46,7 +44,6 @@ export abstract class AWasmBuffer<T extends WasmClass> implements IDestroy {
   abstract allocate(): void;
 
   destroy(): void {
-
     const buffer = this._buffer;
     const length = buffer.length;
     let i;
@@ -59,5 +56,4 @@ export abstract class AWasmBuffer<T extends WasmClass> implements IDestroy {
     this._buffer.splice(0);
     this._buffer = null;
   }
-
 }

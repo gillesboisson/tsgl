@@ -10,7 +10,7 @@ import { structAttr } from '../core/decorators/StructAttribute';
 @glInterleavedAttributes()
 @interleavedData()
 export class TestTFdata implements IInterleaveData {
-  static __byteLength: number;
+  static byteLength: number;
   static createAttributes: (gl: WebGL2RenderingContext, buffer: GLBuffer, stride?: number) => GLAttribute[];
 
   @structAttr({

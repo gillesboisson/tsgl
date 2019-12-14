@@ -1,6 +1,16 @@
 import { IInterleaveData } from './IInterleaveData';
 import { InterleaveGLDataType } from './InterleaveGLDataType';
-export class InterleavedDataArray<DataT extends IInterleaveData> {
+
+export interface IInterleavedDataArray<DataT> {
+  byteLength: number;
+  length: number;
+  stride: number;
+  collection: DataT[];
+  arrayBuffer: ArrayBuffer;
+  bufferView: ArrayBufferView;
+}
+
+export class InterleavedDataArray<DataT extends IInterleaveData> implements IInterleavedDataArray<DataT> {
   protected _arrayBuffer: ArrayBuffer;
   protected _collection: DataT[];
   protected _byteLength: number;
@@ -36,6 +46,9 @@ export class InterleavedDataArray<DataT extends IInterleaveData> {
   }
   get length() {
     return this._length;
+  }
+  get stride() {
+    return this._stride;
   }
   get collection(): DataT[] {
     return this._collection;
