@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack --watch --listFiles",
     "server": "node server.js",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "prettier": "prettier --write ts/*.ts;prettier --write ts/**/*.ts;prettier --write ts/**/**/*.ts;prettier --write ts/**/**/**/*.ts"
   },
   "author": "",
   "license": "ISC",
