@@ -11,7 +11,11 @@ export function wasmFunctionOut(name?: string, argsType: Emscripten.ValueType[] 
       name,
       argsType,
       returnType,
+      used: false,
+      target,
     };
+    
+    console.log('mProp : ',mProp, target);
 
     if (!target.__anFunctionssOutList) {
       target.__anFunctionssOutList = [mProp];

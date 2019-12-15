@@ -9,9 +9,14 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
   const prototype = target.prototype;
 
   let classBLength = 0;
-  for (const prop of prototype.__anPropsList) {
+  let prop: StructAttributeProp;
+
+  for (prop of prototype.__anPropsList) {
     const propOffset = prop.offset === -1 ? classBLength : prop.offset;
-    const byteLength = prop.wasmType ? prop.wasmType.byteLength : prop.type.BYTES_PER_ELEMENT * prop.length;
+    const byteLength =
+      prop.wasm !== undefined && prop.wasm.wasmType !== undefined
+        ? prop.wasm.wasmType.byteLength
+        : prop.type.BYTES_PER_ELEMENT * prop.length;
     const nLength = propOffset + byteLength;
     if (nLength > classBLength) classBLength = nLength;
   }
@@ -20,6 +25,20 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
 
   target.prototype.byteLength = classBLength;
 
+  const __bindMethods = prototype.__bindMethods;
+
+  prototype.__bindMethods = function(arrayBuffer: ArrayBuffer, offset: number){
+    if(__bindMethods !== undefined) __bindMethods.apply(this,arguments);
+    if (structProps && prototype.__anFunctionssOutList)
+      for (const method of prototype.__anFunctionssOutList) if(target.prototype === method.target) {
+        this['__' + method.name] = this._module.cwrap(
+          structProps.methodsPrefix + method.name,
+          method.returnType,
+          method.argsType,
+        );
+      }
+  }
+
   prototype.allocate = function(arrayBuffer: ArrayBuffer, offset: number) {
     let cBLength = 0;
     let prop: StructAttributeProp;
@@ -27,7 +46,7 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
 
     for (prop of prototype.__anPropsList) {
       const propName = '__' + prop.name;
-      const propOffset = prop.offset === -1 ? cBLength : prop.offset;
+      const propOffset = prop.offset === -1 ? cBLength + prop.margin : prop.offset;
       const byteLength =
         prop.wasm !== undefined && prop.wasm.wasmType !== undefined
           ? prop.wasm.wasmType.byteLength
@@ -52,13 +71,7 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
       }
     }
 
-    if (structProps && prototype.__anFunctionssOutList)
-      for (const method of prototype.__anFunctionssOutList) {
-        this['__' + method.name] = this._module.cwrap(
-          structProps.methodsPrefix + method.name,
-          method.returnType,
-          method.argsType,
-        );
-      }
+    this.__bindMethods(arrayBuffer, offset);
+    
   };
 }

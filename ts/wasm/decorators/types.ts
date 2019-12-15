@@ -25,6 +25,8 @@ export type WasmFunctionOut = {
   name?: string;
   returnType: Emscripten.ValueType;
   argsType: Emscripten.ValueType[];
+  used?: boolean;
+  target?: any;
 };
 /*
 export const defaultWasmProp: WasmProp = {

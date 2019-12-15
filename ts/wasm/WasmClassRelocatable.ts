@@ -3,7 +3,7 @@ import { WasmClass } from './WasmClass';
 type RelocateListener = <T>(ptr: number, oldPtr: number) => void;
 
 export class WasmClassRelocatable extends WasmClass {
-  private _relocateListeners: RelocateListener[];
+  private _relocateListeners: RelocateListener[] = [];
 
   addRelocateListener(relocateListener: RelocateListener) {
     if (this._relocateListeners.indexOf(relocateListener) === -1) this._relocateListeners.push(relocateListener);
@@ -25,7 +25,7 @@ export class WasmClassRelocatable extends WasmClass {
 
   destroy(freePtr?: boolean) {
     this._relocateListeners.splice(0);
-    this._relocateListeners = null;
+    delete this._relocateListeners;
     super.destroy(freePtr);
   }
 
