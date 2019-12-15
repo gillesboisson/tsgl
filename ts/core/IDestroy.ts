@@ -1,3 +1,3 @@
 export interface IDestroy {
-  destroy(...args: any):void;
+  destroy(...args: any): void;
 }

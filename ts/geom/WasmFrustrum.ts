@@ -7,7 +7,6 @@ import { plane } from './plane';
 import { CollisionType } from './CollisionType';
 import { createVertices } from './createVertices';
 
-
 const vec4_create = vec4.create;
 const vec4_transformMat4 = vec4.transformMat4;
 
@@ -21,89 +20,76 @@ let __v2 = vec3_create();
 let _vmax = vec3_create();
 let _vmin = vec3_create();
 
-const _boundsVertices3 = createVertices(8,3);
+const _boundsVertices3 = createVertices(8, 3);
 
 let _v4 = vec4_create();
 
-const _boxVertices= createVertices([
-  -1,-1,1,1,
-  1,-1,1,1,
-  1,1,1,1,
-  -1,1,1,1,
-
-  -1,-1,-1,1,
-  1,-1,-1,1,
-  1,1,-1,1,
-  -1,1,-1,1,
-],4);
+const _boxVertices = createVertices(
+  [-1, -1, 1, 1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, -1, 1, 1, -1, -1, 1, 1, 1, -1, 1, -1, 1, -1, 1],
+  4,
+);
 
 export class Frustrum extends WasmClass {
-
   // Wasm Attribute Binding ==========================================
 
   @structBool()
   protected _dirtyBounds: boolean;
 
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 4,
   })
   private __plane1: Float32Array;
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 4,
   })
   private __plane2: Float32Array;
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 4,
   })
   private __plane3: Float32Array;
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 4,
   })
   private __plane4: Float32Array;
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 4,
   })
   private __plane5: Float32Array;
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 4,
   })
   private __plane6: Float32Array;
 
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 16,
   })
   protected _invertMat: mat4;
-  
+
   @structAttr({
-    type:Float32Array,
+    type: Float32Array,
     length: 6,
   })
   protected _bounds: box;
-  
+
   planes: plane[];
 
-
-
-  init(firstInit?: boolean){
-    
-    this.planes = [this.__plane1,this.__plane2,this.__plane3,this.__plane4,this.__plane5,this.__plane6];
-    
+  init(firstInit?: boolean) {
+    this.planes = [this.__plane1, this.__plane2, this.__plane3, this.__plane4, this.__plane5, this.__plane6];
   }
 
-  destroy(freePtr?: boolean){
+  destroy(freePtr?: boolean) {
     this.planes.splice(0);
     delete this.planes;
 
     super.destroy(freePtr);
   }
-
 
   setFromMat(me: mat4) {
     var planes = this.planes;
@@ -141,7 +127,7 @@ export class Frustrum extends WasmClass {
   intersectBounds(rect: box) {
     let res = CollisionType.Inside;
 
-    let i: number
+    let i: number;
     let plane: plane;
 
     for (i = 0; i < 6; i++) {

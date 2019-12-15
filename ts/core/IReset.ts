@@ -1,3 +1,3 @@
 export interface IReset {
-    reset(): void;
+  reset(): void;
 }

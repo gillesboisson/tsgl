@@ -6,7 +6,6 @@ import { DirtyFlag } from '../geom/Transform';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
 import { SceneNodeType } from './SceneNodeType';
 
-
 const tMat: mat4 = mat4.create();
 
 @wasmStruct({ methodsPrefix: 'Camera_' })
@@ -31,13 +30,11 @@ export class WasmCamera extends WasmSceneNode {
     return this._projectionMat;
   }
 
-  init(firstInit?: boolean){
+  init(firstInit?: boolean) {
     super.init(firstInit);
     this._nodeType = SceneNodeType.Camera;
   }
-  
-  
-  
+
   @structAttr({
     type: Float32Array,
     length: 32,
@@ -69,7 +66,7 @@ export class WasmCamera extends WasmSceneNode {
 
   public mvp(modelMat: mat4, out: mat4) {
     // mat4.invert(tMat, this.worldMat);
-    mat4.multiply(this._vp, this._projectionMat , this.worldMat);
+    mat4.multiply(this._vp, this._projectionMat, this.worldMat);
     mat4.multiply(out, this._vp, modelMat);
   }
 }

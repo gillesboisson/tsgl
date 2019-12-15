@@ -27,12 +27,12 @@ export abstract class GLShaderState extends GLCore implements IGLShaderState {
 
   abstract syncUniforms(): void;
 
-  start(){
+  start() {
     this.gl.useProgram(this._program);
     this.syncUniforms();
   }
 
-  stop(){
+  stop() {
     this.gl.useProgram(null);
   }
 

@@ -49,7 +49,7 @@ export const defaultGLAttributeProp: GLAttributeProp = {
   type: (gl: AnyWebRenderingGLContext) => gl.FLOAT,
 };
 
-export function getStructAttributesByteLength(structsAttr: StructAttributes){
+export function getStructAttributesByteLength(structsAttr: StructAttributes) {
   let classBLength = 0;
   let prop: StructAttributeProp;
 

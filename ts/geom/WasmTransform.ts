@@ -80,12 +80,10 @@ export class WasmTransform extends WasmClassRelocatable {
   get position(): vec3 {
     return this._position;
   }
-  
+
   get scale(): vec3 {
     return this._scale;
   }
-  
-  
 
   init(firstInit?: boolean) {
     super.init(firstInit);
@@ -144,8 +142,8 @@ export class WasmTransform extends WasmClassRelocatable {
     this.dirty &= ~flag;
   }
 
-  isDirtyAndUnset(flag: DirtyFlag){
-    const isDirty = (this.dirty & flag) !== 0; 
+  isDirtyAndUnset(flag: DirtyFlag) {
+    const isDirty = (this.dirty & flag) !== 0;
     this.dirty &= ~flag;
     return isDirty;
   }

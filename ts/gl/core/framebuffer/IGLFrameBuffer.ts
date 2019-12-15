@@ -1,8 +1,7 @@
 export interface IGLFrameBuffer {
+  bind(): void;
+  unbind(): void;
 
-    bind(): void;
-    unbind(): void;
-
-    width: number;
-    height: number;
+  width: number;
+  height: number;
 }

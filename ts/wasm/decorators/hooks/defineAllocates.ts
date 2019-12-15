@@ -14,18 +14,19 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
   target.prototype.byteLength = classBLength;
 
   const __bindMethods = prototype.__bindMethods;
-  
-  prototype.__bindMethods = function(arrayBuffer: ArrayBuffer, offset: number){
-    if(__bindMethods !== undefined) __bindMethods.apply(this,arguments);
+
+  prototype.__bindMethods = function(arrayBuffer: ArrayBuffer, offset: number) {
+    if (__bindMethods !== undefined) __bindMethods.apply(this, arguments);
     if (structProps && prototype.__anFunctionssOutList)
-      for (const method of prototype.__anFunctionssOutList) if(target.prototype === method.target) {
-        this['__' + method.name] = this._module.cwrap(
-          structProps.methodsPrefix + method.name,
-          method.returnType,
-          method.argsType,
-        );
-      }
-  }
+      for (const method of prototype.__anFunctionssOutList)
+        if (target.prototype === method.target) {
+          this['__' + method.name] = this._module.cwrap(
+            structProps.methodsPrefix + method.name,
+            method.returnType,
+            method.argsType,
+          );
+        }
+  };
 
   prototype.allocate = function(arrayBuffer: ArrayBuffer, offset: number) {
     let cBLength = 0;
@@ -60,6 +61,5 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
     }
 
     this.__bindMethods(arrayBuffer, offset);
-    
   };
 }

@@ -1,10 +1,10 @@
-import { Type } from "../core/Type";
-import {WasmClass, WasmClassType} from "./WasmClass";
+import { Type } from '../core/Type';
+import { WasmClass, WasmClassType } from './WasmClass';
 
 export function allocateMultipleWasmClasses<T extends WasmClass>(
   cl: WasmClassType<T>,
   length: number,
-  module: EmscriptenModule = window["Module"]
+  module: EmscriptenModule = window['Module'],
 ): T[] {
   const ptr = module._malloc(length * cl.byteLength);
   const array: T[] = new Array(length);
@@ -17,15 +17,17 @@ export function allocateMultipleWasmClasses<T extends WasmClass>(
 }
 
 export interface TypedArrayType<T> extends Function {
-  new(length: number): T;
-  new(arrayOrArrayBuffer: ArrayLike<number> | ArrayBufferLike): T;
-  new(buffer: ArrayBufferLike, byteOffset: number, length?: number): T
-  BYTES_PER_ELEMENT: number
+  new (length: number): T;
+  new (arrayOrArrayBuffer: ArrayLike<number> | ArrayBufferLike): T;
+  new (buffer: ArrayBufferLike, byteOffset: number, length?: number): T;
+  BYTES_PER_ELEMENT: number;
 }
 
-
-
-export function allocateTypedArray<T>(type: TypedArrayType<T>, length: number, module: EmscriptenModule = window["Module"]): T{
+export function allocateTypedArray<T>(
+  type: TypedArrayType<T>,
+  length: number,
+  module: EmscriptenModule = window['Module'],
+): T {
   const ptr = module._malloc(type.BYTES_PER_ELEMENT * length);
-  return new type(module.HEAP8.buffer,ptr,length);
+  return new type(module.HEAP8.buffer, ptr, length);
 }

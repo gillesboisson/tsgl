@@ -1,1 +1,1 @@
-export type AnyWebRenderingGLContext = WebGLRenderingContext | WebGL2RenderingContext
+export type AnyWebRenderingGLContext = WebGLRenderingContext | WebGL2RenderingContext;

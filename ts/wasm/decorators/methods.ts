@@ -1,11 +1,14 @@
-import {WasmFunctionOut} from "./types";
+import { WasmFunctionOut } from './types';
 
-export function wasmFunctionOut(name?: string, argsType: Emscripten.ValueType[] = [], returnType: Emscripten.ValueType = null) {
-  return function (target: any, propName: string | Symbol) {
+export function wasmFunctionOut(
+  name?: string,
+  argsType: Emscripten.ValueType[] = [],
+  returnType: Emscripten.ValueType = null,
+) {
+  return function(target: any, propName: string | Symbol) {
     argsType.splice(0, 0, 'number');
     if (!name) name = propName as string;
     // const argsType = ["number",...methodOut.argsType];
-
 
     const mProp: WasmFunctionOut = {
       name,
@@ -14,19 +17,19 @@ export function wasmFunctionOut(name?: string, argsType: Emscripten.ValueType[] 
       used: false,
       target,
     };
-    
+
     if (!target.__anFunctionssOutList) {
       target.__anFunctionssOutList = [mProp];
     } else {
       target.__anFunctionssOutList.push(mProp);
     }
 
-    const methodName = "__" + name;
+    const methodName = '__' + name;
 
-    target[propName as string] = function () {
+    target[propName as string] = function() {
       const args = Array.from(arguments);
       args.splice(0, 0, this._ptr);
-      return this[methodName].apply(this,args);
+      return this[methodName].apply(this, args);
     };
   };
 }

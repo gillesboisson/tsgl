@@ -1,26 +1,23 @@
-import { WasmClass, WasmClassType } from "../WasmClass";
-import {WasmIndexedAllocatorI} from "./interfaces";
+import { WasmClass, WasmClassType } from '../WasmClass';
+import { WasmIndexedAllocatorI } from './interfaces';
 
 export type WasmDynamicAllocatorOptions<T extends WasmClass> = {
-  wasmType: WasmClassType<T>,
-  createIfNotFound?: boolean
-}
+  wasmType: WasmClassType<T>;
+  createIfNotFound?: boolean;
+};
 
-export class WasmDynamicAllocator<T extends WasmClass>
-  implements WasmIndexedAllocatorI<T> {
+export class WasmDynamicAllocator<T extends WasmClass> implements WasmIndexedAllocatorI<T> {
   private ptrs: number[] = [];
   private elements: T[] = [];
   protected wasmType: WasmClassType<T>;
   protected createIfNotFound: boolean = true;
 
-  constructor(
-    options: WasmDynamicAllocatorOptions<T>,
-  ) {
-    if(options.createIfNotFound) this.createIfNotFound = options.createIfNotFound;
-    if(options.wasmType) this.wasmType = options.wasmType;
+  constructor(options: WasmDynamicAllocatorOptions<T>) {
+    if (options.createIfNotFound) this.createIfNotFound = options.createIfNotFound;
+    if (options.wasmType) this.wasmType = options.wasmType;
   }
 
-  allocate(module: EmscriptenModule, element: T) : number {
+  allocate(module: EmscriptenModule, element: T): number {
     const ptr = module._malloc(this.wasmType.byteLength);
     this.ptrs.push(ptr);
     this.elements.push(element);
@@ -45,17 +42,10 @@ export class WasmDynamicAllocator<T extends WasmClass>
       this.ptrs.push(elementPtr);
       this.elements.push(element);
       return element;
-    } else
-      throw new Error(
-        "dynamicAllocate::getElement element with " + elementPtr + " not found"
-      );
+    } else throw new Error('dynamicAllocate::getElement element with ' + elementPtr + ' not found');
   }
 
-  getElements(
-    module: EmscriptenModule,
-    elementPtrs: number[],
-    array: T[] = new Array(elementPtrs.length)
-  ): T[] {
+  getElements(module: EmscriptenModule, elementPtrs: number[], array: T[] = new Array(elementPtrs.length)): T[] {
     for (let i = 0; i < elementPtrs.length; i++) {
       array[i] = this.getElement(module, elementPtrs[i]);
     }
