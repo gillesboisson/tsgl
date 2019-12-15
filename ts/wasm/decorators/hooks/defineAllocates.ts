@@ -1,5 +1,5 @@
 import { WasmStructProp } from '../types';
-import { StructAttributeProp } from '../../../core/decorators/StructAttribute';
+import { StructAttributeProp, getStructAttributesByteLength } from '../../../core/decorators/StructAttribute';
 
 function cppTypeToWrap(type: string) {
   return type === 'string' ? 'string' : type === 'bool' ? 'boolean' : 'number';
@@ -8,25 +8,13 @@ function cppTypeToWrap(type: string) {
 export function defineAllocate(target: any, structProps?: WasmStructProp) {
   const prototype = target.prototype;
 
-  let classBLength = 0;
-  let prop: StructAttributeProp;
-
-  for (prop of prototype.__anPropsList) {
-    const propOffset = prop.offset === -1 ? classBLength : prop.offset;
-    const byteLength =
-      prop.wasm !== undefined && prop.wasm.wasmType !== undefined
-        ? prop.wasm.wasmType.byteLength
-        : prop.type.BYTES_PER_ELEMENT * prop.length;
-    const nLength = propOffset + byteLength;
-    if (nLength > classBLength) classBLength = nLength;
-  }
+  let classBLength = getStructAttributesByteLength(prototype.__anPropsList);
 
   target.byteLength = classBLength;
-
   target.prototype.byteLength = classBLength;
 
   const __bindMethods = prototype.__bindMethods;
-
+  
   prototype.__bindMethods = function(arrayBuffer: ArrayBuffer, offset: number){
     if(__bindMethods !== undefined) __bindMethods.apply(this,arguments);
     if (structProps && prototype.__anFunctionssOutList)

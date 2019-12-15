@@ -6,6 +6,7 @@ export type StructAttributeProp = {
   name?: string;
   isBool?: boolean;
   offset?: number;
+  margin?: number;
   length: number;
   type: any;
   wasm?: WasmAttributeProp;
@@ -31,6 +32,7 @@ export type StructAttributes = StructAttributeProp[];
 
 export const defaultStructAttributeProp: StructAttributeProp = {
   offset: -1,
+  margin: 0,
   length: 1,
   isBool: false,
   type: null,
@@ -46,6 +48,23 @@ export const defaultGLAttributeProp: GLAttributeProp = {
   normalize: false,
   type: (gl: AnyWebRenderingGLContext) => gl.FLOAT,
 };
+
+export function getStructAttributesByteLength(structsAttr: StructAttributes){
+  let classBLength = 0;
+  let prop: StructAttributeProp;
+
+  for (prop of structsAttr) {
+    const propOffset = prop.offset === -1 ? classBLength : prop.offset;
+    const byteLength =
+      prop.wasm !== undefined && prop.wasm.wasmType !== undefined
+        ? prop.wasm.wasmType.byteLength
+        : prop.type.BYTES_PER_ELEMENT * prop.length;
+    const nLength = propOffset + byteLength;
+    if (nLength > classBLength) classBLength = nLength;
+  }
+
+  return classBLength;
+}
 
 function createOrAddPropList(
   name: string,
@@ -90,19 +109,22 @@ export function structAttr(prop: StructAttributeProp) {
   };
 }
 
-export function wasmPtrAttr(prop?: StructAttributeProp) {
+export function wasmPtrAttr(wasmType: WasmClassType<WasmClass>, prop: StructAttributeProp = <StructAttributeProp>{}) {
   return function(target: any, propName: string | Symbol) {
     createOrAddPropList(
       <string>propName,
       { ...prop, useAccessor: true, type: Uint32Array, length: 1 },
       prop.gl,
-      { ...prop.wasm, isPtr: true },
+      { ...prop.wasm, wasmType, isPtr: true },
       target,
     );
   };
 }
 
-export function wasmObjectAttr<T extends WasmClass>(wasmType: WasmClassType<T>, prop?: StructAttributeProp) {
+export function wasmObjectAttr<T extends WasmClass>(
+  wasmType: WasmClassType<T>,
+  prop: StructAttributeProp = <StructAttributeProp>{},
+) {
   return function(target: any, propName: string | Symbol) {
     createOrAddPropList(
       <string>propName,
@@ -114,7 +136,7 @@ export function wasmObjectAttr<T extends WasmClass>(wasmType: WasmClassType<T>, 
   };
 }
 
-export function structBool(prop?: StructAttributeProp) {
+export function structBool(prop: StructAttributeProp = <StructAttributeProp>{}) {
   return function(target: any, propName: string | Symbol) {
     createOrAddPropList(
       <string>propName,

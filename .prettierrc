@@ -9,5 +9,14 @@
   "trailingComma": "all",
   "endOfLine": "lf",
   "jsxSingleQuote": true,
-  "requireConfig": true
+  "requireConfig": true,
+
+  "overrides": [
+    {
+      "files": "**/*.c",
+      "options": {
+        "semi": true
+      }
+    }
+  ]
 }

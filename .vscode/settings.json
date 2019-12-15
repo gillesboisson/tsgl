@@ -32,7 +32,12 @@
     "test.h": "c",
     "ptrbuffer.h": "c",
     "helpers.h": "c",
-    "bufferstack.h": "c"
+    "bufferstack.h": "c",
+    "__node_handle": "c",
+    "scenenode.h": "c",
+    "unordered_map": "c",
+    "atomic": "c",
+    "cstdint": "c"
   },
   "files.watcherExclude": {
     "archive": true

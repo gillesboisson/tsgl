@@ -18,6 +18,27 @@ extern "C"
 
   typedef struct
   {
+    VecP myVar;
+  } WA1;
+  typedef struct
+  {
+    WA1 wa1;
+    VecP myVar2;
+  } WA2;
+
+  EMSCRIPTEN_KEEPALIVE void WA1_test(WA1 *this)
+  {
+    printf("WA1 test %f\n", this->myVar);
+  }
+
+  EMSCRIPTEN_KEEPALIVE void WA2_test_2(WA2 *this)
+  {
+    WA1_test(&this->wa1);
+    printf("WA2 test %f\n", this->myVar2);
+  }
+
+  typedef struct
+  {
     VecP position[2];
     VecP velocity[2];
   } PositionVelocity;
@@ -61,6 +82,11 @@ extern "C"
         buffer[i].position[0] = 1.0;
       }
     }
+  }
+
+  EMSCRIPTEN_KEEPALIVE void testDynamicLocalTransform(Transform *t)
+  {
+    void (*updateLocalMethod)(Transform * t) = &Transform_updateLocalMat;
   }
 
 #ifdef __cplusplus

@@ -2,7 +2,7 @@ import { EmscriptenModuleLoader } from './wasm/EmscriptenModuleLoader';
 import { GLRenderer, GLRendererType } from './gl/core/GLRenderer';
 import { SimpleColorShader } from './shaders/SimpleColorShader';
 import { WasmClass } from './wasm/WasmClass';
-import { vec3, vec2 } from 'gl-matrix';
+import { vec3, vec2, mat4, quat } from 'gl-matrix';
 import { structAttr } from './core/decorators/StructAttribute';
 import { GLDefaultAttributesLocation } from './gl/core/data/GLDefaultAttributesLocation';
 import { WasmBuffer } from './wasm/WasmBuffer';
@@ -16,6 +16,12 @@ import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLAttribute } from './gl/core/data/GLAttribute';
 import { TestTFShader } from './shaders/TestTFShader';
 import { GLTransformFeedbackPass } from './gl/core/GLTransformFeedbackPass';
+import { WasmSceneNode } from './3d/WasmSceneNode';
+import { WasmCamera } from './3d/WasmCamera';
+import { BasicShader } from './shaders/BasicShader';
+import { GLMesh } from './gl/core/data/GLMesh';
+import { InterleavedDataArray } from './gl/data/InterleavedDataArray';
+import { BOX_POSITIONS, BOX_TRIANGLES_INDICES } from './geom/primitive';
 
 const loader: EmscriptenModuleLoader = new EmscriptenModuleLoader();
 
@@ -29,90 +35,160 @@ if (DEBUG) {
   spector = new SPECTOR.Spector();
 }
 
-@wasmStruct({})
-@glInterleavedAttributes()
-class WasmVertexTest extends WasmClass {
-  static byteLength: number;
-  static allocator: WasmAllocatorI<WasmVertexTest>;
-  static createAttributes: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride?: number) => GLAttribute[];
-
-  @structAttr({
-    type: Float32Array,
-    length: 2,
-    gl: {
-      location: GLDefaultAttributesLocation.IPOSITION,
-    },
-  })
-  position: vec2;
-
-  @structAttr({
-    type: Float32Array,
-    length: 2,
-    gl: {
-      location: GLDefaultAttributesLocation.IVELOCITY,
-    },
-  })
-  velocity: vec2;
-}
-
 loader.load('em_app.js').then((module) => {
   const renderer = GLRenderer.createFromCanvas(
     document.getElementById('test') as HTMLCanvasElement,
-    GLRendererType.WebGL2,
+    // GLRendererType.WebGL2,
   );
   const gl = <WebGL2RenderingContext>renderer.getGL();
+  let watching = false;
+  // proxyAllMethods(gl, (name, args) => console.log(name, args),100,() => watching = false);
 
+  const posBuffer = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(BOX_POSITIONS));
+  const colorBuffer = new GLBuffer(
+    gl,
+    gl.ARRAY_BUFFER,
+    gl.STATIC_DRAW,
+    new Float32Array([1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1]),
+  );
+  const indicesBuffer = new GLBuffer(
+    gl,
+    gl.ELEMENT_ARRAY_BUFFER,
+    gl.STATIC_DRAW,
+    new Uint16Array(BOX_TRIANGLES_INDICES),
+  );
+
+  const attributes = [
+    new GLAttribute(
+      gl,
+      posBuffer,
+      GLDefaultAttributesLocation.POSITION,
+      'position',
+      3,
+      3 * Float32Array.BYTES_PER_ELEMENT,
+    ),
+    new GLAttribute(gl, colorBuffer, GLDefaultAttributesLocation.COLOR, 'color', 4, 4 * Float32Array.BYTES_PER_ELEMENT),
+  ];
+
+  const shader = new BasicShader(gl);
+  const shaderState = shader.createState();
+
+  const mesh = new GLMesh(gl, 8, 12, attributes, indicesBuffer);
   if (DEBUG) {
     spector.displayUI();
 
     if (DEBUG_COMMANDS_START) spector.captureContext(gl, 33);
   }
 
-  const buffer = new WasmBuffer({
-    length: 1024 * 512,
-    wasmType: WasmVertexTest,
+  const node = new WasmSceneNode();
+  const cam = new WasmCamera();
+
+  cam.perspective(70, renderer.width / renderer.height);
+
+  cam.transform.setPosition(0, 0, 10);
+
+  const mouseState = {
+    x: 0,
+    y: 0,
+    leftM: false,
+  };
+
+  const keyState = {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+  };
+
+  document.addEventListener('mousemove', (mouseEvent: MouseEvent) => {
+    mouseState.x = mouseEvent.clientX;
+    mouseState.y = mouseEvent.clientY;
   });
 
-  const wasm_randomVBuffer: (ptr: number, amount: number) => void = module.cwrap('randomVBuffer', null, [
-    'number',
-    'number',
-  ]);
+  document.addEventListener('mousedown', () => (mouseState.leftM = true));
+  document.addEventListener('mouseup', () => (mouseState.leftM = false));
 
-  const wasm_applyTransformFeeback: (ptr: number, amount: number) => void = module.cwrap(
-    'applyTransformFeeback',
-    null,
-    ['number', 'number'],
-  );
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    switch (e.keyCode) {
+      case 81:
+        keyState.left = true;
+        break;
+      case 68:
+        keyState.right = true;
 
-  wasm_randomVBuffer(buffer.ptr, buffer.length);
+        break;
+      case 90:
+        keyState.up = true;
 
-  const tfShader = new TestTFShader(gl);
-  const tfShaderState = tfShader.createState();
-  const tf = new GLTransformFeedbackPass(gl, WasmVertexTest, buffer.length);
-  tf.getBufferIn().bufferSubData(buffer.bufferView);
+        break;
+      case 83:
+        keyState.down = true;
 
-  const renderShader = new TestTFShaderRender(gl);
-  const renderShaderState = renderShader.createState();
+        break;
+    }
+  });
+  document.addEventListener('keyup', (e: KeyboardEvent) => {
+    switch (e.keyCode) {
+      case 81:
+        keyState.left = false;
+        break;
+      case 68:
+        keyState.right = false;
 
-  // const glBuffer = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW, buffer.bufferView);
-  // const attributes = WasmVertexTest.createAttributes(gl, glBuffer);
-  // const vao = new GLVao(gl, attributes);
+        break;
+      case 90:
+        keyState.up = false;
+
+        break;
+      case 83:
+        keyState.down = false;
+
+        break;
+    }
+  });
+
+  const camMovVec = vec3.create();
+  const camSpeed = 0.1;
 
   function render() {
     window.requestAnimationFrame(render);
+
     renderer.clear();
+    if (watching) console.log('--------------------------------------------------------');
 
-    renderShaderState.use();
+    node.wasmUpdateWorldMat(0, false);
+    cam.wasmUpdateWorldMat(0, false);
 
-    /*
-    wasm_applyTransformFeeback(buffer.ptr, buffer.length);
-    glBuffer.bufferSubData();
-    vao.bind();
-    */
+    cam.transform.setEulerRotation(
+      (-mouseState.y / window.innerHeight) * Math.PI * 2 - Math.PI,
+      (-mouseState.x / window.innerWidth) * Math.PI * 2 - Math.PI,
+      0,
+    );
 
-    tf.applyPass(tfShaderState).bind();
-    renderShaderState.use();
-    gl.drawArrays(gl.POINTS, 0, buffer.length);
+    vec3.set(camMovVec, 0, 0, 0);
+
+    if (keyState.up) {
+      camMovVec[2] += camSpeed;
+    }
+
+    if (keyState.down) {
+      camMovVec[2] -= camSpeed;
+    }
+    if (keyState.left) {
+      camMovVec[0] += camSpeed;
+    }
+    if (keyState.right) {
+      camMovVec[0] -= camSpeed;
+    }
+
+    vec3.transformQuat(camMovVec, camMovVec, cam.transform.rotation);
+
+    node.transform.translateVec(camMovVec);
+
+    cam.mvp(node.worldMat, shaderState.mvp);
+
+    shaderState.start();
+    mesh.draw();
   }
 
   render();
