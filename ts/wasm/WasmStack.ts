@@ -3,6 +3,7 @@ import { EmscriptenModuleExtended } from './EmscriptenModuleLoader';
 import { WasmClass } from './WasmClass';
 import { TypedArrayType } from './utils';
 import { structAttr, structBool } from '../core/decorators/StructAttribute';
+import { WasmAllocatorI } from './allocators/interfaces';
 
 const DEFAULT_BUFFER_LENGTH_STEP = 32;
 
@@ -12,6 +13,8 @@ export type WasmBufferStateUpdateFunc = (ptr: number, index: number, length: num
   methodsPrefix: 'StackBuffer_',
 })
 export class WasmStack extends WasmClass {
+  static allocator: WasmAllocatorI<WasmStack>;
+
   protected _buffer: Uint8Array;
 
   /**

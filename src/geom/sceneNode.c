@@ -35,7 +35,7 @@ EMSCRIPTEN_KEEPALIVE void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat
       Mat4_copy(tr->worldMat, tr->transform->localMat);
     }
 
-    if (tr->nodeType == Camera)
+    if (tr->nodeType == CAMERA)
     {
       Mat4_invert(tr->worldMat, tr->worldMat);
     }

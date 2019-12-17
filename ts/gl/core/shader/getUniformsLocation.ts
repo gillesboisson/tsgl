@@ -3,16 +3,26 @@ import { AnyWebRenderingGLContext } from '../GLHelpers';
 export function getUniformsLocation(
   gl: AnyWebRenderingGLContext,
   program: WebGLProgram,
+  uniformsName?: string[],
 ): {
   [name: string]: WebGLUniformLocation;
 } {
-  const nbUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+  const nbUniforms =
+    uniformsName !== undefined ? uniformsName.length : gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
   const res: {
     [name: string]: WebGLUniformLocation;
   } = {};
-  for (let i = 0; i < nbUniforms; i++) {
-    const uniform = gl.getActiveUniform(program, i);
-    res[uniform.name] = <WebGLUniformLocation>gl.getUniformLocation(program, uniform.name);
+
+  if (uniformsName !== undefined) {
+    for (let i = 0; i < nbUniforms; i++) {
+      const uniformName = uniformsName[i];
+      res[uniformName] = <WebGLUniformLocation>gl.getUniformLocation(program, uniformName);
+    }
+  } else {
+    for (let i = 0; i < nbUniforms; i++) {
+      const uniformName = gl.getActiveUniform(program, i).name;
+      res[uniformName] = <WebGLUniformLocation>gl.getUniformLocation(program, uniformName);
+    }
   }
   return res;
 }

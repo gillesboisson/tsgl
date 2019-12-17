@@ -7,7 +7,10 @@
 #include "./core/ptrBuffer.h"
 #include "geom/tests.h"
 #include "geom/transform.h"
+#include "geom/camera.h"
+#include "geom/sceneNodeResult.h"
 #include "core/test.h"
+#include "core/wasmBuffer.h"
 
 //#include "./myClass.h"
 
@@ -25,6 +28,18 @@ extern "C"
     WA1 wa1;
     VecP myVar2;
   } WA2;
+
+  EMSCRIPTEN_KEEPALIVE void batchNodes(Camera *cam, WasmBuffer *nodes, WasmBuffer *results)
+  {
+    for (size_t ind = 0; WasmBuffer_has(nodes, ind); ind++)
+    {
+      SceneNode *node = WasmBuffer_get(nodes, ind);
+      SceneNodeResult *result = WasmBuffer_get(results, ind);
+
+      //SceneNode_updateWorldMat(node, NULL, false);
+      SceneNodeResult_compute(result, cam, node);
+    }
+  }
 
   EMSCRIPTEN_KEEPALIVE void WA1_test(WA1 *this)
   {

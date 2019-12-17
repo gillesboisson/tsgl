@@ -31,6 +31,12 @@ export class WasmSceneNode extends WasmClassRelocatable {
   })
   public worldMat: mat4;
 
+  @structAttr({
+    type: Float32Array,
+    length: 6,
+  })
+  protected _bounds: Float32Array;
+
   @wasmObjectAttr(WasmPtrVector)
   _childrenPtrVector: WasmPtrVector<WasmSceneNode>;
 

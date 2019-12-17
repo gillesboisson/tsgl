@@ -7,10 +7,10 @@
 
 typedef enum
 {
-  Static = 0,
-  Dynamic = 2,
-  Camera = 4,
-  Light = 8,
+  STATIC = 0,
+  DYNAMIC = 2,
+  CAMERA = 4,
+  LIGHT = 8,
 } SceneNodeType;
 
 typedef struct
@@ -24,5 +24,6 @@ typedef struct
 } SceneNode;
 
 void SceneNode_test(SceneNode *node);
+void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty);
 
 #endif

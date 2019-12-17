@@ -17,7 +17,7 @@ export class TestUBOShaderState extends GLShaderState {
   constructor(shader: GLShader<TestUBOShaderState>) {
     super(shader);
     const gl: WebGL2RenderingContext = <WebGL2RenderingContext>shader.getGL();
-    this._modelUbo = new GLUbo(gl, 'model', shader.getProgram());
+    this._modelUbo = new GLUbo(gl, shader.getProgram(), 'model', 0);
     const b = new Float32Array(20);
 
     const mvp: mat4 = <mat4>new Float32Array(b.buffer, 0, 16);

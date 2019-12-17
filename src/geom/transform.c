@@ -1,5 +1,6 @@
 
 #include "transform.h"
+#include "../core/wasmBuffer.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -151,6 +152,10 @@ EMSCRIPTEN_KEEPALIVE void Transform_updateWorldMat(Transform *tr, Mat4 parentMat
 
 EMSCRIPTEN_KEEPALIVE void Transform_print(Transform *tr, bool debugChildren)
 {
+  WasmBuffer *B = malloc(sizeof(WasmBuffer));
+  size_t ind = 0;
+  WasmBuffer_next(B, &ind);
+
   printf("Dirty %i\n", tr->dirty);
   printf("Position %f %f %f \n", tr->position[0], tr->position[1], tr->position[2]);
   printf("Scale %f %f %f \n", tr->scale[0], tr->scale[1], tr->scale[2]);

@@ -1,16 +1,20 @@
 import { WasmSceneNode } from './WasmSceneNode';
-import { structAttr, structBool } from '../core/decorators/StructAttribute';
+import { structAttr, structBool, wasmObjectAttr } from '../core/decorators/StructAttribute';
 import { mat4 } from 'gl-matrix';
 import { wasmStruct } from '../wasm/decorators/classes';
 import { DirtyFlag } from '../geom/Transform';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
 import { SceneNodeType } from './SceneNodeType';
+import { Frustrum } from '../geom/WasmFrustrum';
 
 const tMat: mat4 = mat4.create();
 
 @wasmStruct({ methodsPrefix: 'Camera_' })
 export class WasmCamera extends WasmSceneNode {
-  // WASM Binding
+  @wasmObjectAttr(Frustrum)
+  protected _frustrum: Frustrum;
+
+  // WASM Binding ====================================
   @structAttr({
     type: Float32Array,
     length: 16,
@@ -30,17 +34,12 @@ export class WasmCamera extends WasmSceneNode {
     return this._projectionMat;
   }
 
+  //
+
   init(firstInit?: boolean) {
     super.init(firstInit);
     this._nodeType = SceneNodeType.Camera;
   }
-
-  @structAttr({
-    type: Float32Array,
-    length: 32,
-    margin: -32,
-  })
-  protected _frustrumData: Float32Array;
 
   perspective(fovY: number, aspect: number, near = 0.001, far = 100) {
     mat4.perspective(this._projectionMat, fovY, aspect, near, far);
@@ -68,5 +67,10 @@ export class WasmCamera extends WasmSceneNode {
     // mat4.invert(tMat, this.worldMat);
     mat4.multiply(this._vp, this._projectionMat, this.worldMat);
     mat4.multiply(out, this._vp, modelMat);
+  }
+
+  destroy(freePtr?: boolean) {
+    this._frustrum.destroy(false);
+    super.destroy(freePtr);
   }
 }

@@ -5,13 +5,17 @@ import { GLBuffer } from './GLBuffer';
 export class GLUbo implements IGLCore {
   protected _uboIndex: number;
 
-  constructor(protected _gl: WebGL2RenderingContext, id: string | number, program?: WebGLProgram) {
-    if (typeof id === 'string') {
-      if (program === undefined) throw new Error('When id is provided as string in UBO, a program is required');
-      this._uboIndex = _gl.getUniformBlockIndex(program, id);
-    } else {
-      this._uboIndex = id;
-    }
+  constructor(
+    protected _gl: WebGL2RenderingContext,
+    program: WebGLProgram,
+    uniformBlockIndex: string | number,
+    uniformBlockBinding: number,
+  ) {
+    _gl.useProgram(program);
+    this._uboIndex =
+      typeof uniformBlockIndex === 'number' ? uniformBlockIndex : _gl.getUniformBlockIndex(program, uniformBlockIndex);
+    _gl.uniformBlockBinding(program, this._uboIndex, uniformBlockBinding);
+    _gl.useProgram(null);
   }
 
   bindBufferRange(buffer: GLBuffer, offset: number, size: number) {

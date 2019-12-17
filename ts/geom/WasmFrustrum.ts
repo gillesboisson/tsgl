@@ -6,6 +6,8 @@ import { normalize as plane_normalize, set as plane_set, distanceToVec as plane_
 import { plane } from './plane';
 import { CollisionType } from './CollisionType';
 import { createVertices } from './createVertices';
+import { WasmAllocatorI } from '../wasm/allocators/interfaces';
+import { wasmStruct } from '../wasm/decorators/classes';
 
 const vec4_create = vec4.create;
 const vec4_transformMat4 = vec4.transformMat4;
@@ -29,8 +31,11 @@ const _boxVertices = createVertices(
   4,
 );
 
+@wasmStruct({ methodsPrefix: 'Frustum_' })
 export class Frustrum extends WasmClass {
   // Wasm Attribute Binding ==========================================
+  static byteLength: number;
+  static allocator: WasmAllocatorI<Frustrum>;
 
   @structBool()
   protected _dirtyBounds: boolean;

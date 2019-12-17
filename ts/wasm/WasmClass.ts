@@ -19,6 +19,10 @@ export abstract class WasmClass {
     return this._ptr;
   }
 
+  get memoryBuffer(): Uint8Array {
+    return this._memoryRef;
+  }
+
   constructor(protected _module?: EmscriptenModule, ptr?: number, firstInit = ptr === undefined) {
     if (this.__allocator === undefined) throw new Error('No decorator defined');
 

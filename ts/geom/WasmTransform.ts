@@ -5,6 +5,7 @@ import { WasmClassRelocatable } from '../wasm/WasmClassRelocatable';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
 import { structAttr, wasmObjectAttr } from '../core/decorators/StructAttribute';
 import { translateScaleRotateQuat, DirtyFlag } from './Transform';
+import { WasmAllocatorI } from '../wasm/allocators/interfaces';
 
 // export enum TransformType {
 //   Normal = 0,
@@ -20,6 +21,9 @@ const tQuat = quat.create();
 
 @wasmStruct({ methodsPrefix: 'Transform_' })
 export class WasmTransform extends WasmClassRelocatable {
+  static byteLength: number;
+  static allocator: WasmAllocatorI<WasmTransform>;
+
   // Wasm Attribute Binding ==========================================
 
   @structAttr({
@@ -108,7 +112,7 @@ export class WasmTransform extends WasmClassRelocatable {
   rotateAroundAxes(axe: vec3, rad: number) {
     quat.setAxisAngle(tQuat, axe, rad);
     quat.multiply(this._rotation, this._rotation, tQuat);
-    this.dirty |= DirtyFlag.Local;
+    this.dirty |= DirtyFlag.All;
   }
 
   rotateEuler(radX: number, radY: number, radZ: number) {
@@ -116,7 +120,7 @@ export class WasmTransform extends WasmClassRelocatable {
     quat.rotateX(rotation, rotation, radX);
     quat.rotateY(rotation, rotation, radY);
     quat.rotateZ(rotation, rotation, radZ);
-    this.dirty |= DirtyFlag.Local;
+    this.dirty |= DirtyFlag.All;
   }
 
   setEulerRotation(radX: number, radY: number, radZ: number) {

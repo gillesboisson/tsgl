@@ -13,12 +13,16 @@ export abstract class GLShaderState extends GLCore implements IGLShaderState {
   constructor(protected _shader: GLShader<GLShaderState>) {
     super(_shader.getGL());
     const program = _shader.getProgram();
-    this._uniformsLocation = getUniformsLocation(this.gl, program);
     this._program = program;
+    this.getUniformsLocation(program);
+  }
+
+  protected getUniformsLocation(program: WebGLProgram) {
+    this._uniformsLocation = getUniformsLocation(this.gl, program);
   }
 
   use() {
-    this.gl.useProgram(this._program);
+    this._shader.use();
   }
 
   getProgram() {
