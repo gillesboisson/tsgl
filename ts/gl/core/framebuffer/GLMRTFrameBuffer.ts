@@ -1,7 +1,7 @@
 import { GLCore } from '../GLCore';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLSupport } from '../GLSupport';
-import { GLTexture } from '../GLTexture';
+import { GLTexture } from '../../texture/GLTexture';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 
 export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {

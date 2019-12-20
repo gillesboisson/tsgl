@@ -1,6 +1,6 @@
 import { GLCore } from '../GLCore';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
-import { GLTexture } from '../GLTexture';
+import { GLTexture } from '../../texture/GLTexture';
 import { GLSupport } from '../GLSupport';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 

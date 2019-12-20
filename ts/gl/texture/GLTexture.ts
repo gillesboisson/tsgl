@@ -1,5 +1,5 @@
-import { GLCore } from './GLCore';
-import { AnyWebRenderingGLContext } from './GLHelpers';
+import { GLCore } from '../core/GLCore';
+import { AnyWebRenderingGLContext } from '../core/GLHelpers';
 
 export class GLTexture extends GLCore {
   get texture(): WebGLTexture {

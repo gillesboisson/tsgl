@@ -81,4 +81,36 @@ export class GLSupport {
       }
     }
   }
+
+  static VAOSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
+    if (typeof (<WebGL2RenderingContext>gl).createVertexArray !== 'undefined') return true;
+    if (useExtension === true) {
+      if ((<any>gl).__vaoExt !== undefined) return true;
+
+      const nativeVaoExtension = ((<any>gl).__vaoExt =
+        gl.getExtension('OES_vertex_array_object') ||
+        gl.getExtension('MOZ_OES_vertex_array_object') ||
+        gl.getExtension('WEBKIT_OES_vertex_array_object'));
+
+      if (nativeVaoExtension === undefined) {
+        if (orFail) throw new Error('VAO not supported on this browser');
+
+        return false;
+      }
+      (<any>gl).createVertexArray = function() {
+        return nativeVaoExtension.createVertexArrayOES();
+      };
+      (<any>gl).bindVertexArray = function(vao: any) {
+        return nativeVaoExtension.bindVertexArrayOES(vao);
+      };
+      (<any>gl).deleteVertexArray = function(vao: any) {
+        return nativeVaoExtension.deleteVertexArrayOES(vao);
+      };
+    } else {
+      if (orFail) throw new Error('VAO not supported on this browser');
+      return false;
+    }
+
+    return true;
+  }
 }

@@ -3,6 +3,32 @@ import { GLCore } from '../GLCore';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLAttribute } from './GLAttribute';
 
+export type AnyWebGLVertexArrayObject = WebGLVertexArrayObject | WebGLVertexArrayObjectOES;
+
+export function createVaoPolyfill(gl: AnyWebRenderingGLContext, orFail: boolean = false): boolean {
+  if (typeof (<WebGL2RenderingContext>gl).createVertexArray !== 'undefined') return true;
+  const nativeVaoExtension = (this.__vaoExt =
+    gl.getExtension('OES_vertex_array_object') ||
+    gl.getExtension('MOZ_OES_vertex_array_object') ||
+    gl.getExtension('WEBKIT_OES_vertex_array_object'));
+
+  if (nativeVaoExtension === undefined) {
+    if (orFail) throw new Error('VAO not supported on this browser');
+
+    return false;
+  }
+  (<any>gl).createVertexArray = function() {
+    return nativeVaoExtension.createVertexArrayOES();
+  };
+  (<any>gl).bindVertexArray = function(vao: any) {
+    return nativeVaoExtension.bindVertexArrayOES(vao);
+  };
+  (<any>gl).deleteVertexArray = function(vao: any) {
+    return nativeVaoExtension.deleteVertexArrayOES(vao);
+  };
+  return true;
+}
+
 export enum VaoSupportType {
   WEBGL2_VAO,
   OES_VAO,
