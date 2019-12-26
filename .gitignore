@@ -5,4 +5,6 @@ dist/bundle
 dist/lib/gli.all.css
 dist/lib/gli.all.js
 dist/lib/assets/*
+dist/*.wasm
+dist/*.js
 .DS_Store
