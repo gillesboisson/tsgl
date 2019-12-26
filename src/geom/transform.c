@@ -18,7 +18,7 @@ Mat4 TranslateScaleRotateQuat(Mat4 out, Vec3 scale, Quat rotQuat, Vec3 position,
 
 Transform *Transform_create()
 {
-  Transform *out = malloc(sizeof(Transform_create));
+  Transform *out = malloc(sizeof(Transform));
   Transform_init(out);
   return out;
 }

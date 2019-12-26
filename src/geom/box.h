@@ -28,7 +28,12 @@ Box Box_move(Box out, Vec3 v);
 void Box_reset(Box out);
 Box Box_set(Box out, VecP minX, VecP maxX, VecP minY, VecP maxY, VecP minZ, VecP maxZ);
 Box Box_setCenterSize(Box out, Vec3 centerVec, Vec3 sizeVec);
-Box Box_setFromVertices(Box out, VecP *vertices, int verticesLength, Mat4 mat);
+
+void Box_getSize(Vec3 out, Box box);
+
+Box Box_setFromVertices(Box out, VecP *vertices, size_t nbVertices, size_t stride, size_t offset, Mat4 mat);
+Box Box_setFromPoints(Box out, VecP *vertices, int nbPoints, Mat4 mat);
+
 Box Box_setSize(Box out, VecP width, VecP height, VecP depth);
 Box Box_setSizeFromVec3(Box out, Vec3 vec);
 Box Box_toVertices(Box out, Box source);

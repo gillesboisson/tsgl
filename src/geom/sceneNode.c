@@ -8,6 +8,18 @@
 #include <stdio.h>
 #include <emscripten.h>
 
+SceneNode *SceneNode_create()
+{
+  SceneNode *node = malloc(sizeof(SceneNode));
+  SceneNode_init(node);
+  return node;
+}
+
+void SceneNode_init(SceneNode *node)
+{
+  node->transform = Transform_create();
+}
+
 EMSCRIPTEN_KEEPALIVE void SceneNode_test(SceneNode *node)
 {
 

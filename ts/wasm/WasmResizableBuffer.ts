@@ -27,7 +27,7 @@ export class WasmResizabledBuffer<T extends WasmClassRelocatable> extends AWasmB
       options.startLength && options.startLength > 0
         ? Math.ceil(options.startLength / this._growStep) * this._growStep
         : this._growStep;
-    this._module = options.module ? options.module : <EmscriptenModuleExtended>window['Module'];
+    this._module = options.module ? options.module : <EmscriptenModuleExtended>(<any>window).Module;
 
     this._stride = this._wasmType.byteLength;
     this.allocate();

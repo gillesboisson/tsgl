@@ -26,7 +26,7 @@ export abstract class WasmClass {
   constructor(protected _module?: EmscriptenModule, ptr?: number, firstInit = ptr === undefined) {
     if (this.__allocator === undefined) throw new Error('No decorator defined');
 
-    if (!_module) _module = window['Module'];
+    if (!_module) _module = <EmscriptenModule>(<any>window).Module;
     this._module = _module;
 
     if (ptr === undefined) {

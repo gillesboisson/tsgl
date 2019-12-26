@@ -102,6 +102,9 @@ let spector: any = null;
 // }
 const nbElements = 128;
 loader.load('em_app.js').then((module) => {
+  const test = module.cwrap('test', null, []);
+  test();
+  return;
   const renderer = GLRenderer.createFromCanvas(
     document.getElementById('test') as HTMLCanvasElement,
     GLRendererType.WebGL2,
@@ -110,7 +113,12 @@ loader.load('em_app.js').then((module) => {
   let watching = DEBUG_COMMANDS_START;
 
   if (DEBUG_COMMANDS_START) {
-    proxyAllMethods(gl, (name, args) => console.log(name, args), DEBUG_COMMANDS_NB, () => (watching = false));
+    proxyAllMethods(
+      gl,
+      (name, args) => console.log(name, args),
+      DEBUG_COMMANDS_NB,
+      () => (watching = false),
+    );
   }
 
   const posBuffer = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(BOX_POSITIONS));
@@ -161,11 +169,11 @@ loader.load('em_app.js').then((module) => {
   const buffer = new GLBuffer(gl, gl.UNIFORM_BUFFER, gl.DYNAMIC_COPY, resultsB.buffer);
   const ubo = new GLUbo(gl, shader.getProgram(), 'transform', 0);
 
-  const batchNodes: (ptrCam: number, ptrNodeBuffer: number, ptrResultBuffer: number) => void = module.cwrap(
-    'batchNodes',
-    null,
-    ['number', 'number', 'number'],
-  );
+  const batchNodes: (
+    ptrCam: number,
+    ptrNodeBuffer: number,
+    ptrResultBuffer: number,
+  ) => void = module.cwrap('batchNodes', null, ['number', 'number', 'number']);
 
   const cam = new WasmCamera();
 

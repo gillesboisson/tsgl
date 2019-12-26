@@ -51,7 +51,7 @@ export class WasmBuffer<T extends WasmClass> extends AWasmBuffer<T> implements I
       this.allocate();
     }
 
-    if (!this._module) this._module = <EmscriptenModuleExtended>window['Module'];
+    if (!this._module) this._module = <EmscriptenModuleExtended>(<any>window).Module;
 
     this.__byteLength = this._stride * this._length;
     this.__typedArray = new Uint8Array(this._module.HEAP8.buffer, this._ptr, this.__byteLength);

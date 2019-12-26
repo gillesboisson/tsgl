@@ -7,6 +7,8 @@
 #include "./core/ptrBuffer.h"
 #include "geom/tests.h"
 #include "geom/transform.h"
+#include "geom/sceneNode.h"
+#include "geom/octoTree.h"
 #include "core/test.h"
 
 //#include "./myClass.h"
@@ -86,22 +88,6 @@ extern "C"
     return buffer;
   }
 
-  EMSCRIPTEN_KEEPALIVE void test()
-  {
-    //printf("helloB\n");
-    //return 10.0;
-
-    Vec3 a = Vec3_fromValues(0, 1, 1);
-    Vec3 b = Vec3_fromValues(-1, 1, 0);
-    Vec3 out = Vec3_create();
-    Vec3 outQ = Quat_create();
-
-    Vec3 ar = realloc(a, sizeof(VecP) * 2);
-
-    Quat_rotationTo(outQ, a, b);
-
-    printf("%f, %f, %f \n", ar[0], ar[1], ar[2]);
-  }
 
 #ifdef __cplusplus
 }

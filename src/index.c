@@ -11,6 +11,7 @@
 #include "geom/sceneNodeResult.h"
 #include "core/test.h"
 #include "core/wasmBuffer.h"
+#include "geom/octotree.h"
 
 //#include "./myClass.h"
 
@@ -18,6 +19,27 @@
 extern "C"
 {
 #endif
+
+  EMSCRIPTEN_KEEPALIVE void test()
+  {
+    Box bounds = Box_fromValues(0, 10, 0, 10, 0, 10);
+    OctoTree *tree = OctoTree_create(bounds, 3, 5, NULL);
+    VecP position[] = {5, 5, 5};
+    VecP size[] = {6, 6, 6};
+    for (size_t i = 0; i < 9; i++)
+    {
+      SceneNode *node = SceneNode_create();
+
+      Box_setCenterSize(node->bounds, position, size);
+
+      OctoTree_addNode(tree, node, true);
+
+      printf("tree %i \n", tree->elements.length);
+    }
+
+    OctoTree_destroy(tree);
+    free(bounds);
+  }
 
   typedef struct
   {

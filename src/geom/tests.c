@@ -63,7 +63,7 @@ void Geom_testBoxes()
       1,
   };
 
-  Box_setFromVertices(box, points, 6, NULL);
+  Box_setFromPoints(box, points, 6, NULL);
 
   printf("Box after vertices \n");
   Box_print(box);

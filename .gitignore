@@ -1,4 +1,6 @@
 node_modules
+obj/**/*.o
+obj/*.o
 dist/bundle
 dist/lib/gli.all.css
 dist/lib/gli.all.js
