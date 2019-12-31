@@ -55,6 +55,21 @@ void PtrBuffer_push(PtrBuffer *out, void *ptr)
   out->buffer[out->length - 1] = ptr;
 }
 
+void PtrBuffer_pushMany(PtrBuffer *out, PtrBuffer *in, bool uniqueOnly, bool resizeBuffer)
+{
+  int ind = out->length;
+  PtrBuffer_resizeBuffer(out, out->length + in->length);
+  for (size_t i = 0; i < in->length; i++)
+  {
+    if (uniqueOnly == false || PtrBuffer_indexOf(out, in->buffer[i]))
+    {
+      out->buffer[ind++] = in->buffer[i];
+    }
+  }
+
+  PtrBuffer_resize(out, ind, resizeBuffer);
+}
+
 bool PtrBuffer_remove(PtrBuffer *out, void *ptr, bool resizeBuffer)
 {
   bool found = false;
@@ -66,6 +81,7 @@ bool PtrBuffer_remove(PtrBuffer *out, void *ptr, bool resizeBuffer)
       out->buffer[i] = out->buffer[i + 1];
   }
   PtrBuffer_resize(out, out->length - 1, resizeBuffer);
+  return found;
 }
 
 void *PtrBuffer_pop(PtrBuffer *out, bool resizeBuffer)
@@ -98,7 +114,7 @@ void PtrBuffer_destroy(PtrBuffer *out)
 
 EMSCRIPTEN_KEEPALIVE void PtrBuffer_print(PtrBuffer *out)
 {
-  printf("Buffer %u %u %u %u %u %u \n", out, out->dirtyBuffer, out->length, out->bufferLength, out->bufferStep, out->buffer);
+  printf("Buffer %u %u %u %u %u %u \n", (unsigned int)out, out->dirtyBuffer, out->length, out->bufferLength, out->bufferStep, (unsigned int)out->buffer);
 }
 
 EMSCRIPTEN_KEEPALIVE void PtrBuffer_printBuffer(PtrBuffer *out)
@@ -110,22 +126,22 @@ EMSCRIPTEN_KEEPALIVE void PtrBuffer_printBuffer(PtrBuffer *out)
     assert(false, "TEST NON OK");
 
     printf("Buffer %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u \n",
-           out->buffer[i],
-           out->buffer[i + 1],
-           out->buffer[i + 2],
-           out->buffer[i + 3],
-           out->buffer[i + 4],
-           out->buffer[i + 5],
-           out->buffer[i + 6],
-           out->buffer[i + 7],
-           out->buffer[i + 8],
-           out->buffer[i + 9],
-           out->buffer[i + 10],
-           out->buffer[i + 11],
-           out->buffer[i + 12],
-           out->buffer[i + 13],
-           out->buffer[i + 14],
-           out->buffer[i + 15]);
+           (unsigned int)out->buffer[i],
+           (unsigned int)out->buffer[i + 1],
+           (unsigned int)out->buffer[i + 2],
+           (unsigned int)out->buffer[i + 3],
+           (unsigned int)out->buffer[i + 4],
+           (unsigned int)out->buffer[i + 5],
+           (unsigned int)out->buffer[i + 6],
+           (unsigned int)out->buffer[i + 7],
+           (unsigned int)out->buffer[i + 8],
+           (unsigned int)out->buffer[i + 9],
+           (unsigned int)out->buffer[i + 10],
+           (unsigned int)out->buffer[i + 11],
+           (unsigned int)out->buffer[i + 12],
+           (unsigned int)out->buffer[i + 13],
+           (unsigned int)out->buffer[i + 14],
+           (unsigned int)out->buffer[i + 15]);
   }
 }
 
@@ -137,4 +153,28 @@ size_t PtrBuffer_indexOf(PtrBuffer *buffer, void *ptr)
       return i;
   }
   return -1;
+}
+
+void PtrBuffer_tests()
+{
+  PtrBuffer *in = PtrBuffer_create();
+  PtrBuffer *out = PtrBuffer_create();
+
+  for (size_t i = 0; i < 18; i++)
+  {
+    void *node = malloc(sizeof(uint16_t));
+    PtrBuffer_push(in, node);
+    if (i % 3 == 10)
+      PtrBuffer_push(in, node);
+  }
+
+  PtrBuffer_pushMany(out, in, false, true);
+
+  assert(out->length == in->length, "out length should be equal to in length");
+
+  PtrBuffer_resize(out, 0, true);
+
+  PtrBuffer_pushMany(out, in, true, true);
+
+  assert(out->length == 18, "out length should be equal to original iteration size");
 }

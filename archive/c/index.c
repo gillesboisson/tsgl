@@ -88,7 +88,6 @@ extern "C"
     return buffer;
   }
 
-
 #ifdef __cplusplus
 }
 #endif

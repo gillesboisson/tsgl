@@ -11,7 +11,10 @@
 #include "geom/sceneNodeResult.h"
 #include "core/test.h"
 #include "core/wasmBuffer.h"
-#include "geom/octotree.h"
+#include "geom/octoTree.h"
+#include "geom/octoTreeGrid.h"
+#include "geom/vertexElementBatch.h"
+#include "core/helpers.h"
 
 //#include "./myClass.h"
 
@@ -20,8 +23,98 @@ extern "C"
 {
 #endif
 
+  void pushVertex(VertexElementBatch *batch)
+  {
+    printf("pushVertex %i\n", batch->vertexInd);
+    for (size_t i = 0; i < batch->vertexInd; i++)
+    {
+      PositionColor *point = batch->vertexBuffer + batch->stride * i;
+      printf("< points %i, x: %f,y: %f,z: %f,r: %f,g: %f,b: %f,a: %f \n", point, point->position[0], point->position[1], point->position[1], point->color[0], point->color[1], point->color[2], point->color[3]);
+    }
+
+    printf("batch->indexInd : %i \n", batch->indexInd);
+    for (size_t i = 0; i < batch->indexInd; i += sizeof(uint16_t))
+    {
+      uint16_t *indexBuffer = batch->indexBuffer + i;
+      printf("< IND %i, val %i \n", indexBuffer, *indexBuffer);
+    }
+  }
+
   EMSCRIPTEN_KEEPALIVE void test()
   {
+
+    VertexElementBatch *batch = VertexElementBatch_create(32, 10 * sizeof(uint16_t), sizeof(PositionColor), &pushVertex);
+    PositionColor *point;
+    uint16_t *index;
+
+    for (size_t i = 0; i < 10; i++)
+    {
+
+      uint32_t vInd = VertexElementBatch_pull(batch, 3, 3 * sizeof(uint16_t), &point, &index);
+      // PositionColor *point = VertexBatch_pull(batch, 3);
+      for (size_t f = 0; f < 3; f++)
+      {
+        point[f].position[0] = i * 10 + f * 3;
+        point[f].position[1] = i * 10 + f * 3 + 1;
+        point[f].position[2] = i * 10 + f * 3 + 3;
+
+        point[f].color[0] = i * 4;
+        point[f].color[1] = i * 4 + 1;
+        point[f].color[2] = i * 4 + 2;
+        point[f].color[3] = i * 4 + 3;
+
+        printf("> points %i, x: %f,y: %f,z: %f,r: %f,g: %f,b: %f,a: %f \n", point + f, point[f].position[0], point[f].position[1], point[f].position[1], point[f].color[0], point[f].color[1], point[f].color[2], point[f].color[3]);
+      }
+
+      index[0] = vInd;
+      index[1] = vInd + 1;
+      index[2] = vInd + 2;
+
+      printf("> IND %i, %i \n", index, index[0]);
+      printf("> IND %i, %i \n", index + 1, index[1]);
+      printf("> IND %i, %i \n", index + 2, index[2]);
+    }
+
+    /*
+    VertexBatch *batch = VertexBatch_create(10, sizeof(PositionColor), &pushVertex);
+
+    for (size_t i = 0; i < 10; i++)
+    {
+      PositionColor *point = VertexBatch_pull(batch, 3);
+      for (size_t f = 0; f < 3; f++)
+      {
+        point[f].position[0] = i * 10 + f * 3;
+        point[f].position[1] = i * 10 + f * 3 + 1;
+        point[f].position[2] = i * 10 + f * 3 + 3;
+
+        point[f].color[0] = i * 4;
+        point[f].color[1] = i * 4 + 1;
+        point[f].color[2] = i * 4 + 2;
+        point[f].color[3] = i * 4 + 3;
+
+        printf("> points %i, x: %f,y: %f,z: %f,r: %f,g: %f,b: %f,a: %f \n", point + f, point[f].position[0], point[f].position[1], point[f].position[1], point[f].color[0], point[f].color[1], point[f].color[2], point[f].color[3]);
+      }
+    }
+
+    /*
+    OctoTreeGrid *grid = OctoTreeGrid_create(3, 3, 3, 3, 3, 3, 5, 5);
+
+    Box bounds = Box_fromValues(1, 6, 1, 4, 4, 8);
+    uint32_t nbTrees;
+    OctoTree **trees = OctoTreeGrid_treesInBounds(&nbTrees, grid, bounds);
+
+    printf("nbTrees for bounds %i \n", nbTrees);
+
+    for (size_t i = 0; i < nbTrees; i++)
+    {
+      OctoTree *tree = *(trees + i);
+      printf("Tree %zu %i\n", i, tree);
+      Box_print(tree->bounds);
+    }
+
+    free(trees);
+
+    /*
     Box bounds = Box_fromValues(0, 10, 0, 10, 0, 10);
     OctoTree *tree = OctoTree_create(bounds, 3, 5, NULL);
     VecP position[] = {5, 5, 5};
@@ -39,6 +132,7 @@ extern "C"
 
     OctoTree_destroy(tree);
     free(bounds);
+    */
   }
 
   typedef struct

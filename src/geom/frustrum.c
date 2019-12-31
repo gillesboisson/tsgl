@@ -42,7 +42,7 @@ void Frustrum_setFromMat(Frustrum *out, Mat4 me)
   Mat4_invert(out->invertMat, me);
 }
 
-enum CollisionType Frustrum_intersectBounds(Frustrum *source, Box rect)
+enum CollisionType Frustrum_intersectBox(Frustrum *source, Box box)
 {
 
   enum CollisionType res = Inside;
@@ -54,35 +54,35 @@ enum CollisionType Frustrum_intersectBounds(Frustrum *source, Box rect)
 
     if (source->planes[i][0] > 0)
     {
-      _vmin[0] = rect[0];
-      _vmax[0] = rect[1];
+      _vmin[0] = box[0];
+      _vmax[0] = box[1];
     }
     else
     {
-      _vmin[0] = rect[1];
-      _vmax[0] = rect[0];
+      _vmin[0] = box[1];
+      _vmax[0] = box[0];
     }
     // Y axis
     if (source->planes[i][1] > 0)
     {
-      _vmin[1] = rect[2];
-      _vmax[1] = rect[3];
+      _vmin[1] = box[2];
+      _vmax[1] = box[3];
     }
     else
     {
-      _vmin[1] = rect[3];
-      _vmax[1] = rect[2];
+      _vmin[1] = box[3];
+      _vmax[1] = box[2];
     }
 
     if (source->planes[i][2] > 0)
     {
-      _vmin[2] = rect[4];
-      _vmax[2] = rect[5];
+      _vmin[2] = box[4];
+      _vmax[2] = box[5];
     }
     else
     {
-      _vmin[2] = rect[5];
-      _vmax[2] = rect[4];
+      _vmin[2] = box[5];
+      _vmax[2] = box[4];
     }
 
     if (Vec3_dot(source->planes[i], _vmax) + source->planes[i][3] >= 0)
@@ -115,10 +115,10 @@ const VecP _boundsVertices3[8][3];
 
 Box Frustrum_bounds(Frustrum *source)
 {
-  VecP v;
-  VecP v4[4];
   if (source->dirtyBounds)
   {
+    VecP v;
+    VecP v4[4];
 
     source->dirtyBounds = false;
 

@@ -13,5 +13,6 @@ enum CollisionType
 
 typedef VecP *Box;
 typedef VecP *Plane;
+typedef uint16_t IndexType;
 
 #endif

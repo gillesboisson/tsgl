@@ -17,7 +17,7 @@ typedef struct Frustrum Frustrum;
 Box Frustrum_bounds(Frustrum *source);
 bool Frustrum_containsVec(Frustrum *source, Vec3 vec);
 Frustrum *Frustrum_create();
-enum CollisionType Frustrum_intersectBounds(Frustrum *source, Box rect);
+enum CollisionType Frustrum_intersectBox(Frustrum *source, Box rect);
 void Frustrum_setFromMat(Frustrum *out, Mat4 me);
 
 #endif

@@ -1,7 +1,7 @@
 import { EmscriptenModuleLoader } from './wasm/EmscriptenModuleLoader';
 import { GLRenderer, GLRendererType } from './gl/core/GLRenderer';
 import { SimpleColorShader } from './shaders/SimpleColorShader';
-import { vec3, vec2, mat4, quat } from 'gl-matrix';
+import { vec3, vec2, mat4, quat, vec4 } from 'gl-matrix';
 import { GLDefaultAttributesLocation } from './gl/core/data/GLDefaultAttributesLocation';
 import { WasmBuffer } from './wasm/WasmBuffer';
 import { TestTFShaderRender } from './shaders/TestTFShaderRender';
@@ -27,6 +27,32 @@ import { proxyAllMethods } from './proxyAllMethods';
 import { Frustrum } from './geom/WasmFrustrum';
 import { GLUbo } from './gl/core/data/GLUbo';
 import { WasmSceneNodeResult } from './WasmSceneNodeResult';
+import { wasmStruct } from './wasm/decorators/classes';
+import { WasmClass } from './wasm/WasmClass';
+import { WasmAllocatorI } from './wasm/allocators/interfaces';
+import { structAttr } from './core/decorators/StructAttribute';
+import { WasmVertexElementBatch } from './geom/WasmVertexElementBatch';
+
+// @glInterleavedAttributes()  // webggl attributes support
+@wasmStruct({ methodsPrefix: 'PositionColor_' })
+export class PositionColor extends WasmClass {
+  // Static ====================================
+
+  static byteLength: number;
+  static allocator: WasmAllocatorI<PositionColor>;
+
+  @structAttr({
+    type: Float32Array,
+    length: 3,
+  })
+  position: vec3;
+
+  @structAttr({
+    type: Float32Array,
+    length: 4,
+  })
+  color: vec4;
+}
 
 const mouseState = {
   x: 0,
@@ -102,8 +128,45 @@ let spector: any = null;
 // }
 const nbElements = 128;
 loader.load('em_app.js').then((module) => {
-  const test = module.cwrap('test', null, []);
-  test();
+  // const test = module.cwrap('test', null, []);
+  // test();
+  //console.log('module : ', module.wasmBinary[Symbol]);
+
+  const batch = new WasmVertexElementBatch(PositionColor, 18, 108, module);
+  function pull(vertexInd: number, collection: PositionColor[], indInd: number, indexBuffer: Uint16Array) {
+    // const x = Math.random() * 2 + 1;
+    // const y = Math.random() * 2 + 1;
+    // const z = Math.random() * 2 + 1;
+    const x = 0;
+    const y = 0;
+    const z = 0;
+
+    for (let i = 0; i < 4; i++) {
+      const element = collection[i + vertexInd];
+      vec4.set(element.color, 1, 0, 1, 1);
+    }
+
+    vec3.set(collection[vertexInd].position, x - 0.5, y - 0.5, z);
+    vec3.set(collection[vertexInd + 1].position, x + 0.5, y - 0.5, z);
+    vec3.set(collection[vertexInd + 2].position, x - 0.5, y + 0.5, z);
+    vec3.set(collection[vertexInd + 3].position, x + 0.5, y + 0.5, z);
+
+    indexBuffer[indInd] = vertexInd + 0;
+    indexBuffer[indInd + 1] = vertexInd + 1;
+    indexBuffer[indInd + 2] = vertexInd + 2;
+    indexBuffer[indInd + 3] = vertexInd + 1;
+    indexBuffer[indInd + 4] = vertexInd + 3;
+    indexBuffer[indInd + 5] = vertexInd + 2;
+  }
+
+  batch.push = () => {
+    console.log('< ', batch);
+  };
+
+  for (let i = 0; i < 16; i++) {
+    batch.pull(4, 6, pull);
+  }
+
   return;
   const renderer = GLRenderer.createFromCanvas(
     document.getElementById('test') as HTMLCanvasElement,

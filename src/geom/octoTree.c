@@ -1,7 +1,8 @@
 #include <math.h>
-#include "octotree.h"
 #include <stdio.h>
 #include <emscripten.h>
+#include "geom.h"
+#include "octoTree.h"
 
 OctoTree *OctoTree_create(Box bounds, uint16_t maxLevel, uint16_t maxElements, OctoTree *parent)
 {
@@ -12,7 +13,7 @@ OctoTree *OctoTree_create(Box bounds, uint16_t maxLevel, uint16_t maxElements, O
 
 OctoTree *OctoTree_init(OctoTree *tree, Box bounds, uint16_t maxLevel, uint16_t maxElements, OctoTree *parent)
 {
-  printf("OctoTree_init %i %i\n", maxLevel, maxElements);
+  // printf("OctoTree_init %i %i\n", maxLevel, maxElements);
   PtrBuffer_init(&tree->elements);
   Box_copy(tree->bounds, bounds);
   tree->maxLevel = maxLevel;
@@ -127,6 +128,28 @@ void OctoTree_remodeNode(OctoTree *tree, SceneNode *node)
 
       if (tree->elements.length < tree->maxElements)
         OctoTree_releaseChildren(tree);
+    }
+  }
+}
+
+void OctoTree_frustrumCulling(PtrBuffer *out, OctoTree *tree, Frustrum *frustrum)
+{
+  enum CollisionType collision = Frustrum_intersectBox(frustrum, tree->bounds);
+  if (collision != Outside)
+  {
+    if (collision == Inside || tree->children != NULL)
+    {
+      for (size_t i = 0; i < 8; i++)
+      {
+        OctoTree_frustrumCulling(out, tree->children + i, frustrum);
+      }
+    }
+    else
+    {
+      for (size_t i = 0; i < tree->elements.length; i++)
+      {
+        PtrBuffer_pushMany(out, &tree->elements, true, true);
+      }
     }
   }
 }

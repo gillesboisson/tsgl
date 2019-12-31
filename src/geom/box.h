@@ -2,8 +2,11 @@
 #ifndef BOX_GEOM
 #define BOX_GEOM
 
+#include "stdint.h"
 #include "geom.h"
+#include "helpers.h"
 #include "plane.h"
+#include "vertexElementBatch.h"
 
 // Box
 Box Box_addMargin(Box out, VecP marginX, VecP marginY, VecP marginZ);
@@ -30,6 +33,7 @@ Box Box_set(Box out, VecP minX, VecP maxX, VecP minY, VecP maxY, VecP minZ, VecP
 Box Box_setCenterSize(Box out, Vec3 centerVec, Vec3 sizeVec);
 
 void Box_getSize(Vec3 out, Box box);
+Box Box_setPosSize(Box out, VecP x, VecP width, VecP y, VecP height, VecP z, VecP depth);
 
 Box Box_setFromVertices(Box out, VecP *vertices, size_t nbVertices, size_t stride, size_t offset, Mat4 mat);
 Box Box_setFromPoints(Box out, VecP *vertices, int nbPoints, Mat4 mat);
@@ -40,5 +44,8 @@ Box Box_toVertices(Box out, Box source);
 void Box_updateScalePos(Vec3 outPos, Vec3 outScale, Box source);
 void Box_print(Box source);
 
-#endif
+void Box_wireframeDebug(Box box, Vec4 color, VertexElementBatch *vertexBatch);
+
 typedef VecP *Box;
+
+#endif

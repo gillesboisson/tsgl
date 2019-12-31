@@ -48,7 +48,12 @@
     "iterator": "c",
     "queue": "c",
     "utility": "c",
-    "vector": "c"
+    "vector": "c",
+    "camera.h": "c",
+    "octotreegrid.h": "c",
+    "stdint.h": "c",
+    "box.h": "c",
+    "vertexbatch.h": "c"
   },
   "files.watcherExclude": {
     "archive": true
