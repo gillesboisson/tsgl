@@ -1,11 +1,12 @@
-import { GLShaderState } from '../gl/core/shader/GLShaderState';
-import { GLShader } from '../gl/core/shader/GLShader';
-import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
+import { GLShaderState } from '../../gl/core/shader/GLShaderState';
+import { GLShader } from '../../gl/core/shader/GLShader';
+import { getDefaultAttributeLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { mat4 } from 'gl-matrix';
-import { GLUbo } from '../gl/core/data/GLUbo';
-import { GLBuffer } from '../gl/core/data/GLBuffer';
-import { WasmSceneNodeResult } from '../WasmSceneNodeResult';
-import { getUniformsLocation } from '../gl/core/shader/getUniformsLocation';
+import { GLUbo } from '../../gl/core/data/GLUbo';
+import { GLBuffer } from '../../gl/core/data/GLBuffer';
+import { WasmSceneNodeResult } from '../../WasmSceneNodeResult';
+import { getUniformsLocation } from '../../gl/core/shader/getUniformsLocation';
+import { GLRenderer } from '../../gl/core/GLRenderer';
 
 // const vertSrc = require('./glsl/basic.vert').default;
 // const fragSrc = require('./glsl/basic.frag').default;
@@ -32,6 +33,10 @@ export class BasicShaderState extends GLShaderState {
 }
 
 export class BasicShader extends GLShader<BasicShaderState> {
+  static registerShader(renderer: GLRenderer) {
+    renderer.registerShader('basic', new BasicShader(renderer.getGL()));
+  }
+
   constructor(gl: WebGLRenderingContext) {
     super(gl, vertSrc, fragSrc, BasicShaderState, getDefaultAttributeLocation(['position', 'color']));
   }

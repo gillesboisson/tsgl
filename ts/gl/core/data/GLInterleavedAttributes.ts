@@ -18,7 +18,6 @@ export function glInterleavedAttributes() {
         const attrs: GLAttribute[] = createAttributes ? createAttributes.apply(target, arguments) : [];
         let length = 0;
         let prop: StructAttributeProp;
-        console.log('stride : ', stride);
         for (prop of target.prototype.__anPropsList) {
           if (prop.gl === undefined) throw new Error('No vertex attribute defined in ' + target + '::' + prop.name);
           if (prop.gl.location !== undefined) {

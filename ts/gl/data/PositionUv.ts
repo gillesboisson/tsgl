@@ -23,5 +23,5 @@ export class PositionUv implements IInterleaveData {
   })
   public uv: vec2;
 
-  allocate: (array: InterleavedDataArray<PositionUv>, arrayBuffer: ArrayBuffer, offset: number, stride: number) => void;
+  allocate: (arrayBuffer: ArrayBuffer, offset: number, stride: number) => void;
 }

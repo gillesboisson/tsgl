@@ -53,7 +53,9 @@
     "octotreegrid.h": "c",
     "stdint.h": "c",
     "box.h": "c",
-    "vertexbatch.h": "c"
+    "vertexbatch.h": "c",
+    "renderpass.h": "c",
+    "vertexelementbatch.h": "c"
   },
   "files.watcherExclude": {
     "archive": true

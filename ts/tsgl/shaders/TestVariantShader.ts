@@ -1,10 +1,10 @@
-import { GLVariantShader } from '../gl/core/shader/variants/GLVariantShader';
-import { shaderVariantBoolProp } from '../gl/core/shader/variants/shaderVariantBoolProp';
-import { shaderVariantEnumProp } from '../gl/core/shader/variants/shaderVariantEnumProp';
+import { GLVariantShader } from '../../gl/core/shader/variants/GLVariantShader';
+import { shaderVariantBoolProp } from '../../gl/core/shader/variants/shaderVariantBoolProp';
+import { shaderVariantEnumProp } from '../../gl/core/shader/variants/shaderVariantEnumProp';
 import { SimpleColorShaderState } from './SimpleColorShader';
-import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
-import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { GLVariantShaderState } from '../gl/core/shader/variants/GLVariantShaderState';
+import { getDefaultAttributeLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
+import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
+import { GLVariantShaderState } from '../../gl/core/shader/variants/GLVariantShaderState';
 
 const fragSrc = require('./glsl/testVariant.frag').default;
 const vertSrc = require('./glsl/testVariant.vert').default;

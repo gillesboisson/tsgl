@@ -4,8 +4,9 @@ import { WasmAllocatorI } from '../wasm/allocators/interfaces';
 import { structAttr } from '../core/decorators/StructAttribute';
 import { EmscriptenModuleExtended } from '../wasm/EmscriptenModuleLoader';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
-
-const batches: { [ptr: string]: WasmVertexElementBatch<any> } = {};
+import { IInterleaveData } from '../gl/data/IInterleaveData';
+import { InterleavedDataType } from '../gl/data/InterleavedData';
+import { WasmClassBinder } from '../wasm/WasmClassBinder';
 
 export type BatchPullFunction<T> = (
   vertexInd: number,
@@ -14,9 +15,13 @@ export type BatchPullFunction<T> = (
   indexBuffer: Uint16Array,
 ) => void;
 
+const binder = new WasmClassBinder<WasmVertexElementBatch<any>>({
+  VertexElementBatch_wasmPush: (element, ptr) => element.push(),
+});
+
 // @glInterleavedAttributes()  // webggl attributes support
 @wasmStruct({ methodsPrefix: 'VertexElementBatch_' })
-export class WasmVertexElementBatch<T extends WasmClass> extends WasmClass {
+export class WasmVertexElementBatch<T extends IInterleaveData> extends WasmClass {
   // Static ====================================
 
   static byteLength: number;
@@ -87,11 +92,14 @@ export class WasmVertexElementBatch<T extends WasmClass> extends WasmClass {
   get indexBuffer(): Uint16Array {
     return this._indexBuffer;
   }
+  get vertexBuffer(): Uint8Array {
+    return this._vertexBuffer;
+  }
 
   // Methods ====================================
 
   constructor(
-    protected _vertexType: WasmClassType<T>,
+    protected _vertexType: InterleavedDataType<T>,
     vertexLength: number,
     indexLength: number,
     module?: EmscriptenModule,
@@ -106,9 +114,15 @@ export class WasmVertexElementBatch<T extends WasmClass> extends WasmClass {
     this._vertexBuffer = new Uint8Array(finalModule.HEAP16.buffer, metas[0], metas[4] * metas[5]);
     this._indexBuffer = new Uint16Array(finalModule.HEAP16.buffer, metas[1], metas[6] / Uint8Array.BYTES_PER_ELEMENT);
     const vertexCollection = (this._vertexCollection = new Array(vertexLength));
+    const buffer = finalModule.HEAP16.buffer;
     for (let i = 0; i < vertexLength; i++) {
-      vertexCollection[i] = new _vertexType(finalModule, metas[0] + stride * i, true);
+      const v = new _vertexType();
+      v.allocate(buffer, metas[0] + stride * i, stride);
+      vertexCollection[i] = v;
     }
+
+    binder.add(this);
+    // batches[this.ptr.toString()] = this;
   }
 
   end(): void {
@@ -138,15 +152,14 @@ export class WasmVertexElementBatch<T extends WasmClass> extends WasmClass {
     metas[3] += nbIndices;
   }
 
-  push: () => void;
+  push() {
+    throw new Error('not implemented');
+  }
 
   destroy(freePtr?: boolean) {
+    binder.remove(this);
     this.dispose();
 
-    const vertexLength = this._metas[5];
-    for (let i = 0; i < vertexLength; i++) {
-      this._vertexCollection[i].destroy(false);
-    }
     this._vertexCollection.splice(0);
     super.destroy(freePtr);
     delete this._vertexBuffer;

@@ -5,9 +5,17 @@ import { compileProgram } from './compileProgram';
 import { GLShaderState } from './GLShaderState';
 import { GLShaderStateType } from './GLShaderStateType';
 import { IShaderProgram, ISyncUniform } from './IShaderProgram';
+import { GLRenderer } from '../GLRenderer';
 
 export type GLShaderPrecompileFlags = {
   [key: string]: string;
+};
+
+export type ShadersDictionnary = {
+  [name: string]: {
+    shader?: IShaderProgram;
+    shaderCreate?: (renderer: GLRenderer) => IShaderProgram;
+  };
 };
 
 export class GLShader<ShaderStateT extends GLShaderState> extends GLCore

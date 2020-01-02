@@ -5,31 +5,15 @@ import { GLAttribute } from './GLAttribute';
 
 export type AnyWebGLVertexArrayObject = WebGLVertexArrayObject | WebGLVertexArrayObjectOES;
 
-export function createVaoPolyfill(gl: AnyWebRenderingGLContext, orFail: boolean = false): boolean {
-  if (typeof (<WebGL2RenderingContext>gl).createVertexArray !== 'undefined') return true;
-  const nativeVaoExtension = (this.__vaoExt =
-    gl.getExtension('OES_vertex_array_object') ||
-    gl.getExtension('MOZ_OES_vertex_array_object') ||
-    gl.getExtension('WEBKIT_OES_vertex_array_object'));
-
-  if (nativeVaoExtension === undefined) {
-    if (orFail) throw new Error('VAO not supported on this browser');
-
-    return false;
-  }
-  (<any>gl).createVertexArray = function() {
-    return nativeVaoExtension.createVertexArrayOES();
-  };
-  (<any>gl).bindVertexArray = function(vao: any) {
-    return nativeVaoExtension.bindVertexArrayOES(vao);
-  };
-  (<any>gl).deleteVertexArray = function(vao: any) {
-    return nativeVaoExtension.deleteVertexArrayOES(vao);
-  };
-  return true;
+export interface WebGLVaoRenderingContext {
+  vaoType: VaoSupportType;
+  createVertexArray(): AnyWebGLVertexArrayObject;
+  bindVertexArray(vao: AnyWebGLVertexArrayObject): void;
+  deleteVertexArray(vao: AnyWebGLVertexArrayObject): void;
 }
 
 export enum VaoSupportType {
+  NO_SUPPORT,
   WEBGL2_VAO,
   OES_VAO,
 }
@@ -57,7 +41,11 @@ export class GLVao extends GLCore {
     this._indexBuffer = _indexBuffer;
     this._attributes = _attributes;
 
-    if ((<WebGL2RenderingContext>gl).createVertexArray !== undefined) {
+    if (
+      (<WebGLVaoRenderingContext>(<unknown>gl)).vaoType === VaoSupportType.WEBGL2_VAO ||
+      ((<WebGLVaoRenderingContext>(<unknown>gl)).vaoType === undefined &&
+        (<WebGL2RenderingContext>gl).createVertexArray !== undefined)
+    ) {
       // vao supported natively (WebGL2)
       const gl2 = gl as WebGL2RenderingContext;
       this._vao = gl2.createVertexArray();
@@ -88,11 +76,17 @@ export class GLVao extends GLCore {
         this.bind = this.activeGeom;
         this.unbind = this.unbindProxy;
 
+        this._supportMode = VaoSupportType.NO_SUPPORT;
+
         //throw new Error('Vao not supported');
       }
     }
 
     this.activate();
+  }
+
+  public getVaoInd(): AnyWebGLVertexArrayObject {
+    return this._vao;
   }
 
   public getAttributes(): GLAttribute[] {

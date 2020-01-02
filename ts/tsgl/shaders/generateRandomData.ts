@@ -1,4 +1,4 @@
-import { InterleavedDataArray } from '../gl/data/InterleavedDataArray';
+import { InterleavedDataArray } from '../../gl/data/InterleavedDataArray';
 import { vec2 } from 'gl-matrix';
 import { TestTFdata } from './TestTFdata';
 export function generateRandomData(length: number): InterleavedDataArray<TestTFdata> {

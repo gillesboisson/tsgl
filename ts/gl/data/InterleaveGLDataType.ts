@@ -4,6 +4,7 @@ import { GLAttribute } from '../core/data/GLAttribute';
 import { IInterleaveData } from './IInterleaveData';
 import { IStruct } from '../../core/IStruct';
 export interface InterleaveGLDataType<DataT> extends IStruct {
-  createAttributes?: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride: number) => GLAttribute[];
-  new (): DataT;
+  createAttributes?: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride?: number) => GLAttribute[];
+  new (...args: any): DataT;
+  byteLength: number;
 }

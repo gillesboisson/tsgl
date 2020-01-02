@@ -21,9 +21,9 @@ BUILD_FLAGS = -c $(OPTIMIZATION_OPTIONS)
 PROJECT_NAME = em_app
 
 
-SOURCES = $(wildcard $(addprefix $(SRC_DIR)/,*.c)) $(wildcard $(addprefix $(SRC_DIR)/core/,*.c)) $(wildcard $(addprefix $(SRC_DIR)/glmatrix/,*.c))  $(wildcard $(addprefix $(SRC_DIR)/geom/,*.c))
+SOURCES = $(wildcard $(addprefix $(SRC_DIR)/,*.c)) $(wildcard $(addprefix $(SRC_DIR)/core/,*.c)) $(wildcard $(addprefix $(SRC_DIR)/rendering/,*.c)) $(wildcard $(addprefix $(SRC_DIR)/glmatrix/,*.c))  $(wildcard $(addprefix $(SRC_DIR)/geom/,*.c))
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJECTS_DIRS = $(OBJ_DIR) $(OBJ_DIR)/glmatrix $(OBJ_DIR)/geom $(OBJ_DIR)/core
+OBJECTS_DIRS = $(OBJ_DIR) $(OBJ_DIR)/glmatrix $(OBJ_DIR)/geom $(OBJ_DIR)/core $(OBJ_DIR)/rendering
 
 
 all: $(PROJECT_NAME)

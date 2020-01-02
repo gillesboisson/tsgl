@@ -19,6 +19,10 @@ export abstract class WasmClass {
     return this._ptr;
   }
 
+  get ptrStr(): string {
+    return this.ptr.toString(16);
+  }
+
   get memoryBuffer(): Uint8Array {
     return this._memoryRef;
   }

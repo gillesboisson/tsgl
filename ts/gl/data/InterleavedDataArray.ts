@@ -39,7 +39,7 @@ export class InterleavedDataArray<DataT extends IInterleaveData> implements IInt
   }
   buildData(index: number) {
     this._collection[index] = new this.DataClass();
-    this._collection[index].allocate(this, this._arrayBuffer, index * this._stride, this._stride);
+    this._collection[index].allocate(this._arrayBuffer, index * this._stride, this._stride);
   }
   get byteLength(): number {
     return this._byteLength;

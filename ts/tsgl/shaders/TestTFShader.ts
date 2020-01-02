@@ -1,7 +1,7 @@
-import { GLTransformFeedbackShader, GLTransformFeedbackShaderState } from '../gl/core/data/GLTFShader';
+import { GLTransformFeedbackShader, GLTransformFeedbackShaderState } from '../../gl/core/data/GLTFShader';
 import { vec3 } from 'gl-matrix';
-import { GLVao } from '../gl/core/data/GLVao';
-import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
+import { GLVao } from '../../gl/core/data/GLVao';
+import { getDefaultAttributeLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 
 /*
 export class TestTFShaderState extends GLTransformFeedback {

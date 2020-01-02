@@ -41,6 +41,7 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
           ? prop.wasm.wasmType.byteLength
           : prop.type.BYTES_PER_ELEMENT * prop.length;
       const nLength = propOffset + byteLength;
+
       if (nLength > cBLength) cBLength = nLength;
 
       if (prop.useAccessor === true) {

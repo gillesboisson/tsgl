@@ -1,4 +1,5 @@
 import { InterleavedDataArray } from './InterleavedDataArray';
+import { IStruct } from '../../core/IStruct';
 /*
 export interface InterleavedProp {
   name?: string;
@@ -13,10 +14,5 @@ export interface InterleavedProp {
 }
 */
 export interface IInterleaveData {
-  allocate(
-    array: InterleavedDataArray<IInterleaveData>,
-    arrayBuffer: ArrayBuffer,
-    offset: number,
-    stride: number,
-  ): void;
+  allocate(arrayBuffer: ArrayBuffer, offset: number, stride: number): void;
 }

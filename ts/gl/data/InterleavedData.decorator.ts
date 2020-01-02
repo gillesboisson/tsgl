@@ -64,12 +64,7 @@ export function interleavedData() {
 
       target.byteLength = length;
 
-      prototype.allocate = function(
-        array: InterleavedDataArray<IInterleaveData>,
-        arrayBuffer: ArrayBuffer,
-        offset: number,
-        stride: number,
-      ) {
+      prototype.allocate = function(arrayBuffer: ArrayBuffer, offset: number, stride: number) {
         let length = 0;
 
         for (let prop of prototype.__anPropsList) {

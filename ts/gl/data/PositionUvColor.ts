@@ -33,10 +33,5 @@ export class PositionUvColor implements IInterleaveData {
     return 9 * Float32Array.BYTES_PER_ELEMENT;
   }
 
-  allocate(
-    array: InterleavedDataArray<IInterleaveData>,
-    arrayBuffer: ArrayBuffer,
-    offset: number,
-    stride: number,
-  ): void {}
+  allocate(arrayBuffer: ArrayBuffer, offset: number, stride: number): void {}
 }

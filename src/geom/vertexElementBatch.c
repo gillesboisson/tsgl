@@ -66,6 +66,11 @@ uint32_t VertexElementBatch_pull(VertexElementBatch *batch, uint32_t nbVertices,
   return vertexInd;
 }
 
+void VertexElementBatch_print(VertexElementBatch *batch)
+{
+  printf("Batch %i, vertexLength %i, stride %i, indexLength %i\n", (uint32_t)batch, batch->vertexLength, batch->stride, batch->indexLength);
+}
+
 void VertexElementBatch_end(VertexElementBatch *batch)
 {
   if (batch->vertexInd > 0 || batch->indexInd > 0)

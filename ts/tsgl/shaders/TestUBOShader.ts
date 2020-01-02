@@ -1,9 +1,9 @@
-import { GLShaderState } from '../gl/core/shader/GLShaderState';
-import { GLShader } from '../gl/core/shader/GLShader';
-import { GLUbo } from '../gl/core/data/GLUbo';
-import { GLBuffer } from '../gl/core/data/GLBuffer';
+import { GLShaderState } from '../../gl/core/shader/GLShaderState';
+import { GLShader } from '../../gl/core/shader/GLShader';
+import { GLUbo } from '../../gl/core/data/GLUbo';
+import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { TestVariantShaderState } from './TestVariantShader';
-import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
+import { getDefaultAttributeLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 
 const fragSrc = require('./glsl/testUbo.frag').default;

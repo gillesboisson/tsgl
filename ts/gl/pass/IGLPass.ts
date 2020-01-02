@@ -3,6 +3,17 @@ import { GLTexture } from '../texture/GLTexture';
 import { mat4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from '../core/GLHelpers';
 import { GLDefaultAttributesLocation } from '../core/data/GLDefaultAttributesLocation';
+import { GLCore } from '../core/GLCore';
+import { WasmVertexElementBatch } from '../../geom/WasmVertexElementBatch';
+import { PositionColor } from '../data/PositionColor';
+import { GLBuffer } from '../core/data/GLBuffer';
+import { GLVao, AnyWebGLVertexArrayObject, WebGLVaoRenderingContext } from '../core/data/GLVao';
+import { GLShader } from '../core/shader/GLShader';
+import { WireframeShader } from '../../tsgl/shaders/WireframeShader';
+import { getUniformsLocation } from '../core/shader/getUniformsLocation';
+import { GLRenderer } from '../core/GLRenderer';
+import { IShaderProgram } from '../core/shader/IShaderProgram';
+// import { PositionColor } from '../../index';
 
 export interface IPrepare<PrepareF extends Function = () => void> {
   prepare: PrepareF;

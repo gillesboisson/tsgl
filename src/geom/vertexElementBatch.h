@@ -28,5 +28,5 @@ uint32_t VertexElementBatch_pull(VertexElementBatch *batch, uint32_t nbVertices,
 void VertexElementBatch_end(VertexElementBatch *batch);
 
 void VertexElementBatch_dispose(VertexElementBatch *batch);
-
+void VertexElementBatch_print(VertexElementBatch *batch);
 #endif

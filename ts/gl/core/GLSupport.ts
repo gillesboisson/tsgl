@@ -1,4 +1,5 @@
 import { AnyWebRenderingGLContext } from './GLHelpers';
+import { WebGLVaoRenderingContext, VaoSupportType } from './data/GLVao';
 
 export class GLSupport {
   static webGL2Supported(gl: WebGL2RenderingContext) {
@@ -83,7 +84,11 @@ export class GLSupport {
   }
 
   static VAOSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
-    if (typeof (<WebGL2RenderingContext>gl).createVertexArray !== 'undefined') return true;
+    if ((<any>gl).vaoType !== undefined) return true;
+    if (typeof (<WebGL2RenderingContext>gl).createVertexArray !== 'undefined') {
+      (<any>gl).vaoType = VaoSupportType.WEBGL2_VAO;
+      return true;
+    }
     if (useExtension === true) {
       if ((<any>gl).__vaoExt !== undefined) return true;
 
@@ -97,6 +102,9 @@ export class GLSupport {
 
         return false;
       }
+
+      (<any>gl).vaoType = VaoSupportType.OES_VAO;
+
       (<any>gl).createVertexArray = function() {
         return nativeVaoExtension.createVertexArrayOES();
       };

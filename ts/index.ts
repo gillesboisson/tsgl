@@ -1,20 +1,20 @@
 import { EmscriptenModuleLoader } from './wasm/EmscriptenModuleLoader';
 import { GLRenderer, GLRendererType } from './gl/core/GLRenderer';
-import { SimpleColorShader } from './shaders/SimpleColorShader';
+import { SimpleColorShader } from './tsgl/shaders/SimpleColorShader';
 import { vec3, vec2, mat4, quat, vec4 } from 'gl-matrix';
 import { GLDefaultAttributesLocation } from './gl/core/data/GLDefaultAttributesLocation';
 import { WasmBuffer } from './wasm/WasmBuffer';
-import { TestTFShaderRender } from './shaders/TestTFShaderRender';
+import { TestTFShaderRender } from './tsgl/shaders/TestTFShaderRender';
 import { GLVao } from './gl/core/data/GLVao';
 import { glInterleavedAttributes } from './gl/core/data/gLInterleavedAttributes';
 import { AnyWebRenderingGLContext } from './gl/core/GLHelpers';
 import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLAttribute } from './gl/core/data/GLAttribute';
-import { TestTFShader } from './shaders/TestTFShader';
+import { TestTFShader } from './tsgl/shaders/TestTFShader';
 import { GLTransformFeedbackPass } from './gl/core/GLTransformFeedbackPass';
 import { WasmSceneNode } from './3d/WasmSceneNode';
 import { WasmCamera } from './3d/WasmCamera';
-import { BasicShader } from './shaders/BasicShader';
+import { BasicShader } from './tsgl/shaders/BasicShader';
 import { GLMesh } from './gl/core/data/GLMesh';
 import { InterleavedDataArray } from './gl/data/InterleavedDataArray';
 import { BOX_POSITIONS, BOX_TRIANGLES_INDICES } from './geom/primitive';
@@ -32,26 +32,31 @@ import { WasmClass } from './wasm/WasmClass';
 import { WasmAllocatorI } from './wasm/allocators/interfaces';
 import { structAttr } from './core/decorators/StructAttribute';
 import { WasmVertexElementBatch } from './geom/WasmVertexElementBatch';
-
+import { WireframeShader } from './tsgl/shaders/WireframeShader';
+import { GLSupport } from './gl/core/GLSupport';
+import { PositionColor } from './gl/data/PositionColor';
+import { WireframePass } from './tsgl/renderer/pass/WireframePass';
+import { AWasmGLPass } from './gl/pass/AWasmGLPass';
 // @glInterleavedAttributes()  // webggl attributes support
-@wasmStruct({ methodsPrefix: 'PositionColor_' })
-export class PositionColor extends WasmClass {
-  // Static ====================================
 
-  static byteLength: number;
-  static allocator: WasmAllocatorI<PositionColor>;
+class MyPass extends AWasmGLPass {
+  init(firstInit: boolean) {
+    super.init(firstInit);
+    console.log('MyPass -> init');
+    this.initDefaultWasmBinding();
+  }
 
-  @structAttr({
-    type: Float32Array,
-    length: 3,
-  })
-  position: vec3;
+  prepare() {
+    console.log('prepare');
+  }
 
-  @structAttr({
-    type: Float32Array,
-    length: 4,
-  })
-  color: vec4;
+  bind() {
+    console.log('bind');
+  }
+
+  apply() {
+    console.log('apply');
+  }
 }
 
 const mouseState = {
@@ -119,7 +124,7 @@ const loader: EmscriptenModuleLoader = new EmscriptenModuleLoader();
 // var SPECTOR = require('spectorjs');
 
 // const DEBUG = false;
-const DEBUG_COMMANDS_START = true;
+const DEBUG_COMMANDS_START = false;
 const DEBUG_COMMANDS_NB = 150;
 let spector: any = null;
 
@@ -132,7 +137,68 @@ loader.load('em_app.js').then((module) => {
   // test();
   //console.log('module : ', module.wasmBinary[Symbol]);
 
-  const batch = new WasmVertexElementBatch(PositionColor, 18, 108, module);
+  const renderer = GLRenderer.createFromCanvas(
+    document.getElementById('test') as HTMLCanvasElement,
+    GLRendererType.WebGL2,
+  );
+  const gl = <WebGL2RenderingContext>renderer.getGL();
+  let watching = DEBUG_COMMANDS_START;
+
+  if (DEBUG_COMMANDS_START) {
+    proxyAllMethods(
+      gl,
+      (name, args) => console.log(name, args),
+      DEBUG_COMMANDS_NB,
+      () => (watching = false),
+    );
+  }
+
+  renderer.registerShaderFromClass(BasicShader);
+  renderer.registerShaderFromClass(WireframeShader);
+
+  // const batch = new WasmVertexElementBatch(PositionColor, 17, 13);
+
+  const testPass = new MyPass(renderer);
+
+  module.ccall('testRenderingPass', null, ['number'], [testPass.ptr]);
+
+  const wireframeB = new WireframePass(renderer, 8, 12, module);
+  wireframeB.prepare();
+
+  function pullV(vertexInd: number, collection: PositionColor[], indexInd: number, indexBuffer: Uint16Array) {
+    const x = 0;
+    const y = 0;
+    const z = 0;
+
+    vec3.set(collection[vertexInd].position, x - 0.5, y - 0.5, z);
+    vec3.set(collection[vertexInd + 1].position, x + 0.5, y - 0.5, z);
+    vec3.set(collection[vertexInd + 2].position, x - 0.5, y + 0.5, z);
+    vec3.set(collection[vertexInd + 3].position, x + 0.5, y + 0.5, z);
+
+    for (let i = 0; i < 4; i++) {
+      const element = collection[i + vertexInd];
+      vec4.set(element.color, 1, 0, 1, 1);
+    }
+
+    indexBuffer[indexInd] = vertexInd + 0;
+    indexBuffer[indexInd + 1] = vertexInd + 1;
+    indexBuffer[indexInd + 2] = vertexInd + 1;
+    indexBuffer[indexInd + 3] = vertexInd + 3;
+    indexBuffer[indexInd + 4] = vertexInd + 3;
+    indexBuffer[indexInd + 5] = vertexInd + 2;
+    indexBuffer[indexInd + 6] = vertexInd + 2;
+    indexBuffer[indexInd + 7] = vertexInd + 0;
+  }
+
+  // batch.push = () => console.log(batch);
+
+  // module.ccall('testBatch', null, ['number'], [batch.ptr]);
+
+  // const vao = new GLVao(gl, []);
+  // console.log('gl : ', gl, vao);
+
+  /*
+  const batch = new WasmVertexElementBatch(PositionColor, 32, 32, module);
   function pull(vertexInd: number, collection: PositionColor[], indInd: number, indexBuffer: Uint16Array) {
     // const x = Math.random() * 2 + 1;
     // const y = Math.random() * 2 + 1;
@@ -153,37 +219,33 @@ loader.load('em_app.js').then((module) => {
 
     indexBuffer[indInd] = vertexInd + 0;
     indexBuffer[indInd + 1] = vertexInd + 1;
-    indexBuffer[indInd + 2] = vertexInd + 2;
-    indexBuffer[indInd + 3] = vertexInd + 1;
+    indexBuffer[indInd + 2] = vertexInd + 1;
+    indexBuffer[indInd + 3] = vertexInd + 3;
     indexBuffer[indInd + 4] = vertexInd + 3;
     indexBuffer[indInd + 5] = vertexInd + 2;
+    indexBuffer[indInd + 6] = vertexInd + 2;
+    indexBuffer[indInd + 7] = vertexInd + 0;
   }
+
+  const vertexBuffer = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW, batch.vertexBuffer);
+  const indexBuffer = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, gl.DYNAMIC_DRAW, batch.indexBuffer);
+  const vao = new GLVao(gl, PositionColor.createAttributes(gl, vertexBuffer), indexBuffer);
+
+  const shader = new WireframeShader(gl);
+  const wireframeShaderState = shader.createState();
 
   batch.push = () => {
-    console.log('< ', batch);
+    // console.log('> push', batch.indexInd);
+    wireframeShaderState.start();
+    indexBuffer.bufferSubData();
+    vertexBuffer.bufferSubData();
+    vao.bind();
+    gl.drawElements(gl.LINES, batch.indexInd, gl.UNSIGNED_SHORT, 0);
+    vao.unbind();
   };
+  */
 
-  for (let i = 0; i < 16; i++) {
-    batch.pull(4, 6, pull);
-  }
-
-  return;
-  const renderer = GLRenderer.createFromCanvas(
-    document.getElementById('test') as HTMLCanvasElement,
-    GLRendererType.WebGL2,
-  );
-  const gl = <WebGL2RenderingContext>renderer.getGL();
-  let watching = DEBUG_COMMANDS_START;
-
-  if (DEBUG_COMMANDS_START) {
-    proxyAllMethods(
-      gl,
-      (name, args) => console.log(name, args),
-      DEBUG_COMMANDS_NB,
-      () => (watching = false),
-    );
-  }
-
+  /*
   const posBuffer = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(BOX_POSITIONS));
   const colorBuffer = new GLBuffer(
     gl,
@@ -248,11 +310,26 @@ loader.load('em_app.js').then((module) => {
   const camSpeed = 0.1;
 
   // const node = new WasmSceneNode();
+  */
 
   function render() {
     window.requestAnimationFrame(render);
 
     renderer.clear();
+
+    wireframeB.begin();
+
+    wireframeB.pull(4, 8, pullV);
+
+    wireframeB.end();
+
+    // batch.begin();
+    // for (let i = 0; i < 32; i++) {
+    //   batch.pull(4, 8, pull);
+    // }
+    // batch.end();
+
+    /*
     if (watching) console.log('--------------------------------------------------------');
     for (let index = 0; index < nodes.length; index++) {
       nodes[index].transform.rotateEuler(0, 0.01, 0);
@@ -305,6 +382,7 @@ loader.load('em_app.js').then((module) => {
     // gl.bufferSubData(gl.UNIFORM_BUFFER, 0, nodeResultData.memoryBuffer, 0);
     // gl.bindBuffer(gl.UNIFORM_BUFFER, null);
     mesh.draw();
+    */
   }
 
   render();
