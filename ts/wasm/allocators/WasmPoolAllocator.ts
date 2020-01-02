@@ -58,7 +58,7 @@ export class WasmPoolAllocator<T extends WasmClassRelocatable> implements WasmIn
 
   getElements(
     module: EmscriptenModuleExtended,
-    elementPtrs: number[],
+    elementPtrs: number[] | Uint32Array,
     array: T[] = new Array(elementPtrs.length),
   ): T[] {
     const elementByteLength = this.wasmType.byteLength;

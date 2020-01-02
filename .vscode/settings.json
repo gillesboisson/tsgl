@@ -55,7 +55,8 @@
     "box.h": "c",
     "vertexbatch.h": "c",
     "renderpass.h": "c",
-    "vertexelementbatch.h": "c"
+    "vertexelementbatch.h": "c",
+    "nodequeuepass.h": "c"
   },
   "files.watcherExclude": {
     "archive": true

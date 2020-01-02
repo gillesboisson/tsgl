@@ -4,7 +4,6 @@ import { getDefaultAttributeLocation } from '../../gl/core/data/GLDefaultAttribu
 import { mat4 } from 'gl-matrix';
 import { GLUbo } from '../../gl/core/data/GLUbo';
 import { GLBuffer } from '../../gl/core/data/GLBuffer';
-import { WasmSceneNodeResult } from '../../WasmSceneNodeResult';
 import { getUniformsLocation } from '../../gl/core/shader/getUniformsLocation';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 

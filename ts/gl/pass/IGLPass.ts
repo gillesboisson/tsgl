@@ -71,3 +71,7 @@ export class BasicTextureModelPass implements IBasicTextureModelPass {
 
   destroy(): void {}
 }
+
+export interface RenderPassDictionnary {
+  [name: string]: IGLPass;
+}

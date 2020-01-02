@@ -12,7 +12,7 @@ import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLAttribute } from './gl/core/data/GLAttribute';
 import { TestTFShader } from './tsgl/shaders/TestTFShader';
 import { GLTransformFeedbackPass } from './gl/core/GLTransformFeedbackPass';
-import { WasmSceneNode } from './3d/SceneNode';
+import { SceneNode } from './3d/SceneNode';
 import { WasmCamera } from './3d/Camera';
 import { BasicShader } from './tsgl/shaders/BasicShader';
 import { GLMesh } from './gl/core/data/GLMesh';
@@ -23,10 +23,9 @@ import { WasmResizabledBuffer } from './wasm/WasmResizableBuffer';
 import { WasmStructBuffer } from './wasm/WasmStructBuffer';
 import { WasmPtrVector } from './wasm/WasmPtrVector';
 import { SceneNodeType } from './3d/SceneNodeType';
-import { proxyAllMethods } from './proxyAllMethods';
+import { proxyAllMethods } from './helpers/proxyAllMethods';
 import { Frustrum } from './geom/Frustrum';
 import { GLUbo } from './gl/core/data/GLUbo';
-import { WasmSceneNodeResult } from './WasmSceneNodeResult';
 import { wasmStruct } from './wasm/decorators/classes';
 import { WasmClass } from './wasm/WasmClass';
 import { WasmAllocatorI } from './wasm/allocators/interfaces';
@@ -43,7 +42,7 @@ class MyPass extends AWasmGLPass {
   init(firstInit: boolean) {
     super.init(firstInit);
     console.log('MyPass -> init');
-    this.initDefaultWasmBinding();
+    this.initPassWasmBinding();
   }
 
   prepare() {
@@ -137,7 +136,7 @@ loader.load('em_app.js').then((module) => {
   // test();
   //console.log('module : ', module.wasmBinary[Symbol]);
 
-  const renderer = GLRenderer.createFromCanvas(
+  const renderer = GLRenderer.createFromCanvas<any>(
     document.getElementById('test') as HTMLCanvasElement,
     GLRendererType.WebGL2,
   );

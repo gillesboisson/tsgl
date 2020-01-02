@@ -7,10 +7,10 @@ import { WasmPtrVector } from '../wasm/WasmPtrVector';
 import { SceneNodeType } from './SceneNodeType';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
 import { mat4 } from 'gl-matrix';
-@wasmStruct({ methodsPrefix: 'SceneNode_', allocator: new WasmPoolAllocator({ wasmType: WasmSceneNode }) })
-export class WasmSceneNode extends WasmClassRelocatable {
+@wasmStruct({ methodsPrefix: 'SceneNode_', allocator: new WasmPoolAllocator({ wasmType: SceneNode }) })
+export class SceneNode extends WasmClassRelocatable {
   static byteLength: number;
-  static allocator: WasmPoolAllocator<WasmSceneNode>;
+  static allocator: WasmPoolAllocator<SceneNode>;
 
   // Wasm Attribute Binding ==========================================
   @structAttr({
@@ -38,7 +38,7 @@ export class WasmSceneNode extends WasmClassRelocatable {
   protected _bounds: Float32Array;
 
   @wasmObjectAttr(WasmPtrVector)
-  _childrenPtrVector: WasmPtrVector<WasmSceneNode>;
+  _childrenPtrVector: WasmPtrVector<SceneNode>;
 
   // Wasm Function Binding ==========================================
 
@@ -49,7 +49,7 @@ export class WasmSceneNode extends WasmClassRelocatable {
   test: () => void;
 
   // ==================================================================
-  private _children: WasmSceneNode[] = [];
+  private _children: SceneNode[] = [];
   private _transform: WasmTransform;
 
   get nodeType() {
@@ -68,14 +68,14 @@ export class WasmSceneNode extends WasmClassRelocatable {
     this._nodeType = SceneNodeType.Dynamic;
   }
 
-  addChild(tr: WasmSceneNode) {
+  addChild(tr: SceneNode) {
     if (this._children.indexOf(tr) === -1) {
       this._childrenPtrVector.add(tr);
       this._children.push(tr);
     }
   }
 
-  removeChild(tr: WasmSceneNode) {
+  removeChild(tr: SceneNode) {
     const ind = this._children.indexOf(tr);
     if (ind !== -1) {
       this._children.splice(ind, 1);

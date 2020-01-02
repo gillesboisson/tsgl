@@ -23,7 +23,7 @@ export abstract class AWasmGLPass extends WasmClass {
   protected _cMethodsDelegate: Uint32Array;
 
   @wasmFunctionOut('initDefaultMethodsBinding')
-  initDefaultWasmBinding: () => void;
+  initPassWasmBinding: () => void;
 
   protected gl: AnyWebRenderingGLContext;
   constructor(protected renderer: GLRenderer, module?: EmscriptenModule) {

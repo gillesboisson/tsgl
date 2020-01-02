@@ -10,5 +10,5 @@ export interface WasmAllocatorI<T extends WasmClass> {
 export interface WasmIndexedAllocatorI<T extends WasmClass> extends WasmAllocatorI<T> {
   getElement(module: EmscriptenModule, elementPtr: number): T;
 
-  getElements(module: EmscriptenModule, elementPtrs: number[], array?: T[]): T[];
+  getElements(module: EmscriptenModule, elementPtrs: number[] | Uint32Array, array?: T[]): T[];
 }

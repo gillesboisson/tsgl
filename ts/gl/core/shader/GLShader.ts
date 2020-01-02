@@ -14,7 +14,7 @@ export type GLShaderPrecompileFlags = {
 export type ShadersDictionnary = {
   [name: string]: {
     shader?: IShaderProgram;
-    shaderCreate?: (renderer: GLRenderer) => IShaderProgram;
+    shaderCreate?: (renderer: GLRenderer<any>) => IShaderProgram;
   };
 };
 

@@ -10,5 +10,5 @@ export interface ICreateState extends IGLCore, IUse {
 }
 
 export interface IShaderFactoryType extends Function {
-  registerShader(renderer: GLRenderer): void;
+  registerShader(renderer: GLRenderer<any>): void;
 }

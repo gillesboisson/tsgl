@@ -1,4 +1,4 @@
-import { WasmSceneNode } from './SceneNode';
+import { SceneNode } from './SceneNode';
 import { structAttr, structBool, wasmObjectAttr } from '../core/decorators/StructAttribute';
 import { mat4 } from 'gl-matrix';
 import { wasmStruct } from '../wasm/decorators/classes';
@@ -10,7 +10,7 @@ import { Frustrum } from '../geom/Frustrum';
 const tMat: mat4 = mat4.create();
 
 @wasmStruct({ methodsPrefix: 'Camera_' })
-export class WasmCamera extends WasmSceneNode {
+export class WasmCamera extends SceneNode {
   @wasmObjectAttr(Frustrum)
   protected _frustrum: Frustrum;
 
