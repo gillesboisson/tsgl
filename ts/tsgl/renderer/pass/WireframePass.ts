@@ -4,7 +4,7 @@ import { GLCore } from '../../../gl/core/GLCore';
 import { GLBuffer } from '../../../gl/core/data/GLBuffer';
 import { GLVao, AnyWebGLVertexArrayObject } from '../../../gl/core/data/GLVao';
 import { GLRenderer } from '../../../gl/core/GLRenderer';
-import { WasmVertexElementBatch } from '../../../geom/WasmVertexElementBatch';
+import { VertexElementBatch } from '../../../geom/VertexElementBatch';
 import { PositionColor } from '../../../gl/data/PositionColor';
 import { getUniformsLocation } from '../../../gl/core/shader/getUniformsLocation';
 import { structAttr, wasmPtrAttr } from '../../../core/decorators/StructAttribute';

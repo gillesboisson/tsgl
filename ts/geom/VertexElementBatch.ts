@@ -15,17 +15,17 @@ export type BatchPullFunction<T> = (
   indexBuffer: Uint16Array,
 ) => void;
 
-const binder = new WasmClassBinder<WasmVertexElementBatch<any>>({
+const binder = new WasmClassBinder<VertexElementBatch<any>>({
   VertexElementBatch_wasmPush: (element, ptr) => element.push(),
 });
 
 // @glInterleavedAttributes()  // webggl attributes support
 @wasmStruct({ methodsPrefix: 'VertexElementBatch_' })
-export class WasmVertexElementBatch<T extends IInterleaveData> extends WasmClass {
+export class VertexElementBatch<T extends IInterleaveData> extends WasmClass {
   // Static ====================================
 
   static byteLength: number;
-  static allocator: WasmAllocatorI<WasmVertexElementBatch<any>>;
+  static allocator: WasmAllocatorI<VertexElementBatch<any>>;
   // static createAttributes(gl: AnyWebRenderingGLContext,buffer: GLBuffer,stride: number = target.byteLength): GLAttributes[] // webgl attributes support
 
   // WASM Props ====================================

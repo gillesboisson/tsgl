@@ -1,4 +1,4 @@
-import { WasmVertexElementBatch } from '../../geom/WasmVertexElementBatch';
+import { VertexElementBatch } from '../../geom/VertexElementBatch';
 import { IInterleaveData } from '../data/IInterleaveData';
 import { InterleavedDataType } from '../data/InterleavedData';
 import { AnyWebRenderingGLContext } from '../core/GLHelpers';
@@ -10,7 +10,7 @@ import { GLVao } from '../core/data/GLVao';
 import { InterleaveGLDataType } from '../data/InterleaveGLDataType';
 import { GLRenderer } from '../core/GLRenderer';
 
-export abstract class AWasmBatchPass<VertexType extends IInterleaveData> extends WasmVertexElementBatch<VertexType>
+export abstract class AWasmBatchPass<VertexType extends IInterleaveData> extends VertexElementBatch<VertexType>
   implements IGLPass, IBind, IDestroy {
   protected vertexGLBuffer: GLBuffer;
   protected indexGLBuffer: GLBuffer;

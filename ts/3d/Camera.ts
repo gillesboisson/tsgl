@@ -1,11 +1,11 @@
-import { WasmSceneNode } from './WasmSceneNode';
+import { WasmSceneNode } from './SceneNode';
 import { structAttr, structBool, wasmObjectAttr } from '../core/decorators/StructAttribute';
 import { mat4 } from 'gl-matrix';
 import { wasmStruct } from '../wasm/decorators/classes';
 import { DirtyFlag } from '../geom/Transform';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
 import { SceneNodeType } from './SceneNodeType';
-import { Frustrum } from '../geom/WasmFrustrum';
+import { Frustrum } from '../geom/Frustrum';
 
 const tMat: mat4 = mat4.create();
 

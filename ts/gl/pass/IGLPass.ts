@@ -4,7 +4,7 @@ import { mat4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from '../core/GLHelpers';
 import { GLDefaultAttributesLocation } from '../core/data/GLDefaultAttributesLocation';
 import { GLCore } from '../core/GLCore';
-import { WasmVertexElementBatch } from '../../geom/WasmVertexElementBatch';
+import { VertexElementBatch } from '../../geom/VertexElementBatch';
 import { PositionColor } from '../data/PositionColor';
 import { GLBuffer } from '../core/data/GLBuffer';
 import { GLVao, AnyWebGLVertexArrayObject, WebGLVaoRenderingContext } from '../core/data/GLVao';
