@@ -3,29 +3,30 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "renderPass.h"
+#include "queuePass.h"
 #include "../core/ptrBuffer.h"
 #include "../core/wasmBuffer.h"
+#include "../geom/sceneNodeResult.h"
 
-typedef struct
+typedef struct ANodeQueuePass ANodeQueuePass;
+
+struct ANodeQueuePass
 {
-  void *(*pullFunction)(RenderPass *rp, SceneNode *node, uint32_t index);
+  void *(*pullFunction)(ANodeQueuePass *rp, SceneNode *node, uint32_t index);
   QueuePass basePass;
   void **nodes;
-} ANodeQueuePass;
-
-typedef struct
-{
-  VecP mvp[16];
-  VecP model[16];
-  VecP rotation[16];
-} SceneNodeResult;
+};
 
 typedef struct
 {
   ANodeQueuePass basePass;
   WasmBuffer *resultData;
 } NodeQueuePass;
+
+void ANodeQueuePass_init(ANodeQueuePass *this, void *(*pullFunction)(ANodeQueuePass *pass, SceneNode *node, uint32_t index), uint32_t length, void (*bindFunction)(RenderPass *rp), void (*applyFunction)(RenderPass *rp));
+
+void *ANodeQueuePass_pull(ANodeQueuePass *pass, SceneNode *node);
+void *NodeQueuePass_pull(NodeQueuePass *pass, SceneNode *node, uint32_t index);
 
 /*
 inline void ANodeQueuePass_init(ANodeQueuePass *pass, uint32_t length)

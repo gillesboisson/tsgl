@@ -57,7 +57,8 @@
     "renderpass.h": "c",
     "vertexelementbatch.h": "c",
     "nodequeuepass.h": "c",
-    "queuepasscollection.h": "c"
+    "queuepasscollection.h": "c",
+    "queuepass.h": "c"
   },
   "files.watcherExclude": {
     "archive": true

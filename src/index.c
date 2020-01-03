@@ -16,7 +16,9 @@
 #include "geom/vertexElementBatch.h"
 #include "core/helpers.h"
 #include "rendering/renderPass.h"
+#include "rendering/queuePass.h"
 #include "rendering/queuePassCollection.h"
+#include "rendering/nodeQueuePass.h"
 
 //#include "./myClass.h"
 
@@ -25,9 +27,37 @@ extern "C"
 {
 #endif
 
-  EMSCRIPTEN_KEEPALIVE void testPassQueueCollection(QueuePassCollection *queue)
+  void QueuePassTest_bind(RenderPass *pass)
   {
-    printf("Queue");
+    printf("> QueuePassTest_bind %p \n", pass);
+  }
+
+  void QueuePassTest_apply(RenderPass *pass)
+  {
+    printf("> QueuePassTest_apply %p \n", pass);
+  }
+
+  void *NodeQueuePassTest_pull(ANodeQueuePass *pass, SceneNode *node, uint32_t index)
+  {
+    printf("> NodeQueuePassTest_pull %p, Node : %p, index : %i \n", pass, node, index);
+    return NULL;
+  }
+
+  EMSCRIPTEN_KEEPALIVE void testPassQueueCollection()
+  {
+    printf("> testPassQueueCollection \n");
+    ANodeQueuePass *pass = malloc(sizeof(ANodeQueuePass));
+
+    ANodeQueuePass_init(pass, &NodeQueuePassTest_pull, 16, &QueuePassTest_bind, &QueuePassTest_apply);
+
+    for (size_t i = 0; i < 33; i++)
+    {
+      SceneNode *node = SceneNode_create();
+      printf("> Create node %p \n", node);
+      void *ptr = ANodeQueuePass_pull(pass, node);
+    }
+
+    // RenderPass_init(&pass->basePass.basePass, &QueuePassTest_bind, &QueuePassTest_apply);
   }
 
   /*

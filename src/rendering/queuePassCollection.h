@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "renderPass.h"
+#include "queuePass.h"
 
 typedef struct
 {

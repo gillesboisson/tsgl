@@ -135,6 +135,9 @@ loader.load('em_app.js').then((module) => {
     BaseRenderer,
   );
 
+  module.ccall('testPassQueueCollection', null, [], []);
+
+  return;
   const collectionQueue = new QueuePassCollection(module);
   collectionQueue.addQueuePass('node', new NodePass(renderer, 32, module));
 
