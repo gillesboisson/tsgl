@@ -21,7 +21,6 @@ inline void QueuePass_begin(QueuePass *pass)
 
 inline void QueuePass_apply(QueuePass *pass)
 {
-  printf("> QueuePass_apply\n");
   (pass->basePass.applyFunction)(&pass->basePass);
   pass->index = 0;
 }

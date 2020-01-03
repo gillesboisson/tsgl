@@ -135,16 +135,24 @@ loader.load('em_app.js').then((module) => {
     BaseRenderer,
   );
 
-  module.ccall('testPassQueueCollection', null, [], []);
-
-  return;
   const collectionQueue = new QueuePassCollection(module);
+
+  // console.log('collectionQueue ', collectionQueue.ptrStr);
+
   collectionQueue.addQueuePass('node', new NodePass(renderer, 32, module));
+
+  // console.log(' collectionQueue.length : ', collectionQueue.length);
 
   const nodeQ = collectionQueue.getQueuePass('node');
 
+  console.log('nodeQ : ', nodeQ, nodeQ.ptrStr);
+
+  /*
   console.log('nodeQ : ', nodeQ);
   collectionQueue.printWasm();
+  */
+
+  module.ccall('testPassQueueCollection', null, ['number'], [collectionQueue.ptr]);
 
   return;
   const gl = <WebGL2RenderingContext>renderer.getGL();

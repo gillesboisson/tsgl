@@ -12,8 +12,8 @@ typedef struct ANodeQueuePass ANodeQueuePass;
 
 struct ANodeQueuePass
 {
-  void *(*pullFunction)(ANodeQueuePass *rp, SceneNode *node, uint32_t index);
   QueuePass basePass;
+  void *(*pullFunction)(ANodeQueuePass *rp, SceneNode *node, uint32_t index);
   void **nodes;
 };
 
@@ -26,8 +26,9 @@ typedef struct
 void ANodeQueuePass_init(ANodeQueuePass *this, void *(*pullFunction)(ANodeQueuePass *pass, SceneNode *node, uint32_t index), uint32_t length, void (*bindFunction)(RenderPass *rp), void (*applyFunction)(RenderPass *rp));
 
 void *ANodeQueuePass_pull(ANodeQueuePass *pass, SceneNode *node);
-void *NodeQueuePass_pull(NodeQueuePass *pass, SceneNode *node, uint32_t index);
+void *NodeQueuePass_pull(ANodeQueuePass *pass, SceneNode *node, uint32_t index);
 
+void NodeQueuePass_initDefaultPullFunction(NodeQueuePass *this, uint32_t length);
 /*
 inline void ANodeQueuePass_init(ANodeQueuePass *pass, uint32_t length)
 {

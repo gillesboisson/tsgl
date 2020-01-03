@@ -43,12 +43,15 @@ extern "C"
     return NULL;
   }
 
-  EMSCRIPTEN_KEEPALIVE void testPassQueueCollection()
+  EMSCRIPTEN_KEEPALIVE void testPassQueueCollection(QueuePassCollection *collection)
   {
-    printf("> testPassQueueCollection \n");
-    ANodeQueuePass *pass = malloc(sizeof(ANodeQueuePass));
+    // printf("> testPassQueueCollection %p , Length : %i, firstPass : %p \n", collection, collection->length, collection->queuePasses);
 
-    ANodeQueuePass_init(pass, &NodeQueuePassTest_pull, 16, &QueuePassTest_bind, &QueuePassTest_apply);
+    ANodeQueuePass *pass = (ANodeQueuePass *)collection->queuePasses[0];
+
+    printf("Pass %p : length %p \n", pass, &pass->basePass.length);
+
+    //ANodeQueuePass_init(pass, &NodeQueuePassTest_pull, 16, &QueuePassTest_bind, &QueuePassTest_apply);
 
     for (size_t i = 0; i < 33; i++)
     {

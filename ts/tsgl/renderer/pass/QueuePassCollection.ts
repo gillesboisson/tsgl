@@ -30,7 +30,7 @@ export class QueuePassCollection<QueuePassType extends AQueuePass = AQueuePass> 
   protected get bufferPtr(): number {
     return this._metas[0];
   }
-  protected get bufferLength(): number {
+  public get length(): number {
     return this._metas[1];
   }
   // Methods ====================================

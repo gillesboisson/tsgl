@@ -5,6 +5,7 @@ import { NodeResult } from './NodeResult';
 import { ANodeQueuePass } from './ANodeQueuePass';
 import { EmscriptenModuleExtended } from '../../../wasm/EmscriptenModuleLoader';
 import { BaseRenderer } from '../Renderer';
+import { wasmFunctionOut } from '../../../wasm/decorators/methods';
 @wasmStruct({ methodsPrefix: 'NodeQueuePass_' })
 export class NodePass extends ANodeQueuePass {
   // Wasm props ------------------------------------------------------------------------------------
@@ -12,9 +13,15 @@ export class NodePass extends ANodeQueuePass {
     type: Uint32Array,
     length: 1,
   })
+  private _resultPtr: number;
+
+  // Wasm methods ------------------------------------------------------------------------------------
+
+  @wasmFunctionOut('initDefaultPullFunction')
+  initDefaultPullFunction: () => void;
 
   // Props ------------------------------------------------------------------------------------
-  private _resultPtr: number;
+
   private _result: WasmBuffer<NodeResult>;
 
   // Methods ------------------------------------------------------------------------------------
@@ -22,11 +29,18 @@ export class NodePass extends ANodeQueuePass {
   constructor(renderer: BaseRenderer, length: number, module: EmscriptenModule) {
     super(renderer, length, module);
     this._result = new WasmBuffer({
-      length: this.length,
+      length,
       wasmType: NodeResult,
       module: this._module as EmscriptenModuleExtended,
     });
     this._resultPtr = this._result.ptr;
+  }
+
+  init(firstInit: boolean): void {
+    super.init(firstInit);
+    if (firstInit) {
+      this.initDefaultPullFunction();
+    }
   }
 
   destroy(freePtr: boolean) {
@@ -40,6 +54,6 @@ export class NodePass extends ANodeQueuePass {
     throw new Error('Method not implemented.');
   }
   apply(): void {
-    this.syncNodePtr;
+    console.log('> Apply');
   }
 }
