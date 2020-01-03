@@ -44,7 +44,7 @@ Box Box_toVertices(Box out, Box source);
 void Box_updateScalePos(Vec3 outPos, Vec3 outScale, Box source);
 void Box_print(Box source);
 
-void Box_wireframeDebug(Box box, Vec4 color, VertexElementBatch *vertexBatch);
+// void Box_wireframeDebug(Box box, Vec4 color, VertexElementBatch *vertexBatch);
 
 typedef VecP *Box;
 

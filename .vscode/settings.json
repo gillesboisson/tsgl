@@ -58,7 +58,8 @@
     "vertexelementbatch.h": "c",
     "nodequeuepass.h": "c",
     "queuepasscollection.h": "c",
-    "queuepass.h": "c"
+    "queuepass.h": "c",
+    "wireframepass.h": "c"
   },
   "files.watcherExclude": {
     "archive": true

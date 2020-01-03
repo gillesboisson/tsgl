@@ -146,10 +146,17 @@ export class VertexElementBatch<T extends IInterleaveData> extends WasmClass {
       metas[2] = 0;
       metas[3] = 0;
     }
+    // console.log(
+    //   '< pull ',
+    //   metas[2],
 
-    pull(metas[2], this._vertexCollection, metas[3], this._indexBuffer);
+    //   metas[3] / Uint16Array.BYTES_PER_ELEMENT,
+    // );
+    pull(metas[2], this._vertexCollection, metas[3] / Uint16Array.BYTES_PER_ELEMENT, this._indexBuffer);
     metas[2] += nbVertex;
-    metas[3] += nbIndices;
+    metas[3] += nbIndices * Uint16Array.BYTES_PER_ELEMENT;
+
+    // console.log(this._vertexCollection, this._indexBuffer);
   }
 
   push() {

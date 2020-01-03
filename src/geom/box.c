@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <emscripten.h>
 
 Box Box_create()
 {
@@ -498,70 +499,4 @@ void Box_getSize(Vec3 out, Box box)
   out[0] = box[1] - box[0];
   out[1] = box[3] - box[2];
   out[2] = box[5] - box[3];
-}
-
-void Box_wireframeDebug(Box box, Vec4 color, VertexElementBatch *vertexBatch)
-{
-  IndexType *indexBuffer;
-  PositionColor *vertexBuffer;
-
-  uint32_t positionOffset = VertexElementBatch_pull(vertexBatch, 8, sizeof(IndexType) * 24, (void **)&vertexBuffer, (void **)&indexBuffer);
-
-  indexBuffer[0] = positionOffset;
-  indexBuffer[1] = positionOffset + 1;
-  indexBuffer[2] = positionOffset + 1;
-  indexBuffer[3] = positionOffset + 2;
-  indexBuffer[4] = positionOffset + 2;
-  indexBuffer[5] = positionOffset + 3;
-  indexBuffer[6] = positionOffset + 3;
-  indexBuffer[7] = positionOffset;
-
-  indexBuffer[8] = positionOffset + 4;
-  indexBuffer[9] = positionOffset + 5;
-  indexBuffer[10] = positionOffset + 5;
-  indexBuffer[11] = positionOffset + 6;
-  indexBuffer[12] = positionOffset + 6;
-  indexBuffer[13] = positionOffset + 7;
-  indexBuffer[14] = positionOffset + 7;
-  indexBuffer[15] = positionOffset + 4;
-
-  indexBuffer[16] = positionOffset;
-  indexBuffer[17] = positionOffset + 4;
-  indexBuffer[18] = positionOffset + 1;
-  indexBuffer[19] = positionOffset + 5;
-  indexBuffer[20] = positionOffset + 2;
-  indexBuffer[21] = positionOffset + 6;
-  indexBuffer[22] = positionOffset + 3;
-  indexBuffer[23] = positionOffset + 7;
-
-  vertexBuffer[0].position[0] = box[0];
-  vertexBuffer[0].position[1] = box[2];
-  vertexBuffer[0].position[2] = box[4];
-  vertexBuffer[1].position[0] = box[1];
-  vertexBuffer[1].position[1] = box[2];
-  vertexBuffer[1].position[2] = box[4];
-  vertexBuffer[2].position[0] = box[1];
-  vertexBuffer[2].position[1] = box[3];
-  vertexBuffer[2].position[2] = box[4];
-  vertexBuffer[3].position[0] = box[0];
-  vertexBuffer[3].position[1] = box[3];
-  vertexBuffer[3].position[2] = box[4];
-
-  vertexBuffer[4].position[0] = box[0];
-  vertexBuffer[4].position[1] = box[2];
-  vertexBuffer[4].position[2] = box[5];
-  vertexBuffer[5].position[0] = box[1];
-  vertexBuffer[5].position[1] = box[2];
-  vertexBuffer[5].position[2] = box[5];
-  vertexBuffer[6].position[0] = box[1];
-  vertexBuffer[6].position[1] = box[3];
-  vertexBuffer[6].position[2] = box[5];
-  vertexBuffer[7].position[0] = box[0];
-  vertexBuffer[7].position[1] = box[3];
-  vertexBuffer[7].position[2] = box[5];
-
-  for (size_t i = 0; i < 8; i++)
-  {
-    Vec4_copy((vertexBuffer + i)->color, color);
-  }
 }
