@@ -2,14 +2,24 @@
 #include <stdio.h>
 #include <emscripten.h>
 #include "../geom/geom.h"
+#include "../geom/sceneNode.h"
 #include "nodeQueuePass.h"
 
-EMSCRIPTEN_KEEPALIVE void ANodeQueuePass_init(ANodeQueuePass *pass)
+void *ANodeQueuePass_pull(ANodeQueuePass *pass, SceneNode *node)
 {
-  PtrBuffer_init(&pass->buffer);
+  if (pass->basePass.index == pass->basePass.length)
+  {
+
+    QueuePass_apply(&pass->basePass);
+  }
+  pass->nodes[pass->basePass.index] = node;
+  void *result = (*pass->pullFunction)(&pass->basePass.basePass, node, pass->basePass.index);
+  pass->basePass.index++;
+
+  return result;
 }
 
-EMSCRIPTEN_KEEPALIVE void ANodeQueuePass_dispose(ANodeQueuePass *pass)
+void *NodeQueuePass_pull(NodeQueuePass *pass, SceneNode *node, uint32_t index)
 {
-  PtrBuffer_dispose(&pass->buffer);
+  return pass->resultData + index;
 }

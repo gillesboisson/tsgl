@@ -27,6 +27,24 @@ inline void RenderPass_init(RenderPass *rp, void (*bindFunction)(RenderPass *rp)
   rp->applyFunction = applyFunction;
 }
 
+inline void QueuePass_begin(QueuePass *pass)
+{
+  pass->index = 0;
+}
+
+inline void QueuePass_apply(QueuePass *pass)
+{
+  (pass->basePass.applyFunction)(&pass->basePass);
+  pass->index = 0;
+}
+
+inline void QueuePass_end(QueuePass *pass)
+{
+  if (pass->index > 0)
+    QueuePass_apply(pass);
+}
+
 void RenderPass_wasmInit(RenderPass *rp);
 
+void QueuePass_print(QueuePass *this);
 #endif

@@ -1,5 +1,5 @@
 import { wasmStruct } from '../wasm/decorators/classes';
-import { structAttr, wasmObjectAttr } from '../core/decorators/StructAttribute';
+import { structAttr, wasmObjectAttr, structBool } from '../core/decorators/StructAttribute';
 import { WasmTransform } from '../geom/WasmTransform';
 import { WasmPoolAllocator } from '../wasm/allocators/WasmPoolAllocator';
 import { WasmClassRelocatable } from '../wasm/WasmClassRelocatable';
@@ -7,6 +7,7 @@ import { WasmPtrVector } from '../wasm/WasmPtrVector';
 import { SceneNodeType } from './SceneNodeType';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
 import { mat4 } from 'gl-matrix';
+import { AMaterial } from '../tsgl/materials/AMaterial';
 @wasmStruct({ methodsPrefix: 'SceneNode_', allocator: new WasmPoolAllocator({ wasmType: SceneNode }) })
 export class SceneNode extends WasmClassRelocatable {
   static byteLength: number;
@@ -18,6 +19,9 @@ export class SceneNode extends WasmClassRelocatable {
     length: 1,
   })
   protected _nodeType: SceneNodeType;
+
+  @structBool()
+  visible: boolean;
 
   @structAttr({
     type: Uint32Array,
@@ -40,6 +44,12 @@ export class SceneNode extends WasmClassRelocatable {
   @wasmObjectAttr(WasmPtrVector)
   _childrenPtrVector: WasmPtrVector<SceneNode>;
 
+  @structAttr({
+    type: Uint32Array,
+    length: 1,
+  })
+  protected _renderingPassPtr: number;
+
   // Wasm Function Binding ==========================================
 
   @wasmFunctionOut('updateWorldMat', ['number', 'number'], null)
@@ -51,6 +61,18 @@ export class SceneNode extends WasmClassRelocatable {
   // ==================================================================
   private _children: SceneNode[] = [];
   private _transform: WasmTransform;
+  private _material: AMaterial<any>;
+
+  get material(): AMaterial<any> {
+    return this._material;
+  }
+
+  set material(val: AMaterial<any>) {
+    if (this._material !== val) {
+      this._material = val;
+      this._renderingPassPtr = val ? val.renderingPass.ptr : 0;
+    }
+  }
 
   get nodeType() {
     return this._nodeType;
@@ -59,6 +81,8 @@ export class SceneNode extends WasmClassRelocatable {
   init(firstInit?: boolean) {
     if (firstInit === true) {
       mat4.identity(this.worldMat);
+      this._renderingPassPtr = 0;
+      this.visible = true;
     }
 
     if (this._transform === undefined) {

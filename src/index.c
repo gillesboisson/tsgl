@@ -16,6 +16,7 @@
 #include "geom/vertexElementBatch.h"
 #include "core/helpers.h"
 #include "rendering/renderPass.h"
+#include "rendering/queuePassCollection.h"
 
 //#include "./myClass.h"
 
@@ -24,6 +25,12 @@ extern "C"
 {
 #endif
 
+  EMSCRIPTEN_KEEPALIVE void testPassQueueCollection(QueuePassCollection *queue)
+  {
+    printf("Queue");
+  }
+
+  /*
   void pushVertex(VertexElementBatch *batch)
   {
     for (size_t i = 0; i < batch->vertexInd; i++)
@@ -44,7 +51,7 @@ extern "C"
     (*pass->applyFunction)(pass);
   }
 
-  /*
+  
   EMSCRIPTEN_KEEPALIVE void testBatch(VertexElementBatch *batch)
 
   {

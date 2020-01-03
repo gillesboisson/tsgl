@@ -148,7 +148,10 @@ void OctoTree_frustrumCulling(PtrBuffer *out, OctoTree *tree, Frustrum *frustrum
     {
       for (size_t i = 0; i < tree->elements.length; i++)
       {
-        PtrBuffer_pushMany(out, &tree->elements, true, true);
+        SceneNode *node = tree->elements.buffer[i];
+        if (!node->visible)
+          continue;
+        PtrBuffer_push(out, node);
       }
     }
   }

@@ -36,6 +36,9 @@ import { GLSupport } from './gl/core/GLSupport';
 import { PositionColor } from './gl/data/PositionColor';
 import { WireframePass } from './tsgl/renderer/pass/WireframePass';
 import { AWasmGLPass } from './gl/pass/AWasmGLPass';
+import { BaseRenderer } from './tsgl/renderer/Renderer';
+import { NodePass } from './tsgl/renderer/pass/NodePass';
+import { QueuePassCollection } from './tsgl/renderer/pass/QueuePassCollection';
 // @glInterleavedAttributes()  // webggl attributes support
 
 class MyPass extends AWasmGLPass {
@@ -120,26 +123,27 @@ document.addEventListener('keyup', (e: KeyboardEvent) => {
 
 const loader: EmscriptenModuleLoader = new EmscriptenModuleLoader();
 
-// var SPECTOR = require('spectorjs');
-
-// const DEBUG = false;
 const DEBUG_COMMANDS_START = false;
 const DEBUG_COMMANDS_NB = 150;
 let spector: any = null;
 
-// if (DEBUG) {
-//   spector = new SPECTOR.Spector();
-// }
 const nbElements = 128;
 loader.load('em_app.js').then((module) => {
-  // const test = module.cwrap('test', null, []);
-  // test();
-  //console.log('module : ', module.wasmBinary[Symbol]);
-
-  const renderer = GLRenderer.createFromCanvas<any>(
+  const renderer: BaseRenderer = GLRenderer.createFromCanvas<BaseRenderer>(
     document.getElementById('test') as HTMLCanvasElement,
     GLRendererType.WebGL2,
+    BaseRenderer,
   );
+
+  const collectionQueue = new QueuePassCollection(module);
+  collectionQueue.addQueuePass('node', new NodePass(renderer, 32, module));
+
+  const nodeQ = collectionQueue.getQueuePass('node');
+
+  console.log('nodeQ : ', nodeQ);
+  collectionQueue.printWasm();
+
+  return;
   const gl = <WebGL2RenderingContext>renderer.getGL();
   let watching = DEBUG_COMMANDS_START;
 

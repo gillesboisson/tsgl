@@ -27,3 +27,8 @@ EMSCRIPTEN_KEEPALIVE void RenderPass_initDefaultMethodsBinding(RenderPass *rp)
   rp->bindFunction = &RenderPass_wasmBind;
   // printf("> pass->bindFunction %p, pass->applyFunction %p \n", rp->bindFunction, rp->applyFunction);
 }
+
+EMSCRIPTEN_KEEPALIVE void QueuePass_print(QueuePass *this)
+{
+  printf("RenderPass %p, Index %i / Length %i\n", this, this->index, this->length);
+}

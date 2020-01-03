@@ -5,6 +5,8 @@
 #include "transform.h"
 #include "../core/ptrBuffer.h"
 
+struct NodeQueuePass;
+
 typedef enum
 {
   STATIC = 0,
@@ -13,15 +15,18 @@ typedef enum
   LIGHT = 8,
 } SceneNodeType;
 
-typedef struct
+typedef struct SceneNode SceneNode;
+
+struct SceneNode
 {
   SceneNodeType nodeType;
+  bool visible;
   Transform *transform;
   VecP worldMat[16];
   VecP bounds[6];
   PtrBuffer children;
-
-} SceneNode;
+  struct NodeQueuePass *queue;
+};
 
 SceneNode *SceneNode_create();
 void SceneNode_init(SceneNode *node);

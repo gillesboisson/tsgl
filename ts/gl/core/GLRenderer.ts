@@ -10,14 +10,14 @@ export enum GLRendererType {
   WebGL2,
 }
 
-export class GLRenderer<PassType = any> extends GLCore {
-  static createFromCanvas<PassType = any>(
+export class GLRenderer extends GLCore {
+  static createFromCanvas<RenderT extends GLRenderer = GLRenderer>(
     canvas: HTMLCanvasElement,
     type: GLRendererType = GLRendererType.WebGL,
     rendererClass: any = GLRenderer,
-  ): GLRenderer<PassType> {
+  ): RenderT {
     const gl = canvas.getContext(type === GLRendererType.WebGL ? 'webgl' : 'webgl2');
-    return new rendererClass(gl, type, canvas) as GLRenderer<PassType>;
+    return new rendererClass(gl, type, canvas) as RenderT;
   }
 
   static create(
@@ -37,7 +37,6 @@ export class GLRenderer<PassType = any> extends GLCore {
   private _clearColor: vec4;
 
   protected _shaders: ShadersDictionnary = {};
-  protected _renderPass: { [name: string]: PassType };
 
   get width(): number {
     return this._width;
@@ -65,27 +64,6 @@ export class GLRenderer<PassType = any> extends GLCore {
   set clearColor(clearColor: vec4) {
     vec4.copy(this._clearColor, clearColor);
     this.gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-  }
-
-  registerRenderPass(passName: string, pass: PassType) {
-    if (this._renderPass[passName] !== undefined) throw new Error('Render pass already registered for' + passName);
-    this._renderPass[passName] = pass;
-  }
-
-  getOrRegisterRenderPass(passName: string, passFactory: (renderer: GLRenderer<PassType>) => PassType) {
-    if (this._renderPass[passName] === undefined) {
-      this._renderPass[passName] = passFactory(this);
-    }
-
-    return this._renderPass[passName];
-  }
-
-  getRenderPass(passName: string, orFail: boolean = true) {
-    if (orFail && this._renderPass[passName] === undefined) {
-      throw new Error('Render pass with name ' + passName + ' not found');
-    }
-
-    return this._renderPass[passName];
   }
 
   getShader(shaderName: string): IShaderProgram {

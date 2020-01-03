@@ -18,6 +18,7 @@ SceneNode *SceneNode_create()
 void SceneNode_init(SceneNode *node)
 {
   node->transform = Transform_create();
+  node->visible = true;
 }
 
 EMSCRIPTEN_KEEPALIVE void SceneNode_test(SceneNode *node)
@@ -31,6 +32,8 @@ EMSCRIPTEN_KEEPALIVE void SceneNode_test(SceneNode *node)
 
 EMSCRIPTEN_KEEPALIVE void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty)
 {
+  if (!tr->visible)
+    return;
   bool dirty = DIRTY_GLOBAL & tr->transform->dirty | parentWasDirty;
 
   if (dirty)
