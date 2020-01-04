@@ -12,6 +12,7 @@ import { mat4, vec4 } from 'gl-matrix';
 import { AWasmBatchPass } from '../../../gl/pass/AWasmBatchPass';
 import { wasmStruct } from '../../../wasm/decorators/classes';
 import { box } from '../../../geom/box';
+import { wasmFunctionOut } from '../../../wasm/decorators/methods';
 
 export interface IWireframePass extends IGLPass {}
 
@@ -22,19 +23,19 @@ function pushBox(vertexInd: number, vertexBuffer: PositionColor[], indexInd: num
   indexBuffer[indexInd] = vertexInd;
   indexBuffer[indexInd + 1] = vertexInd + 1;
   indexBuffer[indexInd + 2] = vertexInd + 1;
-  indexBuffer[indexInd + 3] = vertexInd + 2;
-  indexBuffer[indexInd + 4] = vertexInd + 2;
-  indexBuffer[indexInd + 5] = vertexInd + 3;
-  indexBuffer[indexInd + 6] = vertexInd + 3;
+  indexBuffer[indexInd + 3] = vertexInd + 3;
+  indexBuffer[indexInd + 4] = vertexInd + 3;
+  indexBuffer[indexInd + 5] = vertexInd + 2;
+  indexBuffer[indexInd + 6] = vertexInd + 2;
   indexBuffer[indexInd + 7] = vertexInd;
 
   indexBuffer[indexInd + 8] = vertexInd + 4;
   indexBuffer[indexInd + 9] = vertexInd + 5;
   indexBuffer[indexInd + 10] = vertexInd + 5;
-  indexBuffer[indexInd + 11] = vertexInd + 6;
-  indexBuffer[indexInd + 12] = vertexInd + 6;
-  indexBuffer[indexInd + 13] = vertexInd + 7;
-  indexBuffer[indexInd + 14] = vertexInd + 7;
+  indexBuffer[indexInd + 11] = vertexInd + 7;
+  indexBuffer[indexInd + 12] = vertexInd + 7;
+  indexBuffer[indexInd + 13] = vertexInd + 6;
+  indexBuffer[indexInd + 14] = vertexInd + 6;
   indexBuffer[indexInd + 15] = vertexInd + 4;
 
   indexBuffer[indexInd + 16] = vertexInd;
@@ -86,13 +87,24 @@ function pushBox(vertexInd: number, vertexBuffer: PositionColor[], indexInd: num
 
 @wasmStruct({ methodsPrefix: 'WireframePass_' })
 export class WireframePass extends AWasmBatchPass<PositionColor> implements IWireframePass {
+  // Wasm props ------------------------------------------------------------------------------------
   @structAttr({
     length: 16,
     type: Float32Array,
   })
   mvp: mat4;
+
+  // Wasm methods ------------------------------------------------------------------------------------
+
+  @wasmFunctionOut('pushBox', ['number', 'number'])
+  private _wasmPushBox: (boxPtr: number, colorPtr: number) => void;
+
+  // Props ------------------------------------------------------------------------------------
+
   protected _program: WebGLProgram;
   protected _mvpLocation: WebGLUniformLocation;
+
+  // Methods ------------------------------------------------------------------------------------
 
   constructor(renderer: GLRenderer, vertexLength: number, indexLength: number, module?: EmscriptenModule) {
     super(renderer, PositionColor, vertexLength, indexLength, module);
@@ -112,6 +124,10 @@ export class WireframePass extends AWasmBatchPass<PositionColor> implements IWir
     __box = box;
     __color = color;
     this.pull(8, 24, pushBox);
+  }
+
+  pushBoxWasm(box: box, color: vec4) {
+    this._wasmPushBox(box.byteOffset, color.byteOffset);
   }
 
   bind(): void {}

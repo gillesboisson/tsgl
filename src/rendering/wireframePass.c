@@ -3,7 +3,7 @@
 #include <emscripten.h>
 #include "wireframePass.h"
 
-void WireframePass_pushBox(WireframePass *wireframe, Box box, Vec4 color)
+EMSCRIPTEN_KEEPALIVE void WireframePass_pushBox(WireframePass *wireframe, Box box, Vec4 color)
 {
   IndexType *indexBuffer;
   PositionColor *vertexBuffer;
@@ -13,19 +13,19 @@ void WireframePass_pushBox(WireframePass *wireframe, Box box, Vec4 color)
   indexBuffer[0] = positionOffset;
   indexBuffer[1] = positionOffset + 1;
   indexBuffer[2] = positionOffset + 1;
-  indexBuffer[3] = positionOffset + 2;
-  indexBuffer[4] = positionOffset + 2;
-  indexBuffer[5] = positionOffset + 3;
-  indexBuffer[6] = positionOffset + 3;
+  indexBuffer[3] = positionOffset + 3;
+  indexBuffer[4] = positionOffset + 3;
+  indexBuffer[5] = positionOffset + 2;
+  indexBuffer[6] = positionOffset + 2;
   indexBuffer[7] = positionOffset;
 
   indexBuffer[8] = positionOffset + 4;
   indexBuffer[9] = positionOffset + 5;
   indexBuffer[10] = positionOffset + 5;
-  indexBuffer[11] = positionOffset + 6;
-  indexBuffer[12] = positionOffset + 6;
-  indexBuffer[13] = positionOffset + 7;
-  indexBuffer[14] = positionOffset + 7;
+  indexBuffer[11] = positionOffset + 7;
+  indexBuffer[12] = positionOffset + 7;
+  indexBuffer[13] = positionOffset + 6;
+  indexBuffer[14] = positionOffset + 6;
   indexBuffer[15] = positionOffset + 4;
 
   indexBuffer[16] = positionOffset;

@@ -385,4 +385,5 @@ export class box extends Float32Array {
   static setSizeFromVec3 = setSizeFromVec3;
   static expand = expand;
   static intersectPlane = intersectPlane;
+  static byteLength = Float32Array.BYTES_PER_ELEMENT * 6;
 }

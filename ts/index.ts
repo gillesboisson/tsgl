@@ -40,6 +40,7 @@ import { BaseRenderer } from './tsgl/renderer/Renderer';
 import { NodePass } from './tsgl/renderer/pass/NodePass';
 import { QueuePassCollection } from './tsgl/renderer/pass/QueuePassCollection';
 import { box } from './geom/box';
+import { allocateTypedArray } from './wasm/utils';
 // @glInterleavedAttributes()  // webggl attributes support
 
 class MyPass extends AWasmGLPass {
@@ -189,10 +190,19 @@ loader.load('em_app.js').then((module) => {
   const camSpeed = 0.1;
 
   const ident = mat4.create();
+  const bounds = box.setCenterSize(
+    allocateTypedArray(Float32Array, 6, module) as box,
+    vec3.fromValues(1, 1, 1),
+    vec3.fromValues(2, 3, 4),
+  );
 
-  const bounds = box.fromCenterSize(vec3.fromValues(1, 1, 1), vec3.fromValues(2, 3, 4));
-  const bounds2 = box.fromCenterSize(vec3.fromValues(4, 1, 1), vec3.fromValues(1, 1, 1));
-  const color = vec4.fromValues(1, 0, 0, 1);
+  const bounds2 = box.setCenterSize(
+    allocateTypedArray(Float32Array, 6, module) as box,
+    vec3.fromValues(4, 1, 1),
+    vec3.fromValues(1, 1, 1),
+  );
+
+  const color = vec4.set(allocateTypedArray(Float32Array, 4, module) as vec4, 1, 0, 0, 1);
 
   function render() {
     window.requestAnimationFrame(render);
@@ -228,8 +238,8 @@ loader.load('em_app.js').then((module) => {
     cam.mvp(ident, wireframeB.mvp);
     wireframeB.begin();
 
-    wireframeB.pushBox(bounds2, color);
-    wireframeB.pushBox(bounds, color);
+    wireframeB.pushBoxWasm(bounds2, color);
+    wireframeB.pushBoxWasm(bounds, color);
 
     wireframeB.pull(4, 8, pullV);
 

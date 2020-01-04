@@ -19,6 +19,7 @@
 #include "rendering/queuePass.h"
 #include "rendering/queuePassCollection.h"
 #include "rendering/nodeQueuePass.h"
+#include "rendering/wireframePass.h"
 
 //#include "./myClass.h"
 
