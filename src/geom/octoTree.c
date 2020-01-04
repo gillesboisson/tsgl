@@ -4,7 +4,7 @@
 #include "geom.h"
 #include "octoTree.h"
 
-OctoTree *OctoTree_create(Box bounds, uint16_t maxLevel, uint16_t maxElements, OctoTree *parent)
+EMSCRIPTEN_KEEPALIVE OctoTree *OctoTree_create(Box bounds, uint16_t maxLevel, uint16_t maxElements, OctoTree *parent)
 {
   OctoTree *out = malloc(sizeof(OctoTree));
   OctoTree_init(out, bounds, maxLevel, maxElements, parent);
@@ -62,12 +62,15 @@ void OctoTree_createChildren(OctoTree *tree)
       (tree->bounds[5] - tree->bounds[4]) / 2,
   };
 
+  // Box_print(tree->bounds);
+  // printf("> OctoTree_createChildren %p, halfsize %f %f %f \n", tree, halfSize[0], halfSize[1], halfSize[2]);
+
   for (uint16_t i = 0; i < 8; i++)
   {
     // VecP a = floor(i / 2) % 2;
-    VecP offsetX = i % 2 * halfSize[0];
-    VecP offsetY = (uint16_t)floor(i / 2) % 2 * halfSize[1];
-    VecP offsetZ = (uint16_t)floor(i / 4) % 2 * halfSize[2];
+    VecP offsetX = i % 2 * halfSize[0] + tree->bounds[0];
+    VecP offsetY = (uint16_t)floor(i / 2) % 2 * halfSize[1] + tree->bounds[2];
+    VecP offsetZ = (uint16_t)floor(i / 4) % 2 * halfSize[2] + tree->bounds[4];
 
     VecP childBounds[] = {
         offsetX,

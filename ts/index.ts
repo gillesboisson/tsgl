@@ -41,6 +41,7 @@ import { NodePass } from './tsgl/renderer/pass/NodePass';
 import { QueuePassCollection } from './tsgl/renderer/pass/QueuePassCollection';
 import { box } from './geom/box';
 import { allocateTypedArray } from './wasm/utils';
+import { createVertices } from './geom/createVertices';
 // @glInterleavedAttributes()  // webggl attributes support
 
 class MyPass extends AWasmGLPass {
@@ -74,6 +75,12 @@ const keyState = {
   right: false,
   up: false,
   down: false,
+  axeXP: false,
+  axeXM: false,
+  axeYP: false,
+  axeYM: false,
+  axeZP: false,
+  axeZM: false,
 };
 
 document.addEventListener('mousemove', (mouseEvent: MouseEvent) => {
@@ -101,6 +108,25 @@ document.addEventListener('keydown', (e: KeyboardEvent) => {
       keyState.down = true;
 
       break;
+    //  ------------------------------------------------------------------------------------
+    case 52:
+      keyState.axeXM = true;
+      break;
+    case 54:
+      keyState.axeXP = true;
+      break;
+    case 50:
+      keyState.axeYM = true;
+      break;
+    case 56:
+      keyState.axeYP = true;
+      break;
+    case 55:
+      keyState.axeZM = true;
+      break;
+    case 57:
+      keyState.axeZP = true;
+      break;
   }
 });
 document.addEventListener('keyup', (e: KeyboardEvent) => {
@@ -119,6 +145,24 @@ document.addEventListener('keyup', (e: KeyboardEvent) => {
     case 83:
       keyState.down = false;
 
+      break;
+    case 52:
+      keyState.axeXM = false;
+      break;
+    case 54:
+      keyState.axeXP = false;
+      break;
+    case 50:
+      keyState.axeYM = false;
+      break;
+    case 56:
+      keyState.axeYP = false;
+      break;
+    case 55:
+      keyState.axeZM = false;
+      break;
+    case 57:
+      keyState.axeZP = false;
       break;
   }
 });
@@ -152,7 +196,7 @@ loader.load('em_app.js').then((module) => {
 
   // const batch = new WasmVertexElementBatch(PositionColor, 17, 13);
 
-  const wireframeB = new WireframePass(renderer, 128, 128, module);
+  const wireframeB = new WireframePass(renderer, 512, 512, module);
   wireframeB.prepare();
 
   function pullV(vertexInd: number, collection: PositionColor[], indexInd: number, indexBuffer: Uint16Array) {
@@ -181,37 +225,80 @@ loader.load('em_app.js').then((module) => {
   }
 
   const cam = new WasmCamera();
+  const cam2 = new WasmCamera();
 
-  cam.perspective(70, renderer.width / renderer.height);
+  cam.perspective(70, renderer.width / renderer.height, 5, 25);
+  cam2.perspective(70, renderer.width / renderer.height);
 
-  cam.transform.setPosition(0, 0, 10);
+  cam.transform.setPosition(25, 25, 25);
+  cam2.transform.setPosition(0, 0, 10);
 
   const camMovVec = vec3.create();
   const camSpeed = 0.1;
+  const camRotationEuler = vec3.create();
 
   const ident = mat4.create();
-  const bounds = box.setCenterSize(
-    allocateTypedArray(Float32Array, 6, module) as box,
-    vec3.fromValues(1, 1, 1),
-    vec3.fromValues(2, 3, 4),
-  );
+  // const testCollisionBoundsPosition = vec3.create();
+  // const testCollisionBoundsSize = vec3.fromValues(10, 10, 10);
 
-  const bounds2 = box.setCenterSize(
-    allocateTypedArray(Float32Array, 6, module) as box,
-    vec3.fromValues(4, 1, 1),
-    vec3.fromValues(1, 1, 1),
-  );
+  // const testCollistionBounds = box.setCenterSize(
+  //   allocateTypedArray(Float32Array, 6, module) as box,
+  //   testCollisionBoundsPosition,
+  //   testCollisionBoundsSize,
+  // );
 
-  const color = vec4.set(allocateTypedArray(Float32Array, 4, module) as vec4, 1, 0, 0, 1);
+  // const bounds2 = box.setCenterSize(
+  //   allocateTypedArray(Float32Array, 6, module) as box,
+  //   vec3.fromValues(4, 1, 1),
+  //   vec3.fromValues(1, 1, 1),
+  // );
+
+  const colorRed = vec4.set(allocateTypedArray(Float32Array, 4, module) as vec4, 0.5, 0, 0, 0.5);
+  const colorGreen = vec4.set(allocateTypedArray(Float32Array, 4, module) as vec4, 0, 1, 0, 0.7);
+
+  // const createTree: (
+  //   boundsPtr: number,
+  //   maxLevel: number,
+  //   maxElement: number,
+  //   parentPtr: number,
+  // ) => Number = module.cwrap('OctoTree_create', 'number', ['number', 'number', 'number', 'number']);
+
+  // const treePr = module.ccall('prepareTree', 'number', [], []);
+  const treeGridPr = module.ccall('prepareTreeGrid', 'number', [], []);
+
+  const debugCollidedTree: (
+    passPtr: number,
+    gridPtr: number,
+    boxPtr: number,
+  ) => void = module.cwrap('debugCollidedTree', null, ['number', 'number', 'number']);
+
+  const nbBounds = 4;
+  const boundsCPtr = module._malloc(nbBounds * Uint32Array.BYTES_PER_ELEMENT);
+  const bounds = new Uint32Array(module.HEAP16.buffer, boundsCPtr, 4);
+
+  const boundsMoveSpeed = 0.1;
+
+  // const bounds: box[] = new Array(nbBounds);
+  for (let i = 0; i < nbBounds; i++) {
+    bounds[i] = module._malloc(box.byteLength * nbBounds);
+    const bound = new Float32Array(module.HEAP16.buffer, bounds[i], 6);
+    box.set(bound, i * 3, i * 3 + 1, 0, 2, 0, 2);
+  }
 
   function render() {
-    window.requestAnimationFrame(render);
+    // window.requestAnimationFrame(render);
 
     renderer.clear();
 
-    cam.transform.setEulerRotation(
-      (-mouseState.y / window.innerHeight) * Math.PI * 2 - Math.PI,
-      (-mouseState.x / window.innerWidth) * Math.PI * 2 - Math.PI,
+    camRotationEuler[0] += 0.01;
+    camRotationEuler[1] += 0.013;
+    camRotationEuler[2] += 0.02;
+
+    cam.transform.setEulerRotation(camRotationEuler[0], camRotationEuler[1], camRotationEuler[2]);
+
+    cam2.transform.setEulerRotation(
+      (-mouseState.y / window.innerHeight) * Math.PI + Math.PI / 2,
+      (-mouseState.x / window.innerWidth) * Math.PI * 2 + Math.PI,
       0,
     );
 
@@ -231,18 +318,29 @@ loader.load('em_app.js').then((module) => {
       camMovVec[0] += camSpeed;
     }
 
-    vec3.transformQuat(camMovVec, camMovVec, cam.transform.rotation);
-    cam.transform.translateVec(camMovVec);
+    // if (keyState.axeXM) testCollisionBoundsPosition[0] -= boundsMoveSpeed;
+    // if (keyState.axeXP) testCollisionBoundsPosition[0] += boundsMoveSpeed;
+    // if (keyState.axeYM) testCollisionBoundsPosition[1] -= boundsMoveSpeed;
+    // if (keyState.axeYP) testCollisionBoundsPosition[1] += boundsMoveSpeed;
+    // if (keyState.axeZM) testCollisionBoundsPosition[2] -= boundsMoveSpeed;
+    // if (keyState.axeZP) testCollisionBoundsPosition[2] += boundsMoveSpeed;
 
+    // box.setCenterSize(testCollistionBounds, testCollisionBoundsPosition, testCollisionBoundsSize);
+
+    vec3.transformQuat(camMovVec, camMovVec, cam2.transform.rotation);
+    cam2.transform.translateVec(camMovVec);
+
+    cam2.wasmUpdateWorldMat(null, false);
     cam.wasmUpdateWorldMat(null, false);
-    cam.mvp(ident, wireframeB.mvp);
+
+    cam2.mvp(ident, wireframeB.mvp);
     wireframeB.begin();
 
-    wireframeB.pushBoxWasm(bounds2, color);
-    wireframeB.pushBoxWasm(bounds, color);
+    // wireframeB._wasmPushOctoTreeGrid(treeGridPr, colorRed.byteOffset, 1.5);
+    debugCollidedTree(wireframeB.ptr, treeGridPr, cam.ptr);
 
-    wireframeB.pull(4, 8, pullV);
-
+    // wireframeB.pushBox(testCollistionBounds, colorGreen);
+    wireframeB._wasmPushCamera(cam.ptr, colorGreen.byteOffset);
     wireframeB.end();
   }
 

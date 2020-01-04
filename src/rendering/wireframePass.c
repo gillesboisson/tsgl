@@ -3,13 +3,51 @@
 #include <emscripten.h>
 #include "wireframePass.h"
 
-EMSCRIPTEN_KEEPALIVE void WireframePass_pushBox(WireframePass *wireframe, Box box, Vec4 color)
+VecP const BOX_POSITIONS[] = {
+    -1,
+    -1,
+    1,
+    1,
+
+    1,
+    -1,
+    1,
+    1,
+
+    -1,
+    1,
+    1,
+    1,
+
+    1,
+    1,
+    1,
+    1,
+
+    -1,
+    -1,
+    -1,
+    1,
+
+    1,
+    -1,
+    -1,
+    1,
+
+    -1,
+    1,
+    -1,
+    1,
+
+    1,
+    1,
+    -1,
+    1,
+
+};
+
+void pushBoxIndices(IndexType *indexBuffer, uint32_t positionOffset)
 {
-  IndexType *indexBuffer;
-  PositionColor *vertexBuffer;
-
-  uint32_t positionOffset = VertexElementBatch_pull(&wireframe->base, 8, sizeof(IndexType) * 24, (void **)&vertexBuffer, (void **)&indexBuffer);
-
   indexBuffer[0] = positionOffset;
   indexBuffer[1] = positionOffset + 1;
   indexBuffer[2] = positionOffset + 1;
@@ -36,6 +74,15 @@ EMSCRIPTEN_KEEPALIVE void WireframePass_pushBox(WireframePass *wireframe, Box bo
   indexBuffer[21] = positionOffset + 6;
   indexBuffer[22] = positionOffset + 3;
   indexBuffer[23] = positionOffset + 7;
+}
+
+EMSCRIPTEN_KEEPALIVE void WireframePass_pushBox(WireframePass *wireframe, Box box, Vec4 color)
+{
+  IndexType *indexBuffer;
+  PositionColor *vertexBuffer;
+
+  uint32_t positionOffset = VertexElementBatch_pull(&wireframe->base, 8, sizeof(IndexType) * 24, (void **)&vertexBuffer, (void **)&indexBuffer);
+  pushBoxIndices(indexBuffer, positionOffset);
 
   vertexBuffer[0].position[0] = box[0];
   vertexBuffer[0].position[1] = box[2];
@@ -75,25 +122,58 @@ EMSCRIPTEN_KEEPALIVE void WireframePass_pushBox(WireframePass *wireframe, Box bo
   }
 }
 
+EMSCRIPTEN_KEEPALIVE void WireframePass_pushBoxes(WireframePass *wireframe, Box *box, uint32_t nbBoxes, Vec4 color)
+{
+  for (uint32_t i = 0; i < nbBoxes; i++)
+  {
+    WireframePass_pushBox(wireframe, box[i], color);
+  }
+}
+
 EMSCRIPTEN_KEEPALIVE void WireframePass_pushOctoTree(WireframePass *this, OctoTree *tree, Vec4 color, float colorTransform)
 {
+  VecP changedColor[4];
   WireframePass_pushBox(this, tree->bounds, color);
-  if (tree->maxLevel > 1)
+  if (tree->children != NULL && colorTransform > 0)
   {
-    Vec4_scale(color, color, colorTransform);
+    Vec4_scale(changedColor, color, colorTransform);
+
     for (size_t i = 0; i < 8; i++)
     {
-      WireframePass_pushOctoTree(this, tree->children + i, color, colorTransform);
+      WireframePass_pushOctoTree(this, tree->children + i, changedColor, colorTransform);
     }
-    Vec4_scale(color, color, 1 / colorTransform);
   }
 }
 
 EMSCRIPTEN_KEEPALIVE void WireframePass_pushOctoTreeGrid(WireframePass *this, OctoTreeGrid *grid, Vec4 color, float colorTranform)
 {
   size_t nbTrees = grid->nbBoxX * grid->nbBoxY * grid->nbBoxZ;
+
   for (size_t i = 0; i < nbTrees; i++)
   {
     WireframePass_pushOctoTree(this, grid->trees + i, color, colorTranform);
+  }
+}
+
+EMSCRIPTEN_KEEPALIVE void WireframePass_pushCamera(WireframePass *this, Camera *camera, Vec4 color)
+{
+  VecP invMat[16];
+  VecP _vec4[4];
+  Mat4_multiply(invMat, camera->projectionMat, camera->node.worldMat);
+  Mat4_invert(invMat, invMat);
+
+  IndexType *indexBuffer;
+  PositionColor *vertexBuffer;
+
+  uint32_t positionOffset = VertexElementBatch_pull(&this->base, 8, sizeof(IndexType) * 24, (void **)&vertexBuffer, (void **)&indexBuffer);
+
+  pushBoxIndices(indexBuffer, positionOffset);
+
+  for (uint32_t i = 0; i < 8; i++, vertexBuffer++)
+  {
+    Vec4 boxP = (Vec4)(BOX_POSITIONS + i * 4);
+    Vec4_transformMat4(_vec4, boxP, invMat);
+    Vec3_set(vertexBuffer->position, _vec4[0] / _vec4[3], _vec4[1] / _vec4[3], _vec4[2] / _vec4[3]);
+    Vec4_copy(vertexBuffer->color, color);
   }
 }

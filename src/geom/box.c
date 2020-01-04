@@ -30,7 +30,7 @@ Box Box_set(Box out, VecP minX, VecP maxX, VecP minY, VecP maxY, VecP minZ, VecP
   return out;
 }
 
-Box Box_setPosSize(Box out, VecP x, VecP width, VecP y, VecP height, VecP z, VecP depth)
+Box Box_setPosSize(Box out, VecP x, VecP y, VecP z, VecP width, VecP height, VecP depth)
 {
   out[0] = x;
   out[1] = x + width;

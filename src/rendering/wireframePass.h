@@ -8,6 +8,7 @@
 #include "../geom/octoTree.h"
 #include "../geom/octoTreeGrid.h"
 #include "../geom/vertexElementBatch.h"
+#include "../geom/camera.h"
 
 typedef struct WireframePass WireframePass;
 
@@ -18,6 +19,7 @@ struct WireframePass
 };
 
 void WireframePass_pushBox(WireframePass *wireframe, Box box, Vec4 color);
+void WireframePass_pushBoxes(WireframePass *wireframe, Box *box, uint32_t nbBoxes, Vec4 color);
 void WireframePass_pushOctoTree(WireframePass *this, OctoTree *tree, Vec4 color, float colorTransform);
 void WireframePass_pushOctoTreeGrid(WireframePass *this, OctoTreeGrid *grid, Vec4 color, float colorTranform);
 

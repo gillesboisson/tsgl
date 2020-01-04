@@ -152,6 +152,10 @@ export class WasmTransform extends WasmClassRelocatable {
     return isDirty;
   }
 
+  isDirty(flag: DirtyFlag) {
+    return (this.dirty & flag) !== 0;
+  }
+
   translate(x: number, y: number, z: number) {
     const position = this._position;
 

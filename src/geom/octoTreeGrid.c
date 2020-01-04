@@ -4,7 +4,7 @@
 #include "geom.h"
 #include "octoTreeGrid.h"
 
-OctoTreeGrid *OctoTreeGrid_create(VecP baseBoxWidth, VecP baseBoxHeight, VecP baseBoxDepth, uint32_t nbBoxX, uint32_t nbBoxY, uint32_t nbBoxZ, uint16_t maxLevel, uint16_t maxElements)
+EMSCRIPTEN_KEEPALIVE OctoTreeGrid *OctoTreeGrid_create(VecP baseBoxWidth, VecP baseBoxHeight, VecP baseBoxDepth, uint32_t nbBoxX, uint32_t nbBoxY, uint32_t nbBoxZ, uint16_t maxLevel, uint16_t maxElements)
 {
   OctoTreeGrid *out = malloc(sizeof(OctoTreeGrid));
   OctoTreeGrid_init(out, baseBoxWidth, baseBoxHeight, baseBoxDepth, nbBoxX, nbBoxY, nbBoxZ, maxLevel, maxElements);
@@ -24,7 +24,6 @@ void OctoTreeGrid_init(OctoTreeGrid *grid, VecP baseBoxWidth, VecP baseBoxHeight
   size_t nbTrees = nbBoxX * nbBoxY * nbBoxZ;
   grid->trees = malloc(nbTrees * sizeof(OctoTree));
   size_t nbBoxYZ = nbBoxY * nbBoxZ;
-  printf("OctoTreeGrid_init nbTrees %zu, nbBoxYZ %zu \n", nbTrees, nbBoxYZ);
   VecP bounds[6];
 
   for (size_t i = 0; i < nbBoxX; i++)
@@ -34,7 +33,6 @@ void OctoTreeGrid_init(OctoTreeGrid *grid, VecP baseBoxWidth, VecP baseBoxHeight
       for (size_t g = 0; g < nbBoxZ; g++)
       {
         size_t ind = nbBoxYZ * i + f * nbBoxZ + g;
-        printf("OctoTreeGrid_init ind %zu\n", ind);
 
         Box_setPosSize(bounds, i * baseBoxWidth, f * baseBoxHeight, g * baseBoxDepth, baseBoxWidth, baseBoxHeight, baseBoxDepth);
         OctoTree_init(grid->trees + ind, bounds, maxLevel, maxElements, NULL);

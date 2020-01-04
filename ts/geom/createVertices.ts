@@ -7,7 +7,7 @@ export class VerticesArray<T> extends Array {
 
 export function createVertices<T>(
   length_data: number | any[],
-  stride: number,
+  nbSubElements: number,
   ArrayType: TypedArrayType = Float32Array,
 ) {
   let length;
@@ -15,19 +15,19 @@ export function createVertices<T>(
 
   if (typeof length_data === 'number') {
     length = length_data;
-    buffer = new ArrayType(length * stride);
+    buffer = new ArrayType(length * nbSubElements);
   } else {
-    length = length_data.length / stride;
+    length = length_data.length / nbSubElements;
     buffer = new ArrayType(length_data);
   }
 
   const vecs = new Array(length) as VerticesArray<T>;
   for (var i = 0; i < length; i++) {
-    vecs[i] = new ArrayType(buffer.buffer, i * ArrayType.BYTES_PER_ELEMENT * stride, stride);
+    vecs[i] = new ArrayType(buffer.buffer, i * ArrayType.BYTES_PER_ELEMENT * nbSubElements, nbSubElements);
   }
 
   vecs.buffer = (<unknown>buffer) as T;
-  vecs.stride = stride;
+  vecs.stride = nbSubElements;
 
   return vecs;
 }

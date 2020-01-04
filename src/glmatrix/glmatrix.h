@@ -25,8 +25,12 @@ struct Fov
   VecP rightDegrees;
 };
 
+// Helpers ------------------------------------------------------------------------------------
+
 VecP min(VecP a, VecP b);
 VecP max(VecP a, VecP b);
+
+// Vec3 ------------------------------------------------------------------------------------
 
 Vec3 Vec3_create();
 Vec3 Vec3_clone(Vec3 v);
@@ -68,6 +72,9 @@ VecP Vec3_angle(Vec3 a, Vec3 b);
 Vec3 Vec3_zero(Vec3 out);
 bool Vec3_equals(Vec3 a, Vec3 b);
 void Vec3_print(Vec3 a);
+VecP Vec3_len(Vec3 a);
+
+// Vec4 ------------------------------------------------------------------------------------
 
 Vec2 Vec2_create();
 Vec2 Vec2_clone(Vec2 v);
@@ -134,6 +141,10 @@ Vec4 Vec4_transformMat4(Vec4 out, Vec4 a, Mat4 m);
 Vec4 Vec4_transformQuat(Vec4 out, Vec4 a, Quat q);
 Vec4 Vec4_zero(Vec4 out);
 bool Vec4_equals(Vec4 a, Vec4 b);
+void Vec4_print(Vec4 this);
+
+// Mat2d ------------------------------------------------------------------------------------
+
 Mat2d Mat2d_create();
 Mat2d Mat2d_clone(Mat2d a);
 Mat2d Mat2d_copy(Mat2d out, Mat2d a);
@@ -177,6 +188,9 @@ Mat2 Mat2_substract(Mat2 out, Mat2 a, Vec2 b);
 bool Mat2_equal(Mat2 a, Vec2 b);
 Mat2 Mat2_multiplyScalar(Mat2 out, Mat2 a, VecP b);
 Mat2 Mat2_multiplyScalarAndAdd(Mat2 out, Mat2 a, Mat2 b, VecP scale);
+
+// Mat3 ------------------------------------------------------------------------------------
+
 Mat3 Mat3_create();
 Mat3 Mat3_fromMat4(Mat3 out, Mat4 a);
 Mat3 Mat3_clone(Mat3 a);
@@ -205,6 +219,9 @@ Mat3 Mat3_substract(Mat3 out, Mat3 a, Vec2 b);
 bool Mat3_equal(Mat3 a, Vec2 b);
 Mat3 Mat3_multiplyScalar(Mat3 out, Mat3 a, VecP b);
 Mat3 Mat3_multiplyScalarAndAdd(Mat3 out, Mat3 a, Mat3 b, VecP scale);
+
+// Mat4 ------------------------------------------------------------------------------------
+
 Mat4 Mat4_create();
 Mat4 Mat4_clone(Mat4 a);
 Mat4 Mat4_copy(Mat4 out, Mat4 a);
@@ -229,7 +246,6 @@ Mat4 Mat4_fromXRotation(Mat4 out, VecP rad);
 Mat4 Mat4_fromYRotation(Mat4 out, VecP rad);
 Mat4 Mat4_fromZRotation(Mat4 out, VecP rad);
 Mat4 Mat4_fromRotationTranslation(Mat4 out, Quat q, Vec3 v);
-
 Mat4 Mat4_fromQuat2(Mat4 out, Quat2 a);
 Vec3 Mat4_getTranslation(Vec3 out, Mat4 mat);
 Vec3 Mat4_getScaling(Vec3 out, Mat4 mat);
@@ -249,6 +265,9 @@ Mat4 Mat4_substract(Mat4 out, Mat4 a, Mat4 b);
 Mat4 Mat4_multiplyScalar(Mat4 out, Mat4 a, VecP b);
 Mat4 Mat4_multiplyScalarAndAdd(Mat4 out, Mat4 a, Mat4 b, VecP scale);
 bool Mat4_equal(Mat4 a, Vec2 b);
+
+// Quat ------------------------------------------------------------------------------------
+
 Quat Quat_create();
 Quat Quat_fromValues(VecP a, VecP b, VecP c, VecP w);
 Quat Quat_copy(Quat out, Quat a);
@@ -280,15 +299,14 @@ Quat Quat_lerp(Quat out, Quat a, Quat b, VecP t);
 VecP Quat_length(Quat a);
 Quat Quat_normalize(Quat out, Quat a);
 bool Quat_equals(Quat a, Quat b);
-
-VecP Vec3_len(Vec3 a);
 Quat Quat_rotationTo(Quat out, Vec3 a, Vec3 b);
-
 Quat Quat_sqlerp(Quat out, Quat a, Quat b, Quat c, Quat d, VecP t);
-
 Quat Quat_setAxes(Quat out, Vec3 view, Vec3 right, Vec3 up);
 VecP Quat_getAngle(Quat a, Quat b);
 Quat Quat_pow(Quat out, Quat a, VecP b);
+
+// Quat2 ------------------------------------------------------------------------------------
+
 Quat2 Quat2_create();
 Quat2 Quat2_fromValues(VecP x1, VecP y1, VecP z1, VecP w1, VecP x2, VecP y2, VecP z2, VecP w2);
 Quat2 Quat2_fromRotationTranslationValues(VecP x1, VecP y1, VecP z1, VecP w1, VecP x2, VecP y2, VecP z2);

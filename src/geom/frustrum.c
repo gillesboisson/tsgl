@@ -1,6 +1,7 @@
 #include "frustrum.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 VecP __v1[3];
@@ -115,6 +116,7 @@ const VecP _boundsVertices3[8][3];
 
 Box Frustrum_bounds(Frustrum *source)
 {
+  printf("source->dirtyBounds : %i\n", source->dirtyBounds);
   if (source->dirtyBounds)
   {
     VecP v;

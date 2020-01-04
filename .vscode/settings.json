@@ -59,7 +59,9 @@
     "nodequeuepass.h": "c",
     "queuepasscollection.h": "c",
     "queuepass.h": "c",
-    "wireframepass.h": "c"
+    "wireframepass.h": "c",
+    "wasmbuffer.h": "c",
+    "frustrum.h": "c"
   },
   "files.watcherExclude": {
     "archive": true

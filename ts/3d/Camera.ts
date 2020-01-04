@@ -34,7 +34,11 @@ export class WasmCamera extends SceneNode {
     return this._projectionMat;
   }
 
-  //
+  // get frustrum(): Frustrum {
+  //   if (this.transform.isDirtyAndUnset(DirtyFlag.Frustrum)) {
+  //   }
+  //   return this._frustrum;
+  // }
 
   init(firstInit?: boolean) {
     super.init(firstInit);

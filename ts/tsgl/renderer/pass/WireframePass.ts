@@ -99,8 +99,19 @@ export class WireframePass extends AWasmBatchPass<PositionColor> implements IWir
   @wasmFunctionOut('pushBox', ['number', 'number'])
   private _wasmPushBox: (boxPtr: number, colorPtr: number) => void;
 
-  // Props ------------------------------------------------------------------------------------
+  @wasmFunctionOut('pushBoxes', ['number', 'number'])
+  _wasmPushBoxes: (boxPtr: number, nbBoxes: number, colorPtr: number) => void;
 
+  @wasmFunctionOut('pushOctoTree', ['number', 'number', 'number'])
+  _wasmPushOctoTree: (treePtr: number, colorPtr: number, colorTransform: number) => void;
+
+  @wasmFunctionOut('pushOctoTreeGrid', ['number', 'number', 'number'])
+  _wasmPushOctoTreeGrid: (treeGridPtr: number, colorPtr: number, colorTransform: number) => void;
+
+  @wasmFunctionOut('pushCamera', ['number', 'number'])
+  _wasmPushCamera: (camera: number, colorPtr: number) => void;
+
+  // Props ------------------------------------------------------------------------------------
   protected _program: WebGLProgram;
   protected _mvpLocation: WebGLUniformLocation;
 

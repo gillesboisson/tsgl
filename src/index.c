@@ -28,6 +28,44 @@ extern "C"
 {
 #endif
 
+  EMSCRIPTEN_KEEPALIVE void debugCollidedTree(WireframePass *pass, OctoTreeGrid *grid, Camera *cam)
+  {
+    uint32_t nbTrees;
+
+    Box bounds = Frustrum_bounds(&cam->frustrum);
+    VecP color[] = {0, 0, 1, 0.7};
+
+    Box_print(bounds);
+
+    WireframePass_pushBox(pass, bounds, color);
+
+    // OctoTree **trees = OctoTreeGrid_treesInBounds(&nbTrees, grid, bounds);
+
+    // for (uint32_t i = 0; i < nbTrees; i++)
+    // {
+    //   WireframePass_pushOctoTree(pass, trees[i], color, 0);
+    // }
+  }
+
+  EMSCRIPTEN_KEEPALIVE OctoTree *prepareTree()
+  {
+    Box bounds = Box_fromValues(0, 2, 0, 2, 0, 2);
+    OctoTree *tree = OctoTree_create(bounds, 3, 16, NULL);
+    OctoTree_createChildren(tree);
+    OctoTree_createChildren(tree->children);
+    OctoTree_releaseChildren(tree->children);
+    free(bounds);
+    return tree;
+  }
+
+  EMSCRIPTEN_KEEPALIVE OctoTreeGrid *prepareTreeGrid()
+  {
+    OctoTreeGrid *grid = OctoTreeGrid_create(10, 10, 10, 5, 5, 5, 4, 16);
+
+    return grid;
+  }
+
+  /*
   void QueuePassTest_bind(RenderPass *pass)
   {
     printf("> QueuePassTest_bind %p \n", pass);
@@ -64,7 +102,7 @@ extern "C"
     // RenderPass_init(&pass->basePass.basePass, &QueuePassTest_bind, &QueuePassTest_apply);
   }
 
-  /*
+  
   void pushVertex(VertexElementBatch *batch)
   {
     for (size_t i = 0; i < batch->vertexInd; i++)

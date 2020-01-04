@@ -28,8 +28,8 @@ OctoTree *OctoTree_create(Box bounds, uint16_t maxLevel, uint16_t maxElements, O
 OctoTree *OctoTree_init(OctoTree *tree, Box bounds, uint16_t maxLevel, uint16_t maxElements, OctoTree *parent);
 void OctoTree_dispose(OctoTree *tree);
 void OctoTree_destroy(OctoTree *tree);
-// void OctoTree_releaseChildren(OctoTree *tree);
-// void OctoTree_createChildren(OctoTree *tree);
+void OctoTree_releaseChildren(OctoTree *tree);
+void OctoTree_createChildren(OctoTree *tree);
 void OctoTree_addNode(OctoTree *tree, SceneNode *node, bool doIntersectCheck);
 void OctoTree_remodeNode(OctoTree *tree, SceneNode *node);
 void OctoTree_frustrumCulling(PtrBuffer *out, OctoTree *tree, Frustrum *frustrum);

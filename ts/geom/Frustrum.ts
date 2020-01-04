@@ -87,6 +87,7 @@ export class Frustrum extends WasmClass {
 
   init(firstInit?: boolean) {
     this.planes = [this.__plane1, this.__plane2, this.__plane3, this.__plane4, this.__plane5, this.__plane6];
+    this._dirtyBounds = true;
   }
 
   destroy(freePtr?: boolean) {
