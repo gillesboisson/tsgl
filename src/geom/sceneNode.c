@@ -1,37 +1,15 @@
 
-#include "geom.h"
 #include "sceneNode.h"
-#include "transform.h"
+#include "geom.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <emscripten.h>
 
-SceneNode *SceneNode_create()
+void _SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty)
 {
-  SceneNode *node = malloc(sizeof(SceneNode));
-  SceneNode_init(node);
-  return node;
-}
-
-void SceneNode_init(SceneNode *node)
-{
-  node->transform = Transform_create();
-  node->visible = true;
-}
-
-EMSCRIPTEN_KEEPALIVE void SceneNode_test(SceneNode *node)
-{
-
-  for (size_t i = 0; i < node->children.length; i++)
-  {
-    SceneNode_test(node->children.buffer[i]);
-  }
-}
-
-EMSCRIPTEN_KEEPALIVE void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty)
-{
+  // printf("> _SceneNode_updateWorldMat\n");
   if (!tr->visible)
     return;
   bool dirty = DIRTY_GLOBAL & tr->transform->dirty | parentWasDirty;
@@ -62,4 +40,39 @@ EMSCRIPTEN_KEEPALIVE void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat
   {
     SceneNode_updateWorldMat((SceneNode *)tr->children.buffer[i], tr->worldMat, dirty);
   }
+}
+
+//  ------------------------------------------------------------------------------------
+
+SceneNode *SceneNode_create()
+{
+  SceneNode *node = malloc(sizeof(SceneNode));
+  SceneNode_init(node);
+  return node;
+}
+
+EMSCRIPTEN_KEEPALIVE void SceneNode_initUpdateWorldMatMethod(SceneNode *this)
+{
+  this->updateWorldMat = &_SceneNode_updateWorldMat;
+}
+
+void SceneNode_init(SceneNode *node)
+{
+  SceneNode_initUpdateWorldMatMethod(node);
+  node->transform = Transform_create();
+  node->visible = true;
+}
+
+EMSCRIPTEN_KEEPALIVE void SceneNode_test(SceneNode *node)
+{
+
+  for (size_t i = 0; i < node->children.length; i++)
+  {
+    SceneNode_test(node->children.buffer[i]);
+  }
+}
+
+EMSCRIPTEN_KEEPALIVE void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty)
+{
+  return (*tr->updateWorldMat)(tr, parentMat, parentWasDirty);
 }

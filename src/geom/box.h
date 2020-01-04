@@ -27,6 +27,7 @@ bool Box_interesects(Box box1, Box box2);
 bool Box_interesectsIn(Box box1, Box box2);
 bool Box_intersectPlane(Box source, Plane sPlane);
 Box Box_merge(Box out, Box box1, Box box2);
+Box Box_setIntersection(Box out, Box box1, Box box2);
 Box Box_move(Box out, Vec3 v);
 void Box_reset(Box out);
 Box Box_set(Box out, VecP minX, VecP maxX, VecP minY, VecP maxY, VecP minZ, VecP maxZ);

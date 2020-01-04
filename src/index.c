@@ -35,16 +35,18 @@ extern "C"
     Box bounds = Frustrum_bounds(&cam->frustrum);
     VecP color[] = {0, 0, 1, 0.7};
 
-    Box_print(bounds);
+    // Box_print(bounds);
 
     WireframePass_pushBox(pass, bounds, color);
 
-    // OctoTree **trees = OctoTreeGrid_treesInBounds(&nbTrees, grid, bounds);
+    VecP colorRed[] = {1, 0, 0, 1};
 
-    // for (uint32_t i = 0; i < nbTrees; i++)
-    // {
-    //   WireframePass_pushOctoTree(pass, trees[i], color, 0);
-    // }
+    OctoTree **trees = OctoTreeGrid_treesInBounds(&nbTrees, grid, bounds);
+
+    for (uint32_t i = 0; i < nbTrees; i++)
+    {
+      WireframePass_pushOctoTree(pass, trees[i], colorRed, 0);
+    }
   }
 
   EMSCRIPTEN_KEEPALIVE OctoTree *prepareTree()
@@ -60,7 +62,7 @@ extern "C"
 
   EMSCRIPTEN_KEEPALIVE OctoTreeGrid *prepareTreeGrid()
   {
-    OctoTreeGrid *grid = OctoTreeGrid_create(10, 10, 10, 5, 5, 5, 4, 16);
+    OctoTreeGrid *grid = OctoTreeGrid_create(-10, -10, -10, 20, 20, 20, 4, 4, 4, 4, 16);
 
     return grid;
   }

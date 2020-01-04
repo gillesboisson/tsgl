@@ -10,6 +10,9 @@
 
 typedef struct
 {
+  VecP x;
+  VecP y;
+  VecP z;
   VecP baseBoxWidth;
   VecP baseBoxHeight;
   VecP baseBoxDepth;
@@ -20,8 +23,9 @@ typedef struct
   uint16_t maxLevel;
   uint16_t maxElements;
 } OctoTreeGrid;
-OctoTreeGrid *OctoTreeGrid_create(VecP baseBoxWidth, VecP baseBoxHeight, VecP baseBoxDepth, uint32_t nbBoxX, uint32_t nbBoxY, uint32_t nbBoxZ, uint16_t maxLevel, uint16_t maxElements);
-void OctoTreeGrid_init(OctoTreeGrid *grid, VecP baseBoxWidth, VecP baseBoxHeight, VecP baseBoxDepth, uint32_t nbBoxX, uint32_t nbBoxY, uint32_t nbBoxZ, uint16_t maxLevel, uint16_t maxElements);
+
+OctoTreeGrid *OctoTreeGrid_create(VecP x, VecP y, VecP z, VecP baseBoxWidth, VecP baseBoxHeight, VecP baseBoxDepth, uint32_t nbBoxX, uint32_t nbBoxY, uint32_t nbBoxZ, uint16_t maxLevel, uint16_t maxElements);
+void OctoTreeGrid_init(OctoTreeGrid *grid, VecP x, VecP y, VecP z, VecP baseBoxWidth, VecP baseBoxHeight, VecP baseBoxDepth, uint32_t nbBoxX, uint32_t nbBoxY, uint32_t nbBoxZ, uint16_t maxLevel, uint16_t maxElements);
 void OctoTreeGrid_destroy(OctoTreeGrid *grid);
 void OctoTreeGrid_dispose(OctoTreeGrid *grid);
 OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box bounds);

@@ -19,6 +19,7 @@ typedef struct SceneNode SceneNode;
 
 struct SceneNode
 {
+  void (*updateWorldMat)(SceneNode *tr, Mat4 parentMat, bool parentWasDirty);
   SceneNodeType nodeType;
   bool visible;
   Transform *transform;
@@ -32,5 +33,8 @@ SceneNode *SceneNode_create();
 void SceneNode_init(SceneNode *node);
 void SceneNode_test(SceneNode *node);
 void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty);
+
+// delegate method
+void _SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty);
 
 #endif

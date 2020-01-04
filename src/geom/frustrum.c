@@ -116,7 +116,7 @@ const VecP _boundsVertices3[8][3];
 
 Box Frustrum_bounds(Frustrum *source)
 {
-  printf("source->dirtyBounds : %i\n", source->dirtyBounds);
+  // printf("source->dirtyBounds : %i\n", source->dirtyBounds);
   if (source->dirtyBounds)
   {
     VecP v;

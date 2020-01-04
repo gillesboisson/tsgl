@@ -238,14 +238,14 @@ loader.load('em_app.js').then((module) => {
   const camRotationEuler = vec3.create();
 
   const ident = mat4.create();
-  // const testCollisionBoundsPosition = vec3.create();
-  // const testCollisionBoundsSize = vec3.fromValues(10, 10, 10);
+  const testCollisionBoundsPosition = vec3.create();
+  const testCollisionBoundsSize = vec3.fromValues(10, 10, 10);
 
-  // const testCollistionBounds = box.setCenterSize(
-  //   allocateTypedArray(Float32Array, 6, module) as box,
-  //   testCollisionBoundsPosition,
-  //   testCollisionBoundsSize,
-  // );
+  const testCollistionBounds = box.setCenterSize(
+    allocateTypedArray(Float32Array, 6, module) as box,
+    testCollisionBoundsPosition,
+    testCollisionBoundsSize,
+  );
 
   // const bounds2 = box.setCenterSize(
   //   allocateTypedArray(Float32Array, 6, module) as box,
@@ -286,7 +286,7 @@ loader.load('em_app.js').then((module) => {
   }
 
   function render() {
-    // window.requestAnimationFrame(render);
+    window.requestAnimationFrame(render);
 
     renderer.clear();
 
@@ -318,14 +318,14 @@ loader.load('em_app.js').then((module) => {
       camMovVec[0] += camSpeed;
     }
 
-    // if (keyState.axeXM) testCollisionBoundsPosition[0] -= boundsMoveSpeed;
-    // if (keyState.axeXP) testCollisionBoundsPosition[0] += boundsMoveSpeed;
-    // if (keyState.axeYM) testCollisionBoundsPosition[1] -= boundsMoveSpeed;
-    // if (keyState.axeYP) testCollisionBoundsPosition[1] += boundsMoveSpeed;
-    // if (keyState.axeZM) testCollisionBoundsPosition[2] -= boundsMoveSpeed;
-    // if (keyState.axeZP) testCollisionBoundsPosition[2] += boundsMoveSpeed;
+    if (keyState.axeXM) testCollisionBoundsPosition[0] -= boundsMoveSpeed;
+    if (keyState.axeXP) testCollisionBoundsPosition[0] += boundsMoveSpeed;
+    if (keyState.axeYM) testCollisionBoundsPosition[1] -= boundsMoveSpeed;
+    if (keyState.axeYP) testCollisionBoundsPosition[1] += boundsMoveSpeed;
+    if (keyState.axeZM) testCollisionBoundsPosition[2] -= boundsMoveSpeed;
+    if (keyState.axeZP) testCollisionBoundsPosition[2] += boundsMoveSpeed;
 
-    // box.setCenterSize(testCollistionBounds, testCollisionBoundsPosition, testCollisionBoundsSize);
+    box.setCenterSize(testCollistionBounds, testCollisionBoundsPosition, testCollisionBoundsSize);
 
     vec3.transformQuat(camMovVec, camMovVec, cam2.transform.rotation);
     cam2.transform.translateVec(camMovVec);
@@ -339,7 +339,7 @@ loader.load('em_app.js').then((module) => {
     // wireframeB._wasmPushOctoTreeGrid(treeGridPr, colorRed.byteOffset, 1.5);
     debugCollidedTree(wireframeB.ptr, treeGridPr, cam.ptr);
 
-    // wireframeB.pushBox(testCollistionBounds, colorGreen);
+    wireframeB.pushBox(testCollistionBounds, colorGreen);
     wireframeB._wasmPushCamera(cam.ptr, colorGreen.byteOffset);
     wireframeB.end();
   }

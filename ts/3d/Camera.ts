@@ -14,7 +14,8 @@ export class WasmCamera extends SceneNode {
   @wasmObjectAttr(Frustrum)
   protected _frustrum: Frustrum;
 
-  // WASM Binding ====================================
+  // Wasm Props ------------------------------------------------------------------------------------
+
   @structAttr({
     type: Float32Array,
     length: 16,
@@ -30,15 +31,22 @@ export class WasmCamera extends SceneNode {
   @structBool()
   protected _ortho: boolean;
 
+  // Wasm Methods out ------------------------------------------------------------------------------------
+
+  @wasmFunctionOut('initUpdateWorldMatMethod')
+  private _initCamUpdateWorldMatMethod: () => void;
+
+  // Properties ------------------------------------------------------------------------------------
+
   get projectionMat(): mat4 {
     return this._projectionMat;
   }
 
-  // get frustrum(): Frustrum {
-  //   if (this.transform.isDirtyAndUnset(DirtyFlag.Frustrum)) {
-  //   }
-  //   return this._frustrum;
-  // }
+  // Methods ------------------------------------------------------------------------------------
+
+  protected bindUpdateWorldMatMethod() {
+    this._initCamUpdateWorldMatMethod();
+  }
 
   init(firstInit?: boolean) {
     super.init(firstInit);

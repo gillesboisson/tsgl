@@ -15,6 +15,8 @@ typedef struct
   bool isOrtho;
 } Camera;
 
+void _Camera_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty);
+
 inline void Camera_mvp(Camera *source, Mat4 out, Mat4 modelMat)
 {
   Mat4_multiply(source->viewProjectionMat, source->projectionMat, source->node.worldMat);

@@ -5,13 +5,18 @@
 
 #include <emscripten.h>
 
-/*
-EMSCRIPTEN_KEEPALIVE void Camera_mvpStack(BufferStack *outBf, Camera *source, BufferStack *modelMatBf)
+void _Camera_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty)
 {
 
-  for (size_t i = 0; i < outBf->length; i++)
-  {
-    Camera_mvp(BufferStack_get(outBf, i), source, BufferStack_get(modelMatBf, i));
-  }
+  Camera *cam = (Camera *)tr;
+  VecP mat[16];
+
+  _SceneNode_updateWorldMat(tr, parentMat, parentWasDirty);
+  Mat4_multiply(mat, cam->projectionMat, cam->node.worldMat);
+  Frustrum_setFromMat(&cam->frustrum, mat);
 }
-*/
+
+EMSCRIPTEN_KEEPALIVE void Camera_initUpdateWorldMatMethod(Camera *this)
+{
+  this->node.updateWorldMat = &_Camera_updateWorldMat;
+}

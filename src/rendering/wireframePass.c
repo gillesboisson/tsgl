@@ -157,10 +157,7 @@ EMSCRIPTEN_KEEPALIVE void WireframePass_pushOctoTreeGrid(WireframePass *this, Oc
 
 EMSCRIPTEN_KEEPALIVE void WireframePass_pushCamera(WireframePass *this, Camera *camera, Vec4 color)
 {
-  VecP invMat[16];
   VecP _vec4[4];
-  Mat4_multiply(invMat, camera->projectionMat, camera->node.worldMat);
-  Mat4_invert(invMat, invMat);
 
   IndexType *indexBuffer;
   PositionColor *vertexBuffer;
@@ -172,7 +169,7 @@ EMSCRIPTEN_KEEPALIVE void WireframePass_pushCamera(WireframePass *this, Camera *
   for (uint32_t i = 0; i < 8; i++, vertexBuffer++)
   {
     Vec4 boxP = (Vec4)(BOX_POSITIONS + i * 4);
-    Vec4_transformMat4(_vec4, boxP, invMat);
+    Vec4_transformMat4(_vec4, boxP, camera->frustrum.invertMat);
     Vec3_set(vertexBuffer->position, _vec4[0] / _vec4[3], _vec4[1] / _vec4[3], _vec4[2] / _vec4[3]);
     Vec4_copy(vertexBuffer->color, color);
   }

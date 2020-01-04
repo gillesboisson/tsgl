@@ -14,6 +14,13 @@ export class SceneNode extends WasmClassRelocatable {
   static allocator: WasmPoolAllocator<SceneNode>;
 
   // Wasm Attribute Binding ==========================================
+
+  @structAttr({
+    length: 1,
+    type: Uint32Array,
+  })
+  private _updateWorldMatMethodPtr: number;
+
   @structAttr({
     type: Uint32Array,
     length: 1,
@@ -58,6 +65,9 @@ export class SceneNode extends WasmClassRelocatable {
   @wasmFunctionOut('test')
   test: () => void;
 
+  @wasmFunctionOut('initUpdateWorldMatMethod')
+  private _initUpdateWorldMatMethod: () => void;
+
   // ==================================================================
   private _children: SceneNode[] = [];
   private _transform: WasmTransform;
@@ -83,6 +93,7 @@ export class SceneNode extends WasmClassRelocatable {
       mat4.identity(this.worldMat);
       this._renderingPassPtr = 0;
       this.visible = true;
+      this.bindUpdateWorldMatMethod();
     }
 
     if (this._transform === undefined) {
@@ -90,6 +101,10 @@ export class SceneNode extends WasmClassRelocatable {
     }
     this._transformPtr = this._transform.ptr;
     this._nodeType = SceneNodeType.Dynamic;
+  }
+
+  protected bindUpdateWorldMatMethod() {
+    this._initUpdateWorldMatMethod();
   }
 
   addChild(tr: SceneNode) {

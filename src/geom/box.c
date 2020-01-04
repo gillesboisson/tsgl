@@ -385,6 +385,25 @@ bool Box_interesectsIn(Box box1, Box box2)
       box2[5] <= box1[4] || box2[4] >= box1[5]);
 }
 
+Box Box_setIntersection(Box out, Box box1, Box box2)
+{
+  VecP x0 = box1[0] > box2[0] ? box1[0] : box2[0];
+  VecP y0 = box1[2] > box2[2] ? box1[2] : box2[2];
+  VecP z0 = box1[4] > box2[4] ? box1[4] : box2[4];
+
+  VecP x1 = box1[1] < box2[1] ? box1[1] : box2[1];
+  VecP y1 = box1[3] < box2[3] ? box1[3] : box2[3];
+  VecP z1 = box1[5] < box2[5] ? box1[5] : box2[5];
+
+  out[0] = x0;
+  out[1] = x1;
+  out[2] = y0;
+  out[3] = y1;
+  out[4] = z0;
+  out[5] = z1;
+  return out;
+}
+
 Box Box_merge(Box out, Box box1, Box box2)
 {
   VecP x0 = box1[0] < box2[0] ? box1[0] : box2[0];
