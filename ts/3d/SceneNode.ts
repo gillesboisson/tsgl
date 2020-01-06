@@ -13,7 +13,7 @@ export class SceneNode extends WasmClassRelocatable {
   static byteLength: number;
   static allocator: WasmPoolAllocator<SceneNode>;
 
-  // Wasm Attribute Binding ==========================================
+  // Wasm Attribute Binding ------------------------------------------------------------------------------------
 
   @structAttr({
     length: 1,
@@ -28,9 +28,16 @@ export class SceneNode extends WasmClassRelocatable {
   protected _nodeType: SceneNodeType;
 
   @structBool()
-  visible: boolean;
+  protected _visible: boolean;
+
+  @structBool()
+  protected _worldVisible: boolean;
+
+  // @structAttr({ type: Uint8Array, length: 2 })
+  // private _margin: Uint8Array;
 
   @structAttr({
+    // margin: 2,
     type: Uint32Array,
     length: 1,
   })
@@ -57,10 +64,13 @@ export class SceneNode extends WasmClassRelocatable {
   })
   protected _renderingPassPtr: number;
 
-  // Wasm Function Binding ==========================================
+  // Wasm Function Binding ------------------------------------------------------------------------------------
 
   @wasmFunctionOut('updateWorldMat', ['number', 'number'], null)
   wasmUpdateWorldMat: (parentMatPtr: number, parentWasDirty: boolean) => void;
+
+  @wasmFunctionOut('updateChildrenWorldVisible')
+  protected _updateChildrenWorldVisible: () => void;
 
   @wasmFunctionOut('test')
   test: () => void;
@@ -68,7 +78,8 @@ export class SceneNode extends WasmClassRelocatable {
   @wasmFunctionOut('initUpdateWorldMatMethod')
   private _initUpdateWorldMatMethod: () => void;
 
-  // ==================================================================
+  // Properties ------------------------------------------------------------------------------------
+
   private _children: SceneNode[] = [];
   private _transform: WasmTransform;
   private _material: AMaterial<any>;
@@ -77,11 +88,29 @@ export class SceneNode extends WasmClassRelocatable {
     return this._material;
   }
 
+  // Accessors ------------------------------------------------------------------------------------
+
   set material(val: AMaterial<any>) {
     if (this._material !== val) {
       this._material = val;
       this._renderingPassPtr = val ? val.renderingPass.ptr : 0;
     }
+  }
+
+  get visible(): boolean {
+    return this._visible;
+  }
+
+  set visible(val: boolean) {
+    if (this._visible !== val) {
+      this._visible = val;
+      this._worldVisible = val;
+      this._updateChildrenWorldVisible();
+    }
+  }
+
+  get worldVisible(): boolean {
+    return this._worldVisible;
   }
 
   get nodeType() {
@@ -92,7 +121,8 @@ export class SceneNode extends WasmClassRelocatable {
     if (firstInit === true) {
       mat4.identity(this.worldMat);
       this._renderingPassPtr = 0;
-      this.visible = true;
+      this._visible = true;
+      this._worldVisible = true;
       this.bindUpdateWorldMatMethod();
     }
 
@@ -108,6 +138,8 @@ export class SceneNode extends WasmClassRelocatable {
   }
 
   addChild(tr: SceneNode) {
+    console.log('this._childrenPtrVector.bufferPtr : ', this._childrenPtrVector.bufferPtr, SceneNode.byteLength);
+
     if (this._children.indexOf(tr) === -1) {
       this._childrenPtrVector.add(tr);
       this._children.push(tr);

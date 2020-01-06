@@ -22,6 +22,7 @@ struct SceneNode
   void (*updateWorldMat)(SceneNode *tr, Mat4 parentMat, bool parentWasDirty);
   SceneNodeType nodeType;
   bool visible;
+  bool worldVisible;
   Transform *transform;
   VecP worldMat[16];
   VecP bounds[6];
@@ -36,5 +37,6 @@ void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty
 
 // delegate method
 void _SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty);
+void SceneNode_setVisible(SceneNode *this, bool visible);
 
 #endif

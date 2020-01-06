@@ -173,6 +173,30 @@ const DEBUG_COMMANDS_START = false;
 const DEBUG_COMMANDS_NB = 150;
 
 loader.load('em_app.js').then((module) => {
+  // const node = new SceneNode(module);
+  // const sNode = new SceneNode(module);
+  // const ssNode = new SceneNode(module);
+
+  // node.addChild(sNode);
+  // sNode.addChild(ssNode);
+
+  // sNode.visible = false;
+
+  // console.log('test visibility 1', node.worldVisible, sNode.worldVisible, ssNode.worldVisible);
+
+  // sNode.visible = true;
+  // node.visible = false;
+
+  // console.log('test visibility 2', node.worldVisible, sNode.worldVisible, ssNode.worldVisible);
+
+  // node.visible = true;
+
+  // console.log('test visibility 3', node.worldVisible, sNode.worldVisible, ssNode.worldVisible);
+
+  // ssNode.visible = false;
+
+  // console.log('test visibility 4', node.worldVisible, sNode.worldVisible, ssNode.worldVisible);
+  // return;
   const renderer: BaseRenderer = GLRenderer.createFromCanvas<BaseRenderer>(
     document.getElementById('test') as HTMLCanvasElement,
     GLRendererType.WebGL2,

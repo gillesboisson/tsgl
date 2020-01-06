@@ -68,5 +68,6 @@
   },
   "search.exclude": {
     "archive": true
-  }
+  },
+  "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

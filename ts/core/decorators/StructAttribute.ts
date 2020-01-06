@@ -54,11 +54,16 @@ export function getStructAttributesByteLength(structsAttr: StructAttributes) {
   let prop: StructAttributeProp;
 
   for (prop of structsAttr) {
-    const propOffset = prop.offset === -1 ? classBLength : prop.offset;
+    let propOffset = prop.offset === -1 ? classBLength + prop.margin : prop.offset;
     const byteLength =
       prop.wasm !== undefined && prop.wasm.wasmType !== undefined
         ? prop.wasm.wasmType.byteLength
         : prop.type.BYTES_PER_ELEMENT * prop.length;
+
+    if (prop.type === Uint32Array || prop.type === Float32Array || prop.type === Int32Array) {
+      propOffset = Math.ceil(propOffset / 4) * 4;
+    }
+
     const nLength = propOffset + byteLength;
     if (nLength > classBLength) classBLength = nLength;
   }
@@ -140,7 +145,7 @@ export function structBool(prop: StructAttributeProp = <StructAttributeProp>{}) 
   return function(target: any, propName: string | Symbol) {
     createOrAddPropList(
       <string>propName,
-      { ...prop, useAccessor: true, type: Uint32Array, length: 1 },
+      { ...prop, useAccessor: true, type: Uint8Array, length: 1, isBool: true },
       prop.gl,
       prop.wasm,
       target,

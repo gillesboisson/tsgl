@@ -35,11 +35,16 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
 
     for (prop of prototype.__anPropsList) {
       const propName = '__' + prop.name;
-      const propOffset = prop.offset === -1 ? cBLength + prop.margin : prop.offset;
+      let propOffset = prop.offset === -1 ? cBLength + prop.margin : prop.offset;
       const byteLength =
         prop.wasm !== undefined && prop.wasm.wasmType !== undefined
           ? prop.wasm.wasmType.byteLength
           : prop.type.BYTES_PER_ELEMENT * prop.length;
+
+      if (prop.type === Uint32Array || prop.type === Float32Array || prop.type === Int32Array) {
+        propOffset = Math.ceil(propOffset / 4) * 4;
+      }
+
       const nLength = propOffset + byteLength;
 
       if (nLength > cBLength) cBLength = nLength;

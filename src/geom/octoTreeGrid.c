@@ -69,8 +69,6 @@ OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box
   uint32_t minZ = floor(globalBounds[4] / grid->baseBoxDepth);
   uint32_t maxZ = ceil(globalBounds[5] / grid->baseBoxDepth);
 
-  // printf("OctoTreeGrid_treesInBounds > minX %i, maxX %i, minY %i, maxY %i, minZ %i , maxZ %i\n", minX, maxX, minY, maxY, minZ, maxZ);
-
   size_t nbBoxYZ = grid->nbBoxY * grid->nbBoxZ;
   size_t ind;
   *nbTrees = (maxZ - minZ) * (maxY - minY) * (maxX - minX);
@@ -87,8 +85,6 @@ OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box
         ind = nbBoxYZ * x + y * grid->nbBoxZ + z;
         *treesIt = grid->trees + ind;
 
-        // printf("Add grid at %zu, %zu, %zu, ind %zu, ptr %i , tree ptr %i \n", x, y, z, ind, treesIt, *treesIt);
-
         treesIt++;
       }
     }
@@ -96,6 +92,7 @@ OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box
 
   return trees;
 }
+
 void OctoTreeGrid_frustrumCulling(PtrBuffer *out, OctoTreeGrid *grid, Frustrum *frustrum)
 {
   Box bounds = Frustrum_bounds(frustrum);

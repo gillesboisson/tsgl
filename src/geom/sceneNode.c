@@ -61,6 +61,7 @@ void SceneNode_init(SceneNode *node)
   SceneNode_initUpdateWorldMatMethod(node);
   node->transform = Transform_create();
   node->visible = true;
+  node->worldVisible = true;
 }
 
 EMSCRIPTEN_KEEPALIVE void SceneNode_test(SceneNode *node)
@@ -75,4 +76,24 @@ EMSCRIPTEN_KEEPALIVE void SceneNode_test(SceneNode *node)
 EMSCRIPTEN_KEEPALIVE void SceneNode_updateWorldMat(SceneNode *tr, Mat4 parentMat, bool parentWasDirty)
 {
   return (*tr->updateWorldMat)(tr, parentMat, parentWasDirty);
+}
+
+EMSCRIPTEN_KEEPALIVE void SceneNode_updateChildrenWorldVisible(SceneNode *this)
+{
+  for (size_t i = 0; i < this->children.length; i++)
+  {
+    SceneNode *child = (SceneNode *)(this->children.buffer[i]);
+    child->worldVisible = this->worldVisible && child->visible;
+    SceneNode_updateChildrenWorldVisible(child);
+  }
+}
+
+void SceneNode_setVisible(SceneNode *this, bool visible)
+{
+  if (visible != this->visible)
+  {
+    this->visible = visible;
+    this->worldVisible = visible;
+    SceneNode_updateChildrenWorldVisible(this);
+  }
 }
