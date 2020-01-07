@@ -7,9 +7,6 @@
 VecP __v1[3];
 VecP __v2[3];
 
-VecP _vmax[3];
-VecP _vmin[3];
-
 const VecP _boxVertices[8][4] = {
     {-1.0, -1.0, 1.0, 1.0},
     {1.0, -1.0, 1.0, 1.0},
@@ -49,6 +46,9 @@ enum CollisionType Frustrum_intersectBox(Frustrum *source, Box box)
   enum CollisionType res = Inside;
 
   Plane plane;
+
+  VecP _vmax[3];
+  VecP _vmin[3];
 
   for (size_t i = 0; i < 6; i++)
   {

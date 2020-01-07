@@ -52,6 +52,18 @@ void OctoTree_releaseChildren(OctoTree *tree)
   tree->children = NULL;
 }
 
+void OctoTree_createChildrenRec(OctoTree *tree, uint16_t rec)
+{
+  OctoTree_createChildren(tree);
+  if (rec > 1)
+  {
+    for (uint16_t i = 0; i < 8; i++)
+    {
+      OctoTree_createChildrenRec(tree->children + i, rec - 1);
+    }
+  }
+}
+
 void OctoTree_createChildren(OctoTree *tree)
 {
   tree->children = malloc(8 * sizeof(OctoTree));
@@ -135,7 +147,7 @@ void OctoTree_remodeNode(OctoTree *tree, SceneNode *node)
   }
 }
 
-void OctoTree_frustrumCulling(PtrBuffer *out, OctoTree *tree, Frustrum *frustrum)
+void OctoTree_frustrumCulling(PtrBuffer *nodesOut, OctoTree *tree, Frustrum *frustrum)
 {
   enum CollisionType collision = Frustrum_intersectBox(frustrum, tree->bounds);
   if (collision != Outside)
@@ -144,7 +156,7 @@ void OctoTree_frustrumCulling(PtrBuffer *out, OctoTree *tree, Frustrum *frustrum
     {
       for (size_t i = 0; i < 8; i++)
       {
-        OctoTree_frustrumCulling(out, tree->children + i, frustrum);
+        OctoTree_frustrumCulling(nodesOut, tree->children + i, frustrum);
       }
     }
     else
@@ -154,8 +166,31 @@ void OctoTree_frustrumCulling(PtrBuffer *out, OctoTree *tree, Frustrum *frustrum
         SceneNode *node = tree->elements.buffer[i];
         if (!node->visible)
           continue;
-        PtrBuffer_push(out, node);
+        PtrBuffer_push(nodesOut, node);
       }
     }
+  }
+}
+
+void OctoTree_frustrumCullingTrees(PtrBuffer *treesOut, OctoTree *tree, Frustrum *frustrum)
+{
+
+  enum CollisionType collision = Frustrum_intersectBox(frustrum, tree->bounds);
+
+  if (collision != Outside)
+  {
+
+    if (collision == Inside || tree->children == NULL)
+    {
+      PtrBuffer_push(treesOut, tree);
+    }
+    else if (tree->children != NULL)
+    {
+      for (size_t i = 0; i < 8; i++)
+      {
+        OctoTree_frustrumCullingTrees(treesOut, tree->children + i, frustrum);
+      }
+    }
+    
   }
 }

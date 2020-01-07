@@ -1,64 +1,57 @@
 #include "./glmatrix.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 const VecP IDENT_MAT4[16] = {
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
 };
 
-Mat4 Mat4_create(){
-    Mat4 out = malloc(sizeof(VecP) * 16);
+Mat4 Mat4_create()
+{
+  Mat4 out = malloc(sizeof(VecP) * 16);
 
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = 0;
-    out[4] = 0;
-    out[6] = 0;
-    out[7] = 0;
-    out[8] = 0;
-    out[9] = 0;
-    out[11] = 0;
-    out[12] = 0;
-    out[13] = 0;
-    out[14] = 0;
-    out[0] = 1;
-    out[5] = 1;
-    out[10] = 1;
-    out[15] = 1;
+  out[1] = 0;
+  out[2] = 0;
+  out[3] = 0;
+  out[4] = 0;
+  out[6] = 0;
+  out[7] = 0;
+  out[8] = 0;
+  out[9] = 0;
+  out[11] = 0;
+  out[12] = 0;
+  out[13] = 0;
+  out[14] = 0;
+  out[0] = 1;
+  out[5] = 1;
+  out[10] = 1;
+  out[15] = 1;
 
-    return out;
+  return out;
 }
 
-Mat4 Mat4_clone(Mat4 a){
-    Mat4 out = malloc(sizeof(VecP) * 16);
+Mat4 Mat4_clone(Mat4 a)
+{
+  Mat4 out = malloc(sizeof(VecP) * 16);
 
-    out[0] = a[0];
-    out[1] = a[1];
-    out[2] = a[2];
-    out[3] = a[3];
-    out[4] = a[4];
-    out[5] = a[5];
-    out[6] = a[6];
-    out[7] = a[7];
-    out[8] = a[8];
-    out[9] = a[9];
-    out[10] = a[10];
-    out[11] = a[11];
-    out[12] = a[12];
-    out[13] = a[13];
-    out[14] = a[14];
-    out[15] = a[15];
-
-    return out;
-}
-
-Mat4 Mat4_copy(Mat4 out, Mat4 a){
-
-    out[0] = a[0];
+  out[0] = a[0];
   out[1] = a[1];
   out[2] = a[2];
   out[3] = a[3];
@@ -75,11 +68,35 @@ Mat4 Mat4_copy(Mat4 out, Mat4 a){
   out[14] = a[14];
   out[15] = a[15];
 
-    return out;
+  return out;
 }
 
-Mat4 Mat4_identity(Mat4 out){
-      out[0] = 1;
+Mat4 Mat4_copy(Mat4 out, Mat4 a)
+{
+
+  out[0] = a[0];
+  out[1] = a[1];
+  out[2] = a[2];
+  out[3] = a[3];
+  out[4] = a[4];
+  out[5] = a[5];
+  out[6] = a[6];
+  out[7] = a[7];
+  out[8] = a[8];
+  out[9] = a[9];
+  out[10] = a[10];
+  out[11] = a[11];
+  out[12] = a[12];
+  out[13] = a[13];
+  out[14] = a[14];
+  out[15] = a[15];
+
+  return out;
+}
+
+Mat4 Mat4_identity(Mat4 out)
+{
+  out[0] = 1;
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
@@ -96,12 +113,13 @@ Mat4 Mat4_identity(Mat4 out){
   out[14] = 0;
   out[15] = 1;
 
-    return out;
+  return out;
 }
 
-Mat4 Mat4_fromValues(VecP m00, VecP m01, VecP m02, VecP m03, VecP m10, VecP m11, VecP m12, VecP m13, VecP m20, VecP m21, VecP m22, VecP m23, VecP m30, VecP m31, VecP m32, VecP m33) {
+Mat4 Mat4_fromValues(VecP m00, VecP m01, VecP m02, VecP m03, VecP m10, VecP m11, VecP m12, VecP m13, VecP m20, VecP m21, VecP m22, VecP m23, VecP m30, VecP m31, VecP m32, VecP m33)
+{
   Mat4 out = malloc(sizeof(VecP) * 16);
-  
+
   out[0] = m00;
   out[1] = m01;
   out[2] = m02;
@@ -122,8 +140,9 @@ Mat4 Mat4_fromValues(VecP m00, VecP m01, VecP m02, VecP m03, VecP m10, VecP m11,
   return out;
 }
 
-Mat4 Mat4_set(Mat4 out, VecP m00, VecP m01, VecP m02, VecP m03, VecP m10, VecP m11, VecP m12, VecP m13, VecP m20, VecP m21, VecP m22, VecP m23, VecP m30, VecP m31, VecP m32, VecP m33) {
-  
+Mat4 Mat4_set(Mat4 out, VecP m00, VecP m01, VecP m02, VecP m03, VecP m10, VecP m11, VecP m12, VecP m13, VecP m20, VecP m21, VecP m22, VecP m23, VecP m30, VecP m31, VecP m32, VecP m33)
+{
+
   out[0] = m00;
   out[1] = m01;
   out[2] = m02;
@@ -144,9 +163,11 @@ Mat4 Mat4_set(Mat4 out, VecP m00, VecP m01, VecP m02, VecP m03, VecP m10, VecP m
   return out;
 }
 
-Mat4 Mat4_transpose(Mat4 out, Mat4 a) {
-  
-  if (out == a) {
+Mat4 Mat4_transpose(Mat4 out, Mat4 a)
+{
+
+  if (out == a)
+  {
     VecP a01 = a[1], a02 = a[2], a03 = a[3];
     VecP a12 = a[6], a13 = a[7];
     VecP a23 = a[11];
@@ -163,7 +184,9 @@ Mat4 Mat4_transpose(Mat4 out, Mat4 a) {
     out[12] = a03;
     out[13] = a13;
     out[14] = a23;
-  } else {
+  }
+  else
+  {
     out[0] = a[0];
     out[1] = a[4];
     out[2] = a[8];
@@ -184,8 +207,9 @@ Mat4 Mat4_transpose(Mat4 out, Mat4 a) {
   return out;
 }
 
-Mat4 Mat4_invert(Mat4 out, Mat4 a) {
-   VecP a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
+Mat4 Mat4_invert(Mat4 out, Mat4 a)
+{
+  VecP a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
   VecP a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
   VecP a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
   VecP a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
@@ -206,7 +230,8 @@ Mat4 Mat4_invert(Mat4 out, Mat4 a) {
   // Calculate the determinant
   VecP det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 
-  if (!det) {
+  if (!det)
+  {
     return NULL;
   }
   det = 1.0 / det;
@@ -231,32 +256,34 @@ Mat4 Mat4_invert(Mat4 out, Mat4 a) {
   return out;
 }
 
-Mat4 Mat4_adjoint(Mat4 out, Mat4 a) {
+Mat4 Mat4_adjoint(Mat4 out, Mat4 a)
+{
   VecP a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
   VecP a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
   VecP a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
   VecP a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
 
-  out[0]  =  (a11 * (a22 * a33 - a23 * a32) - a21 * (a12 * a33 - a13 * a32) + a31 * (a12 * a23 - a13 * a22));
-  out[1]  = -(a01 * (a22 * a33 - a23 * a32) - a21 * (a02 * a33 - a03 * a32) + a31 * (a02 * a23 - a03 * a22));
-  out[2]  =  (a01 * (a12 * a33 - a13 * a32) - a11 * (a02 * a33 - a03 * a32) + a31 * (a02 * a13 - a03 * a12));
-  out[3]  = -(a01 * (a12 * a23 - a13 * a22) - a11 * (a02 * a23 - a03 * a22) + a21 * (a02 * a13 - a03 * a12));
-  out[4]  = -(a10 * (a22 * a33 - a23 * a32) - a20 * (a12 * a33 - a13 * a32) + a30 * (a12 * a23 - a13 * a22));
-  out[5]  =  (a00 * (a22 * a33 - a23 * a32) - a20 * (a02 * a33 - a03 * a32) + a30 * (a02 * a23 - a03 * a22));
-  out[6]  = -(a00 * (a12 * a33 - a13 * a32) - a10 * (a02 * a33 - a03 * a32) + a30 * (a02 * a13 - a03 * a12));
-  out[7]  =  (a00 * (a12 * a23 - a13 * a22) - a10 * (a02 * a23 - a03 * a22) + a20 * (a02 * a13 - a03 * a12));
-  out[8]  =  (a10 * (a21 * a33 - a23 * a31) - a20 * (a11 * a33 - a13 * a31) + a30 * (a11 * a23 - a13 * a21));
-  out[9]  = -(a00 * (a21 * a33 - a23 * a31) - a20 * (a01 * a33 - a03 * a31) + a30 * (a01 * a23 - a03 * a21));
-  out[10] =  (a00 * (a11 * a33 - a13 * a31) - a10 * (a01 * a33 - a03 * a31) + a30 * (a01 * a13 - a03 * a11));
+  out[0] = (a11 * (a22 * a33 - a23 * a32) - a21 * (a12 * a33 - a13 * a32) + a31 * (a12 * a23 - a13 * a22));
+  out[1] = -(a01 * (a22 * a33 - a23 * a32) - a21 * (a02 * a33 - a03 * a32) + a31 * (a02 * a23 - a03 * a22));
+  out[2] = (a01 * (a12 * a33 - a13 * a32) - a11 * (a02 * a33 - a03 * a32) + a31 * (a02 * a13 - a03 * a12));
+  out[3] = -(a01 * (a12 * a23 - a13 * a22) - a11 * (a02 * a23 - a03 * a22) + a21 * (a02 * a13 - a03 * a12));
+  out[4] = -(a10 * (a22 * a33 - a23 * a32) - a20 * (a12 * a33 - a13 * a32) + a30 * (a12 * a23 - a13 * a22));
+  out[5] = (a00 * (a22 * a33 - a23 * a32) - a20 * (a02 * a33 - a03 * a32) + a30 * (a02 * a23 - a03 * a22));
+  out[6] = -(a00 * (a12 * a33 - a13 * a32) - a10 * (a02 * a33 - a03 * a32) + a30 * (a02 * a13 - a03 * a12));
+  out[7] = (a00 * (a12 * a23 - a13 * a22) - a10 * (a02 * a23 - a03 * a22) + a20 * (a02 * a13 - a03 * a12));
+  out[8] = (a10 * (a21 * a33 - a23 * a31) - a20 * (a11 * a33 - a13 * a31) + a30 * (a11 * a23 - a13 * a21));
+  out[9] = -(a00 * (a21 * a33 - a23 * a31) - a20 * (a01 * a33 - a03 * a31) + a30 * (a01 * a23 - a03 * a21));
+  out[10] = (a00 * (a11 * a33 - a13 * a31) - a10 * (a01 * a33 - a03 * a31) + a30 * (a01 * a13 - a03 * a11));
   out[11] = -(a00 * (a11 * a23 - a13 * a21) - a10 * (a01 * a23 - a03 * a21) + a20 * (a01 * a13 - a03 * a11));
   out[12] = -(a10 * (a21 * a32 - a22 * a31) - a20 * (a11 * a32 - a12 * a31) + a30 * (a11 * a22 - a12 * a21));
-  out[13] =  (a00 * (a21 * a32 - a22 * a31) - a20 * (a01 * a32 - a02 * a31) + a30 * (a01 * a22 - a02 * a21));
+  out[13] = (a00 * (a21 * a32 - a22 * a31) - a20 * (a01 * a32 - a02 * a31) + a30 * (a01 * a22 - a02 * a21));
   out[14] = -(a00 * (a11 * a32 - a12 * a31) - a10 * (a01 * a32 - a02 * a31) + a30 * (a01 * a12 - a02 * a11));
-  out[15] =  (a00 * (a11 * a22 - a12 * a21) - a10 * (a01 * a22 - a02 * a21) + a20 * (a01 * a12 - a02 * a11));
+  out[15] = (a00 * (a11 * a22 - a12 * a21) - a10 * (a01 * a22 - a02 * a21) + a20 * (a01 * a12 - a02 * a11));
   return out;
 }
 
-VecP Mat4_determinant(Mat4 a){
+VecP Mat4_determinant(Mat4 a)
+{
   VecP a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
   VecP a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
   VecP a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
@@ -279,59 +306,90 @@ VecP Mat4_determinant(Mat4 a){
   return b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 }
 
-
-Mat4 Mat4_multiply(Mat4 out, Mat4 a, Mat4 b) {
+Mat4 Mat4_multiply(Mat4 out, Mat4 a, Mat4 b)
+{
   VecP a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
   VecP a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
   VecP a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
   VecP a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
 
   // Cache only the current line of the second matrix
-  VecP b0  = b[0], b1 = b[1], b2 = b[2], b3 = b[3];
-  out[0] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
-  out[1] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
-  out[2] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
-  out[3] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+  VecP b0 = b[0], b1 = b[1], b2 = b[2], b3 = b[3];
+  out[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 
-  b0 = b[4]; b1 = b[5]; b2 = b[6]; b3 = b[7];
-  out[4] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
-  out[5] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
-  out[6] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
-  out[7] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+  b0 = b[4];
+  b1 = b[5];
+  b2 = b[6];
+  b3 = b[7];
+  out[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 
-  b0 = b[8]; b1 = b[9]; b2 = b[10]; b3 = b[11];
-  out[8] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
-  out[9] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
-  out[10] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
-  out[11] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+  b0 = b[8];
+  b1 = b[9];
+  b2 = b[10];
+  b3 = b[11];
+  out[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 
-  b0 = b[12]; b1 = b[13]; b2 = b[14]; b3 = b[15];
-  out[12] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
-  out[13] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
-  out[14] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
-  out[15] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+  b0 = b[12];
+  b1 = b[13];
+  b2 = b[14];
+  b3 = b[15];
+  out[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
   return out;
 }
 
-Mat4 Mat4_translate(Mat4 out, Mat4 a, Vec2 v) {
-   VecP x = v[0], y = v[1], z = v[2];
+Mat4 Mat4_translate(Mat4 out, Mat4 a, Vec2 v)
+{
+  VecP x = v[0], y = v[1], z = v[2];
   VecP a00, a01, a02, a03;
   VecP a10, a11, a12, a13;
   VecP a20, a21, a22, a23;
 
-  if (a == out) {
+  if (a == out)
+  {
     out[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
     out[13] = a[1] * x + a[5] * y + a[9] * z + a[13];
     out[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
     out[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
-  } else {
-    a00 = a[0]; a01 = a[1]; a02 = a[2]; a03 = a[3];
-    a10 = a[4]; a11 = a[5]; a12 = a[6]; a13 = a[7];
-    a20 = a[8]; a21 = a[9]; a22 = a[10]; a23 = a[11];
+  }
+  else
+  {
+    a00 = a[0];
+    a01 = a[1];
+    a02 = a[2];
+    a03 = a[3];
+    a10 = a[4];
+    a11 = a[5];
+    a12 = a[6];
+    a13 = a[7];
+    a20 = a[8];
+    a21 = a[9];
+    a22 = a[10];
+    a23 = a[11];
 
-    out[0] = a00; out[1] = a01; out[2] = a02; out[3] = a03;
-    out[4] = a10; out[5] = a11; out[6] = a12; out[7] = a13;
-    out[8] = a20; out[9] = a21; out[10] = a22; out[11] = a23;
+    out[0] = a00;
+    out[1] = a01;
+    out[2] = a02;
+    out[3] = a03;
+    out[4] = a10;
+    out[5] = a11;
+    out[6] = a12;
+    out[7] = a13;
+    out[8] = a20;
+    out[9] = a21;
+    out[10] = a22;
+    out[11] = a23;
 
     out[12] = a00 * x + a10 * y + a20 * z + a[12];
     out[13] = a01 * x + a11 * y + a21 * z + a[13];
@@ -341,7 +399,8 @@ Mat4 Mat4_translate(Mat4 out, Mat4 a, Vec2 v) {
   return out;
 }
 
-Mat4 Mat4_scale(Mat4 out, Mat4 a, Mat4 v) {
+Mat4 Mat4_scale(Mat4 out, Mat4 a, Mat4 v)
+{
   VecP x = v[0], y = v[1], z = v[2];
 
   out[0] = a[0] * x;
@@ -363,9 +422,10 @@ Mat4 Mat4_scale(Mat4 out, Mat4 a, Mat4 v) {
   return out;
 }
 
-Mat4 Mat4_rotate(Mat4 out, Mat4 a, VecP rad, Vec3 axis) {
+Mat4 Mat4_rotate(Mat4 out, Mat4 a, VecP rad, Vec3 axis)
+{
   VecP x = axis[0], y = axis[1], z = axis[2];
-  VecP len = sqrt(x*x+y*y+z*z);
+  VecP len = sqrt(x * x + y * y + z * z);
   VecP s, c, t;
   VecP a00, a01, a02, a03;
   VecP a10, a11, a12, a13;
@@ -374,7 +434,10 @@ Mat4 Mat4_rotate(Mat4 out, Mat4 a, VecP rad, Vec3 axis) {
   VecP b10, b11, b12;
   VecP b20, b21, b22;
 
-  if (len == 0) { return NULL; }
+  if (len == 0)
+  {
+    return NULL;
+  }
 
   len = 1 / len;
   x *= len;
@@ -385,14 +448,29 @@ Mat4 Mat4_rotate(Mat4 out, Mat4 a, VecP rad, Vec3 axis) {
   c = cos(rad);
   t = 1 - c;
 
-  a00 = a[0]; a01 = a[1]; a02 = a[2]; a03 = a[3];
-  a10 = a[4]; a11 = a[5]; a12 = a[6]; a13 = a[7];
-  a20 = a[8]; a21 = a[9]; a22 = a[10]; a23 = a[11];
+  a00 = a[0];
+  a01 = a[1];
+  a02 = a[2];
+  a03 = a[3];
+  a10 = a[4];
+  a11 = a[5];
+  a12 = a[6];
+  a13 = a[7];
+  a20 = a[8];
+  a21 = a[9];
+  a22 = a[10];
+  a23 = a[11];
 
   // Construct the elements of the rotation matrix
-  b00 = x * x * t + c; b01 = y * x * t + z * s; b02 = z * x * t - y * s;
-  b10 = x * y * t - z * s; b11 = y * y * t + c; b12 = z * y * t + x * s;
-  b20 = x * z * t + y * s; b21 = y * z * t - x * s; b22 = z * z * t + c;
+  b00 = x * x * t + c;
+  b01 = y * x * t + z * s;
+  b02 = z * x * t - y * s;
+  b10 = x * y * t - z * s;
+  b11 = y * y * t + c;
+  b12 = z * y * t + x * s;
+  b20 = x * z * t + y * s;
+  b21 = y * z * t - x * s;
+  b22 = z * z * t + c;
 
   // Perform rotation-specific matrix multiplication
   out[0] = a00 * b00 + a10 * b01 + a20 * b02;
@@ -408,7 +486,8 @@ Mat4 Mat4_rotate(Mat4 out, Mat4 a, VecP rad, Vec3 axis) {
   out[10] = a02 * b20 + a12 * b21 + a22 * b22;
   out[11] = a03 * b20 + a13 * b21 + a23 * b22;
 
-  if (a != out) { // If the source and destination differ, copy the unchanged last row
+  if (a != out)
+  { // If the source and destination differ, copy the unchanged last row
     out[12] = a[12];
     out[13] = a[13];
     out[14] = a[14];
@@ -417,7 +496,8 @@ Mat4 Mat4_rotate(Mat4 out, Mat4 a, VecP rad, Vec3 axis) {
   return out;
 }
 
-Mat4 Mat4_rotateX(Mat4 out, Mat4 a, VecP rad) {
+Mat4 Mat4_rotateX(Mat4 out, Mat4 a, VecP rad)
+{
   VecP s = sin(rad);
   VecP c = cos(rad);
   VecP a10 = a[4];
@@ -429,11 +509,12 @@ Mat4 Mat4_rotateX(Mat4 out, Mat4 a, VecP rad) {
   VecP a22 = a[10];
   VecP a23 = a[11];
 
-  if (a != out) { // If the source and destination differ, copy the unchanged rows
-    out[0]  = a[0];
-    out[1]  = a[1];
-    out[2]  = a[2];
-    out[3]  = a[3];
+  if (a != out)
+  { // If the source and destination differ, copy the unchanged rows
+    out[0] = a[0];
+    out[1] = a[1];
+    out[2] = a[2];
+    out[3] = a[3];
     out[12] = a[12];
     out[13] = a[13];
     out[14] = a[14];
@@ -452,8 +533,9 @@ Mat4 Mat4_rotateX(Mat4 out, Mat4 a, VecP rad) {
   return out;
 }
 
-Mat4 Mat4_rotateY(Mat4 out, Mat4 a, VecP rad) {
-VecP s = sin(rad);
+Mat4 Mat4_rotateY(Mat4 out, Mat4 a, VecP rad)
+{
+  VecP s = sin(rad);
   VecP c = cos(rad);
   VecP a00 = a[0];
   VecP a01 = a[1];
@@ -464,11 +546,12 @@ VecP s = sin(rad);
   VecP a22 = a[10];
   VecP a23 = a[11];
 
-  if (a != out) { // If the source and destination differ, copy the unchanged rows
-    out[4]  = a[4];
-    out[5]  = a[5];
-    out[6]  = a[6];
-    out[7]  = a[7];
+  if (a != out)
+  { // If the source and destination differ, copy the unchanged rows
+    out[4] = a[4];
+    out[5] = a[5];
+    out[6] = a[6];
+    out[7] = a[7];
     out[12] = a[12];
     out[13] = a[13];
     out[14] = a[14];
@@ -487,7 +570,8 @@ VecP s = sin(rad);
   return out;
 }
 
-Mat4 Mat4_rotateZ(Mat4 out, Mat4 a, VecP rad) {
+Mat4 Mat4_rotateZ(Mat4 out, Mat4 a, VecP rad)
+{
   VecP s = sin(rad);
   VecP c = cos(rad);
   VecP a00 = a[0];
@@ -499,9 +583,10 @@ Mat4 Mat4_rotateZ(Mat4 out, Mat4 a, VecP rad) {
   VecP a12 = a[6];
   VecP a13 = a[7];
 
-  if (a != out) { // If the source and destination differ, copy the unchanged last row
-    out[8]  = a[8];
-    out[9]  = a[9];
+  if (a != out)
+  { // If the source and destination differ, copy the unchanged last row
+    out[8] = a[8];
+    out[9] = a[9];
     out[10] = a[10];
     out[11] = a[11];
     out[12] = a[12];
@@ -522,8 +607,9 @@ Mat4 Mat4_rotateZ(Mat4 out, Mat4 a, VecP rad) {
   return out;
 }
 
-Mat4 Mat4_fromTranslation(Mat4 out, Vec2 v) {
-    out[0] = 1;
+Mat4 Mat4_fromTranslation(Mat4 out, Vec2 v)
+{
+  out[0] = 1;
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
@@ -540,11 +626,11 @@ Mat4 Mat4_fromTranslation(Mat4 out, Vec2 v) {
   out[14] = v[2];
   out[15] = 1;
 
-    return out;
+  return out;
 }
 
-
-Mat4 Mat4_fromScaling(Mat4 out, Vec2 v) {
+Mat4 Mat4_fromScaling(Mat4 out, Vec2 v)
+{
   out[0] = v[0];
   out[1] = 0;
   out[2] = 0;
@@ -564,9 +650,10 @@ Mat4 Mat4_fromScaling(Mat4 out, Vec2 v) {
   return out;
 }
 
-Mat4 Mat4_fromRotation(Mat4 out, VecP rad, Vec3 axis) {
+Mat4 Mat4_fromRotation(Mat4 out, VecP rad, Vec3 axis)
+{
   VecP x = axis[0], y = axis[1], z = axis[2];
-  VecP len = sqrt(x*x + y*y + z*z);
+  VecP len = sqrt(x * x + y * y + z * z);
   VecP s, c, t;
 
   //if (len < glMatrix.EPSILON) { return null; }
@@ -600,15 +687,16 @@ Mat4 Mat4_fromRotation(Mat4 out, VecP rad, Vec3 axis) {
   return out;
 }
 
-Mat4 Mat4_fromXRotation(Mat4 out, VecP rad) {
+Mat4 Mat4_fromXRotation(Mat4 out, VecP rad)
+{
   VecP s = sin(rad);
   VecP c = cos(rad);
 
   // Perform axis-specific matrix multiplication
-  out[0]  = 1;
-  out[1]  = 0;
-  out[2]  = 0;
-  out[3]  = 0;
+  out[0] = 1;
+  out[1] = 0;
+  out[2] = 0;
+  out[3] = 0;
   out[4] = 0;
   out[5] = c;
   out[6] = s;
@@ -624,16 +712,16 @@ Mat4 Mat4_fromXRotation(Mat4 out, VecP rad) {
   return out;
 }
 
-
-Mat4 Mat4_fromYRotation(Mat4 out, VecP rad) {
+Mat4 Mat4_fromYRotation(Mat4 out, VecP rad)
+{
   VecP s = sin(rad);
   VecP c = cos(rad);
 
   // Perform axis-specific matrix multiplication
-  out[0]  = c;
-  out[1]  = 0;
-  out[2]  = -s;
-  out[3]  = 0;
+  out[0] = c;
+  out[1] = 0;
+  out[2] = -s;
+  out[3] = 0;
   out[4] = 0;
   out[5] = 1;
   out[6] = 0;
@@ -649,15 +737,16 @@ Mat4 Mat4_fromYRotation(Mat4 out, VecP rad) {
   return out;
 }
 
-Mat4 Mat4_fromZRotation(Mat4 out, VecP rad) {
+Mat4 Mat4_fromZRotation(Mat4 out, VecP rad)
+{
   VecP s = sin(rad);
   VecP c = cos(rad);
 
   // Perform axis-specific matrix multiplication
-  out[0]  = c;
-  out[1]  = s;
-  out[2]  = 0;
-  out[3]  = 0;
+  out[0] = c;
+  out[1] = s;
+  out[2] = 0;
+  out[3] = 0;
   out[4] = -s;
   out[5] = c;
   out[6] = 0;
@@ -673,8 +762,8 @@ Mat4 Mat4_fromZRotation(Mat4 out, VecP rad) {
   return out;
 }
 
-
-Mat4 Mat4_fromRotationTranslation(Mat4 out,Quat q, Vec3 v) {
+Mat4 Mat4_fromRotationTranslation(Mat4 out, Quat q, Vec3 v)
+{
   VecP x = q[0], y = q[1], z = q[2], w = q[3];
   VecP x2 = x + x;
   VecP y2 = y + y;
@@ -711,18 +800,22 @@ Mat4 Mat4_fromRotationTranslation(Mat4 out,Quat q, Vec3 v) {
 
 VecP __tempMV3[3];
 
-Mat4 Mat4_fromQuat2(Mat4 out, Quat2 a) {
+Mat4 Mat4_fromQuat2(Mat4 out, Quat2 a)
+{
   //Vec4 translation = new glMatrix.ARRAY_TYPE(3);
   VecP bx = -a[0], by = -a[1], bz = -a[2], bw = a[3],
-  ax = a[4], ay = a[5], az = a[6], aw = a[7];
+       ax = a[4], ay = a[5], az = a[6], aw = a[7];
 
   VecP magnitude = bx * bx + by * by + bz * bz + bw * bw;
   //Only scale if it makes sense
-  if (magnitude > 0) {
+  if (magnitude > 0)
+  {
     __tempMV3[0] = (ax * bw + aw * bx + ay * bz - az * by) * 2 / magnitude;
     __tempMV3[1] = (ay * bw + aw * by + az * bx - ax * bz) * 2 / magnitude;
     __tempMV3[2] = (az * bw + aw * bz + ax * by - ay * bx) * 2 / magnitude;
-  } else {
+  }
+  else
+  {
     __tempMV3[0] = (ax * bw + aw * bx + ay * bz - az * by) * 2;
     __tempMV3[1] = (ay * bw + aw * by + az * bx - ax * bz) * 2;
     __tempMV3[2] = (az * bw + aw * bz + ax * by - ay * bx) * 2;
@@ -731,8 +824,8 @@ Mat4 Mat4_fromQuat2(Mat4 out, Quat2 a) {
   return out;
 }
 
-
-Vec3 Mat4_getTranslation(Vec3 out, Mat4 mat) {
+Vec3 Mat4_getTranslation(Vec3 out, Mat4 mat)
+{
   out[0] = mat[12];
   out[1] = mat[13];
   out[2] = mat[14];
@@ -740,7 +833,8 @@ Vec3 Mat4_getTranslation(Vec3 out, Mat4 mat) {
   return out;
 }
 
-Vec3 Mat4_getScaling(Vec3 out, Mat4 mat){
+Vec3 Mat4_getScaling(Vec3 out, Mat4 mat)
+{
   VecP m11 = mat[0];
   VecP m12 = mat[1];
   VecP m13 = mat[2];
@@ -751,14 +845,15 @@ Vec3 Mat4_getScaling(Vec3 out, Mat4 mat){
   VecP m32 = mat[9];
   VecP m33 = mat[10];
 
-  out[0] = sqrt(m11*m11 + m12*m12 + m12*m12);
-  out[1] = sqrt(m21*m21 + m22*m22 + m22*m22);
-  out[2] = sqrt(m31*m31 + m32*m32 + m32*m32);
+  out[0] = sqrt(m11 * m11 + m12 * m12 + m12 * m12);
+  out[1] = sqrt(m21 * m21 + m22 * m22 + m22 * m22);
+  out[2] = sqrt(m31 * m31 + m32 * m32 + m32 * m32);
 
   return out;
 }
 
-Quat Mat4_getRotation(Quat out, Mat4 mat){
+Quat Mat4_getRotation(Quat out, Mat4 mat)
+{
 
   Mat4_getScaling((Vec3)__tempMV3, mat);
 
@@ -779,25 +874,32 @@ Quat Mat4_getRotation(Quat out, Mat4 mat){
   VecP trace = sm11 + sm22 + sm33;
   VecP S = 0;
 
-  if (trace > 0) {
+  if (trace > 0)
+  {
     S = sqrt(trace + 1.0) * 2;
     out[3] = 0.25 * S;
     out[0] = (sm23 - sm32) / S;
     out[1] = (sm31 - sm13) / S;
     out[2] = (sm12 - sm21) / S;
-  } else if ((sm11 > sm22) && (sm11 > sm33)) {
-    S = sqrt(1.0 + sm11 - sm22- sm33) * 2;
+  }
+  else if ((sm11 > sm22) && (sm11 > sm33))
+  {
+    S = sqrt(1.0 + sm11 - sm22 - sm33) * 2;
     out[3] = (sm23 - sm32) / S;
     out[0] = 0.25 * S;
     out[1] = (sm12 + sm21) / S;
     out[2] = (sm31 + sm13) / S;
-  } else if (sm22 > sm33) {
+  }
+  else if (sm22 > sm33)
+  {
     S = sqrt(1.0 + sm22 - sm11 - sm33) * 2;
     out[3] = (sm31 - sm13) / S;
     out[0] = (sm12 + sm21) / S;
     out[1] = 0.25 * S;
     out[2] = (sm23 + sm32) / S;
-  } else {
+  }
+  else
+  {
     S = sqrt(1.0 + sm33 - sm11 - sm22) * 2;
     out[3] = (sm12 - sm21) / S;
     out[0] = (sm31 + sm13) / S;
@@ -808,8 +910,9 @@ Quat Mat4_getRotation(Quat out, Mat4 mat){
   return out;
 }
 
-Mat4 Mat4_fromRotationTranslationScale(Mat4 out, Quat q, Vec3 v, Vec3 s) {
-    VecP x = q[0], y = q[1], z = q[2], w = q[3];
+Mat4 Mat4_fromRotationTranslationScale(Mat4 out, Quat q, Vec3 v, Vec3 s)
+{
+  VecP x = q[0], y = q[1], z = q[2], w = q[3];
   VecP x2 = x + x;
   VecP y2 = y + y;
   VecP z2 = z + z;
@@ -847,8 +950,8 @@ Mat4 Mat4_fromRotationTranslationScale(Mat4 out, Quat q, Vec3 v, Vec3 s) {
   return out;
 }
 
-
-Mat4 Mat4_fromRotationTranslationScaleOrigin(Mat4 out, Quat q, Vec3 v, Vec3 s, Vec3 o) {
+Mat4 Mat4_fromRotationTranslationScaleOrigin(Mat4 out, Quat q, Vec3 v, Vec3 s, Vec3 o)
+{
   // Quaternion math
   VecP x = q[0], y = q[1], z = q[2], w = q[3];
   VecP x2 = x + x;
@@ -903,7 +1006,8 @@ Mat4 Mat4_fromRotationTranslationScaleOrigin(Mat4 out, Quat q, Vec3 v, Vec3 s, V
   return out;
 }
 
-Mat4 Mat4_fromQuat(Mat4 out, Quat q) {
+Mat4 Mat4_fromQuat(Mat4 out, Quat q)
+{
   VecP x = q[0], y = q[1], z = q[2], w = q[3];
   VecP x2 = x + x;
   VecP y2 = y + y;
@@ -942,7 +1046,8 @@ Mat4 Mat4_fromQuat(Mat4 out, Quat q) {
   return out;
 }
 
-Mat4 Mat4_frustum(Mat4 out, VecP left,VecP right,VecP bottom,VecP top,VecP near,VecP far) {
+Mat4 Mat4_frustum(Mat4 out, VecP left, VecP right, VecP bottom, VecP top, VecP near, VecP far)
+{
   VecP rl = 1 / (right - left);
   VecP tb = 1 / (top - bottom);
   VecP nf = 1 / (near - far);
@@ -965,7 +1070,8 @@ Mat4 Mat4_frustum(Mat4 out, VecP left,VecP right,VecP bottom,VecP top,VecP near,
   return out;
 }
 
-Mat4 Mat4_perspective(Mat4 out,VecP fovy,VecP aspect,VecP near,VecP far) {
+Mat4 Mat4_perspective(Mat4 out, VecP fovy, VecP aspect, VecP near, VecP far)
+{
   VecP f = 1.0 / tan(fovy / 2), nf;
   out[0] = f / aspect;
   out[1] = 0;
@@ -981,22 +1087,26 @@ Mat4 Mat4_perspective(Mat4 out,VecP fovy,VecP aspect,VecP near,VecP far) {
   out[12] = 0;
   out[13] = 0;
   out[15] = 0;
-  if (far != 0) {
+  if (far != 0)
+  {
     nf = 1 / (near - far);
     out[10] = (far + near) * nf;
     out[14] = (2 * far * near) * nf;
-  } else {
+  }
+  else
+  {
     out[10] = -1;
     out[14] = -2 * near;
   }
   return out;
 }
 
-Mat4 Mat4_perspectiveFromFieldOfView(Mat4 out, struct Fov* fov, VecP near, VecP far) {
-  VecP upTan = tan(fov->upDegrees * M_PI/180.0);
-  VecP downTan = tan(fov->downDegrees * M_PI/180.0);
-  VecP leftTan = tan(fov->leftDegrees * M_PI/180.0);
-  VecP rightTan = tan(fov->rightDegrees * M_PI/180.0);
+Mat4 Mat4_perspectiveFromFieldOfView(Mat4 out, struct Fov *fov, VecP near, VecP far)
+{
+  VecP upTan = tan(fov->upDegrees * M_PI / 180.0);
+  VecP downTan = tan(fov->downDegrees * M_PI / 180.0);
+  VecP leftTan = tan(fov->leftDegrees * M_PI / 180.0);
+  VecP rightTan = tan(fov->rightDegrees * M_PI / 180.0);
   VecP xScale = 2.0 / (leftTan + rightTan);
   VecP yScale = 2.0 / (upTan + downTan);
 
@@ -1019,8 +1129,9 @@ Mat4 Mat4_perspectiveFromFieldOfView(Mat4 out, struct Fov* fov, VecP near, VecP 
   return out;
 }
 
-Mat4 Mat4_ortho(Mat4 out, VecP left, VecP right, VecP bottom, VecP top, VecP near, VecP far) {
-    VecP lr = 1 / (left - right);
+Mat4 Mat4_ortho(Mat4 out, VecP left, VecP right, VecP bottom, VecP top, VecP near, VecP far)
+{
+  VecP lr = 1 / (left - right);
   VecP bt = 1 / (bottom - top);
   VecP nf = 1 / (near - far);
   out[0] = -2 * lr;
@@ -1042,8 +1153,8 @@ Mat4 Mat4_ortho(Mat4 out, VecP left, VecP right, VecP bottom, VecP top, VecP nea
   return out;
 }
 
-
-Mat4 Mat4_lookAt(Mat4 out, Vec3 eye, Vec3 center, Vec3 up) {
+Mat4 Mat4_lookAt(Mat4 out, Vec3 eye, Vec3 center, Vec3 up)
+{
   VecP x0, x1, x2, y0, y1, y2, z0, z1, z2, len;
   VecP eyex = eye[0];
   VecP eyey = eye[1];
@@ -1054,9 +1165,10 @@ Mat4 Mat4_lookAt(Mat4 out, Vec3 eye, Vec3 center, Vec3 up) {
   VecP centerx = center[0];
   VecP centery = center[1];
   VecP centerz = center[2];
-  if(
+  if (
       abs((int)(eyey - centery)) == 0 &&
-      abs((int)(eyez - centerz)) == 0) {
+      abs((int)(eyez - centerz)) == 0)
+  {
     return Mat4_identity(out);
   }
 
@@ -1064,7 +1176,7 @@ Mat4 Mat4_lookAt(Mat4 out, Vec3 eye, Vec3 center, Vec3 up) {
   z1 = eyey - centery;
   z2 = eyez - centerz;
 
-  len = 1 / sqrt(z0*z0 * z1*z1 * z2*z2);
+  len = 1 / sqrt(z0 * z0 * z1 * z1 * z2 * z2);
   z0 *= len;
   z1 *= len;
   z2 *= len;
@@ -1072,12 +1184,15 @@ Mat4 Mat4_lookAt(Mat4 out, Vec3 eye, Vec3 center, Vec3 up) {
   x0 = upy * z2 - upz * z1;
   x1 = upz * z0 - upx * z2;
   x2 = upx * z1 - upy * z0;
-  len = sqrt(x0*x0 * x1*x1 * x2*x2);
-  if (!len) {
+  len = sqrt(x0 * x0 * x1 * x1 * x2 * x2);
+  if (!len)
+  {
     x0 = 0;
     x1 = 0;
     x2 = 0;
-  } else {
+  }
+  else
+  {
     len = 1 / len;
     x0 *= len;
     x1 *= len;
@@ -1088,12 +1203,15 @@ Mat4 Mat4_lookAt(Mat4 out, Vec3 eye, Vec3 center, Vec3 up) {
   y1 = z2 * x0 - z0 * x2;
   y2 = z0 * x1 - z1 * x0;
 
-  len = sqrt(y0*y0 + y1*y1 + y2*y2);
-  if (!len) {
+  len = sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+  if (!len)
+  {
     y0 = 0;
     y1 = 0;
     y2 = 0;
-  } else {
+  }
+  else
+  {
     len = 1 / len;
     y0 *= len;
     y1 *= len;
@@ -1120,20 +1238,22 @@ Mat4 Mat4_lookAt(Mat4 out, Vec3 eye, Vec3 center, Vec3 up) {
   return out;
 }
 
-Mat4 Mat4_targetTo(Mat4 out, Vec3 eye, Vec3 target, Vec3 up) {
+Mat4 Mat4_targetTo(Mat4 out, Vec3 eye, Vec3 target, Vec3 up)
+{
   VecP eyex = eye[0],
-      eyey = eye[1],
-      eyez = eye[2],
-      upx = up[0],
-      upy = up[1],
-      upz = up[2];
+       eyey = eye[1],
+       eyez = eye[2],
+       upx = up[0],
+       upy = up[1],
+       upz = up[2];
 
   VecP z0 = eyex - target[0],
-      z1 = eyey - target[1],
-      z2 = eyez - target[2];
+       z1 = eyey - target[1],
+       z2 = eyez - target[2];
 
-  VecP len = z0*z0 + z1*z1 + z2*z2;
-  if (len > 0) {
+  VecP len = z0 * z0 + z1 * z1 + z2 * z2;
+  if (len > 0)
+  {
     len = 1 / sqrt(len);
     z0 *= len;
     z1 *= len;
@@ -1141,11 +1261,12 @@ Mat4 Mat4_targetTo(Mat4 out, Vec3 eye, Vec3 target, Vec3 up) {
   }
 
   VecP x0 = upy * z2 - upz * z1,
-      x1 = upz * z0 - upx * z2,
-      x2 = upx * z1 - upy * z0;
+       x1 = upz * z0 - upx * z2,
+       x2 = upx * z1 - upy * z0;
 
-  len = x0*x0 + x1*x1 + x2*x2;
-  if (len > 0) {
+  len = x0 * x0 + x1 * x1 + x2 * x2;
+  if (len > 0)
+  {
     len = 1 / sqrt(len);
     x0 *= len;
     x1 *= len;
@@ -1171,12 +1292,14 @@ Mat4 Mat4_targetTo(Mat4 out, Vec3 eye, Vec3 target, Vec3 up) {
   return out;
 };
 
-VecP Mat4_frob(Mat4 out, Mat4 a, VecP v) {
-  return sqrt(a[0]*a[0]+a[1]*a[1]+a[3]*a[3]+a[4]*a[4]+a[5]*a[5]+a[6]*a[6]+a[7]*a[7]+a[8]*a[8]+a[9]*a[9]+a[10]*a[10]+a[11]*a[11]+a[12]*a[12]+a[13]*a[13]+a[14]*a[14]+a[15]*a[15]);
+VecP Mat4_frob(Mat4 out, Mat4 a, VecP v)
+{
+  return sqrt(a[0] * a[0] + a[1] * a[1] + a[3] * a[3] + a[4] * a[4] + a[5] * a[5] + a[6] * a[6] + a[7] * a[7] + a[8] * a[8] + a[9] * a[9] + a[10] * a[10] + a[11] * a[11] + a[12] * a[12] + a[13] * a[13] + a[14] * a[14] + a[15] * a[15]);
 }
 
-Mat4 Mat4_add(Mat4 out, Mat4 a, Mat4 b) {
- out[0] = a[0] + b[0];
+Mat4 Mat4_add(Mat4 out, Mat4 a, Mat4 b)
+{
+  out[0] = a[0] + b[0];
   out[1] = a[1] + b[1];
   out[2] = a[2] + b[2];
   out[3] = a[3] + b[3];
@@ -1195,8 +1318,9 @@ Mat4 Mat4_add(Mat4 out, Mat4 a, Mat4 b) {
   return out;
 }
 
-Mat4 Mat4_substract(Mat4 out, Mat4 a, Mat4 b) {
-   out[0] = a[0] - b[0];
+Mat4 Mat4_substract(Mat4 out, Mat4 a, Mat4 b)
+{
+  out[0] = a[0] - b[0];
   out[1] = a[1] - b[1];
   out[2] = a[2] - b[2];
   out[3] = a[3] - b[3];
@@ -1215,9 +1339,8 @@ Mat4 Mat4_substract(Mat4 out, Mat4 a, Mat4 b) {
   return out;
 }
 
-
-
-Mat4 Mat4_multiplyScalar(Mat4 out, Mat4 a, VecP b) {
+Mat4 Mat4_multiplyScalar(Mat4 out, Mat4 a, VecP b)
+{
   out[0] = a[0] * b;
   out[1] = a[1] * b;
   out[2] = a[2] * b;
@@ -1237,8 +1360,9 @@ Mat4 Mat4_multiplyScalar(Mat4 out, Mat4 a, VecP b) {
   return out;
 }
 
-Mat4 Mat4_multiplyScalarAndAdd(Mat4 out, Mat4 a, Mat4 b, VecP scale) {
-   out[0] = a[0] + (b[0] * scale);
+Mat4 Mat4_multiplyScalarAndAdd(Mat4 out, Mat4 a, Mat4 b, VecP scale)
+{
+  out[0] = a[0] + (b[0] * scale);
   out[1] = a[1] + (b[1] * scale);
   out[2] = a[2] + (b[2] * scale);
   out[3] = a[3] + (b[3] * scale);
@@ -1257,9 +1381,19 @@ Mat4 Mat4_multiplyScalarAndAdd(Mat4 out, Mat4 a, Mat4 b, VecP scale) {
   return out;
 }
 
-bool Mat4_equal(Mat4 a, Vec2 b){
- return a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] &&
+bool Mat4_equal(Mat4 a, Vec2 b)
+{
+  return a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] &&
          a[4] == b[4] && a[5] == b[5] && a[6] == b[6] && a[7] == b[7] &&
          a[8] == b[8] && a[9] == b[9] && a[10] == b[10] && a[11] == b[11] &&
          a[12] == b[12] && a[13] == b[13] && a[14] == b[14] && a[15] == b[15];
+}
+
+void Mat4_print(Mat4 mat)
+{
+  printf("Mat4\n");
+  printf("%f, %f, %f, %f\n", mat[0], mat[1], mat[2], mat[3]);
+  printf("%f, %f, %f, %f\n", mat[4], mat[5], mat[6], mat[7]);
+  printf("%f, %f, %f, %f\n", mat[8], mat[9], mat[10], mat[11]);
+  printf("%f, %f, %f, %f\n", mat[12], mat[13], mat[14], mat[15]);
 }

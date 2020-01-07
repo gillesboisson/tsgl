@@ -220,7 +220,7 @@ loader.load('em_app.js').then((module) => {
 
   // const batch = new WasmVertexElementBatch(PositionColor, 17, 13);
 
-  const wireframeB = new WireframePass(renderer, 512, 512, module);
+  const wireframeB = new WireframePass(renderer, 2048, 2048, module);
   wireframeB.prepare();
 
   function pullV(vertexInd: number, collection: PositionColor[], indexInd: number, indexBuffer: Uint16Array) {
@@ -251,7 +251,7 @@ loader.load('em_app.js').then((module) => {
   const cam = new WasmCamera();
   const cam2 = new WasmCamera();
 
-  cam.perspective(70, renderer.width / renderer.height, 5, 25);
+  cam.perspective(90, 1, 5, 50);
   cam2.perspective(70, renderer.width / renderer.height);
 
   cam.transform.setPosition(25, 25, 25);
@@ -263,7 +263,7 @@ loader.load('em_app.js').then((module) => {
 
   const ident = mat4.create();
   const testCollisionBoundsPosition = vec3.create();
-  const testCollisionBoundsSize = vec3.fromValues(10, 10, 10);
+  const testCollisionBoundsSize = vec3.fromValues(5, 5, 5);
 
   const testCollistionBounds = box.setCenterSize(
     allocateTypedArray(Float32Array, 6, module) as box,
@@ -277,7 +277,7 @@ loader.load('em_app.js').then((module) => {
   //   vec3.fromValues(1, 1, 1),
   // );
 
-  const colorRed = vec4.set(allocateTypedArray(Float32Array, 4, module) as vec4, 0.5, 0, 0, 0.5);
+  const colorRed = vec4.set(allocateTypedArray(Float32Array, 4, module) as vec4, 1, 0, 0, 0.7);
   const colorGreen = vec4.set(allocateTypedArray(Float32Array, 4, module) as vec4, 0, 1, 0, 0.7);
 
   // const createTree: (
@@ -295,6 +295,17 @@ loader.load('em_app.js').then((module) => {
     gridPtr: number,
     boxPtr: number,
   ) => void = module.cwrap('debugCollidedTree', null, ['number', 'number', 'number']);
+  const debugCollidedTreeBounds: (
+    passPtr: number,
+    gridPtr: number,
+    boxPtr: number,
+  ) => void = module.cwrap('debugCollidedTreeBounds', null, ['number', 'number', 'number']);
+
+  const debugFustrum: (passPtr: number, boundsPtr: number, camPtr: number) => void = module.cwrap(
+    'debugFustrum',
+    null,
+    ['number', 'number', 'number'],
+  );
 
   const nbBounds = 4;
   const boundsCPtr = module._malloc(nbBounds * Uint32Array.BYTES_PER_ELEMENT);
@@ -314,9 +325,9 @@ loader.load('em_app.js').then((module) => {
 
     renderer.clear();
 
-    camRotationEuler[0] += 0.01;
-    camRotationEuler[1] += 0.013;
-    camRotationEuler[2] += 0.02;
+    camRotationEuler[0] += 0.004;
+    // camRotationEuler[1] += 0.0013;
+    // camRotationEuler[2] += 0.002;
 
     cam.transform.setEulerRotation(camRotationEuler[0], camRotationEuler[1], camRotationEuler[2]);
 
@@ -360,11 +371,15 @@ loader.load('em_app.js').then((module) => {
     cam2.mvp(ident, wireframeB.mvp);
     wireframeB.begin();
 
-    // wireframeB._wasmPushOctoTreeGrid(treeGridPr, colorRed.byteOffset, 1.5);
-    debugCollidedTree(wireframeB.ptr, treeGridPr, cam.ptr);
+    // console.log('WireframePass ', WireframePass.byteLength);
 
-    wireframeB.pushBox(testCollistionBounds, colorGreen);
+    // wireframeB._wasmPushOctoTreeGrid(treeGridPr, colorRed.byteOffset, 1.5);
+    // debugCollidedTreeBounds(wireframeB.ptr, treeGridPr, cam.ptr);
+    debugCollidedTree(wireframeB.ptr, treeGridPr, cam.ptr);
+    // debugFustrum(wireframeB.ptr, testCollistionBounds.byteOffset, cam.ptr);
+    // wireframeB.pushBox(testCollistionBounds, colorGreen);
     wireframeB._wasmPushCamera(cam.ptr, colorGreen.byteOffset);
+
     wireframeB.end();
   }
 

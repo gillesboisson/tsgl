@@ -62,12 +62,12 @@ OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box
   VecP globalBounds[6];
   Box_setIntersection(globalBounds, OctoTreeGrid_getBounds(globalBounds, grid), bounds);
 
-  uint32_t minX = floor(globalBounds[0] / grid->baseBoxWidth);
-  uint32_t maxX = ceil(globalBounds[1] / grid->baseBoxWidth);
-  uint32_t minY = floor(globalBounds[2] / grid->baseBoxHeight);
-  uint32_t maxY = ceil(globalBounds[3] / grid->baseBoxHeight);
-  uint32_t minZ = floor(globalBounds[4] / grid->baseBoxDepth);
-  uint32_t maxZ = ceil(globalBounds[5] / grid->baseBoxDepth);
+  uint32_t minX = floor((globalBounds[0] - grid->x) / grid->baseBoxWidth);
+  uint32_t maxX = ceil((globalBounds[1] - grid->x) / grid->baseBoxWidth);
+  uint32_t minY = floor((globalBounds[2] - grid->y) / grid->baseBoxHeight);
+  uint32_t maxY = ceil((globalBounds[3] - grid->y) / grid->baseBoxHeight);
+  uint32_t minZ = floor((globalBounds[4] - grid->z) / grid->baseBoxDepth);
+  uint32_t maxZ = ceil((globalBounds[5] - grid->z) / grid->baseBoxDepth);
 
   size_t nbBoxYZ = grid->nbBoxY * grid->nbBoxZ;
   size_t ind;
@@ -93,14 +93,28 @@ OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box
   return trees;
 }
 
-void OctoTreeGrid_frustrumCulling(PtrBuffer *out, OctoTreeGrid *grid, Frustrum *frustrum)
+void OctoTreeGrid_frustrumCulling(PtrBuffer *nodesOut, OctoTreeGrid *grid, Frustrum *frustrum)
 {
   Box bounds = Frustrum_bounds(frustrum);
   uint32_t nbTrees;
   OctoTree **trees = OctoTreeGrid_treesInBounds(&nbTrees, grid, bounds);
   for (size_t i = 0; i < nbTrees; i++)
   {
-    OctoTree_frustrumCulling(out, trees[i], frustrum);
+    OctoTree_frustrumCulling(nodesOut, trees[i], frustrum);
+  }
+
+  free(trees);
+}
+
+void OctoTreeGrid_frustrumCullingTrees(PtrBuffer *treesOut, OctoTreeGrid *grid, Frustrum *frustrum)
+{
+  Box bounds = Frustrum_bounds(frustrum);
+  uint32_t nbTrees;
+  OctoTree **trees = OctoTreeGrid_treesInBounds(&nbTrees, grid, bounds);
+
+  for (size_t i = 0; i < nbTrees; i++)
+  {
+    OctoTree_frustrumCullingTrees(treesOut, trees[i], frustrum);
   }
 
   free(trees);

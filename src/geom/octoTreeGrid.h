@@ -30,6 +30,7 @@ void OctoTreeGrid_destroy(OctoTreeGrid *grid);
 void OctoTreeGrid_dispose(OctoTreeGrid *grid);
 OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box bounds);
 void OctoTreeGrid_frustrumCulling(PtrBuffer *out, OctoTreeGrid *grid, Frustrum *frustrum);
+void OctoTreeGrid_frustrumCullingTrees(PtrBuffer *treesOut, OctoTreeGrid *grid, Frustrum *frustrum);
 
 inline OctoTree *treeAt(OctoTreeGrid *grid, uint32_t x, uint32_t y, uint32_t z)
 {

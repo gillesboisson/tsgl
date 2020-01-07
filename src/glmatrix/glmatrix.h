@@ -265,6 +265,7 @@ Mat4 Mat4_substract(Mat4 out, Mat4 a, Mat4 b);
 Mat4 Mat4_multiplyScalar(Mat4 out, Mat4 a, VecP b);
 Mat4 Mat4_multiplyScalarAndAdd(Mat4 out, Mat4 a, Mat4 b, VecP scale);
 bool Mat4_equal(Mat4 a, Vec2 b);
+void Mat4_print(Mat4 mat);
 
 // Quat ------------------------------------------------------------------------------------
 

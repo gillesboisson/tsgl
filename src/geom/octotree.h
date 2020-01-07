@@ -30,8 +30,10 @@ void OctoTree_dispose(OctoTree *tree);
 void OctoTree_destroy(OctoTree *tree);
 void OctoTree_releaseChildren(OctoTree *tree);
 void OctoTree_createChildren(OctoTree *tree);
+void OctoTree_createChildrenRec(OctoTree *tree, uint16_t rec);
 void OctoTree_addNode(OctoTree *tree, SceneNode *node, bool doIntersectCheck);
 void OctoTree_remodeNode(OctoTree *tree, SceneNode *node);
-void OctoTree_frustrumCulling(PtrBuffer *out, OctoTree *tree, Frustrum *frustrum);
+void OctoTree_frustrumCulling(PtrBuffer *nodesOut, OctoTree *tree, Frustrum *frustrum);
+void OctoTree_frustrumCullingTrees(PtrBuffer *treesOut, OctoTree *tree, Frustrum *frustrum);
 
 #endif

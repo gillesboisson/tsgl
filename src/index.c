@@ -28,7 +28,7 @@ extern "C"
 {
 #endif
 
-  EMSCRIPTEN_KEEPALIVE void debugCollidedTree(WireframePass *pass, OctoTreeGrid *grid, Camera *cam)
+  EMSCRIPTEN_KEEPALIVE void debugCollidedTreeBounds(WireframePass *pass, OctoTreeGrid *grid, Camera *cam)
   {
     uint32_t nbTrees;
 
@@ -49,6 +49,62 @@ extern "C"
     }
   }
 
+  EMSCRIPTEN_KEEPALIVE void debugCollidedTree(WireframePass *pass, OctoTreeGrid *grid, Camera *cam)
+  {
+    uint32_t nbTrees;
+
+    Box bounds = Frustrum_bounds(&cam->frustrum);
+    VecP color[] = {0, 0, 1, 0.7};
+
+    // Box_print(bounds);
+
+    WireframePass_pushBox(pass, bounds, color);
+
+    VecP colorRed[] = {1, 0, 0, 1};
+
+    //OctoTree **trees = OctoTreeGrid_treesInBounds(&nbTrees, grid, bounds);
+
+    PtrBuffer *trees = PtrBuffer_create();
+
+    OctoTreeGrid_frustrumCullingTrees(trees, grid, &cam->frustrum);
+
+    for (uint32_t i = 0; i < trees->length; i++)
+    {
+
+      WireframePass_pushOctoTree(pass, (OctoTree *)(trees->buffer[i]), colorRed, 0);
+    }
+
+    PtrBuffer_destroy(trees);
+  }
+
+  EMSCRIPTEN_KEEPALIVE void debugFustrum(WireframePass *pass, Box bounds, Camera *cam)
+  {
+
+    // printf("WireframePass size %zu \n", sizeof(WireframePass));
+
+    enum CollisionType collision = Frustrum_intersectBox(&cam->frustrum, bounds);
+
+    // Box_print(bounds);
+    // printf("collision : %i\n", collision);
+
+    VecP color[4] = {0, 0, 0, 1};
+    switch (collision)
+    {
+    case Outside:
+      color[0] = 1;
+      break;
+    case Inside:
+      color[1] = 1;
+
+      break;
+    case Intersect:
+      color[2] = 1;
+      break;
+    }
+
+    WireframePass_pushBox(pass, bounds, color);
+  }
+
   EMSCRIPTEN_KEEPALIVE OctoTree *prepareTree()
   {
     Box bounds = Box_fromValues(0, 2, 0, 2, 0, 2);
@@ -62,7 +118,17 @@ extern "C"
 
   EMSCRIPTEN_KEEPALIVE OctoTreeGrid *prepareTreeGrid()
   {
-    OctoTreeGrid *grid = OctoTreeGrid_create(-10, -10, -10, 20, 20, 20, 4, 4, 4, 4, 16);
+    const uint32_t lX = 4;
+    const uint32_t lY = 4;
+    const uint32_t lZ = 4;
+    const uint32_t nbRec = 3;
+    const uint32_t nbNode = lX * lY * lZ;
+    OctoTreeGrid *grid = OctoTreeGrid_create(-10, -10, -10, 20, 20, 20, lX, lY, lZ, nbRec, 16);
+
+    for (uint16_t i = 0; i < nbNode; i++)
+    {
+      OctoTree_createChildrenRec(grid->trees + i, nbRec);
+    }
 
     return grid;
   }
