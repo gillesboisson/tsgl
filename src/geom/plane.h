@@ -21,5 +21,6 @@ Plane Plane_normalize(Plane out);
 Plane Plane_projectVec(Plane out, Plane sourcePlane, Vec3 vec);
 Plane Plane_set(Plane out, VecP x, VecP y, VecP z, VecP w);
 Plane Plane_translate(Plane out, Vec3 v);
+void Plane_print(Plane plane);
 
 #endif
