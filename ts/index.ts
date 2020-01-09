@@ -1,4 +1,4 @@
-import { EmscriptenModuleLoader } from './wasm/EmscriptenModuleLoader';
+import { EmscriptenModuleLoader, setupExtendedModule } from './wasm/EmscriptenModuleLoader';
 import { GLRenderer, GLRendererType } from './gl/core/GLRenderer';
 import { SimpleColorShader } from './tsgl/shaders/SimpleColorShader';
 import { vec3, vec2, mat4, quat, vec4 } from 'gl-matrix';
@@ -173,6 +173,10 @@ const DEBUG_COMMANDS_START = false;
 const DEBUG_COMMANDS_NB = 150;
 
 loader.load('em_app.js').then((module) => {
+  console.log('module : ', module);
+
+  const eModule = setupExtendedModule(module);
+
   // const node = new SceneNode(module);
   // const sNode = new SceneNode(module);
   // const ssNode = new SceneNode(module);

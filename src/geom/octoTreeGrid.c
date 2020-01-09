@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <emscripten.h>
+#include "../core/helpers.h"
 #include "geom.h"
 #include "octoTreeGrid.h"
 
@@ -37,7 +38,7 @@ void OctoTreeGrid_init(OctoTreeGrid *grid, VecP x, VecP y, VecP z, VecP baseBoxW
   grid->maxLevel = maxLevel;
   grid->maxElements = maxElements;
   size_t nbTrees = nbBoxX * nbBoxY * nbBoxZ;
-  grid->trees = malloc(nbTrees * sizeof(OctoTree));
+  grid->trees = safeMalloc(nbTrees * sizeof(OctoTree), "OctoTreeGrid_init : init trees");
   size_t nbBoxYZ = nbBoxY * nbBoxZ;
   VecP bounds[6];
 
@@ -73,7 +74,7 @@ OctoTree **OctoTreeGrid_treesInBounds(uint32_t *nbTrees, OctoTreeGrid *grid, Box
   size_t ind;
   *nbTrees = (maxZ - minZ) * (maxY - minY) * (maxX - minX);
 
-  OctoTree **trees = malloc(*nbTrees * sizeof(OctoTree *));
+  OctoTree **trees = safeMalloc(*nbTrees * sizeof(OctoTree *), "OctoTreeGrid_treesInBounds : allocates trees");
   OctoTree **treesIt = trees;
 
   for (size_t x = minX; x < maxX; x++)

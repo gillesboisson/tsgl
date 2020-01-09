@@ -15,7 +15,7 @@ void PtrBuffer_init(PtrBuffer *out)
   out->length = 0;
   out->bufferLength = PTR_BUFFER_DEFAULT_LENGTH;
   out->bufferStep = PTR_BUFFER_DEFAULT_STEP;
-  out->buffer = malloc(out->bufferLength * sizeof(uint32_t));
+  out->buffer = safeMalloc(out->bufferLength * sizeof(uint32_t), "PtrBuffer_init : allocate buffer");
   out->dirtyBuffer = true;
 }
 
@@ -28,7 +28,7 @@ void PtrBuffer_resizeBuffer(PtrBuffer *out, uint32_t newLength)
 
   if (newBufferLength != out->bufferLength)
   {
-    out->buffer = realloc(out->buffer, newBufferLength * sizeof(uint32_t));
+    out->buffer = safeRealloc(out->buffer, newBufferLength * sizeof(uint32_t), "PtrBuffer_resizeBuffer");
     out->bufferLength = newBufferLength;
     out->dirtyBuffer = true;
   }
@@ -162,7 +162,7 @@ void PtrBuffer_tests()
 
   for (size_t i = 0; i < 18; i++)
   {
-    void *node = malloc(sizeof(uint16_t));
+    void *node = safeMalloc(sizeof(uint16_t), "PtrBuffer_tests");
     PtrBuffer_push(in, node);
     if (i % 3 == 10)
       PtrBuffer_push(in, node);

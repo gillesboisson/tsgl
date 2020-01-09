@@ -1,5 +1,6 @@
 export interface EmscriptenModuleExtended extends EmscriptenModule {
   _realloc: (ptr: number, byteLength: number) => number;
+  UTF8ToString(ptr: number, length: number): string;
 }
 
 export class EmscriptenModuleLoader {
@@ -34,4 +35,12 @@ export class EmscriptenModuleLoader {
   }
 
   protected runtimeInitialize(): void {}
+}
+
+export function setupExtendedModule(module: EmscriptenModule): EmscriptenModuleExtended {
+  (<any>window).throwWasmError = (messagePtr: number) => {
+    throw new Error('WASM runtime Error : ' + (<EmscriptenModuleExtended>module).UTF8ToString(messagePtr, 1024));
+  };
+
+  return module as EmscriptenModuleExtended;
 }

@@ -4,6 +4,8 @@
 #define GEOM_HELPERS
 #include <stdbool.h>
 #include "geom.h"
+#include "stdio.h"
+#include "../config.h"
 
 typedef struct
 {

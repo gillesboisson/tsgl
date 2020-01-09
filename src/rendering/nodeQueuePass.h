@@ -29,16 +29,5 @@ void *ANodeQueuePass_pull(ANodeQueuePass *pass, SceneNode *node);
 void *NodeQueuePass_pull(ANodeQueuePass *pass, SceneNode *node, uint32_t index);
 
 void NodeQueuePass_initDefaultPullFunction(NodeQueuePass *this, uint32_t length);
-/*
-inline void ANodeQueuePass_init(ANodeQueuePass *pass, uint32_t length)
-{
-  pass->nodes = malloc(sizeof(SceneNode *) * length);
-}
-
-inline void ANodeQueuePass_dispose(ANodeQueuePass *pass)
-{
-  free(pass->nodes);
-}
-*/
 
 #endif

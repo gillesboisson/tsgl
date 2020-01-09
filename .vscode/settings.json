@@ -61,7 +61,8 @@
     "queuepass.h": "c",
     "wireframepass.h": "c",
     "wasmbuffer.h": "c",
-    "frustrum.h": "c"
+    "frustrum.h": "c",
+    "config.h": "c"
   },
   "files.watcherExclude": {
     "archive": true

@@ -23,7 +23,7 @@ void BufferStack_init(BufferStack *bs, uint32_t stride)
   bs->length = 0;
   bs->bufferLength = BUFFER_STACK_DEFAULT_LENGTH;
   bs->bufferStep = BUFFER_STACK_DEFAULT_STEP;
-  bs->bufferPtr = malloc(BUFFER_STACK_DEFAULT_LENGTH * stride);
+  bs->bufferPtr = safeMalloc(BUFFER_STACK_DEFAULT_LENGTH * stride, "BufferStack_init : buffer allocation");
   bs->autoShrink = false;
 }
 
@@ -33,7 +33,7 @@ void BufferStack_resize(BufferStack *bs, uint32_t newLength, bool autoShrink)
 
   if (newBufferLength > bs->bufferLength || autoShrink && newBufferLength != bs->bufferLength)
   {
-    bs->bufferPtr = realloc(bs->bufferPtr, newBufferLength * bs->bufferStride);
+    bs->bufferPtr = safeRealloc(bs->bufferPtr, newBufferLength * bs->bufferStride, "BufferStack_resize");
     bs->bufferLength = newBufferLength;
   }
   bs->length = newLength;

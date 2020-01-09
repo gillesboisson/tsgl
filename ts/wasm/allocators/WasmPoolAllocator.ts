@@ -27,6 +27,7 @@ export class WasmPoolAllocator<T extends WasmClassRelocatable> implements WasmIn
     if (this.ptr === -1) {
       this.bufferLength = this.wasmType.byteLength * this.stepSize;
       this.ptr = module._malloc(this.bufferLength);
+      if (!this.ptr) throw new Error('Allocation failed');
       this.length++;
       this.elements.push(element);
 
@@ -77,6 +78,7 @@ export class WasmPoolAllocator<T extends WasmClassRelocatable> implements WasmIn
     const elementByteLength = this.wasmType.byteLength;
     if (bufferLength !== this.bufferLength) {
       const newPtr = module._realloc(this.ptr, bufferLength * elementByteLength);
+      if (!newPtr) throw new Error('Realloc failed');
       if (newPtr !== this.ptr) {
         for (let i = 0; i < this.elements.length; i++)
           if (this.elements[i] !== null) {

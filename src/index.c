@@ -67,7 +67,7 @@ extern "C"
     PtrBuffer *trees = PtrBuffer_create();
 
     OctoTreeGrid_frustrumCullingTrees(trees, grid, &cam->frustrum);
-
+    // printf("trees->length %i : \n", trees->length);
     for (uint32_t i = 0; i < trees->length; i++)
     {
 
@@ -118,10 +118,11 @@ extern "C"
 
   EMSCRIPTEN_KEEPALIVE OctoTreeGrid *prepareTreeGrid()
   {
+
     const uint32_t lX = 4;
     const uint32_t lY = 4;
     const uint32_t lZ = 4;
-    const uint32_t nbRec = 3;
+    const uint32_t nbRec = 4;
     const uint32_t nbNode = lX * lY * lZ;
     OctoTreeGrid *grid = OctoTreeGrid_create(-10, -10, -10, 20, 20, 20, lX, lY, lZ, nbRec, 16);
 

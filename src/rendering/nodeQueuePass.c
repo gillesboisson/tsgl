@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <emscripten.h>
+#include "../core/helpers.h"
 #include "../geom/geom.h"
 #include "../geom/sceneNode.h"
 #include "nodeQueuePass.h"
@@ -26,7 +27,7 @@ void *NodeQueuePass_pull(ANodeQueuePass *pass, SceneNode *node, uint32_t index)
 
 EMSCRIPTEN_KEEPALIVE void ANodeQueuePass_init(ANodeQueuePass *this, void *(*pullFunction)(ANodeQueuePass *pass, SceneNode *node, uint32_t index), uint32_t length, void (*bindFunction)(RenderPass *rp), void (*applyFunction)(RenderPass *rp))
 {
-  this->nodes = malloc(length * sizeof(SceneNode *));
+  this->nodes = safeMalloc(length * sizeof(SceneNode *), "ANodeQueuePass_init : allocate nodes");
   this->pullFunction = pullFunction;
   QueuePass_init(&this->basePass, length, bindFunction, applyFunction);
   // RenderPass_init(this->basePass.basePass,

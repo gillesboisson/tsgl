@@ -1,11 +1,13 @@
 
-#include "transform.h"
-#include "../core/wasmBuffer.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <emscripten/emscripten.h>
+
+#include "transform.h"
+#include "../core/wasmBuffer.h"
+#include "../core/helpers.h"
 
 Mat4 TranslateScaleRotateQuat(Mat4 out, Vec3 scale, Quat rotQuat, Vec3 position, Mat4 rotMat)
 {

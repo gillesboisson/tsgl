@@ -2,6 +2,7 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "../core/helpers.h"
 
 VertexElementBatch *VertexElementBatch_create(uint32_t vertexLength, uint32_t indexLength, uint32_t stride, void (*push)(VertexElementBatch *))
 {
@@ -16,8 +17,8 @@ void VertexElementBatch_init(VertexElementBatch *batch, uint32_t vertexLength, u
   batch->indexLength = indexLength;
   batch->stride = stride;
   batch->push = push;
-  batch->vertexBuffer = malloc(vertexLength * stride);
-  batch->indexBuffer = malloc(indexLength);
+  batch->vertexBuffer = safeMalloc(vertexLength * stride, "VertexElementBatch_init : allocate vertex buffer");
+  batch->indexBuffer = safeMalloc(indexLength, "VertexElementBatch_init : allocate index buffer");
 }
 
 EMSCRIPTEN_KEEPALIVE void VertexElementBatch_dispose(VertexElementBatch *batch)
@@ -91,6 +92,6 @@ EMSCRIPTEN_KEEPALIVE void VertexElementBatch_initForWasm(VertexElementBatch *bat
   batch->indexLength = indexLength;
   batch->stride = stride;
   batch->push = &VertexElementBatch_wasmPush;
-  batch->vertexBuffer = malloc(vertexLength * stride);
-  batch->indexBuffer = malloc(indexLength);
+  batch->vertexBuffer = safeMalloc(vertexLength * stride, "VertexElementBatch_initForWasm : alloc vertex buffer");
+  batch->indexBuffer = safeMalloc(indexLength, "VertexElementBatch_initForWasm : alloc index buffer");
 }

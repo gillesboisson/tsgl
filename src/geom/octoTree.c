@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <emscripten.h>
+#include "../core/helpers.h"
 #include "geom.h"
 #include "octoTree.h"
 
@@ -66,7 +67,8 @@ void OctoTree_createChildrenRec(OctoTree *tree, uint16_t rec)
 
 void OctoTree_createChildren(OctoTree *tree)
 {
-  tree->children = malloc(8 * sizeof(OctoTree));
+  tree->children = safeMalloc(8 * sizeof(OctoTree), "OctoTree_createChildren");
+  // tree->children = malloc(8 * sizeof(OctoTree));
 
   VecP halfSize[] = {
       (tree->bounds[1] - tree->bounds[0]) / 2,
@@ -191,6 +193,5 @@ void OctoTree_frustrumCullingTrees(PtrBuffer *treesOut, OctoTree *tree, Frustrum
         OctoTree_frustrumCullingTrees(treesOut, tree->children + i, frustrum);
       }
     }
-    
   }
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <emscripten.h>
 
 #include "helpers.h"
 
@@ -17,4 +18,12 @@ bool assert(bool condition, char *message)
   }
 
   return condition;
+}
+
+void throwError(char *message)
+{
+  EM_ASM({
+    throwWasmError($0);
+  },
+         message);
 }

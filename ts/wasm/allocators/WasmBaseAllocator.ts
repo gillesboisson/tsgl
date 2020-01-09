@@ -6,7 +6,9 @@ export class WasmBaseAllocator<T extends WasmClass> implements WasmAllocatorI<T>
   constructor(protected wasmType: WasmClassType<T>) {}
 
   allocate(module: EmscriptenModule, element: T): number {
-    return module._malloc(this.wasmType.byteLength);
+    const ptr = module._malloc(this.wasmType.byteLength);
+    if (!ptr) throw new Error('Allocation failed');
+    return ptr;
   }
 
   deallocate(module: EmscriptenModule, elementPtr: number): void {
