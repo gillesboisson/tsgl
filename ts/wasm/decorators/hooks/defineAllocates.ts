@@ -44,6 +44,9 @@ export function defineAllocate(target: any, structProps?: WasmStructProp) {
       if (prop.type === Uint32Array || prop.type === Float32Array || prop.type === Int32Array) {
         propOffset = Math.ceil(propOffset / 4) * 4;
       }
+      if (prop.type === Uint16Array || prop.type === Int16Array) {
+        propOffset = Math.ceil(propOffset / 2) * 2;
+      }
 
       const nLength = propOffset + byteLength;
 
