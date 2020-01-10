@@ -64,6 +64,10 @@ export function getStructAttributesByteLength(structsAttr: StructAttributes) {
       propOffset = Math.ceil(propOffset / 4) * 4;
     }
 
+    if (prop.type === Uint16Array || prop.type === Int16Array) {
+      propOffset = Math.ceil(propOffset / 2) * 2;
+    }
+
     const nLength = propOffset + byteLength;
     if (nLength > classBLength) classBLength = nLength;
   }
