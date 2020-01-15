@@ -1,6 +1,7 @@
 #ifndef GEOMTRANSFORM
 #define GEOMTRANSFORM
 
+#include <stdint.h>
 #include <stdbool.h>
 #include "../glmatrix/glmatrix.h"
 #include "../core/ptrBuffer.h"
@@ -16,16 +17,13 @@ typedef enum
 
 typedef struct
 {
-  unsigned int dirty;
-  //bool localDirty;
-  //bool dirty;
+  bool isStatic;
+  uint16_t dirty;
   VecP position[3];
   VecP scale[3];
   VecP rotation[4];
   VecP localMat[16];
   VecP rotMat[16];
-  // VecP worldMat[16];
-  // PtrBuffer children;
 } Transform;
 
 typedef void (*TransformUpdateLocalMethod)(Transform *ptr);

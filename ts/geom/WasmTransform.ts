@@ -3,7 +3,7 @@ import { mat4, quat, vec3 } from 'gl-matrix';
 import { WasmPtrVector } from '../wasm/WasmPtrVector';
 import { WasmClassRelocatable } from '../wasm/WasmClassRelocatable';
 import { wasmFunctionOut } from '../wasm/decorators/methods';
-import { structAttr, wasmObjectAttr } from '../core/decorators/StructAttribute';
+import { structAttr, wasmObjectAttr, structBool } from '../core/decorators/StructAttribute';
 import { translateScaleRotateQuat, DirtyFlag } from './Transform';
 import { WasmAllocatorI } from '../wasm/allocators/interfaces';
 
@@ -26,17 +26,14 @@ export class WasmTransform extends WasmClassRelocatable {
 
   // Wasm Attribute Binding ==========================================
 
-  @structAttr({
-    length: 1,
-    type: Int16Array,
-  })
-  protected dirty: DirtyFlag;
+  @structBool()
+  protected _isStatic: boolean;
 
   @structAttr({
     length: 1,
-    type: Int16Array,
+    type: Uint16Array,
   })
-  private __margin: number;
+  protected dirty: DirtyFlag;
 
   @structAttr({
     length: 3,
@@ -99,11 +96,23 @@ export class WasmTransform extends WasmClassRelocatable {
       mat4.identity(this.rotMat);
       mat4.identity(this.localMat);
       this.dirty = DirtyFlag.None;
+      this._isStatic = false;
     }
   }
 
+  setStaticMat(localMat: mat4) {
+    mat4.copy(this.localMat, localMat);
+    this._isStatic = true;
+    this.dirty &= ~DirtyFlag.Local;
+  }
+
+  unsetStatic(): void {
+    this._isStatic = false;
+    this.dirty |= DirtyFlag.Local;
+  }
+
   getLocalMat(): mat4 {
-    if (this.dirty | DirtyFlag.Local) {
+    if (!this._isStatic && this.dirty & DirtyFlag.Local) {
       this.updateLocalMat();
     }
     return this.localMat;

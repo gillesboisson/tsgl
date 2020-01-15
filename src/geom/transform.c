@@ -101,7 +101,7 @@ void Transform_updateLocalMat_Cam(Transform *tr)
 
 Mat4 Transform_getLocalMat(Transform *tr)
 {
-  if (tr->dirty & DIRTY_LOCAL)
+  if (!tr->isStatic && tr->dirty & DIRTY_LOCAL)
     Transform_updateLocalMat(tr);
   return tr->localMat;
 }
