@@ -6,36 +6,33 @@ import { GLShaderState } from '../gl/core/shader/GLShaderState';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 import { GLRenderer } from '../gl/core/GLRenderer';
 
-const fragSrc = require('./glsl/sprite.frag').default;
-const vertSrc = require('./glsl/sprite.vert').default;
+const fragSrc = require('./glsl/copyTile.frag').default;
+const vertSrc = require('./glsl/copyTile.vert').default;
 
-export interface IGLSpriteShaderState extends IGLShaderState {
-  mvp: mat4;
+export interface IGLTileSheetMapShaderState extends IGLShaderState {
   textureInd: number;
 }
 
-export class SpriteShaderState extends GLShaderState implements IGLSpriteShaderState {
+export class TileSheetMapShaderState extends GLShaderState implements IGLTileSheetMapShaderState {
   syncUniforms(): void {
     const gl = this.gl;
     const uniformsLocations = this._uniformsLocation;
 
-    gl.uniformMatrix4fv(uniformsLocations.mvp, false, this.mvp);
     gl.uniform1i(uniformsLocations.texture, this.textureInd);
   }
 
-  mvp: mat4 = mat4.create();
   textureInd: number = 0;
 }
 
-export class SpriteShader extends GLShader<SpriteShaderState> {
+export class TileSheetMapShader extends GLShader<TileSheetMapShaderState> {
   static register(renderer: GLRenderer) {
     renderer.registerShaderFactoryFunction(
-      'sprite',
-      (gl: AnyWebRenderingGLContext, name: string) => new SpriteShader(gl),
+      'copyTile',
+      (gl: AnyWebRenderingGLContext, name: string) => new TileSheetMapShader(gl),
     );
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, SpriteShaderState, getDefaultAttributeLocation(['position', 'uv', 'color']));
+    super(gl, vertSrc, fragSrc, TileSheetMapShaderState, getDefaultAttributeLocation(['position', 'uv']));
   }
 }

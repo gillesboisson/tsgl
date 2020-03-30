@@ -1,198 +1,168 @@
 import { GLRenderer, GLRendererType } from './gl/core/GLRenderer';
-import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import { GLBuffer } from './gl/core/data/GLBuffer';
-import { GLShader } from './gl/core/shader/GLShader';
-import { getDefaultAttributeLocation, GLDefaultAttributesLocation } from './gl/core/data/GLDefaultAttributesLocation';
-import { IInterleavedData, InterleavedDataArray } from './gl/data/InterleavedData';
-import { interleavedData, interleavedProp } from './gl/data/InterleavedData.decorator';
-
 import { GLTexture } from './gl/core/GLTexture';
-import { GLAttribute } from './gl/core/data/GLAttribute';
-import { GLMesh } from './gl/core/data/GLMesh';
-import { AGLBatch, GLBatchable, pullMethod } from './gl/core/data/AGLBatch';
-import { AnyWebRenderingGLContext } from './gl/core/GLHelpers';
-import { GLFramebuffer } from './gl/core/framebuffer/GLFramebuffer';
-import { GLInterleavedAttributes } from './gl/core/data/GLInterleavedAttributes';
-import { Transform3D } from './geom/Transform3D';
-import { SceneInstance3D } from './3d/SceneInstance3D';
-import { createQuadMesh } from './geom/MeshHelpers';
-import { Camera3D } from './3d/Camera3D';
-import { GLAttributesCollection } from './gl/core/data/GLAttributesCollection';
-import { cpus } from 'os';
-import { SimpleColorShader } from './shaders/SimpleColorShader';
-import { GLVariantShader } from './gl/core/shader/variants/GLVariantShader';
-import { TestVariantShader, ColorMode } from './shaders/TestVariantShader';
-import { TestUBOShader, TestUBOShaderState } from './shaders/TestUboShader';
-import { TestTFShader } from './shaders/TestTFShader';
-import { generateTriangle } from './shaders/generateTriangle';
-import { generateRandomData } from './shaders/generateRandomData';
-import { TestTFdata } from './shaders/TestTFdata';
-import { TestTFShaderRender } from './shaders/TestTFShaderRender';
-import { GLVao } from './gl/core/data/GLVao';
-import { interceptMethod } from './core/helpers';
-import { compileTFProgram } from './gl/core/shader/compileProgram';
-import { GLTransformFeedbackPass } from './gl/core/GLTransformFeedbackPass';
+import { Camera } from './3d/Camera';
+import { SpriteBatchPullable, SpriteBatchData, SpriteBatch } from './2d/SpriteBatch';
+import { SpriteShader, SpriteShaderState } from './shaders/SpriteShader';
+import { SimpleSprite } from './2d/SimpleSprite';
+import { SimpleGrid } from './2d/SimpleGrid';
+import { SubTexture, createSubTextureGrid, createGridAlignedSubTextures } from './2d/SubTexture';
+import { Camera2D } from './2d/Camera2D';
+import { TiledMap } from './2d/tiled/TiledMap';
+import { TiledTile } from './2d/tiled/TiledTile';
+import { TiledTileLayer } from './2d/tiled/TiledTileLayer';
+import { SimpleGroup } from './2d/SimpleGroup';
+import { GameInput, GameInputKey } from './game/GameInput';
+import GameInputStateManager from './game/GameInputStateManager';
+import { Panda } from './game/Panda';
+import { SimpleTextFont, SimpleText } from './2d/SimpleText';
+import { SimpleStage2D } from './2d/SimpleStage2D';
+import { Juggler } from './animation/Juggler';
+import { AnimatedMap } from './animation/AnimatedMap';
+import { SimpleAnimatedSprite } from './2d/SimpleAnimatedSprite';
+import { Base2DApp } from './game/Base2DApp';
 
-var SPECTOR = require('spectorjs');
+// var SPECTOR = require('spectorjs');
 
-const DEBUG = false;
-const DEBUG_COMMANDS_START = false;
-let spector: any = null;
-
-if (DEBUG) {
-  spector = new SPECTOR.Spector();
-}
-
-@GLInterleavedAttributes()
-@interleavedData()
-class PosUvColor implements IInterleavedData {
-  static createAttributes: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride?: number) => GLAttribute[];
-
-  @interleavedProp({
-    type: Float32Array,
-    length: 3,
-    attributeLocation: GLDefaultAttributesLocation.POSITION,
-  })
-  public position: vec3;
-
-  @interleavedProp({
-    type: Float32Array,
-    length: 2,
-    attributeLocation: GLDefaultAttributesLocation.UV,
-  })
-  public uv: vec2;
-
-  @interleavedProp({
-    type: Float32Array,
-    length: 4,
-    attributeLocation: GLDefaultAttributesLocation.COLOR,
-  })
-  public color: vec4;
-
-  allocate(array: InterleavedDataArray<PosUvColor>, arrayBuffer: ArrayBuffer, offset: number, stride: number): void {}
-}
-
-window.addEventListener('load', () => {
-  const renderer = GLRenderer.createFromCanvas(
-    document.getElementById('test') as HTMLCanvasElement,
-    GLRendererType.WebGL2,
-  );
-
-  const gl = renderer.getGL() as WebGL2RenderingContext;
-
-  const data = new Float32Array([-1, -1, 0, 0, 0, 1, -1, 0, 1, 0, -1, 1, 0, 0, 1, 1, 1, 0, 1, 1]);
-
-  // prettier-ignore
-  const posUvColdata = new Float32Array([
-    -1, -1, 0,  0, 0,   1, 0, 0, 1,
-    1, -1, 0,   1, 0,   0, 1, 0, 1,
-    -1, 1, 0,   0, 1,   0, 0, 1, 1,
-    1, 1, 0,    1, 1,   1, 0, 1, 1,
-  ]);
-
-  const indices = new Uint16Array([0, 1, 2, 1, 3, 2]);
-
-  const vertexB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, posUvColdata);
-  const indicesB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW, indices);
-  const attributes = PosUvColor.createAttributes(gl, vertexB);
-  // const attributes = [new GLAttribute(gl, vertexB, GLDefaultAttributesLocation.POSITION,'position',3,3*Float32Array.BYTES_PER_ELEMENT)];
-  const mesh = new GLMesh(gl, 4, 2, attributes, indicesB, gl.TRIANGLES);
-
-  // const intData = generateRandomData();
-  // const buffer1 = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STREAM_DRAW, intData.bufferView);
-  // const buffer2 = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STREAM_DRAW);
-  // buffer2.bufferDataLength(intData.byteLength);
-  // const vao1 = new GLVao(gl, TestTFdata.createAttributes(gl, buffer1));
-  // const vao2 = new GLVao(gl, TestTFdata.createAttributes(gl, buffer2));
-
-  // let bufferSwapped = false;
-
-  // const transformFeedback = gl.createTransformFeedback();
-
-  const shaderTFRender = new TestTFShaderRender(gl);
-  const testTFShader = new TestTFShader(gl);
-  const testTFShaderState = testTFShader.createState();
-
-  const transformPass = new GLTransformFeedbackPass<TestTFdata>(gl, TestTFdata, 2056);
-
-  const intData = generateRandomData(transformPass.length);
-
-  transformPass.getBufferIn().bufferSubData(intData.bufferView);
-
-  const tfTestVertSrc = require('./shaders/glsl/testTF.vert').default;
-
-  const tfShaderProgram = compileTFProgram(
-    gl,
-    tfTestVertSrc,
-    ['oposition', 'ovelocity'],
-    gl.INTERLEAVED_ATTRIBS,
-    getDefaultAttributeLocation(['iposition', 'ivelocity']),
-  );
-
-  if (DEBUG) {
-    spector.displayUI();
-
-    if (DEBUG_COMMANDS_START) spector.captureContext(gl, 33);
+class PandaGame extends Base2DApp {
+  protected static _instance: PandaGame;
+  static get instance(): PandaGame {
+    if (this._instance === undefined) this._instance = new PandaGame();
+    return this._instance;
   }
 
-  gl.disable(gl.CULL_FACE);
-  gl.disable(gl.DEPTH_TEST);
+  activeSpritesGroup: SimpleGroup = new SimpleGroup();
+  gameInput = GameInput.default;
+  gameInputState = new GameInputStateManager(this.gameInput);
 
-  function render() {
-    window.requestAnimationFrame(render);
-    renderer.clear();
+  panda: Panda;
+  font: SimpleTextFont;
+  text: SimpleText;
+  fontTexture: SubTexture;
 
-    /*
-    const vaoIn = bufferSwapped === true ? vao2 : vao1;
-    const bufferOut = bufferSwapped === true ? buffer1 : buffer2;
+  textureGrid: SubTexture[];
+  backgroundGrid: SimpleGrid;
+  activeGrid: SimpleGrid;
+  foregroundGrid: SimpleGrid;
 
-    const vaoOut = bufferSwapped === false ? vao2 : vao1;
-
-    bufferSwapped = !bufferSwapped;
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    gl.enable(gl.RASTERIZER_DISCARD);
-    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback);
-    gl.useProgram(tfShaderProgram);
-    vaoIn.bind();
-    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, bufferOut.bufferIndex);
-    gl.beginTransformFeedback(gl.POINTS);
-
-    gl.drawArrays(gl.POINTS, 0, 16);
-    gl.endTransformFeedback();
-    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
-    gl.disable(gl.RASTERIZER_DISCARD);
-    */
-
-    const vaoOut = transformPass.applyPass(testTFShaderState);
-    shaderTFRender.use();
-    vaoOut.bind();
-    gl.drawArrays(gl.POINTS, 0, transformPass.length);
-
-    // testUboShaderState.use();
-    // testUboShaderState.syncUniforms();
-    //myVariantShaderState.syncUniforms();
-
-    // myShader.use();
-    // myShaderState.use();
-    // myShaderState.syncUniforms();
-    // mesh.draw();
-  }
-
-  const img = document.createElement('img') as HTMLImageElement;
-
-  img.addEventListener('load', () => {
-    // setTimeout(() => {
-    const texture = new GLTexture(gl, gl.TEXTURE_2D, img.width, img.height);
-    texture.uploadImage(img, gl.RGB);
+  async init() {
+    const gl = this._renderer.getGL();
+    const texture = await GLTexture.load(gl, './images/dungeon.png');
     texture.active(0);
-    // myShader.getUniforms().textureInd = 0;
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    render();
-    // }, 1000);
-  });
+    this.textureGrid = createSubTextureGrid(texture, 16, 16);
 
-  img.src = './images/bb.jpg';
-  // setTimeout(() => (myVariantShaderState.colorMode = ColorMode.Green), 3000);
+    this.fontTexture = new SubTexture(texture, 0, 96, 128, 24);
+    this.font = new SimpleTextFont(this.fontTexture, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.:-+', 8, 8);
+
+    this.text = new SimpleText(this.font);
+    this.text.upperCaseOnly = true;
+
+    this.text.width = 72;
+
+    this.text.text = 'Le gilles\nde ABCDEFGH';
+
+    const tiledData = (await fetch('tiles/dungeon.json').then((response) => response.json())) as TiledMap;
+
+    const bgData = tiledData.layers[0] as TiledTileLayer;
+    const activeData = tiledData.layers[1] as TiledTileLayer;
+    const fgData = tiledData.layers[2] as TiledTileLayer;
+
+    this.backgroundGrid = new SimpleGrid(
+      this.textureGrid,
+      bgData.data,
+      bgData.width,
+      bgData.height,
+      tiledData.tilewidth,
+      tiledData.tileheight,
+      this.cam,
+    );
+    this.backgroundGrid.x = bgData.x;
+    this.backgroundGrid.y = bgData.y;
+
+    this.activeGrid = new SimpleGrid(
+      this.textureGrid,
+      activeData.data,
+      activeData.width,
+      activeData.height,
+      tiledData.tilewidth,
+      tiledData.tileheight,
+      this.cam,
+    );
+    this.activeGrid.x = activeData.x;
+    this.activeGrid.y = activeData.y;
+
+    this.foregroundGrid = new SimpleGrid(
+      this.textureGrid,
+      fgData.data,
+      fgData.width,
+      fgData.height,
+      tiledData.tilewidth,
+      tiledData.tileheight,
+      this.cam,
+    );
+    this.foregroundGrid.x = bgData.x;
+    this.foregroundGrid.y = bgData.y;
+
+    const animatedMap = new AnimatedMap();
+    animatedMap.addAnimation(2, 65, 2);
+    this.juggler.addChildren(animatedMap);
+    this.foregroundGrid.addIndexMapper(animatedMap.indexMapper);
+
+    const [textureDown, textureRight, textureUp, textureLeft] = createGridAlignedSubTextures(
+      texture,
+      16,
+      32,
+      0,
+      8,
+      4,
+      16,
+      16,
+    );
+
+    const flowerAnimationTextures = createGridAlignedSubTextures(texture, 16, 16, 0, 4, 2, 16, 16);
+
+    const animatedFlower = new SimpleAnimatedSprite(flowerAnimationTextures, 4, true);
+
+    animatedFlower.setPosition(64, 64);
+
+    animatedFlower.start();
+
+    this.juggler.addChildren(animatedFlower);
+
+    this.panda = new Panda(
+      {
+        down: textureDown,
+        right: textureRight,
+        up: textureUp,
+        left: textureLeft,
+      },
+      this.gameInputState,
+    );
+    this.panda.x = 32;
+    this.panda.y = 16;
+
+    this.stage.addChild(this.backgroundGrid);
+    this.stage.addChild(this.activeGrid);
+
+    this.stage.addChild(this.activeSpritesGroup);
+    this.stage.addChild(this.foregroundGrid);
+    this.stage.gui.addChild(this.text);
+
+    this.activeSpritesGroup.addChild(this.panda);
+    this.activeSpritesGroup.addChild(animatedFlower);
+  }
+
+  update(time: number, elapsedTime: number): void {
+    this.panda.update(this.backgroundGrid, this.activeGrid);
+    const canvas = this.renderer.canvas;
+    this.cam.setClampedPosition(this.panda.x - canvas.width / 2, this.panda.y - canvas.height / 2, 0, 432, 0, 320);
+  }
+  beforeRender(time: number, elapsedTime: number): void {
+    // throw new Error('Method not implemented.');
+  }
+}
+
+window.addEventListener('load', async () => {
+  await PandaGame.instance.init();
+  PandaGame.instance.start();
 });

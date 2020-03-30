@@ -1,54 +1,103 @@
-import {vec4} from "gl-matrix";
-import {GLTexture} from "../gl/core/GLTexture";
-import {WithUv} from "../gl/data/InterleavedData";
+import { vec4 } from 'gl-matrix';
+import { GLTexture } from '../gl/core/GLTexture';
+import { WithUv } from '../gl/data/InterleavedData';
 
-export class SubTexture{
-    get x(){
-        return this.uv[0] * this._texture.width;
+export function createSubTextureGrid(
+  texture: GLTexture,
+  spriteWidth: number,
+  spriteHeight = spriteWidth,
+): SubTexture[] {
+  const textureWidth = texture.width;
+  const textureHeight = texture.height;
+  if (textureWidth % spriteWidth !== 0 || textureHeight % spriteHeight !== 0) {
+    throw new Error('createSubTextureGrid : texture dimension is not a multiple of sprite size');
+  }
+
+  const textures: SubTexture[] = [];
+
+  for (let y = 0; y < textureHeight; y += spriteHeight) {
+    for (let x = 0; x < textureWidth; x += spriteWidth) {
+      textures.push(new SubTexture(texture, x, y, spriteWidth, spriteHeight));
     }
+  }
 
-    get y(){
-        return this.uv[1] * this._texture.height;
-    }
+  return textures;
+}
 
-    get width(){
-        return (this.uv[6] - this.uv[0])  * this._texture.width;
-    }
+export function createGridAlignedSubTextures(
+  texture: GLTexture,
+  spriteWidth: number,
+  spriteHeight: number,
+  gridPosX: number,
+  gridPosY: number,
+  nbTextures = 1,
+  gridWidth = spriteWidth,
+  gridHeight = spriteHeight,
+): SubTexture[] {
+  const subTextures = new Array(nbTextures);
 
-    get height(){
-        return (this.uv[7] - this.uv[1]) * this._texture.height;
-    }
+  const nbTilePerRow = Math.floor(texture.width / gridWidth);
 
-    uv: Float32Array;
+  for (let i = 0; i < nbTextures; i++) {
+    const textureX = ((gridPosX + i) % nbTilePerRow) * gridWidth;
+    const textureY = Math.floor((gridPosX + i) / nbTilePerRow + gridPosY) * gridHeight;
+    subTextures[i] = new SubTexture(texture, textureX, textureY, spriteWidth, spriteHeight);
+  }
 
-    constructor(
-        protected _texture: GLTexture,
-        x:number = 0,
-        y:number = 0,
-        width: number = _texture.width,
-        height: number = _texture.height
-    ){
-        this.uv = new Float32Array(8);
-        this.setBounds(x,y,width,height);
-    }
+  return subTextures;
+}
 
-    setBounds(x:number, y:number, width: number, height: number){
-        this.setBoundsRect(x,y,x + width, y + height);
-    }
+export class SubTexture {
+  get x() {
+    return this.uv[0] * this._texture.width;
+  }
 
-    setBoundsRect(left:number, top:number, right: number, bottom: number){
-        this.setBoundUv(
-            left / this._texture.width,
-            top / this._texture.height,
-            right / this._texture.width,
-            bottom / this._texture.height,
-        );
-    }
+  get y() {
+    return this.uv[1] * this._texture.height;
+  }
 
-    setBoundUv(left:number, top:number, right: number, bottom: number){
-        this.uv[0] = this.uv[4] = left;
-        this.uv[1] = this.uv[3] = top;
-        this.uv[2] = this.uv[6] = right;
-        this.uv[5] = this.uv[7] = bottom;
-    }
+  get width() {
+    return (this.uv[2] - this.uv[0]) * this._texture.width;
+  }
+
+  get height() {
+    return (this.uv[3] - this.uv[1]) * this._texture.height;
+  }
+
+  get glTexture() {
+    return this._texture;
+  }
+
+  uv: Float32Array;
+
+  constructor(
+    protected _texture: GLTexture,
+    x: number = 0,
+    y: number = 0,
+    width: number = _texture.width,
+    height: number = _texture.height,
+  ) {
+    this.uv = new Float32Array(4);
+    this.setBounds(x, y, width, height);
+  }
+
+  setBounds(x: number, y: number, width: number, height: number) {
+    this.setBoundsRect(x, y, x + width, y + height);
+  }
+
+  setBoundsRect(left: number, top: number, right: number, bottom: number) {
+    this.setBoundUv(
+      left / this._texture.width,
+      top / this._texture.height,
+      right / this._texture.width,
+      bottom / this._texture.height,
+    );
+  }
+
+  setBoundUv(left: number, top: number, right: number, bottom: number) {
+    this.uv[0] = left;
+    this.uv[1] = top;
+    this.uv[2] = right;
+    this.uv[3] = bottom;
+  }
 }

@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform mat4 mvp;
 attribute vec2 position;
 attribute vec2 uv;

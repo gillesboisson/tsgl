@@ -1,5 +1,6 @@
 import { GLShader } from './GLShader';
 import { GLShaderState } from './GLShaderState';
-export type GLShaderStateType<ShaderStateT extends GLShaderState> = {
+import { IGLShaderState } from './IGLShaderState';
+export type GLShaderStateType<ShaderStateT extends IGLShaderState> = {
   new (shader: GLShader<ShaderStateT>): ShaderStateT;
 };
