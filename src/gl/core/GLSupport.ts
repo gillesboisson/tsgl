@@ -63,15 +63,15 @@ export class GLSupport {
           (gl as any).angleExt = ext;
 
           // map ext methods to context it was a webgl2 context
-          (gl as WebGL2RenderingContext).vertexAttribDivisor = function (attrLocation, divisor) {
+          (gl as WebGL2RenderingContext).vertexAttribDivisor = function(attrLocation, divisor) {
             return ext.vertexAttribDivisorANGLE(attrLocation, divisor);
           };
 
-          (gl as WebGL2RenderingContext).drawElementsInstanced = function (mode, count, type, offset, primcount) {
+          (gl as WebGL2RenderingContext).drawElementsInstanced = function(mode, count, type, offset, primcount) {
             return ext.drawElementsInstancedANGLE(mode, count, type, offset, primcount);
           };
 
-          (gl as WebGL2RenderingContext).drawArraysInstanced = function (mode, first, count, primcount) {
+          (gl as WebGL2RenderingContext).drawArraysInstanced = function(mode, first, count, primcount) {
             return ext.drawArraysInstancedANGLE(mode, first, count, primcount);
           };
         }

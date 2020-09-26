@@ -24,7 +24,7 @@ export type KernelCompare = (
 ) => number;
 
 export const KernelCompareFuncs = {
-  base: function (
+  base: function(
     base: number,
     val: number,
     kernel: number,
@@ -53,7 +53,7 @@ export function createConvolutionGridIndexMapper(
 ): GridIndexMapper {
   if (kernel.length !== kernelWidth * kernelHeight) throw new Error("Kernel data doesn' match provides dimensions");
   const kernelLength = kernel.length;
-  return function (ind: number, x: number, y: number, data: number[], gridWidth: number, gridHeight: number): number {
+  return function(ind: number, x: number, y: number, data: number[], gridWidth: number, gridHeight: number): number {
     let base = 0;
     const xOffset = (kernelWidth - 1) / 2;
     const YOffset = (kernelHeight - 1) / 2;

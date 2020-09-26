@@ -6,7 +6,7 @@ if (self.document !== undefined) {
   hasGamepadSupport = window.navigator.getGamepads !== undefined;
 
   if (String(typeof window) !== 'undefined') {
-    ['webkit', 'moz'].forEach(function (key) {
+    ['webkit', 'moz'].forEach(function(key) {
       _requestAnimationFrame =
         _requestAnimationFrame ||
         window.requestAnimationFrame ||
@@ -80,7 +80,7 @@ export const GAME_INPUT_KEY_ALL_STICKS: GameInputKey[] = [GameInputKey.STICK_LEF
 function findKeyMapping(index: number, mapping: { [key: string]: number[] | number }) {
   var results: GameInputKey[] = [];
 
-  Object.keys(mapping).forEach(function (key: GameInputKey) {
+  Object.keys(mapping).forEach(function(key: GameInputKey) {
     if (mapping[key] === index) {
       results.push(key);
     } else if (Array.isArray(mapping[key]) && (mapping[key] as number[]).indexOf(index) !== -1) {
@@ -240,11 +240,11 @@ export class GameInput {
     var self = this;
 
     if (controller && controller.connected) {
-      controller.buttons.forEach(function (button: any, index: any) {
+      controller.buttons.forEach(function(button: any, index: any) {
         var keys = findKeyMapping(index, self._keyMapping.gamepad);
 
         if (keys) {
-          keys.forEach(function (key) {
+          keys.forEach(function(key) {
             if (button.pressed) {
               if (!self._events.gamepad[controller.index][key]) {
                 self._events.gamepad[controller.index][key] = {
@@ -270,7 +270,7 @@ export class GameInput {
     var self = this;
 
     if (controller && controller.connected) {
-      Object.keys(self._keyMapping.axes).forEach(function (key) {
+      Object.keys(self._keyMapping.axes).forEach(function(key) {
         var axes = Array.prototype.slice.apply(controller.axes, (self._keyMapping.axes as any)[key]);
 
         if (Math.abs(axes[0]) > self._threshold || Math.abs(axes[1]) > self._threshold) {
@@ -297,7 +297,7 @@ export class GameInput {
       keys = findKeyMapping(e.keyCode, self._keyMapping.keyboard);
 
     if (keys) {
-      keys.forEach(function (key) {
+      keys.forEach(function(key) {
         if (e.type === 'keydown' && !(self._events.keyboard as any)[key]) {
           (self._events.keyboard as any)[key] = {
             pressed: true,
@@ -353,24 +353,24 @@ export class GameInput {
         }
       }
 
-      self._events.gamepad.forEach(function (gamepad, player) {
+      self._events.gamepad.forEach(function(gamepad, player) {
         if (gamepad) {
-          Object.keys(gamepad).forEach(function (key) {
+          Object.keys(gamepad).forEach(function(key) {
             self._handleEvent(key, gamepad, player);
           });
         }
       });
 
-      self._events.axes.forEach(function (gamepad, player) {
+      self._events.axes.forEach(function(gamepad, player) {
         if (gamepad) {
-          Object.keys(gamepad).forEach(function (key) {
+          Object.keys(gamepad).forEach(function(key) {
             self._handleEvent(key, gamepad, player);
           });
         }
       });
     }
 
-    Object.keys(self._events.keyboard).forEach(function (key) {
+    Object.keys(self._events.keyboard).forEach(function(key) {
       self._handleEvent(key, self._events.keyboard, 'keyboard');
     });
 
@@ -400,11 +400,11 @@ export class GameInput {
       }
 
       if (Array.isArray(type)) {
-        type.forEach(function (type) {
+        type.forEach(function(type) {
           self.on(type, button, callback, options);
         });
       } else if (Array.isArray(button)) {
-        button.forEach(function (button) {
+        button.forEach(function(button) {
           self.on(type, button, callback, options);
         });
       } else {
@@ -430,15 +430,15 @@ export class GameInput {
     }
 
     if (Array.isArray(type)) {
-      type.forEach(function (type) {
+      type.forEach(function(type) {
         self.off(type, button);
       });
     } else if (Array.isArray(button)) {
-      button.forEach(function (button) {
+      button.forEach(function(button) {
         self.off(type, button);
       });
     } else {
-      this._listeners = this._listeners.filter(function (listener) {
+      this._listeners = this._listeners.filter(function(listener) {
         return listener.type !== type && listener.button !== button;
       });
     }
@@ -458,7 +458,7 @@ export class GameInput {
 
   trigger(type: GameInputEventType, button: GameInputKey, value: number, player: GameInputPlayer) {
     if (this._listeners) {
-      this._listeners.forEach(function (listener: GameInputListenner) {
+      this._listeners.forEach(function(listener: GameInputListenner) {
         if (listener.type === type && listener.button === button) {
           listener.callback({
             type: listener.type,

@@ -13,7 +13,12 @@ export class GLTexture extends GLCore {
     const finalType =
       type !== undefined
         ? type
-        : EXT_DEFAULT_ALPHA.indexOf(url.split('.').pop().toLowerCase()) !== -1
+        : EXT_DEFAULT_ALPHA.indexOf(
+            url
+              .split('.')
+              .pop()
+              .toLowerCase(),
+          ) !== -1
         ? gl.RGBA
         : gl.RGB;
 

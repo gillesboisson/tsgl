@@ -117,7 +117,10 @@ export class SimpleText extends SimpleElement implements SimpleSpriteBatchPullab
   }
 
   calcWordsSize() {
-    const words = this._text.split('\n').join(' ').split(' ');
+    const words = this._text
+      .split('\n')
+      .join(' ')
+      .split(' ');
     this._wordSizes = words.map((word) => word.length);
   }
 

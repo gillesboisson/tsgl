@@ -339,7 +339,7 @@ async function ready(canvas?: HTMLCanvasElement) {
 
 if ((self as any).document === undefined) {
   // postMessage("I'm fairly confident I'm a webworker");
-  onmessage = function (evt) {
+  onmessage = function(evt) {
     switch (evt.data.subject) {
       case 'init':
         ready(evt.data.canvas);

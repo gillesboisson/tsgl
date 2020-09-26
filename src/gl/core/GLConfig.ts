@@ -1,3 +1,3 @@
 export class GLConfig {
-    static SafeBufferBinding = true;
+  static SafeBufferBinding = true;
 }
