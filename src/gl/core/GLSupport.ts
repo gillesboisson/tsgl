@@ -1,102 +1,106 @@
-import {AnyWebRenderingGLContext} from "./GLHelpers";
-
+import { AnyWebRenderingGLContext } from './GLHelpers';
 
 export class GLSupport {
+  static VAOSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
+    if ((gl as WebGL2RenderingContext).createVertexArray) {
+      return;
+    } else if (useExtension) {
+      const _vaoExt =
+        gl.getExtension('OES_vertex_array_object') ||
+        gl.getExtension('MOZ_OES_vertex_array_object') ||
+        gl.getExtension('WEBKIT_OES_vertex_array_object');
 
-    static webGL2Supported(gl: WebGL2RenderingContext) {
-        return typeof WebGL2RenderingContext !== "undefined" && gl instanceof WebGL2RenderingContext;
+      if (_vaoExt) {
+        (gl as any).createVertexArray = () => _vaoExt.createVertexArrayOES();
+        (gl as any).deleteVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.deleteVertexArrayOES(vao);
+        (gl as any).bindVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.bindVertexArrayOES(vao);
+        return;
+      }
     }
 
+    if (orFail) {
+      throw new Error('Vao not supported');
+    }
+  }
 
+  static webGL2Supported(gl: WebGL2RenderingContext) {
+    return typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext;
+  }
 
+  /**
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} useExtension
+   * @param {boolean} orFail
+   * @returns {boolean}
+   */
+  static depthTextureSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
+    if (this.webGL2Supported(gl as WebGL2RenderingContext)) {
+      return true;
+    } else if (useExtension) {
+      let ext = gl.getExtension('WEBGL_depth_texture');
 
-    /**
-     *
-     * @param {WebGLRenderingContext} gl
-     * @param {boolean} useExtension
-     * @param {boolean} orFail
-     * @returns {boolean}
-     */
-    static depthTextureSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
-        if (this.webGL2Supported(gl as WebGL2RenderingContext)) {
-            return true;
-        } else if (useExtension) {
-            let ext = gl.getExtension('WEBGL_depth_texture');
+      if (ext) {
+        (gl as any).depthTextureExt = ext;
+        return true;
+      }
+    } else if (orFail) {
+      throw new Error('Depth texture is required and not supported');
+    }
+  }
 
-            if (ext) {
-                (gl as any).depthTextureExt = ext;
-                return true;
-            }
+  static instanceRenderingSupported(
+    gl: AnyWebRenderingGLContext,
+    makeAngleExtPolyfill: boolean = true,
+    orFail: boolean = false,
+  ): boolean {
+    if (GLSupport.webGL2Supported(gl as WebGL2RenderingContext)) return true;
+    else if (makeAngleExtPolyfill) {
+      if (!(gl as any).angleExt) {
+        const ext = gl.getExtension('ANGLE_instanced_arrays');
 
-        } else if (orFail){
-            throw new Error('Depth texture is required and not supported');
+        if (ext) {
+          (gl as any).angleExt = ext;
+
+          // map ext methods to context it was a webgl2 context
+          (gl as WebGL2RenderingContext).vertexAttribDivisor = function (attrLocation, divisor) {
+            return ext.vertexAttribDivisorANGLE(attrLocation, divisor);
+          };
+
+          (gl as WebGL2RenderingContext).drawElementsInstanced = function (mode, count, type, offset, primcount) {
+            return ext.drawElementsInstancedANGLE(mode, count, type, offset, primcount);
+          };
+
+          (gl as WebGL2RenderingContext).drawArraysInstanced = function (mode, first, count, primcount) {
+            return ext.drawArraysInstancedANGLE(mode, first, count, primcount);
+          };
         }
+
+        return ext !== null && ext !== undefined;
+      } else return true;
+    } else if (orFail) {
+      throw 'Instanced Geometry not supported on this context';
     }
 
-    static instanceRenderingSupported(
-        gl: AnyWebRenderingGLContext,
-        makeAngleExtPolyfill: boolean = true,
-        orFail: boolean = false): boolean {
-        if (GLSupport.webGL2Supported(gl as WebGL2RenderingContext))
-            return true;
-        else if (makeAngleExtPolyfill) {
+    return false;
+  }
 
-            if (!(gl as any).angleExt) {
-                const ext = gl.getExtension('ANGLE_instanced_arrays');
+  static MRTFrameBufferSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
+    if (this.webGL2Supported(gl as WebGL2RenderingContext)) return true;
+    else {
+      let ext;
+      if (useExtension)
+        ext =
+          (gl as any).drawBuffersExt !== undefined ? (gl as any).drawBuffersExt : gl.getExtension('WEBGL_draw_buffers');
 
-                if (ext) {
-
-                    (gl as any).angleExt = ext;
-
-
-                    // map ext methods to context it was a webgl2 context
-                    (gl as WebGL2RenderingContext).vertexAttribDivisor = function (attrLocation, divisor) {
-                        return ext.vertexAttribDivisorANGLE(attrLocation, divisor);
-                    };
-
-                    (gl as WebGL2RenderingContext).drawElementsInstanced = function (mode, count, type, offset, primcount) {
-                        return ext.drawElementsInstancedANGLE(mode, count, type, offset, primcount);
-                    };
-
-                    (gl as WebGL2RenderingContext).drawArraysInstanced = function (mode, first, count, primcount) {
-                        return ext.drawArraysInstancedANGLE(mode, first, count, primcount);
-                    };
-                }
-
-                return ext !== null && ext !== undefined;
-            } else
-                return true;
-        } else if (orFail) {
-            throw "Instanced Geometry not supported on this context";
-        }
-
+      if (!ext) {
+        if (orFail) throw 'MRT not supported for this context';
         return false;
+      } else {
+        (gl as any).drawBuffersExt = ext;
+
+        return true;
+      }
     }
-
-    static MRTFrameBufferSupported(
-        gl: AnyWebRenderingGLContext,
-        useExtension = true,
-        orFail = false
-    ){
-
-        if(this.webGL2Supported(gl as WebGL2RenderingContext))
-            return true;
-        else{
-            let ext;
-            if(useExtension)
-                ext = (gl as any).drawBuffersExt !== undefined
-                    ? (gl as any).drawBuffersExt
-                    : gl.getExtension('WEBGL_draw_buffers');
-
-            if(!ext){
-                if(orFail)
-                    throw "MRT not supported for this context";
-                return false;
-            }else{
-                (gl as any).drawBuffersExt = ext;
-
-                return true;
-            }
-        }
-    }
+  }
 }

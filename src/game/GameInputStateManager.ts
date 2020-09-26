@@ -1,24 +1,26 @@
-import { GameInput, GameInputEvent, GameInputPlayer, GameInputEventType, GAME_INPUT_KEY_ALL } from './GameInput';
+import { GameInput, GameInputEvent, GameInputEventType, GAME_INPUT_KEY_ALL } from './GameInput';
 
-export default class GameInputStateManager {
-  public state: {
-    button_1?: boolean;
-    button_2?: boolean;
-    button_3?: boolean;
-    button_4?: boolean;
-    shoulder_top_left?: boolean;
-    shoulder_top_right?: boolean;
-    shoulder_bottom_left?: boolean;
-    shoulder_bottom_right?: boolean;
-    select?: boolean;
-    start?: boolean;
-    stick_button_left?: boolean;
-    stick_button_right?: boolean;
-    d_pad_up?: boolean;
-    d_pad_down?: boolean;
-    d_pad_left?: boolean;
-    d_pad_right?: boolean;
-  } = {
+export type GameInputState = {
+  button_1?: boolean;
+  button_2?: boolean;
+  button_3?: boolean;
+  button_4?: boolean;
+  shoulder_top_left?: boolean;
+  shoulder_top_right?: boolean;
+  shoulder_bottom_left?: boolean;
+  shoulder_bottom_right?: boolean;
+  select?: boolean;
+  start?: boolean;
+  stick_button_left?: boolean;
+  stick_button_right?: boolean;
+  d_pad_up?: boolean;
+  d_pad_down?: boolean;
+  d_pad_left?: boolean;
+  d_pad_right?: boolean;
+};
+
+export function emptyInputState(): GameInputState {
+  return {
     button_1: false,
     button_2: false,
     button_3: false,
@@ -36,6 +38,10 @@ export default class GameInputStateManager {
     d_pad_left: false,
     d_pad_right: false,
   };
+}
+
+export default class GameInputStateManager {
+  public state: GameInputState = emptyInputState();
   _input: GameInput;
   _inputPressBind: (e: GameInputEvent) => any;
   _inputReleaseBind: (e: GameInputEvent) => any;
@@ -53,13 +59,17 @@ export default class GameInputStateManager {
   protected _inputDown(e: GameInputEvent) {
     if (e.player === 0 || e.player === 'keyboard') {
       this.state[e.button] = true;
+      if (this.onStateUpdatedate !== undefined) this.onStateUpdatedate(this.state);
     }
   }
   protected _inputUp(e: GameInputEvent) {
     if (e.player === 0 || e.player === 'keyboard') {
       this.state[e.button] = false;
+      if (this.onStateUpdatedate !== undefined) this.onStateUpdatedate(this.state);
     }
   }
+
+  onStateUpdatedate: (state: GameInputState) => void;
 
   destroy() {}
 }

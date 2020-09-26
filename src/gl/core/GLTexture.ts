@@ -13,27 +13,32 @@ export class GLTexture extends GLCore {
     const finalType =
       type !== undefined
         ? type
-        : EXT_DEFAULT_ALPHA.indexOf(
-            url
-              .split('.')
-              .pop()
-              .toLowerCase(),
-          ) !== -1
+        : EXT_DEFAULT_ALPHA.indexOf(url.split('.').pop().toLowerCase()) !== -1
         ? gl.RGBA
         : gl.RGB;
 
-    return new Promise(function(resolve, reject) {
-      const img = new Image();
-      img.onload = (e) => {
-        const texture = new GLTexture(gl, gl.TEXTURE_2D, img.width, img.height);
-        texture.uploadImage(img, finalType);
-        resolve(texture);
-      };
+    // return new Promise(function(resolve, reject) {
 
-      img.onerror = (event, src, li, le, error) => reject({ event, src, error });
+    //   const img = new Image();
+    //   img.onload = (e) => {
+    //     const texture = new GLTexture(gl, gl.TEXTURE_2D, img.width, img.height);
+    //     texture.uploadImage(img, finalType);
+    //     resolve(texture);
+    //   };
 
-      img.src = url;
-    });
+    //   img.onerror = (event, src, li, le, error) => reject({ event, src, error });
+
+    //   img.src = url;
+    // });
+
+    return fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => createImageBitmap(blob))
+      .then((image) => {
+        const texture = new GLTexture(gl, gl.TEXTURE_2D, image.width, image.height);
+        texture.uploadImage(image, finalType);
+        return texture;
+      });
   }
 
   // static async loadMany(gl: AnyWebRenderingGLContext,imageSources: ImageSource[],parallelLoads = 3){

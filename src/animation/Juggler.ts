@@ -18,13 +18,13 @@ export class Juggler implements IStartStop {
   protected _children: IAnimated[] = [];
   protected _active: boolean = false;
 
-  addChildren(child: IAnimated) {
+  addChild(child: IAnimated) {
     if (this._children.indexOf(child) === -1) {
       this._children.push(child);
     }
   }
 
-  removeChildren(child: IAnimated) {
+  removeChild(child: IAnimated) {
     const ind = this._children.indexOf(child);
     if (ind !== -1) {
       this._children.splice(ind, 1);

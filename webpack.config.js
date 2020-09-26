@@ -2,7 +2,12 @@ const path = require('path');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-  entry: './index.ts',
+
+  entry: {
+    index: './index.ts',
+    index_worker: './index_worker.ts',
+  },
+
   devtool: 'inline-source-map',
   mode: 'development',
   module: {
@@ -23,7 +28,7 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: 'app.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist/bundle'),
   },
   // devServer: {

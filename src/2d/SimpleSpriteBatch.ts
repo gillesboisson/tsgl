@@ -9,40 +9,41 @@ import { Camera } from '../3d/Camera';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 import { GLVao } from '../gl/core/data/GLVao';
 
-const VERTEX_BATCH_SIZE = 10448;
-const INDICES_BATCH_SIZE = 10448;
+const VERTEX_BATCH_SIZE = 2300;
+const INDICES_BATCH_SIZE = 4500;
 
-const BATCH_DATA_NB_FLOAT = 8;
+const BATCH_DATA_NB_FLOAT = 4;
 const VERTEX_STRIDE = BATCH_DATA_NB_FLOAT * Float32Array.BYTES_PER_ELEMENT;
 const VERTEX_BUFFER_SIZE = VERTEX_BATCH_SIZE * VERTEX_STRIDE;
 
 const INDICES_BUFFER_SIZE = INDICES_BATCH_SIZE * Uint16Array.BYTES_PER_ELEMENT;
-export class SpriteBatchData {
+export class SimpleSpriteBatchData {
   pos: vec2;
   uv: vec2;
-  color: vec4;
+  // color: vec4;
+
   constructor(bitOffset: number, buffer: ArrayBuffer) {
     this.pos = new Float32Array(buffer, bitOffset, 2) as vec2;
     this.uv = new Float32Array(buffer, bitOffset + 2 * Float32Array.BYTES_PER_ELEMENT, 2) as vec2;
-    this.color = new Float32Array(buffer, bitOffset + 4 * Float32Array.BYTES_PER_ELEMENT, 4) as vec4;
+    // this.color = new Float32Array(buffer, bitOffset + 4 * Float32Array.BYTES_PER_ELEMENT, 4) as vec4;
   }
 }
 
-export interface SpriteBatchPullable {
+export interface SimpleSpriteBatchPullable {
   pull(
-    batch: SpriteBatch,
-    vertices: SpriteBatchData[],
+    batch: SimpleSpriteBatch,
+    vertices: SimpleSpriteBatchData[],
     indices: Uint16Array,
     vertexIndex: number,
     indicesIndex: number,
   ): void;
 }
 
-export interface SpriteBatchRenderable<WorldCoordsT> {
-  draw(batch: SpriteBatch, parentWorldCoords?: WorldCoordsT): void;
+export interface SimpleSpriteBatchRenderable<WorldCoordsT> {
+  draw(batch: SimpleSpriteBatch, parentWorldCoords?: WorldCoordsT): void;
 }
 
-export class SpriteBatch {
+export class SimpleSpriteBatch {
   private vao: WebGLVertexArrayObject;
   private verticesBuffer: WebGLBuffer;
   private indicesBuffer: WebGLBuffer;
@@ -55,7 +56,7 @@ export class SpriteBatch {
 
   private indices = new Uint16Array(INDICES_BATCH_SIZE);
   private verticesSlice: Uint8Array;
-  private vertices: SpriteBatchData[];
+  private vertices: SimpleSpriteBatchData[];
   private currentShaderState: IGLSpriteShaderState;
   private currentPassCam: Camera;
 
@@ -67,7 +68,7 @@ export class SpriteBatch {
 
     const vertexBuffer = this.verticesSlice.buffer;
     for (let i = 0; i < VERTEX_BATCH_SIZE; i++) {
-      this.vertices[i] = new SpriteBatchData(i * VERTEX_STRIDE, vertexBuffer);
+      this.vertices[i] = new SimpleSpriteBatchData(i * VERTEX_STRIDE, vertexBuffer);
     }
 
     // create gl objects
@@ -98,15 +99,6 @@ export class SpriteBatch {
       2 * Float32Array.BYTES_PER_ELEMENT,
     );
     gl.enableVertexAttribArray(GLDefaultAttributesLocation.UV);
-    gl.vertexAttribPointer(
-      GLDefaultAttributesLocation.COLOR,
-      4,
-      gl.FLOAT,
-      false,
-      VERTEX_STRIDE,
-      4 * Float32Array.BYTES_PER_ELEMENT,
-    );
-    gl.enableVertexAttribArray(GLDefaultAttributesLocation.COLOR);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer);
     gl.bindVertexArray(null);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -139,7 +131,9 @@ export class SpriteBatch {
 
   // private render() {}
 
-  push(nbIndices: number, nbVertex: number, texture: WebGLTexture, pullable: SpriteBatchPullable) {
+  push(nbIndices: number, nbVertex: number, texture: WebGLTexture, pullable: SimpleSpriteBatchPullable) {
+    // console.log(nbVertex, nbIndices);
+
     if (
       this.currentTexture !== null &&
       (this.currentTexture !== texture ||

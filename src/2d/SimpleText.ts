@@ -1,5 +1,5 @@
 import { SimpleElement } from './SimpleElement';
-import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from './SpriteBatch';
+import { SimpleSpriteBatchPullable, SimpleSpriteBatch, SimpleSpriteBatchData } from './SimpleSpriteBatch';
 import { SubTexture } from './SubTexture';
 import { GLTexture } from '../gl/core/GLTexture';
 import { Texture } from '../gltf-schema';
@@ -59,7 +59,7 @@ export class SimpleTextFont {
   }
 }
 
-export class SimpleText extends SimpleElement implements SpriteBatchPullable {
+export class SimpleText extends SimpleElement implements SimpleSpriteBatchPullable {
   protected _width = -1;
   protected _height = -1;
 
@@ -104,7 +104,7 @@ export class SimpleText extends SimpleElement implements SpriteBatchPullable {
   }
 
   draw(
-    batch: import('./SpriteBatch').SpriteBatch,
+    batch: import('./SimpleSpriteBatch').SimpleSpriteBatch,
     parentWorldCoords?: import('./SimpleWorldCoords').SimpleWorldCoords,
   ): void {
     if (this._text.length === 0) return;
@@ -120,16 +120,13 @@ export class SimpleText extends SimpleElement implements SpriteBatchPullable {
   }
 
   calcWordsSize() {
-    const words = this._text
-      .split('\n')
-      .join(' ')
-      .split(' ');
+    const words = this._text.split('\n').join(' ').split(' ');
     this._wordSizes = words.map((word) => word.length);
   }
 
   pull(
-    batch: SpriteBatch,
-    vertices: SpriteBatchData[],
+    batch: SimpleSpriteBatch,
+    vertices: SimpleSpriteBatchData[],
     indices: Uint16Array,
     vertexIndex: number,
     indicesIndex: number,
@@ -231,10 +228,10 @@ export class SimpleText extends SimpleElement implements SpriteBatchPullable {
         v3.uv[0] = uxX1;
         v3.uv[1] = uvY1;
 
-        vec4.copy(v0.color, color);
-        vec4.copy(v1.color, color);
-        vec4.copy(v2.color, color);
-        vec4.copy(v3.color, color);
+        // vec4.copy(v0.color, color);
+        // vec4.copy(v1.color, color);
+        // vec4.copy(v2.color, color);
+        // vec4.copy(v3.color, color);
 
         indices[indicesIndex] = vertexIndex;
         indices[indicesIndex + 1] = vertexIndex + 1;

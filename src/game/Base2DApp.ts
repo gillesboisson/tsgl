@@ -2,12 +2,15 @@ import { GLRenderer, GLRendererType } from '../gl/core/GLRenderer';
 import { SpriteBatch } from '../2d/SpriteBatch';
 import { SimpleStage2D } from '../2d/SimpleStage2D';
 import { SpriteShader } from '../shaders/SpriteShader';
+import { SimpleSpriteShader } from '../shaders/SimpleSpriteShader';
 import { Juggler } from '../animation/Juggler';
 import { Camera2D } from '../2d/Camera2D';
+import { GLSupport } from '../gl/core/GLSupport';
+import { SimpleSpriteBatch } from '../2d/SimpleSpriteBatch';
 
 export abstract class Base2DApp {
   protected _renderer: GLRenderer;
-  protected _batch: SpriteBatch;
+  protected _batch: SimpleSpriteBatch;
   protected _stage: SimpleStage2D;
   protected _t0: number;
   protected _t: number;
@@ -16,10 +19,41 @@ export abstract class Base2DApp {
   protected _active: boolean;
   protected _cam: Camera2D;
 
+  constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement) {
+    const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL));
+    GLSupport.VAOSupported(this._renderer.getGL(), true, true);
+    // let canvasRatio = canvas.height / canvas.width;
+    // let vpRatio = window.innerHeight / window.innerWidth;
+    // update canvas size;
+    // if (vpRatio < canvasRatio) {
+    //   canvas.style.height = window.innerHeight + 'px';
+    //   canvas.style.width = window.innerHeight / canvasRatio + 'px';
+    // } else {
+    //   canvas.style.width = window.innerWidth + 'px';
+    //   canvas.style.height = window.innerWidth * canvasRatio + 'px';
+    // }
+
+    const gl = renderer.getGL() as WebGL2RenderingContext;
+
+    renderer.registerShaderFactory(SpriteShader);
+    renderer.registerShaderFactory(SimpleSpriteShader);
+
+    const batch = (this._batch = new SimpleSpriteBatch(gl));
+    const stage = (this._stage = new SimpleStage2D(renderer, batch, canvas.width, canvas.height));
+    this._cam = stage.cam;
+
+    gl.disable(gl.CULL_FACE);
+    gl.disable(gl.DEPTH_TEST);
+
+    this._juggler = new Juggler();
+
+    this.__refresh = () => this._refresh();
+  }
+
   get renderer(): GLRenderer {
     return this._renderer;
   }
-  get batch(): SpriteBatch {
+  get batch(): SimpleSpriteBatch {
     return this._batch;
   }
   get stage(): SimpleStage2D {
@@ -37,37 +71,6 @@ export abstract class Base2DApp {
     return this._cam;
   }
 
-  constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement) {
-    const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL2));
-
-    let canvasRatio = canvas.height / canvas.width;
-    let vpRatio = window.innerHeight / window.innerWidth;
-
-    // update canvas size;
-    if (vpRatio < canvasRatio) {
-      canvas.style.height = window.innerHeight + 'px';
-      canvas.style.width = window.innerHeight / canvasRatio + 'px';
-    } else {
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerWidth * canvasRatio + 'px';
-    }
-
-    const gl = renderer.getGL() as WebGL2RenderingContext;
-
-    renderer.registerShaderFactory(SpriteShader);
-
-    const batch = (this._batch = new SpriteBatch(gl));
-    const stage = (this._stage = new SimpleStage2D(renderer, batch, canvas.width, canvas.height));
-    this._cam = stage.cam;
-
-    gl.disable(gl.CULL_FACE);
-    gl.disable(gl.DEPTH_TEST);
-
-    this._juggler = new Juggler();
-
-    this.__refresh = () => this._refresh();
-  }
-
   start() {
     this._t0 = this._t = new Date().getTime();
     this._active = true;
@@ -83,9 +86,9 @@ export abstract class Base2DApp {
   abstract update(time: number, elapsedTime: number): void;
   abstract beforeRender(time: number, elapsedTime: number): void;
 
-  _refresh(requestAnimationFrame = true) {
+  protected _refresh(requestAnimationFrame = true) {
     if (this._active === false) return;
-    if (requestAnimationFrame) window.requestAnimationFrame(this.__refresh);
+    if (requestAnimationFrame) (self as any).requestAnimationFrame(this.__refresh);
 
     const t1 = new Date().getTime();
 
