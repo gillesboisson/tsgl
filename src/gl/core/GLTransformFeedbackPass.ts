@@ -19,7 +19,7 @@ export class GLTransformFeedbackPass<DataT> extends GLCore {
 
   constructor(
     gl: WebGL2RenderingContext,
-    protected _interleavedDataType: InterleaveAttributesType<DataT>,
+    protected _interleavedDataType: InterleaveAttributesType,
     protected _length: number,
     protected _type: GLenum = gl.TRANSFORM_FEEDBACK,
     protected _drawType: GLenum = gl.STREAM_DRAW,

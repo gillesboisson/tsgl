@@ -1,5 +1,4 @@
-import { SimpleSprite } from '../2d/SimpleSprite';
-import { SimpleAnimatedSprite } from '../2d/SimpleAnimatedSprite';
+import { SimpleSprite } from '../2d/simpleSprite/SimpleSprite';
 import { IAnimated } from '../animation/Juggler';
 import { SubTexture } from '../2d/SubTexture';
 import { IBombDropper } from './Panda';

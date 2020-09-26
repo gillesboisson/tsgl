@@ -1,4 +1,4 @@
-import { SimpleGrid } from '../2d/SimpleGrid';
+import { SimpleGrid } from '../2d/simpleSprite/SimpleGrid';
 import { Bomb } from './Bomb';
 import { DebuggerText } from './DebuggerText';
 

@@ -1,5 +1,5 @@
 import { IAnimated } from './Juggler';
-import { GridIndexMapper } from '../2d/SimpleGrid';
+import { GridIndexMapper } from '../2d/simpleSprite/SimpleGrid';
 
 export interface AnimatedMapData {
   nbFrame: number;

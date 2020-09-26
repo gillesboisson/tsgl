@@ -1,17 +1,9 @@
-import {
-  SimpleSpriteBatchPullable,
-  SimpleSpriteBatchRenderable,
-  SimpleSpriteBatch,
-  SimpleSpriteBatchData,
-} from './SimpleSpriteBatch';
 import { vec2, vec4 } from 'gl-matrix';
-import { SubTexture } from './SubTexture';
+import { SubTexture } from '../SubTexture';
 import { SimpleElement } from './SimpleElement';
-import { Camera } from '../3d/Camera';
-import { Camera2D } from './Camera2D';
-import { SimpleGroup } from './SimpleGroup';
+import { Camera2D } from '../Camera2D';
 import { SimpleWorldCoords } from './SimpleWorldCoords';
-import { SimpleTextFont } from './SimpleText';
+import { SimpleSpriteBatch, SimpleSpriteBatchPullable, SimpleSpriteBatchData } from './SimpleSpriteBatch';
 
 export type GridIndexMapper = (
   ind: number,
@@ -22,7 +14,64 @@ export type GridIndexMapper = (
   gridHeight: number,
 ) => number;
 
-export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBatchPullable {
+export type KernelCompare = (
+  base: number,
+  val: number,
+  kernel: number,
+  kernelX: number,
+  kernelY: number,
+  kernelSize: number,
+) => number;
+
+export const KernelCompareFuncs = {
+  base: function (
+    base: number,
+    val: number,
+    kernel: number,
+    kernelX: number,
+    kernelY: number,
+    kernelSize: number,
+  ): number {
+    return base + val * kernel;
+  },
+};
+
+export function createEmptyDataSet(width: number, height: number): number[] {
+  const length = width * height;
+  const data = new Array(length);
+  for (let index = 0; index < length; index++) {
+    data[index] = 0;
+  }
+  return data;
+}
+
+export function createConvolutionGridIndexMapper(
+  kernel: number[],
+  kernelWidth: number,
+  kernelHeight: number,
+  compare: KernelCompare = KernelCompareFuncs.base,
+): GridIndexMapper {
+  if (kernel.length !== kernelWidth * kernelHeight) throw new Error("Kernel data doesn' match provides dimensions");
+  const kernelLength = kernel.length;
+  return function (ind: number, x: number, y: number, data: number[], gridWidth: number, gridHeight: number): number {
+    let base = 0;
+    const xOffset = (kernelWidth - 1) / 2;
+    const YOffset = (kernelHeight - 1) / 2;
+    for (let i = 0; i < kernelLength; i++) {
+      const kernelX = i % kernelWidth;
+      const kernelY = Math.floor(i / kernelWidth);
+      const gridX = kernelX + x - xOffset;
+      const gridY = kernelY + y - YOffset;
+      if (gridX < 0 || gridY < 0 || gridX >= gridWidth || gridY >= gridHeight) continue;
+      const ind = gridX + gridY * gridWidth;
+      base = compare(base, data[ind], kernel[i], kernelX, kernelY, kernelLength);
+    }
+
+    return base;
+  };
+}
+
+export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullable {
   protected _grid: number[];
   protected _nbElementX: number;
   protected _nbElementY: number;
@@ -31,11 +80,11 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
   protected _width: number;
   protected _height: number;
   protected _cam: Camera2D;
-  protected _font: SimpleTextFont;
+  protected _textures: SubTexture[];
   protected _indMappers: GridIndexMapper[];
 
   constructor(
-    font: SimpleTextFont,
+    textures: SubTexture[],
     grid: number[],
     nbElementX: number,
     nbElementY: number,
@@ -43,16 +92,17 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     tileHeight: number,
     cam: Camera2D,
   ) {
+    if (textures.length === 0) throw new Error('Empty subtexture collection');
     if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
 
-    super(font.texture.glTexture);
+    super(textures[0].glTexture);
     this._grid = grid;
     this._nbElementX = nbElementX;
     this._nbElementY = nbElementY;
     this._tileWidth = tileWidth;
     this._tileHeight = tileHeight;
     this._cam = cam;
-    this._font = font;
+    this._textures = textures;
 
     this._width = this._tileWidth * this._nbElementX;
     this._height = this._tileHeight * this._nbElementY;
@@ -79,8 +129,23 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     return this._grid[x + y * this._nbElementX];
   }
 
+  get grid(): number[] {
+    return this._grid;
+  }
+
+  get nbElementX(): number {
+    return this._nbElementX;
+  }
+  get nbElementY(): number {
+    return this._nbElementY;
+  }
+
   setDataAt(x: number, y: number, val: number) {
     this._grid[x + y * this._nbElementX] = val;
+  }
+
+  getDataAt(x: number, y: number): number {
+    return this._grid[x + y * this._nbElementX];
   }
 
   draw(batch: SimpleSpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
@@ -88,7 +153,7 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     const gridWidth = Math.ceil(this._cam.viewportWidth / this._tileWidth);
     const gridHeight = Math.ceil(this._cam.viewportHeight / this._tileHeight);
 
-    const nbElement = gridWidth * gridHeight * 2;
+    const nbElement = gridWidth * gridHeight;
 
     const nbVertices = nbElement * 4;
     const nbIndices = nbElement * 6;
@@ -103,7 +168,7 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
   ): void {
     const gridWidth = Math.ceil(this._cam.viewportWidth / this._tileWidth);
     const gridHeight = Math.ceil(this._cam.viewportHeight / this._tileHeight);
-    const maxElements = gridWidth * gridHeight * 2;
+    const maxElements = gridWidth * gridHeight;
     let nbElements = 0;
 
     const camPos = this._cam.transform.getRawPosition();
@@ -113,15 +178,10 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     const nbElementX = this._nbElementX;
     const nbElementY = this._nbElementY;
     const grid = this._grid;
-    const color = this._worldCoords.color;
+    const textures = this._textures;
+    // const color = this._worldCoords.color;
     const tileWidth = this._tileWidth;
     const tileHeight = this._tileHeight;
-
-    const font = this._font;
-    const glyphWidth = font.glyphWidth;
-    const glyphHeight = font.glyphHeight;
-    const glyphGeom = font.glyphGeom;
-    const glyphs = font.glyphs;
 
     let gridX0 = Math.floor((camPos[0] - x) / tileWidth);
     let gridY0 = Math.floor((camPos[1] - y) / tileHeight);
@@ -130,8 +190,6 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     let textureInd;
 
     const indMappers = this._indMappers;
-
-    const yOffset = (tileHeight - glyphHeight) / 2;
 
     // cap to element size
     if (gridX0 < 0) gridX0 = 0;
@@ -148,50 +206,31 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
           textureInd = indMappers[mapInd](textureInd, iX, iY, grid, nbElementX, nbElementY);
         }
 
-        const indStr = textureInd.toString();
-        const size = indStr.length * glyphWidth;
-        const x = (tileWidth - size) / 2 + iX * tileWidth;
-        const y = yOffset + iY * tileHeight;
+        if (textureInd !== 0) {
+          const tileLeft = iX * tileWidth + x;
+          const tileTop = iY * tileHeight + y;
+          const tileRight = tileLeft + tileWidth;
+          const tileBottom = tileTop + tileHeight;
 
-        // if (indStr !== '0') debugger;
-        // console.log(indStr, x, y);
+          // 0 = no texture 1 = texture 0
+          const tileTexture = textures[textureInd - 1];
 
-        for (let glyphI = 0; glyphI < indStr.length; glyphI++) {
+          const uvs = tileTexture.uv;
+
           const v0 = vertices[vertexIndex];
           const v1 = vertices[vertexIndex + 1];
           const v2 = vertices[vertexIndex + 2];
           const v3 = vertices[vertexIndex + 3];
 
-          const char = indStr.substr(glyphI, 1);
-          // console.log('char : ', char);
-          const glyphGeomInd = glyphs.indexOf(char) * 4;
-          const uvX0 = glyphGeom[glyphGeomInd];
-          const uxX1 = glyphGeom[glyphGeomInd + 1];
-          const uvY0 = glyphGeom[glyphGeomInd + 2];
-          const uvY1 = glyphGeom[glyphGeomInd + 3];
+          vec2.set(v0.pos, tileLeft, tileTop);
+          vec2.set(v1.pos, tileRight, tileTop);
+          vec2.set(v2.pos, tileLeft, tileBottom);
+          vec2.set(v3.pos, tileRight, tileBottom);
 
-          const x0 = glyphI * glyphWidth + x;
-          const x1 = x0 + glyphWidth;
-          const y0 = y;
-          const y1 = y0 + glyphHeight;
-
-          v0.pos[0] = x0;
-          v0.pos[1] = y0;
-          v1.pos[0] = x1;
-          v1.pos[1] = y0;
-          v2.pos[0] = x0;
-          v2.pos[1] = y1;
-          v3.pos[0] = x1;
-          v3.pos[1] = y1;
-
-          v0.uv[0] = uvX0;
-          v0.uv[1] = uvY0;
-          v1.uv[0] = uxX1;
-          v1.uv[1] = uvY0;
-          v2.uv[0] = uvX0;
-          v2.uv[1] = uvY1;
-          v3.uv[0] = uxX1;
-          v3.uv[1] = uvY1;
+          vec2.set(v0.uv, uvs[0], uvs[1]);
+          vec2.set(v1.uv, uvs[2], uvs[1]);
+          vec2.set(v2.uv, uvs[0], uvs[3]);
+          vec2.set(v3.uv, uvs[2], uvs[3]);
 
           // vec4.copy(v0.color, color);
           // vec4.copy(v1.color, color);
@@ -211,7 +250,7 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
         }
       }
     }
-    // debugger;
+
     const nbReducedElement = maxElements - nbElements;
     batch.reduce(nbReducedElement * 6, nbReducedElement * 4);
   }

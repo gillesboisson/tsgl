@@ -1,9 +1,6 @@
 import { SimpleElement } from './SimpleElement';
 import { SimpleSpriteBatchPullable, SimpleSpriteBatch, SimpleSpriteBatchData } from './SimpleSpriteBatch';
-import { SubTexture } from './SubTexture';
-import { GLTexture } from '../gl/core/GLTexture';
-import { Texture } from '../gltf-schema';
-import { vec4 } from 'gl-matrix';
+import { SubTexture } from '../SubTexture';
 
 export enum SimpleTextOverflow {
   WORD_WRAP,

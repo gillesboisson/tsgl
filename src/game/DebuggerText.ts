@@ -1,4 +1,4 @@
-import { SimpleText, SimpleTextFont } from '../2d/SimpleText';
+import { SimpleText, SimpleTextFont } from '../2d/simpleSprite/SimpleText';
 
 export class DebuggerText extends SimpleText {
   static _defaultInstance: DebuggerText;

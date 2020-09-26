@@ -25,7 +25,7 @@ export interface IInterleavedData {
   ): void;
 }
 
-export type InterleaveAttributesType<DataT> = {
+export type InterleaveAttributesType = {
   createAttributes?: (gl: AnyWebRenderingGLContext, buffer: GLBuffer, stride: number) => GLAttribute[];
   __byteLength: number;
 };

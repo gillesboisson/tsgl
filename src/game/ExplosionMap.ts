@@ -1,4 +1,4 @@
-import { SimpleGrid, createConvolutionGridIndexMapper } from '../2d/SimpleGrid';
+import { SimpleGrid, createConvolutionGridIndexMapper } from '../2d/simpleSprite/SimpleGrid';
 import { SubTexture } from '../2d/SubTexture';
 import { Camera2D } from '../2d/Camera2D';
 import { H_BITFLAG, V_BITFLAG } from './Explosion';

@@ -1,5 +1,5 @@
-import { SimpleSprite } from '../2d/SimpleSprite';
-import { SimpleGrid } from '../2d/SimpleGrid';
+import { SimpleSprite } from '../2d/simpleSprite/SimpleSprite';
+import { SimpleGrid } from '../2d/simpleSprite/SimpleGrid';
 import { SubTexture } from '../2d/SubTexture';
 import GameInputStateManager, { GameInputState } from './GameInputStateManager';
 import { CollisionManager, CollisionFlag } from './CollisionManager';

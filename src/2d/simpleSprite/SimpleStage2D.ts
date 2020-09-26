@@ -1,9 +1,7 @@
 import { SimpleGroup } from './SimpleGroup';
-import { Camera2D } from './Camera2D';
-import { SpriteBatch } from './SpriteBatch';
-import { GLRenderer } from '../gl/core/GLRenderer';
-import { SpriteShaderState } from '../shaders/SpriteShader';
-import { Camera } from '../gltf-schema';
+import { Camera2D } from '../Camera2D';
+import { GLRenderer } from '../../gl/core/GLRenderer';
+import { SpriteShaderState } from '../../shaders/SpriteShader';
 import { SimpleSpriteBatch } from './SimpleSpriteBatch';
 
 export class SimpleStage2D extends SimpleGroup {

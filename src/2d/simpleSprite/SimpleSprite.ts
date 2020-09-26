@@ -5,7 +5,7 @@ import {
   SimpleSpriteBatchData,
 } from './SimpleSpriteBatch';
 import { vec2, vec4 } from 'gl-matrix';
-import { SubTexture } from './SubTexture';
+import { SubTexture } from '../SubTexture';
 import { SimpleElement } from './SimpleElement';
 import { SimpleGroup } from './SimpleGroup';
 import { SimpleWorldCoords } from './SimpleWorldCoords';

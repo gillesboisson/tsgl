@@ -1,6 +1,6 @@
 import { SimpleSprite } from './SimpleSprite';
-import { IAnimated, IStartStopPause } from '../animation/Juggler';
-import { SubTexture } from './SubTexture';
+import { IAnimated, IStartStopPause } from '../../animation/Juggler';
+import { SubTexture } from '../SubTexture';
 
 export class SimpleAnimatedSprite extends SimpleSprite implements IAnimated, IStartStopPause {
   protected _currentFrame: number;

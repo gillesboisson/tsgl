@@ -1,13 +1,13 @@
-import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
+import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { vec3, vec2, vec4, mat4 } from 'gl-matrix';
-import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributesLocation';
-import { GLTexture } from '../gl/core/GLTexture';
-import { GLShader } from '../gl/core/shader/GLShader';
-import { SpriteShaderState, IGLSpriteShaderState } from '../shaders/SpriteShader';
-import { CameraOrthographic } from '../gltf-schema';
-import { Camera } from '../3d/Camera';
-import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
-import { GLVao } from '../gl/core/data/GLVao';
+import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
+import { GLTexture } from '../../gl/core/GLTexture';
+import { GLShader } from '../../gl/core/shader/GLShader';
+import { SpriteShaderState, IGLSpriteShaderState } from '../../shaders/SpriteShader';
+import { CameraOrthographic } from '../../gltf-schema';
+import { Camera } from '../../3d/Camera';
+import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
+import { GLVao } from '../../gl/core/data/GLVao';
 
 const VERTEX_BATCH_SIZE = 2300;
 const INDICES_BATCH_SIZE = 4500;

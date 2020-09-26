@@ -1,5 +1,5 @@
 import { IAnimated } from '../animation/Juggler';
-import { SimpleGrid } from '../2d/SimpleGrid';
+import { SimpleGrid } from '../2d/simpleSprite/SimpleGrid';
 import { ExplosionMap } from './ExplosionMap';
 import { CollisionManager, CollisionFlag } from './CollisionManager';
 
