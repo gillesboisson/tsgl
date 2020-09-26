@@ -1,7 +1,7 @@
 import { AnyWebRenderingGLContext } from './GLHelpers';
 
 export class GLSupport {
-  static VAOSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
+  static VAOSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false): void {
     if ((gl as WebGL2RenderingContext).createVertexArray) {
       return;
     } else if (useExtension) {
@@ -23,7 +23,7 @@ export class GLSupport {
     }
   }
 
-  static webGL2Supported(gl: WebGL2RenderingContext) {
+  static webGL2Supported(gl: WebGL2RenderingContext): boolean {
     return typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext;
   }
 
@@ -34,11 +34,11 @@ export class GLSupport {
    * @param {boolean} orFail
    * @returns {boolean}
    */
-  static depthTextureSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
+  static depthTextureSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false): boolean {
     if (this.webGL2Supported(gl as WebGL2RenderingContext)) {
       return true;
     } else if (useExtension) {
-      let ext = gl.getExtension('WEBGL_depth_texture');
+      const ext = gl.getExtension('WEBGL_depth_texture');
 
       if (ext) {
         (gl as any).depthTextureExt = ext;
@@ -51,8 +51,8 @@ export class GLSupport {
 
   static instanceRenderingSupported(
     gl: AnyWebRenderingGLContext,
-    makeAngleExtPolyfill: boolean = true,
-    orFail: boolean = false,
+    makeAngleExtPolyfill = true,
+    orFail = false,
   ): boolean {
     if (GLSupport.webGL2Supported(gl as WebGL2RenderingContext)) return true;
     else if (makeAngleExtPolyfill) {
@@ -63,15 +63,15 @@ export class GLSupport {
           (gl as any).angleExt = ext;
 
           // map ext methods to context it was a webgl2 context
-          (gl as WebGL2RenderingContext).vertexAttribDivisor = function(attrLocation, divisor) {
+          (gl as WebGL2RenderingContext).vertexAttribDivisor = function (attrLocation, divisor) {
             return ext.vertexAttribDivisorANGLE(attrLocation, divisor);
           };
 
-          (gl as WebGL2RenderingContext).drawElementsInstanced = function(mode, count, type, offset, primcount) {
+          (gl as WebGL2RenderingContext).drawElementsInstanced = function (mode, count, type, offset, primcount) {
             return ext.drawElementsInstancedANGLE(mode, count, type, offset, primcount);
           };
 
-          (gl as WebGL2RenderingContext).drawArraysInstanced = function(mode, first, count, primcount) {
+          (gl as WebGL2RenderingContext).drawArraysInstanced = function (mode, first, count, primcount) {
             return ext.drawArraysInstancedANGLE(mode, first, count, primcount);
           };
         }
@@ -85,7 +85,7 @@ export class GLSupport {
     return false;
   }
 
-  static MRTFrameBufferSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false) {
+  static MRTFrameBufferSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false): boolean {
     if (this.webGL2Supported(gl as WebGL2RenderingContext)) return true;
     else {
       let ext;

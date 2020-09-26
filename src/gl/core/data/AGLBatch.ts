@@ -3,7 +3,6 @@ import { GLVao } from './GLVao';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLBuffer } from './GLBuffer';
 import { GLAttribute } from './GLAttribute';
-import { Type } from '../../../core/Type';
 
 export type pullMethod<DataT extends IInterleavedData> = (
   points: DataT[],
@@ -60,21 +59,21 @@ export abstract class AGLBatch<DataT extends IInterleavedData> extends Interleav
     this._vao = new GLVao(_gl, this._attributes, this._indexBuffer);
   }
 
-  protected bufferData() {
+  protected bufferData(): void {
     this._buffer.bufferSubData(this._bufferView, this._stride * this._pointPos);
     if (this._indexLength !== -1) this._indexBuffer.bufferSubData(this._indexArray, this._indexPos);
   }
 
-  public reset() {
+  public reset(): void {
     this._pointPos = 0;
     this._indexPos = 0;
   }
 
-  public begin() {
+  public begin(): void {
     this.reset();
   }
 
-  public push(pointLength: number, indexLength: number, pull: pullMethod<DataT>) {
+  public push(pointLength: number, indexLength: number, pull: pullMethod<DataT>): void {
     if (this._pointPos + pointLength > this._length || this._indexPos + indexLength > this._indexLength) {
       this.complete();
     }
@@ -89,7 +88,7 @@ export abstract class AGLBatch<DataT extends IInterleavedData> extends Interleav
     this._indexPos += indexLength;
   }
 
-  public pushElement(element: GLBatchable<DataT>) {
+  public pushElement(element: GLBatchable<DataT>): void {
     if (
       this._pointPos + element.pointLength > this._length ||
       this._indexPos + element.indexLength > this._indexLength
@@ -109,7 +108,7 @@ export abstract class AGLBatch<DataT extends IInterleavedData> extends Interleav
     this._indexPos += element.indexLength;
   }
 
-  public complete() {
+  public complete(): void {
     this.bufferData();
     this._vao.bind();
     this.ended(this._gl, this._pointPos, this._indexPos * this._indexStride);
@@ -117,13 +116,13 @@ export abstract class AGLBatch<DataT extends IInterleavedData> extends Interleav
     this.reset();
   }
 
-  public end() {
+  public end(): void {
     this.complete();
   }
 
   abstract ended(gl: AnyWebRenderingGLContext, nbPoints: number, nbIndices: number): void;
 
-  destroy() {
+  destroy(): void {
     this._vao.destroy();
     this._buffer.destroy();
   }

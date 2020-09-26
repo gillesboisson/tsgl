@@ -1,9 +1,6 @@
 import { GLCore } from '../GLCore';
 import { GLShader } from './GLShader';
 import { getUniformsLocation } from './getUniformsLocation';
-import { ICreateState } from './IGLShader';
-import { AnyWebRenderingGLContext } from '../GLHelpers';
-import { IUse } from './IShaderProgram';
 import { IGLShaderState } from './IGLShaderState';
 
 export abstract class GLShaderState extends GLCore implements IGLShaderState {
@@ -17,11 +14,11 @@ export abstract class GLShaderState extends GLCore implements IGLShaderState {
     this._program = program;
   }
 
-  use() {
+  use(): void {
     this.gl.useProgram(this._program);
   }
 
-  getProgram() {
+  getProgram(): WebGLProgram {
     return this._program;
   }
 

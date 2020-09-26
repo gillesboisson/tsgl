@@ -31,6 +31,7 @@ const defaultAttributes: { [name: string]: number } = {
 };
 
 export function getDefaultAttributeLocation(only?: string[]): { [name: string]: number } {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const res = only === undefined ? defaultAttributes : {};
   if (only === undefined) {
     return defaultAttributes;

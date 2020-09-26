@@ -1,13 +1,7 @@
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { vec3, vec2, vec4, mat4 } from 'gl-matrix';
+import { vec2 } from 'gl-matrix';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { GLTexture } from '../../gl/core/GLTexture';
-import { GLShader } from '../../gl/core/shader/GLShader';
-import { SpriteShaderState, IGLSpriteShaderState } from '../../shaders/SpriteShader';
-import { CameraOrthographic } from '../../gltf-schema';
+import { IGLSpriteShaderState } from '../../shaders/SpriteShader';
 import { Camera } from '../../3d/Camera';
-import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
-import { GLVao } from '../../gl/core/data/GLVao';
 
 const VERTEX_BATCH_SIZE = 2300;
 const INDICES_BATCH_SIZE = 4500;
@@ -64,8 +58,6 @@ export class SimpleSpriteBatch {
     this.verticesSlice = new Uint8Array(VERTEX_BUFFER_SIZE);
     this.vertices = new Array(VERTEX_BATCH_SIZE);
 
-    const vao = new GLVao(gl);
-
     const vertexBuffer = this.verticesSlice.buffer;
     for (let i = 0; i < VERTEX_BATCH_SIZE; i++) {
       this.vertices[i] = new SimpleSpriteBatchData(i * VERTEX_STRIDE, vertexBuffer);
@@ -104,7 +96,7 @@ export class SimpleSpriteBatch {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   }
 
-  begin<SS extends IGLSpriteShaderState>(shaderState: SS, cam?: Camera) {
+  begin<SS extends IGLSpriteShaderState>(shaderState: SS, cam?: Camera): void {
     this.indicesInd = 0;
     this.verticesInd = 0;
     this.currentTexture = null;
@@ -119,19 +111,19 @@ export class SimpleSpriteBatch {
    * @param nbIndices nb indice to reduce
    * @param nbVertex nb vertex to reduce
    */
-  public reduce(nbIndices: number, nbVertex: number) {
+  public reduce(nbIndices: number, nbVertex: number): void {
     this.indicesInd -= nbIndices;
     this.verticesInd -= nbVertex;
   }
 
-  changeShader<SS extends IGLSpriteShaderState>(shaderState: SS) {
+  changeShader<SS extends IGLSpriteShaderState>(shaderState: SS): void {
     this.end();
     this.begin(shaderState);
   }
 
   // private render() {}
 
-  push(nbIndices: number, nbVertex: number, texture: WebGLTexture, pullable: SimpleSpriteBatchPullable) {
+  push(nbIndices: number, nbVertex: number, texture: WebGLTexture, pullable: SimpleSpriteBatchPullable): void {
     // console.log(nbVertex, nbIndices);
 
     if (
@@ -150,13 +142,13 @@ export class SimpleSpriteBatch {
     this.indicesInd += nbIndices;
   }
 
-  destroy() {
+  destroy(): void {
     this.gl.deleteBuffer(this.indicesBuffer);
     this.gl.deleteBuffer(this.verticesBuffer);
     this.gl.deleteVertexArray(this.vao);
   }
 
-  end() {
+  end(): void {
     if (this.currentTexture !== null && (this.indicesInd !== 0 || this.verticesInd !== 0)) {
       const gl = this.gl;
       gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);

@@ -5,10 +5,10 @@ import { GLTexture } from '../GLTexture';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 
 export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
-  get width() {
+  get width(): number {
     return this._width;
   }
-  get height() {
+  get height(): number {
     return this._height;
   }
 
@@ -41,7 +41,7 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     this._textures = [];
 
     for (let i = 0; i < _nbLayers; i++) {
-      let texture = new GLTexture(gl, gl.TEXTURE_2D, _width, _height);
+      const texture = new GLTexture(gl, gl.TEXTURE_2D, _width, _height);
 
       this._textures.push(texture);
     }
@@ -55,7 +55,7 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     this.updateSettings();
   }
 
-  updateSettings() {
+  updateSettings(): void {
     const gl = this.gl;
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
@@ -128,11 +128,11 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
-  resize(width: number, height: number) {
+  resize(width: number, height: number): void {
     this._width = width;
     this._height = height;
 
-    for (let t of this._textures) {
+    for (const t of this._textures) {
       t.resize(width, height);
     }
 
@@ -141,7 +141,7 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     this.updateSettings();
   }
 
-  bind() {
+  bind(): void {
     this._previousViewport = this.gl.getParameter(this.gl.VIEWPORT);
 
     this.gl.viewport(0, 0, this._width, this._height);
@@ -157,7 +157,7 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
   /**
    * unbind shortcut method
    */
-  unbind() {
+  unbind(): void {
     if (this._previousViewport === null) throw new Error('Frame buffer has never been bind');
 
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
@@ -173,7 +173,7 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
 
   destroy(): void {
     this.gl.deleteFramebuffer(this._frameBuffer);
-    for (let t of this._textures) {
+    for (const t of this._textures) {
       t.destroy();
     }
     if (this._depthTexture !== undefined) this._depthTexture.destroy();

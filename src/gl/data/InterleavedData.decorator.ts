@@ -2,7 +2,8 @@ import { AnyWebRenderingGLContext } from '../core/GLHelpers';
 import { IInterleavedData, InterleavedDataArray, InterleavedProp } from './InterleavedData';
 
 export function interleavedProp(prop: InterleavedProp) {
-  return function(target: any, propName: string | Symbol) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  return function (target: any, propName: string | symbol): void {
     prop = {
       name: propName as string,
       length: 1,
@@ -22,13 +23,14 @@ export function interleavedProp(prop: InterleavedProp) {
 }
 
 export function interleavedData() {
-  return function(target: any) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  return function (target: any): void {
     const prototype = target.prototype;
 
     if (prototype.__anPropsList) {
       const allocate = prototype.allocate;
       let length = 0;
-      for (let prop of prototype.__anPropsList) {
+      for (const prop of prototype.__anPropsList) {
         const propOffset = prop.offset === -1 ? length : prop.offset;
         const nLength = propOffset + prop.type.BYTES_PER_ELEMENT * prop.length;
         if (nLength > length) length = nLength;
@@ -39,21 +41,21 @@ export function interleavedData() {
 
           const get =
             prop.length > 1
-              ? function() {
-                  return this[propName];
-                }
-              : function() {
-                  return this[propName][0];
-                };
+              ? function () {
+                return this[propName];
+              }
+              : function () {
+                return this[propName][0];
+              };
 
           const set =
             prop.length > 1
-              ? function(val: ArrayBufferView) {
-                  this[propName].set(val);
-                }
-              : function(val: number) {
-                  this[propName][0] = val;
-                };
+              ? function (val: ArrayBufferView) {
+                this[propName].set(val);
+              }
+              : function (val: number) {
+                this[propName][0] = val;
+              };
 
           Object.defineProperty(prototype, prop.name, { get, set });
         }
@@ -61,7 +63,7 @@ export function interleavedData() {
 
       target.__byteLength = length;
 
-      prototype.allocate = function(
+      prototype.allocate = function (
         array: InterleavedDataArray<IInterleavedData>,
         arrayBuffer: ArrayBuffer,
         offset: number,
@@ -69,7 +71,7 @@ export function interleavedData() {
       ) {
         let length = 0;
 
-        for (let prop of prototype.__anPropsList) {
+        for (const prop of prototype.__anPropsList) {
           const propOffset = prop.offset === -1 ? length : prop.offset;
           const nLength = propOffset + prop.type.BYTES_PER_ELEMENT * prop.length;
           if (nLength > length) length = nLength;
@@ -80,7 +82,7 @@ export function interleavedData() {
           }
         }
 
-        if (allocate) allocate.apply(this, arguments);
+        if (allocate) allocate.apply(this, [array, arrayBuffer, offset, stride]);
       };
     }
   };

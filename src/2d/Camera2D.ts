@@ -1,6 +1,4 @@
 import { Camera } from '../3d/Camera';
-import { mat4 } from 'gl-matrix';
-import { Transform3D } from '../geom/Transform3D';
 
 export class Camera2D extends Camera {
   protected _viewportWidth: number;
@@ -28,7 +26,7 @@ export class Camera2D extends Camera {
     this.setPosition(0, 0);
   }
 
-  setClampedPosition(x: number, y: number, minX: number, maxX: number, minY: number, maxY: number) {
+  setClampedPosition(x: number, y: number, minX: number, maxX: number, minY: number, maxY: number): void {
     if (x < minX) x = minX;
     else if (x + this.viewportWidth > maxX) x = maxX - this.viewportWidth;
 
@@ -38,12 +36,12 @@ export class Camera2D extends Camera {
     this.setPosition(x, y);
   }
 
-  setPosition(x: number, y: number) {
+  setPosition(x: number, y: number): void {
     this.transform.setPosition(x, y, 1.0);
     this.updateWorldMat();
   }
 
-  setViewport(viewportWidth: number, viewportHeight: number) {
+  setViewport(viewportWidth: number, viewportHeight: number): void {
     this.setDimension2d(viewportWidth, viewportHeight);
     this._viewportWidth = viewportWidth;
     this._viewportHeight = viewportHeight;

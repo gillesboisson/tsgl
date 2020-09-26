@@ -1,4 +1,4 @@
-import { vec2, vec4 } from 'gl-matrix';
+import { vec2 } from 'gl-matrix';
 import { SubTexture } from '../SubTexture';
 import { SimpleElement } from './SimpleElement';
 import { Camera2D } from '../Camera2D';
@@ -24,12 +24,15 @@ export type KernelCompare = (
 ) => number;
 
 export const KernelCompareFuncs = {
-  base: function(
+  base: function (
     base: number,
     val: number,
     kernel: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     kernelX: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     kernelY: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     kernelSize: number,
   ): number {
     return base + val * kernel;
@@ -51,9 +54,9 @@ export function createConvolutionGridIndexMapper(
   kernelHeight: number,
   compare: KernelCompare = KernelCompareFuncs.base,
 ): GridIndexMapper {
-  if (kernel.length !== kernelWidth * kernelHeight) throw new Error("Kernel data doesn' match provides dimensions");
+  if (kernel.length !== kernelWidth * kernelHeight) throw new Error('Kernel data doesn\' match provides dimensions');
   const kernelLength = kernel.length;
-  return function(ind: number, x: number, y: number, data: number[], gridWidth: number, gridHeight: number): number {
+  return function (ind: number, x: number, y: number, data: number[], gridWidth: number, gridHeight: number): number {
     let base = 0;
     const xOffset = (kernelWidth - 1) / 2;
     const YOffset = (kernelHeight - 1) / 2;
@@ -93,7 +96,7 @@ export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullab
     cam: Camera2D,
   ) {
     if (textures.length === 0) throw new Error('Empty subtexture collection');
-    if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
+    if (grid.length !== nbElementX * nbElementY) throw new Error('Grid size doesn\'t have nb elements');
 
     super(textures[0].glTexture);
     this._grid = grid;
@@ -109,11 +112,11 @@ export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullab
     this._indMappers = [];
   }
 
-  addIndexMapper(mapper: GridIndexMapper) {
+  addIndexMapper(mapper: GridIndexMapper): void {
     this._indMappers.push(mapper);
   }
 
-  removeIndexMapper(mapper: GridIndexMapper) {
+  removeIndexMapper(mapper: GridIndexMapper): void {
     const ind = this._indMappers.indexOf(mapper);
     if (ind !== -1) {
       this._indMappers.splice(ind, 1);
@@ -125,7 +128,7 @@ export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullab
    * @param x
    * @param y
    */
-  getGridIndexAt(x: number, y: number) {
+  getGridIndexAt(x: number, y: number): number {
     return this._grid[x + y * this._nbElementX];
   }
 
@@ -140,7 +143,7 @@ export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullab
     return this._nbElementY;
   }
 
-  setDataAt(x: number, y: number, val: number) {
+  setDataAt(x: number, y: number, val: number): void {
     this._grid[x + y * this._nbElementX] = val;
   }
 

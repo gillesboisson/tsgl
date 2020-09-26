@@ -16,7 +16,7 @@ export class SimpleAnimatedSprite extends SimpleSprite implements IAnimated, ISt
     this._nbFrames = this._textures.length;
   }
 
-  protected updateCurrentFrame(frame: number) {
+  protected updateCurrentFrame(frame: number): void {
     this._currentFrame = frame;
     this._subTexture = this._textures[frame];
     this._texture = this._subTexture.glTexture.texture;
@@ -56,6 +56,7 @@ export class SimpleAnimatedSprite extends SimpleSprite implements IAnimated, ISt
   }
 
   animationStart(): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   animationEnd(time: number): void {}
 
   animationUpdate(time: number, elapsedTime: number): void {

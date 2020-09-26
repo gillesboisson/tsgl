@@ -11,7 +11,7 @@ export class AnimatedMap implements IAnimated {
   protected _frames: number[] = [];
   protected _datas: AnimatedMapData[] = [];
 
-  protected _indexMapper = (sourceInd: number) => {
+  protected _indexMapper = (sourceInd: number): number => {
     const datas = this._datas;
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
@@ -23,24 +23,24 @@ export class AnimatedMap implements IAnimated {
     return sourceInd;
   };
 
-  addAnimation(nbFrame: number, firstFrame: number, fps: number) {
+  addAnimation(nbFrame: number, firstFrame: number, fps: number): AnimatedMapData {
     const data: AnimatedMapData = { nbFrame, firstFrame, fps };
     this.addAnimationData(data);
     return data;
   }
 
-  protected addAnimationData(data: AnimatedMapData) {
+  protected addAnimationData(data: AnimatedMapData): void {
     this._datas.push(data);
     this._frames.push(data.firstFrame);
   }
 
-  addAnimationDatas(...datas: AnimatedMapData[]) {
-    for (let data of datas) {
+  addAnimationDatas(...datas: AnimatedMapData[]): void {
+    for (const data of datas) {
       this.addAnimationData(data);
     }
   }
 
-  removeAnimationData(data: AnimatedMapData) {
+  removeAnimationData(data: AnimatedMapData): void {
     const ind = this._datas.indexOf(data);
     if (ind !== -1) this._datas.splice(ind, 1);
   }
@@ -54,7 +54,9 @@ export class AnimatedMap implements IAnimated {
   animationStart(): void {
     this.animationUpdate(0, 0);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   animationEnd(time: number): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   animationUpdate(time: number, elapsedTime: number): void {
     const frames = this._frames;
 

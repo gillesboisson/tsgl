@@ -2,10 +2,10 @@ import { GLCore } from './GLCore';
 import { InterleaveAttributesType } from '../data/InterleavedData';
 import { GLVao } from './data/GLVao';
 import { GLBuffer } from './data/GLBuffer';
-import { GLTransformFeedbackShader, GLTransformFeedbackShaderState } from './data/GLTFShader';
+import { GLTransformFeedbackShaderState } from './data/GLTFShader';
 import { applyPointsTransformPass } from './applyPointsTransformPass';
 
-export class GLTransformFeedbackPass<DataT> extends GLCore {
+export class GLTransformFeedbackPass extends GLCore {
   protected _buffer1Ind: WebGLBuffer;
   protected _buffer2Ind: WebGLBuffer;
   protected _vao1: GLVao;
@@ -50,7 +50,7 @@ export class GLTransformFeedbackPass<DataT> extends GLCore {
     this._bufferSwapped = false;
   }
 
-  get length() {
+  get length(): number {
     return this._length;
   }
 
@@ -68,7 +68,7 @@ export class GLTransformFeedbackPass<DataT> extends GLCore {
     return this._bufferSwapped === true ? this._vao1 : this._vao2;
   }
 
-  applyPass(shaderState: GLTransformFeedbackShaderState, length = this._length) {
+  applyPass(shaderState: GLTransformFeedbackShaderState, length = this._length): GLVao {
     const bufferSwapped = this._bufferSwapped;
     const vaoIn = bufferSwapped === true ? this._vao2 : this._vao1;
     const bufferOut = bufferSwapped === true ? this._buffer1 : this._buffer2;

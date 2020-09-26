@@ -3,16 +3,17 @@ import { GLBuffer } from './GLBuffer';
 import { GLAttribute } from './GLAttribute';
 
 export function GLInterleavedAttributes() {
-  return function(target: any) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  return function (target: any): void {
     if (target.prototype.__anPropsList) {
       const createAttributes = target.createAttributes;
 
-      target.createAttributes = function(
+      target.createAttributes = function (
         gl: AnyWebRenderingGLContext,
         buffer: GLBuffer,
         stride: number = target.__byteLength,
       ) {
-        const attrs: GLAttribute[] = createAttributes ? createAttributes.apply(target, arguments) : [];
+        const attrs: GLAttribute[] = createAttributes ? createAttributes.apply(target, [gl, buffer, stride]) : [];
         let length = 0;
 
         for (const prop of target.prototype.__anPropsList) {

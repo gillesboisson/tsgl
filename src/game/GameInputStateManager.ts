@@ -56,13 +56,13 @@ export default class GameInputStateManager {
     this._input.on(GameInputEventType.RELEASE, GAME_INPUT_KEY_ALL, this._inputReleaseBind);
   }
 
-  protected _inputDown(e: GameInputEvent) {
+  protected _inputDown(e: GameInputEvent): void {
     if (e.player === 0 || e.player === 'keyboard') {
       this.state[e.button] = true;
       if (this.onStateUpdatedate !== undefined) this.onStateUpdatedate(this.state);
     }
   }
-  protected _inputUp(e: GameInputEvent) {
+  protected _inputUp(e: GameInputEvent): void {
     if (e.player === 0 || e.player === 'keyboard') {
       this.state[e.button] = false;
       if (this.onStateUpdatedate !== undefined) this.onStateUpdatedate(this.state);
@@ -71,5 +71,5 @@ export default class GameInputStateManager {
 
   onStateUpdatedate: (state: GameInputState) => void;
 
-  destroy() {}
+  destroy(): void {}
 }

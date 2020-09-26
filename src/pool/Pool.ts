@@ -18,7 +18,7 @@ export class Pool<T extends IPoolable> implements IDestroyable {
   protected _available: T[] = [];
   protected _used: T[] = [];
 
-  constructor(protected Type: PoolableType<T>, allocate: number = 0) {
+  constructor(protected Type: PoolableType<T>, allocate = 0) {
     for (let i = 0; i < allocate; i++) {
       this._available.push(this.create());
     }
@@ -46,7 +46,7 @@ export class Pool<T extends IPoolable> implements IDestroyable {
     return element;
   }
 
-  release(element: T) {
+  release(element: T): void {
     const ind = this._used.indexOf(element);
     if (ind !== -1) {
       this._used.splice(ind, 1);
@@ -55,19 +55,19 @@ export class Pool<T extends IPoolable> implements IDestroyable {
     }
   }
 
-  releaseAll() {
+  releaseAll(): void {
     if (this._used.length === 0) {
       const released = this._used.splice(0, this._used.length);
       this._available.push(...released);
       if (this.Type.prototype.releaded !== undefined) {
-        for (let element of released) {
+        for (const element of released) {
           element.released();
         }
       }
     }
   }
 
-  destroyElement(element: T) {
+  destroyElement(element: T): void {
     const ind = this._used.indexOf(element);
     if (ind !== -1) {
       const indU = this._used.indexOf(element);
@@ -85,7 +85,7 @@ export class Pool<T extends IPoolable> implements IDestroyable {
   }
 
   destroy(): void {
-    for (let element of this._pool) {
+    for (const element of this._pool) {
       element.destroy();
     }
 

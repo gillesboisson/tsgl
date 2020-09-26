@@ -4,7 +4,7 @@ import { GLAttribute } from '../gl/core/data/GLAttribute';
 import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { GLMesh } from '../gl/core/data/GLMesh';
 
-export function createQuadMesh(gl: AnyWebRenderingGLContext, drawType: GLenum = gl.STATIC_DRAW) {
+export function createQuadMesh(gl: AnyWebRenderingGLContext, drawType: GLenum = gl.STATIC_DRAW): GLMesh {
   const quadB = new GLBuffer(gl, gl.ARRAY_BUFFER, drawType);
   quadB.bufferData(new Float32Array([-1, -1, 0, 0, 0, 1, -1, 0, 1, 0, -1, 1, 0, 0, 1, 1, 1, 0, 1, 1]));
 
@@ -26,7 +26,7 @@ export function createWiredBoxMesh(
   scaleY: number,
   scaleZ: number,
   drawType: GLenum = gl.STATIC_DRAW,
-) {
+): GLMesh {
   const quadB = new GLBuffer(gl, gl.ARRAY_BUFFER, drawType);
   quadB.bufferData(new Float32Array([-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]));
 

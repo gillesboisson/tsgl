@@ -11,7 +11,7 @@ export function compileDeclinaison(
   attributeLocations?: {
     [name: string]: number;
   },
-) {
+): void {
   for (const variant of variantsDefinition) {
     variant.program = compileProgram(gl, vertexSrc, fragmentSrc, attributeLocations, variant.flags);
     variant.uniformsLocation = getUniformsLocation(gl, variant.program);

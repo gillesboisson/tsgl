@@ -19,19 +19,19 @@ export class GLBuffer extends GLCore {
     if (this._data !== undefined) this.bufferData(this._data);
   }
 
-  get bufferIndex() {
+  get bufferIndex(): WebGLBuffer {
     return this._bufferIndex;
   }
 
-  destroy() {
+  destroy(): void {
     this.gl.deleteBuffer(this._bufferIndex);
   }
 
-  bind() {
+  bind(): void {
     this.gl.bindBuffer(this._target, this._bufferIndex);
   }
 
-  unbind() {
+  unbind(): void {
     this.gl.bindBuffer(this._target, null);
   }
 
@@ -39,22 +39,22 @@ export class GLBuffer extends GLCore {
     attrLocation: number,
     elementLength: number,
     verticesType: number = this.gl.FLOAT,
-    normalize: boolean = false,
-    stride: number = 0,
-    offset: number = 0,
-  ) {
+    normalize = false,
+    stride = 0,
+    offset = 0,
+  ): void {
     this.bind();
     this.gl.enableVertexAttribArray(attrLocation);
     this.gl.vertexAttribPointer(attrLocation, elementLength, verticesType, normalize, stride, offset);
   }
 
-  bufferDataLength(byteLength: number) {
+  bufferDataLength(byteLength: number): void {
     this.gl.bindBuffer(this._target, this._bufferIndex);
     this.gl.bufferData(this._target, byteLength, this._drawType);
     if (GLConfig.SafeBufferBinding === true) this.gl.bindBuffer(this._target, null);
   }
 
-  bufferData(data: ArrayBufferView) {
+  bufferData(data: ArrayBufferView): void {
     this._data = data;
 
     this.gl.bindBuffer(this._target, this._bufferIndex);
@@ -62,7 +62,7 @@ export class GLBuffer extends GLCore {
     if (GLConfig.SafeBufferBinding === true) this.gl.bindBuffer(this._target, null);
   }
 
-  bufferSubData(data: ArrayBufferView = this._data, length?: number, offset: number = 0, offsetSrc: number = offset) {
+  bufferSubData(data: ArrayBufferView = this._data, length?: number, offset = 0, offsetSrc: number = offset): void {
     this.gl.bindBuffer(this._target, this._bufferIndex);
     this.gl.bufferSubData(this._target, offset, data, offsetSrc, length);
     if (GLConfig.SafeBufferBinding === true) this.gl.bindBuffer(this._target, null);

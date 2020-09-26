@@ -30,7 +30,7 @@ export class SimpleStage2D extends SimpleGroup {
     return this._gui;
   }
 
-  render(cam?: Camera2D) {
+  render(cam?: Camera2D): void {
     this._batch.begin(this._renderState, cam || this._cam);
     super.draw(this._batch);
     this._batch.end();

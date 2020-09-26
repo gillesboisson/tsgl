@@ -58,7 +58,7 @@ export class GLVao extends GLCore {
 
         this._supportMode = VaoSupportType.OES_VAO;
       } else {
-        this.activate = function() {};
+        this.activate = function () {};
         this.bind = this.activeGeom;
         this.unbind = this.unbindProxy;
 
@@ -101,7 +101,7 @@ export class GLVao extends GLCore {
     (this.gl as WebGL2RenderingContext).deleteVertexArray(this._vao);
   }
 
-  public activate() {
+  public activate(): void {
     this.bind();
 
     this.activeGeom();
@@ -109,7 +109,7 @@ export class GLVao extends GLCore {
     this.unbind();
   }
 
-  public activeGeom() {
+  public activeGeom(): void {
     for (const attr of this._attributes) {
       attr.activate();
     }
@@ -117,7 +117,7 @@ export class GLVao extends GLCore {
   }
 
   // dynamically assigned based on WebGL VAO implementation (VaoSupportType)
-  public unbind() {}
-  public bind() {}
-  public destroy() {}
+  public unbind(): void {}
+  public bind(): void {}
+  public destroy(): void {}
 }

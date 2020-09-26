@@ -1,9 +1,9 @@
 import { vec2, vec4 } from 'gl-matrix';
 import { GLTexture } from '../../gl/core/GLTexture';
 import { SimpleWorldCoords } from './SimpleWorldCoords';
-import { SpriteBatchRenderable } from './../SpriteBatch';
 import { SimpleGroup } from './SimpleGroup';
 import { SimpleSpriteBatch, SimpleSpriteBatchRenderable } from './SimpleSpriteBatch';
+import { SubTexture } from '../SubTexture';
 
 export abstract class SimpleElement implements SimpleSpriteBatchRenderable<SimpleWorldCoords> {
   protected position: vec2 = vec2.create();
@@ -18,7 +18,7 @@ export abstract class SimpleElement implements SimpleSpriteBatchRenderable<Simpl
     color: vec4.create(),
   };
 
-  removeFromParent() {
+  removeFromParent(): void {
     if (this.parent !== undefined) this.parent.removeChild(this);
   }
 
@@ -43,12 +43,12 @@ export abstract class SimpleElement implements SimpleSpriteBatchRenderable<Simpl
     this.position[1] = val;
   }
 
-  setPosition(x: number, y: number) {
+  setPosition(x: number, y: number): void {
     this.position[0] = x;
     this.position[1] = y;
   }
 
-  calcWorldCoordinate(parentWorldCoords: SimpleWorldCoords) {
+  calcWorldCoordinate(parentWorldCoords: SimpleWorldCoords): void {
     const resultWorldCoords = this._worldCoords;
     if (parentWorldCoords === undefined) {
       resultWorldCoords.x = this.position[0];
@@ -61,15 +61,15 @@ export abstract class SimpleElement implements SimpleSpriteBatchRenderable<Simpl
     }
   }
 
-  setColor(r: number, g: number, b: number, a: number) {
+  setColor(r: number, g: number, b: number, a: number): void {
     vec4.set(this.color, r, g, b, a);
   }
 
-  setColorBase255(r: number, g: number, b: number, a: number) {
+  setColorBase255(r: number, g: number, b: number, a: number): void {
     vec4.set(this.color, r / 255, g / 255, b / 255, a / 255);
   }
 
-  getColor() {
+  getColor(): vec4 {
     return vec4.clone(this.color);
   }
 }

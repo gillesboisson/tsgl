@@ -14,17 +14,17 @@ export class GLUbo implements IGLCore {
     }
   }
 
-  bindBufferRange(buffer: GLBuffer, offset: number, size: number) {
+  bindBufferRange(buffer: GLBuffer, offset: number, size: number): void {
     const gl = this._gl;
     gl.bindBufferRange(gl.UNIFORM_BUFFER, this._uboIndex, buffer.bufferIndex, offset, size);
   }
 
-  bindBufferBase(buffer: GLBuffer) {
+  bindBufferBase(buffer: GLBuffer): void {
     const gl = this._gl;
     gl.bindBufferBase(gl.UNIFORM_BUFFER, this._uboIndex, buffer.bufferIndex);
   }
 
-  get uboIndex() {
+  get uboIndex(): number {
     return this._uboIndex;
   }
 

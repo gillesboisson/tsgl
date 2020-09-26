@@ -31,7 +31,7 @@ const SPRITE_KERNEL = [
   0           ,0b00000100   ,0,
   0b00000001  ,FACTOR_MASK  ,0b00000010,
   0           ,0b00001000   ,0
-  ]
+];
 
 export const kernelCompare = createConvolutionGridIndexMapper(
   SPRITE_KERNEL,
@@ -52,26 +52,26 @@ export function explosionTile(
     const orientation = ind & ORIENTATION_MASK;
 
     switch (orientation) {
-      case LEFT_TILE_END_FLAG:
-        return LEFT_TILE_END;
+        case LEFT_TILE_END_FLAG:
+          return LEFT_TILE_END;
 
-      case HORIZONTAL_TILE_FLAG:
-        return HORIZONTAL_TILE;
+        case HORIZONTAL_TILE_FLAG:
+          return HORIZONTAL_TILE;
 
-      case RIGHT_TILE_END_FLAG:
-        return RIGHT_TILE_END;
+        case RIGHT_TILE_END_FLAG:
+          return RIGHT_TILE_END;
 
-      case TOP_TILE_END_FLAG:
-        return TOP_TILE_END;
+        case TOP_TILE_END_FLAG:
+          return TOP_TILE_END;
 
-      case VERTICAL_TILE_FLAG:
-        return VERTICAL_TILE;
+        case VERTICAL_TILE_FLAG:
+          return VERTICAL_TILE;
 
-      case BOTTOM_TILE_END_FLAG:
-        return BOTTOM_TILE_END;
+        case BOTTOM_TILE_END_FLAG:
+          return BOTTOM_TILE_END;
 
-      default:
-        return CENTER_TILE;
+        default:
+          return CENTER_TILE;
     }
   } else {
     return 0;
@@ -113,7 +113,7 @@ export class ExplosionMap extends SimpleGrid implements IAnimated {
   removeExplosionAt(x: number, y: number) {
     const gridInd = x + y * this._nbElementX;
     let nbExplosion = this._grid[gridInd] & FACTOR_MASK;
-    let orientationFlag = this._grid[gridInd] & ORIENTATION_MASK;
+    const orientationFlag = this._grid[gridInd] & ORIENTATION_MASK;
 
     nbExplosion -= FACTOR_MUL;
     if (nbExplosion > 0) {

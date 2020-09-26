@@ -13,28 +13,9 @@ export class GLTexture extends GLCore {
     const finalType =
       type !== undefined
         ? type
-        : EXT_DEFAULT_ALPHA.indexOf(
-            url
-              .split('.')
-              .pop()
-              .toLowerCase(),
-          ) !== -1
-        ? gl.RGBA
-        : gl.RGB;
-
-    // return new Promise(function(resolve, reject) {
-
-    //   const img = new Image();
-    //   img.onload = (e) => {
-    //     const texture = new GLTexture(gl, gl.TEXTURE_2D, img.width, img.height);
-    //     texture.uploadImage(img, finalType);
-    //     resolve(texture);
-    //   };
-
-    //   img.onerror = (event, src, li, le, error) => reject({ event, src, error });
-
-    //   img.src = url;
-    // });
+        : EXT_DEFAULT_ALPHA.indexOf(url.split('.').pop().toLowerCase()) !== -1
+          ? gl.RGBA
+          : gl.RGB;
 
     return fetch(url)
       .then((response) => response.blob())
@@ -45,22 +26,6 @@ export class GLTexture extends GLCore {
         return texture;
       });
   }
-
-  // static async loadMany(gl: AnyWebRenderingGLContext,imageSources: ImageSource[],parallelLoads = 3){
-
-  //   let loadInd;
-
-  //   for()
-
-  //   for(let imageSource of imageSources){
-  //     if(imageSource.type === undefined){
-  //       const imgExt = imageSource.src.split('.').pop().toLowerCase();
-  //       imageSource.type = EXT_DEFAULT_ALPHA.indexOf(imgExt) === -1 ? gl.RGB : gl.RGBA;
-
-  //     }
-
-  //   }
-  // }
 
   get texture(): WebGLTexture {
     return this._texture;
@@ -99,7 +64,7 @@ export class GLTexture extends GLCore {
     enableMimap: boolean = this._mipmap,
     linearFiltering: boolean = this._linearFiltering,
     wrapMode: GLenum = this._wrapMode,
-  ) {
+  ): void {
     this.bind();
     if (enableMimap) {
       this.gl.texParameteri(
@@ -133,12 +98,12 @@ export class GLTexture extends GLCore {
     this.unbind();
   }
 
-  setEmpty(format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE) {
+  setEmpty(format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE): void {
     this.gl.texImage2D(this._textureType, 0, format, format, type, null);
     if (this._mipmap) this.gl.generateMipmap(this._textureType);
   }
 
-  resize(width: number, height: number) {
+  resize(width: number, height: number): void {
     this._width = width;
     this._height = height;
     this.setEmpty(this.gl.RGBA);
@@ -148,23 +113,23 @@ export class GLTexture extends GLCore {
     image: HTMLImageElement | HTMLCanvasElement | ArrayBufferView | ImageData | ImageBitmap | HTMLVideoElement,
     format: GLenum,
     type: GLenum = this.gl.UNSIGNED_BYTE,
-  ) {
+  ): void {
     this.bind();
     this.gl.texImage2D(this._textureType, 0, format, format, type, image as any);
     if (this._mipmap) this.gl.generateMipmap(this._textureType);
     this.unbind();
   }
 
-  active(ind: number = 0) {
+  active(ind = 0): void {
     this.gl.activeTexture(this.gl.TEXTURE0 + ind);
     this.bind();
   }
 
-  bind() {
+  bind(): void {
     this.gl.bindTexture(this._textureType, this.texture);
   }
 
-  unbind() {
+  unbind(): void {
     this.gl.bindTexture(this._textureType, null);
   }
 }

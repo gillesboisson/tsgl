@@ -1,5 +1,5 @@
 import { GLTexture } from './gl/core/GLTexture';
-import { SimpleGrid, createConvolutionGridIndexMapper, createEmptyDataSet } from './2d/simpleSprite/SimpleGrid';
+import { SimpleGrid } from './2d/simpleSprite/SimpleGrid';
 import { SubTexture, createSubTextureGrid, createGridAlignedSubTextures } from './2d/SubTexture';
 import { TiledMap } from './2d/tiled/TiledMap';
 import { TiledTileLayer } from './2d/tiled/TiledTileLayer';
@@ -11,7 +11,7 @@ import { Base2DApp } from './game/Base2DApp';
 import { Bomb } from './game/Bomb';
 import { Explosion } from './game/Explosion';
 import { SimpleGridDebugger } from './2d//simpleSprite/SimpleGridDebugger';
-import { ExplosionMap, kernelCompare, explosionTile } from './game/ExplosionMap';
+import { ExplosionMap } from './game/ExplosionMap';
 import { CollisionManager, CollisionFlag } from './game/CollisionManager';
 import { DebuggerText } from './game/DebuggerText';
 import { GameInputState, emptyInputState } from './game/GameInputStateManager';
@@ -66,6 +66,7 @@ class PandaGame extends Base2DApp {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async init(canvas?: HTMLCanvasElement) {
     const gl = this._renderer.getGL();
     const texture = await GLTexture.load(gl, '../images/dungeon.png');
@@ -187,7 +188,7 @@ class PandaGame extends Base2DApp {
       16,
     );
 
-    const flowerAnimationTextures = createGridAlignedSubTextures(texture, 16, 16, 0, 4, 2, 16, 16);
+    // const flowerAnimationTextures = createGridAlignedSubTextures(texture, 16, 16, 0, 4, 2, 16, 16);
 
     this.juggler.addChild(this.explosionGrid);
 
@@ -324,6 +325,7 @@ class PandaGame extends Base2DApp {
       320,
     );
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   beforeRender(time: number, elapsedTime: number): void {
     // throw new Error('Method not implemented.');
   }
@@ -339,15 +341,15 @@ async function ready(canvas?: HTMLCanvasElement) {
 
 if ((self as any).document === undefined) {
   // postMessage("I'm fairly confident I'm a webworker");
-  onmessage = function(evt) {
+  onmessage = function (evt) {
     switch (evt.data.subject) {
-      case 'init':
-        ready(evt.data.canvas);
-        break;
-      case 'input':
-        panda.inputState = evt.data.state;
-        // console.log('panda.inputState : ', panda.inputState);
-        break;
+        case 'init':
+          ready(evt.data.canvas);
+          break;
+        case 'input':
+          panda.inputState = evt.data.state;
+          // console.log('panda.inputState : ', panda.inputState);
+          break;
     }
   };
 } else {

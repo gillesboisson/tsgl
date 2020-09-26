@@ -52,7 +52,7 @@ export class GLAttribute extends GLCore {
   protected _offset: number;
   protected _type: GLenum;
   protected _normalize: boolean;
-  public divisor: number = 0;
+  public divisor = 0;
 
   constructor(
     gl: AnyWebRenderingGLContext,
@@ -61,9 +61,9 @@ export class GLAttribute extends GLCore {
     name: string,
     length: number,
     stride: number,
-    offset: number = 0,
+    offset = 0,
     type: GLenum = gl.FLOAT,
-    normalize: boolean = false,
+    normalize = false,
   ) {
     super(gl);
     this._normalize = normalize;
@@ -76,7 +76,7 @@ export class GLAttribute extends GLCore {
     this._buffer = buffer;
   }
 
-  activate() {
+  activate(): void {
     this._buffer.bind();
     this.gl.vertexAttribPointer(this._location, this._length, this._type, this._normalize, this._stride, this._offset);
     this.gl.enableVertexAttribArray(this._location);

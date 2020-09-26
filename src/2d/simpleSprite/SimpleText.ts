@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { SimpleElement } from './SimpleElement';
 import { SimpleSpriteBatchPullable, SimpleSpriteBatch, SimpleSpriteBatchData } from './SimpleSpriteBatch';
 import { SubTexture } from '../SubTexture';
@@ -61,10 +62,10 @@ export class SimpleText extends SimpleElement implements SimpleSpriteBatchPullab
   protected _height = -1;
 
   protected _text: string;
-  protected _textDirty: boolean = false;
+  protected _textDirty = false;
   protected _wordSizes: number[] = [];
 
-  public upperCaseOnly: boolean = false;
+  public upperCaseOnly = false;
 
   get text(): string {
     return this._text;
@@ -116,11 +117,8 @@ export class SimpleText extends SimpleElement implements SimpleSpriteBatchPullab
     batch.push(nbElements * 6, nbElements * 4, this._texture, this);
   }
 
-  calcWordsSize() {
-    const words = this._text
-      .split('\n')
-      .join(' ')
-      .split(' ');
+  calcWordsSize(): void {
+    const words = this._text.split('\n').join(' ').split(' ');
     this._wordSizes = words.map((word) => word.length);
   }
 

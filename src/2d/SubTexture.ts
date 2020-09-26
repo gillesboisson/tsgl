@@ -1,6 +1,4 @@
-import { vec4 } from 'gl-matrix';
 import { GLTexture } from '../gl/core/GLTexture';
-import { WithUv } from '../gl/data/InterleavedData';
 
 export function createSubTextureGrid(
   texture: GLTexture,
@@ -48,23 +46,23 @@ export function createGridAlignedSubTextures(
 }
 
 export class SubTexture {
-  get x() {
+  get x(): number {
     return this.uv[0] * this._texture.width;
   }
 
-  get y() {
+  get y(): number {
     return this.uv[1] * this._texture.height;
   }
 
-  get width() {
+  get width(): number {
     return (this.uv[2] - this.uv[0]) * this._texture.width;
   }
 
-  get height() {
+  get height(): number {
     return (this.uv[3] - this.uv[1]) * this._texture.height;
   }
 
-  get glTexture() {
+  get glTexture(): GLTexture {
     return this._texture;
   }
 
@@ -72,8 +70,8 @@ export class SubTexture {
 
   constructor(
     protected _texture: GLTexture,
-    x: number = 0,
-    y: number = 0,
+    x = 0,
+    y = 0,
     width: number = _texture.width,
     height: number = _texture.height,
   ) {
@@ -81,11 +79,11 @@ export class SubTexture {
     this.setBounds(x, y, width, height);
   }
 
-  setBounds(x: number, y: number, width: number, height: number) {
+  setBounds(x: number, y: number, width: number, height: number): void {
     this.setBoundsRect(x, y, x + width, y + height);
   }
 
-  setBoundsRect(left: number, top: number, right: number, bottom: number) {
+  setBoundsRect(left: number, top: number, right: number, bottom: number): void {
     this.setBoundUv(
       left / this._texture.width,
       top / this._texture.height,
@@ -94,7 +92,7 @@ export class SubTexture {
     );
   }
 
-  setBoundUv(left: number, top: number, right: number, bottom: number) {
+  setBoundUv(left: number, top: number, right: number, bottom: number): void {
     this.uv[0] = left;
     this.uv[1] = top;
     this.uv[2] = right;

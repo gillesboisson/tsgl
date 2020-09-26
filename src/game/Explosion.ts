@@ -38,10 +38,10 @@ export class Explosion implements IAnimated {
   }
 
   protected updateLength(length: number) {
-    let topHit: boolean = false;
-    let bottompHit: boolean = false;
-    let leftHit: boolean = false;
-    let rightHit: boolean = false;
+    let topHit = false;
+    let bottompHit = false;
+    let leftHit = false;
+    let rightHit = false;
     this._currentLength = length;
 
     let tX, tY: number;
@@ -90,10 +90,10 @@ export class Explosion implements IAnimated {
   }
 
   protected clearGrid() {
-    let topHit: boolean = false;
-    let bottompHit: boolean = false;
-    let leftHit: boolean = false;
-    let rightHit: boolean = false;
+    let topHit = false;
+    let bottompHit = false;
+    let leftHit = false;
+    let rightHit = false;
     const length = this._currentLength;
     const cm = this._collisionManager;
 

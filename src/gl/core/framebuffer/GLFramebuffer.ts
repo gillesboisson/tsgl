@@ -12,10 +12,10 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer {
     return this._colorTexture;
   }
 
-  get width() {
+  get width(): number {
     return this._width;
   }
-  get height() {
+  get height(): number {
     return this._height;
   }
 
@@ -58,7 +58,7 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer {
     this.updateSettings();
   }
 
-  updateSettings() {
+  updateSettings(): void {
     const gl = this.gl;
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
@@ -121,7 +121,7 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
-  resize(width: number, height: number) {
+  resize(width: number, height: number): void {
     this._width = width;
     this._height = height;
 
@@ -131,13 +131,13 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer {
     this.updateSettings();
   }
 
-  bind() {
+  bind(): void {
     this._previousViewport = this.gl.getParameter(this.gl.VIEWPORT);
     this.gl.viewport(0, 0, this._width, this._height);
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this._frameBuffer);
   }
 
-  unbind() {
+  unbind(): void {
     if (this._previousViewport === null) throw new Error('Frame buffer has never been bind');
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     this.gl.viewport(

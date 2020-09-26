@@ -2,10 +2,8 @@ import { ICreateState } from '../shader/IGLShader';
 import { ISyncUniform as IGLSyncUniform, IShaderProgram } from '../shader/IShaderProgram';
 import { GLCore } from '../GLCore';
 import { IGLShaderState } from '../shader/IGLShaderState';
-import { GLShaderStateType } from '../shader/GLShaderStateType';
 import { GLShaderPrecompileFlags } from '../shader/GLShader';
 import { compileTFProgram } from '../shader/compileProgram';
-import { GLConfig } from '../GLConfig';
 
 export type GLTransformFeedbackShaderStateType<ShaderStateT extends GLTransformFeedbackShaderState> = {
   new (shader: GLTransformFeedbackShader<ShaderStateT>): ShaderStateT;
@@ -26,7 +24,7 @@ export abstract class GLTransformFeedbackShaderState extends GLCore implements I
     this._program = shader.getProgram();
   }
 
-  destroy() {}
+  destroy(): void {}
 }
 
 export class GLTransformFeedbackShader<GLTransformFeedbackShaderStateT extends GLTransformFeedbackShaderState>

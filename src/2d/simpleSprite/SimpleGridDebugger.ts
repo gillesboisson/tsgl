@@ -1,15 +1,6 @@
-import {
-  SimpleSpriteBatchPullable,
-  SimpleSpriteBatchRenderable,
-  SimpleSpriteBatch,
-  SimpleSpriteBatchData,
-} from './SimpleSpriteBatch';
-import { vec2, vec4 } from 'gl-matrix';
-import { SubTexture } from '../SubTexture';
+import { SimpleSpriteBatchPullable, SimpleSpriteBatch, SimpleSpriteBatchData } from './SimpleSpriteBatch';
 import { SimpleElement } from './SimpleElement';
-import { Camera } from '../../3d/Camera';
 import { Camera2D } from '../Camera2D';
-import { SimpleGroup } from './SimpleGroup';
 import { SimpleWorldCoords } from './SimpleWorldCoords';
 import { SimpleTextFont } from './SimpleText';
 
@@ -43,7 +34,7 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     tileHeight: number,
     cam: Camera2D,
   ) {
-    if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
+    if (grid.length !== nbElementX * nbElementY) throw new Error('Grid size doesn\'t have nb elements');
 
     super(font.texture.glTexture);
     this._grid = grid;
@@ -59,11 +50,11 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     this._indMappers = [];
   }
 
-  addIndexMapper(mapper: GridIndexMapper) {
+  addIndexMapper(mapper: GridIndexMapper): void {
     this._indMappers.push(mapper);
   }
 
-  removeIndexMapper(mapper: GridIndexMapper) {
+  removeIndexMapper(mapper: GridIndexMapper): void {
     const ind = this._indMappers.indexOf(mapper);
     if (ind !== -1) {
       this._indMappers.splice(ind, 1);
@@ -75,11 +66,11 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
    * @param x
    * @param y
    */
-  getGridIndexAt(x: number, y: number) {
+  getGridIndexAt(x: number, y: number): number {
     return this._grid[x + y * this._nbElementX];
   }
 
-  setDataAt(x: number, y: number, val: number) {
+  setDataAt(x: number, y: number, val: number): void {
     this._grid[x + y * this._nbElementX] = val;
   }
 
@@ -113,7 +104,7 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     const nbElementX = this._nbElementX;
     const nbElementY = this._nbElementY;
     const grid = this._grid;
-    const color = this._worldCoords.color;
+    // const color = this._worldCoords.color;
     const tileWidth = this._tileWidth;
     const tileHeight = this._tileHeight;
 

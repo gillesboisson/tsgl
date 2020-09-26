@@ -2,7 +2,6 @@ import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLCore } from '../GLCore';
 import { ICreateState } from './IGLShader';
 import { compileProgram } from './compileProgram';
-import { GLShaderState } from './GLShaderState';
 import { GLShaderStateType } from './GLShaderStateType';
 import { IShaderProgram, ISyncUniform } from './IShaderProgram';
 import { IGLShaderState } from './IGLShaderState';
@@ -16,7 +15,8 @@ export interface IShaderRegisterer {
   register(renderer: GLRenderer): void;
 }
 
-export class GLShader<ShaderStateT extends IGLShaderState> extends GLCore
+export class GLShader<ShaderStateT extends IGLShaderState>
+  extends GLCore
   implements ICreateState, IShaderProgram, ISyncUniform {
   protected _program: WebGLProgram;
   protected _state: ShaderStateT;
@@ -37,15 +37,15 @@ export class GLShader<ShaderStateT extends IGLShaderState> extends GLCore
     return new this._shaderStateTypeClass(this);
   }
 
-  getProgram() {
+  getProgram(): WebGLProgram {
     return this._program;
   }
 
-  use() {
+  use(): void {
     this.gl.useProgram(this._program);
   }
 
-  destroy() {
+  destroy(): void {
     this.gl.deleteProgram(this._program);
   }
 

@@ -16,7 +16,7 @@ export class GLViewportStack {
 
   constructor(protected _gl: AnyWebRenderingGLContext, protected _mainViewportState: GLViewportState) {}
 
-  protected updateViewportState(state: GLViewportState) {
+  protected updateViewportState(state: GLViewportState): void {
     const gl = this._gl;
     const { frameBuffer, x, y, width, height, setGlState } = state;
 
@@ -34,23 +34,23 @@ export class GLViewportStack {
     if (setGlState !== undefined) setGlState(gl);
   }
 
-  reset() {
+  reset(): void {
     this._stack.splice(0);
     this.updateViewportState(this._mainViewportState);
   }
 
-  pushState(state: GLViewportState) {
+  pushState(state: GLViewportState): void {
     this.updateViewportState(state);
     this._stack.push(state);
   }
 
-  changeState(state: GLViewportState) {
-    if (this._stack.length === 0) throw new Error("changeState : Main viewport state can't be replaced");
+  changeState(state: GLViewportState): void {
+    if (this._stack.length === 0) throw new Error('changeState : Main viewport state can\'t be replaced');
     this.updateViewportState(state);
     this._stack[this._stack.length - 1] = state;
   }
 
-  popState() {
+  popState(): GLViewportState {
     if (this._stack.length === 0) {
       this.updateViewportState(this._mainViewportState);
       return this._mainViewportState;

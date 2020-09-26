@@ -65,7 +65,7 @@ export class InterleavedDataArray<DataT extends IInterleavedData> {
     }
   }
 
-  buildData(index: number) {
+  buildData(index: number): void {
     this._collection[index] = new this.DataClass();
     this._collection[index].allocate(this, this._arrayBuffer, index * this._stride, this._stride);
   }
@@ -74,7 +74,7 @@ export class InterleavedDataArray<DataT extends IInterleavedData> {
     return this._byteLength;
   }
 
-  get length() {
+  get length(): number {
     return this._length;
   }
 

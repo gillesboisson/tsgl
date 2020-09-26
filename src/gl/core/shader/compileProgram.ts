@@ -2,6 +2,7 @@ import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLShaderPrecompileFlags } from './GLShader';
 import { compileShader } from './compileShader';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const emptyFragSrc = require('./glsl/empty.frag').default;
 
 export function compileProgram(
@@ -21,7 +22,7 @@ export function compileProgram(
   gl.attachShader(program, glFragShader);
   // optionally, set the attributesLocation manually for the program rather than letting WebGL decide..
   if (attributeLocations !== null) {
-    for (var i in attributeLocations) {
+    for (const i in attributeLocations) {
       gl.bindAttribLocation(program, attributeLocations[i], i);
     }
   }
@@ -55,15 +56,16 @@ export function compileTFProgram(
     [name: string]: number;
   },
   flags?: GLShaderPrecompileFlags,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   beforeLink?: (gl: AnyWebRenderingGLContext, program: WebGLProgram) => void,
-) {
+): WebGLProgram {
   const glVertShader = compileShader(gl, gl.VERTEX_SHADER, vertexSrc, flags);
   const glFragShader = compileShader(gl, gl.FRAGMENT_SHADER, emptyFragSrc, flags);
   let program = gl.createProgram();
   gl.attachShader(program, glVertShader);
   gl.attachShader(program, glFragShader);
   if (attributeLocations !== null) {
-    for (var i in attributeLocations) {
+    for (const i in attributeLocations) {
       gl.bindAttribLocation(program, attributeLocations[i], i);
     }
   }

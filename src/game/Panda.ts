@@ -1,11 +1,10 @@
 import { SimpleSprite } from '../2d/simpleSprite/SimpleSprite';
 import { SimpleGrid } from '../2d/simpleSprite/SimpleGrid';
 import { SubTexture } from '../2d/SubTexture';
-import GameInputStateManager, { GameInputState } from './GameInputStateManager';
+import { GameInputState } from './GameInputStateManager';
 import { CollisionManager, CollisionFlag } from './CollisionManager';
 import { DebuggerText } from './DebuggerText';
 import { Bomb } from './Bomb';
-import { IAnimated } from '../animation/Juggler';
 
 const HIT_BOX_LEFT = 4;
 const HIT_BOX_TOP = 20;
@@ -36,10 +35,10 @@ export class Panda extends SimpleSprite implements IBombDropper {
   protected _orientation = { x: 0, y: 1 };
   protected _collisionManager: CollisionManager;
 
-  protected _oldX: number = 0;
-  protected _oldY: number = 0;
-  protected _x: number = 0;
-  protected _y: number = 0;
+  protected _oldX = 0;
+  protected _oldY = 0;
+  protected _x = 0;
+  protected _y = 0;
 
   protected _bombLength: number;
   protected _traverseCrate: boolean;
@@ -97,11 +96,12 @@ export class Panda extends SimpleSprite implements IBombDropper {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   bombExploded(bomb: Bomb): void {
     this._maxBombs++;
   }
 
-  resetStats() {
+  resetStats(): void {
     this._bombLength = 1;
     this._traverseCrate = false;
     this._life = 2;
@@ -110,31 +110,31 @@ export class Panda extends SimpleSprite implements IBombDropper {
     this._invincible = false;
   }
 
-  handlePowerUp(powerUp: PandaPowerUp) {
+  handlePowerUp(powerUp: PandaPowerUp): void {
     switch (powerUp) {
-      case PandaPowerUp.Speed:
-        this._speed += 0.3333333;
-        break;
-      case PandaPowerUp.Bomb:
-        this._maxBombs++;
-        break;
-      case PandaPowerUp.Flame:
-        this._bombLength++;
-        break;
-      case PandaPowerUp.Wall:
-        this._traverseCrate = true;
-        break;
-      case PandaPowerUp.Life:
-        this._life++;
-        break;
-      default:
-        const ind = Math.floor(Math.random() * (MAX_ITEM_IND - MIN_ITEM_IND + 0.99999999)) + MIN_ITEM_IND;
-        this.handlePowerUp(ind);
-        break;
+        case PandaPowerUp.Speed:
+          this._speed += 0.3333333;
+          break;
+        case PandaPowerUp.Bomb:
+          this._maxBombs++;
+          break;
+        case PandaPowerUp.Flame:
+          this._bombLength++;
+          break;
+        case PandaPowerUp.Wall:
+          this._traverseCrate = true;
+          break;
+        case PandaPowerUp.Life:
+          this._life++;
+          break;
+        default:
+          const ind = Math.floor(Math.random() * (MAX_ITEM_IND - MIN_ITEM_IND + 0.99999999)) + MIN_ITEM_IND;
+          this.handlePowerUp(ind);
+          break;
     }
   }
 
-  explosionHit() {
+  explosionHit(): void {
     if (!this._invincible) {
       this._life--;
       if (this._life <= 0) this.onDead();
@@ -148,42 +148,48 @@ export class Panda extends SimpleSprite implements IBombDropper {
     }
   }
 
-  updateWallAround(gridPosX: number, gridPosY: number) {
+  updateWallAround(gridPosX: number, gridPosY: number): void {
     const cm = this._collisionManager;
     for (let i = 0; i < 9; i++) {
       this._wallAround[i] = cm.isWall((i % 3) + gridPosX - 1, Math.floor(i / 3) + gridPosY - 1);
     }
   }
 
-  protected move(xOffset: number, yOffset: number, autoplace = false) {
+  protected move(xOffset: number, yOffset: number, autoplace = false): void {
     this._orientation.x = this._orientation.y = 0;
     switch (true) {
-      case xOffset == 1:
-        this.subTexture = this.textures.right;
-        this._orientation.x = 1;
-        break;
-      case xOffset == -1:
-        this.subTexture = this.textures.left;
-        this._orientation.x = -1;
-        break;
-      case yOffset == 1:
-        this.subTexture = this.textures.down;
-        this._orientation.y = 1;
-        break;
-      case yOffset == -1:
-        this.subTexture = this.textures.up;
-        this._orientation.y = -1;
-        break;
-      default:
-        this._orientation.y = 1;
-        break;
+        case xOffset == 1:
+          this.subTexture = this.textures.right;
+          this._orientation.x = 1;
+          break;
+        case xOffset == -1:
+          this.subTexture = this.textures.left;
+          this._orientation.x = -1;
+          break;
+        case yOffset == 1:
+          this.subTexture = this.textures.down;
+          this._orientation.y = 1;
+          break;
+        case yOffset == -1:
+          this.subTexture = this.textures.up;
+          this._orientation.y = -1;
+          break;
+        default:
+          this._orientation.y = 1;
+          break;
     }
 
     this.x = autoplace ? Math.floor(this.x + xOffset) : this.x + xOffset * this._speed;
     this.y = autoplace ? Math.floor(this.y + yOffset) : this.y + yOffset * this._speed;
   }
 
-  update(inputState: GameInputState, bgmap: SimpleGrid, activemap: SimpleGrid, time: number, elapsedTime: number) {
+  update(
+    inputState: GameInputState,
+    bgmap: SimpleGrid,
+    activemap: SimpleGrid,
+    time: number,
+    elapsedTime: number,
+  ): void {
     const gridPosX = this.x / 16;
     const gridPosY = this.y / 16 + 1;
 

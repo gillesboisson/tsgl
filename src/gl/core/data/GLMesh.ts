@@ -3,8 +3,6 @@ import { GLAttribute } from './GLAttribute';
 import { GLBuffer } from './GLBuffer';
 import { GLCore } from '../GLCore';
 import { GLVao } from './GLVao';
-import { GLFramebuffer } from '../framebuffer/GLFramebuffer';
-import { GLDefaultAttributesLocation } from './GLDefaultAttributesLocation';
 
 export class GLMesh extends GLCore {
   static indicesSize(gl: AnyWebRenderingGLContext, renderType: GLenum): number {
@@ -43,7 +41,7 @@ export class GLMesh extends GLCore {
     this._vao = new GLVao(gl, _attributes, _indexBuffer);
 
     this.buffers = [];
-    for (let attr of _attributes) {
+    for (const attr of _attributes) {
       if (this.buffers.indexOf(attr.buffer) === -1) this.buffers.push(attr.buffer);
     }
 
@@ -52,36 +50,36 @@ export class GLMesh extends GLCore {
     this.bindDrawMethod();
   }
 
-  destroy(destroyBuffers: boolean = true): void {
+  destroy(destroyBuffers = true): void {
     this._vao.destroy();
     if (destroyBuffers) {
-      for (let buffer of this.buffers) buffer.destroy();
+      for (const buffer of this.buffers) buffer.destroy();
       if (this._indexBuffer !== undefined) this._indexBuffer.destroy();
     }
   }
 
-  setInstanced(nbInstances: number) {
+  setInstanced(nbInstances: number): void {
     this._nbInstances = nbInstances;
     this.bindDrawMethod();
   }
 
-  unsetInstanced() {
+  unsetInstanced(): void {
     this._nbInstances = 0;
     this.bindDrawMethod();
   }
 
-  bufferData() {
-    for (let buffer of this.buffers) {
+  bufferData(): void {
+    for (const buffer of this.buffers) {
       buffer.bufferSubData();
     }
   }
 
   protected drawElementInstanced(
     nbElements: number = this._nbElements,
-    start: number = 0,
-    bindVao: boolean = true,
+    start = 0,
+    bindVao = true,
     nbInstances: number = this._nbInstances,
-  ) {
+  ): void {
     if (bindVao === true) this._vao.bind();
     (<WebGL2RenderingContext>this.gl).drawElementsInstanced(
       this._renderType,
@@ -95,22 +93,22 @@ export class GLMesh extends GLCore {
 
   protected drawArrayInstanced(
     nbElements: number = this._nbElements,
-    start: number = 0,
-    bindVao: boolean = true,
+    start = 0,
+    bindVao = true,
     nbInstances: number = this._nbInstances,
-  ) {
+  ): void {
     if (bindVao === true) this._vao.bind();
     (<WebGL2RenderingContext>this.gl).drawArraysInstanced(this._renderType, start, nbElements, nbInstances);
     if (bindVao === true) this._vao.unbind();
   }
 
-  protected drawArrays(nbElements: number = this._nbElements, start: number = 0, bindVao: boolean = true) {
+  protected drawArrays(nbElements: number = this._nbElements, start = 0, bindVao = true): void {
     if (bindVao === true) this._vao.bind();
     this.gl.drawArrays(this._renderType, start, nbElements);
     if (bindVao === true) this._vao.unbind();
   }
 
-  protected drawElements(nbElements: number = this._nbElements, start: number = 0, bindVao: boolean = true) {
+  protected drawElements(nbElements: number = this._nbElements, start = 0, bindVao = true): void {
     if (bindVao === true) this._vao.bind();
     this.gl.drawElements(
       this._renderType,
@@ -121,7 +119,7 @@ export class GLMesh extends GLCore {
     if (bindVao === true) this._vao.unbind();
   }
 
-  protected bindDrawMethod() {
+  protected bindDrawMethod(): void {
     if (this._nbInstances > 0) {
       if (this.vao.indexBuffer !== undefined) {
         this.draw = this.drawElementInstanced;
@@ -138,9 +136,13 @@ export class GLMesh extends GLCore {
   }
 
   draw(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     nbElements: number = this._nbElements,
-    start: number = 0,
-    bindVao: boolean = true,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    start = 0,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    bindVao = true,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     nbInstances: number = this._nbInstances,
-  ) {}
+  ): void {}
 }

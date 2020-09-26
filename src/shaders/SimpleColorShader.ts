@@ -1,10 +1,12 @@
 import { GLShader } from '../gl/core/shader/GLShader';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
-import { mat4, vec4 } from 'gl-matrix';
+import { vec4 } from 'gl-matrix';
 import { GLShaderState } from '../gl/core/shader/GLShaderState';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/simpleColor.frag').default;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/simpleColor.vert').default;
 
 export class SimpleColorShaderState extends GLShaderState {
@@ -16,7 +18,7 @@ export class SimpleColorShaderState extends GLShaderState {
     gl.uniform4fv(uniformsLocations.color, this.color);
   }
   // @glShaderUniformProp('i',1,'tex')
-  textureInd: number = 0;
+  textureInd = 0;
 
   color: vec4 = vec4.fromValues(1, 0, 1, 1);
 }

@@ -1,5 +1,6 @@
 export function shaderVariantBoolProp(flagName: string, valueTrue = 1, valueFalse = 0) {
-  return function(prototype: any, propName: string | Symbol) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  return function (prototype: any, propName: string | symbol): void {
     if (prototype.__variantsDefinition === undefined) {
       prototype.__variantsDefinition = [];
       prototype.__variantsValues = [];

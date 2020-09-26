@@ -6,7 +6,9 @@ import { GLShaderState } from '../gl/core/shader/GLShaderState';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 import { GLRenderer } from '../gl/core/GLRenderer';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/sprite.frag').default;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/sprite.vert').default;
 
 export interface IGLSpriteShaderState extends IGLShaderState {
@@ -24,13 +26,14 @@ export class SpriteShaderState extends GLShaderState implements IGLSpriteShaderS
   }
 
   mvp: mat4 = mat4.create();
-  textureInd: number = 0;
+  textureInd = 0;
 }
 
 export class SpriteShader extends GLShader<SpriteShaderState> {
-  static register(renderer: GLRenderer) {
+  static register(renderer: GLRenderer): void {
     renderer.registerShaderFactoryFunction(
       'sprite',
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (gl: AnyWebRenderingGLContext, name: string) => new SpriteShader(gl),
     );
   }

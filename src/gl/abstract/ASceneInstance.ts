@@ -3,6 +3,7 @@ import { Type } from '../../core/Type';
 import { ITransform } from './ITransform';
 import { MatType } from './MatType';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const IDENT_MAT4 = mat4.create();
 
 export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> {
@@ -16,14 +17,14 @@ export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> 
     this.transform = new TransformClass();
   }
 
-  addChild(node: ASceneInstance<MatT, ITransform<MatT>>) {
+  addChild(node: ASceneInstance<MatT, ITransform<MatT>>): void {
     if (this._nodes.indexOf(node) === -1) {
       this._nodes.push(node);
       node._parent = this;
     }
   }
 
-  removeChild(node: ASceneInstance<MatT, ITransform<MatT>>) {
+  removeChild(node: ASceneInstance<MatT, ITransform<MatT>>): void {
     const ind = this._nodes.indexOf(node);
     if (ind !== -1) {
       this._nodes.splice(ind, 1);
@@ -41,20 +42,10 @@ export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> 
 
   resolveTransformTree(parentMat?: MatT): void {
     this.updateWorldMat(parentMat, this._worldMat);
-    for (let child of this._nodes) {
+    for (const child of this._nodes) {
       child.resolveTransformTree(this._worldMat);
     }
   }
 
   protected abstract updateWorldMat(parentMap?: MatT, worldMat?: MatT): MatT;
-
-  // getWorldMat(worldMat: MatT = this._worldMat): MatT {
-  //     const localMat = this._transform.getLocalMat();
-  //
-  //     if (this._parent === null) {
-  //         return localMat;
-  //     } else {
-  //         return this.MatClass.multiply(worldMat, this._parent.getWorldMat(), localMat);
-  //     }
-  // }
 }

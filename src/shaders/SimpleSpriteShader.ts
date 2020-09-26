@@ -6,7 +6,9 @@ import { GLShaderState } from '../gl/core/shader/GLShaderState';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 import { GLRenderer } from '../gl/core/GLRenderer';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/simple_sprite.frag').default;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/simple_sprite.vert').default;
 
 export interface IGLSimpleSpriteShaderState extends IGLShaderState {
@@ -24,13 +26,14 @@ export class SimpleSpriteShaderState extends GLShaderState implements IGLSimpleS
   }
 
   mvp: mat4 = mat4.create();
-  textureInd: number = 0;
+  textureInd = 0;
 }
 
 export class SimpleSpriteShader extends GLShader<SimpleSpriteShaderState> {
-  static register(renderer: GLRenderer) {
+  static register(renderer: GLRenderer): void {
     renderer.registerShaderFactoryFunction(
       'simple_sprite',
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (gl: AnyWebRenderingGLContext, name: string) => new SimpleSpriteShader(gl),
     );
   }

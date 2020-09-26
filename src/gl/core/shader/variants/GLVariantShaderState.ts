@@ -1,9 +1,6 @@
 import { GLVariantShader, VariantDeclinaison, VariantDefinition } from './GLVariantShader';
-import { IDestroyable } from '../../../../pool/Pool';
-import { ICreateState } from '../IGLShader';
 import { GLCore } from '../../GLCore';
 import { IGLShaderState } from '../IGLShaderState';
-import { AnyWebRenderingGLContext } from '../../GLHelpers';
 
 export abstract class GLVariantShaderState extends GLCore implements IGLShaderState {
   getProgram(): WebGLProgram {

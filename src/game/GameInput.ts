@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 let _requestAnimationFrame: Function;
 let _cancelAnimationFrame: Function;
 let hasGamepadSupport = false;
@@ -6,7 +7,7 @@ if (self.document !== undefined) {
   hasGamepadSupport = window.navigator.getGamepads !== undefined;
 
   if (String(typeof window) !== 'undefined') {
-    ['webkit', 'moz'].forEach(function(key) {
+    ['webkit', 'moz'].forEach(function (key) {
       _requestAnimationFrame =
         _requestAnimationFrame ||
         window.requestAnimationFrame ||
@@ -78,9 +79,9 @@ export const GAME_INPUT_KEY_ALL_BUTTONS: GameInputKey[] = [
 export const GAME_INPUT_KEY_ALL_STICKS: GameInputKey[] = [GameInputKey.STICK_LEFT, GameInputKey.STICK_RIGHT];
 
 function findKeyMapping(index: number, mapping: { [key: string]: number[] | number }) {
-  var results: GameInputKey[] = [];
+  const results: GameInputKey[] = [];
 
-  Object.keys(mapping).forEach(function(key: GameInputKey) {
+  Object.keys(mapping).forEach(function (key: GameInputKey) {
     if (mapping[key] === index) {
       results.push(key);
     } else if (Array.isArray(mapping[key]) && (mapping[key] as number[]).indexOf(index) !== -1) {
@@ -93,8 +94,9 @@ function findKeyMapping(index: number, mapping: { [key: string]: number[] | numb
 
 export type GameInputPlayer = string | number; // number for gamepad number for other inputs
 
-type GameInputEvents = { gamepad: any[]; axes: any[]; keyboard: {} };
-type GameInputHandlers = { gamepad: { connect: any; disconnect: any } };
+// type GameInputEvents = { gamepad: any[]; axes: any[]; keyboard: {} };
+// type GameInputHandlers = { gamepad: { connect: any; disconnect: any } };
+
 type GameInputKeyMapping = {
   gamepad: GameInputKeys;
   keyboard: GameInputKeys;
@@ -224,30 +226,28 @@ export class GameInput {
     this.resume();
   }
 
-  protected _handleGamepadConnected(index: number) {
+  protected _handleGamepadConnected(index: number): void {
     if (this._handlers.gamepad.connect) {
       this._handlers.gamepad.connect({ index: index });
     }
   }
 
-  protected _handleGamepadDisconnected(index: number) {
+  protected _handleGamepadDisconnected(index: number): void {
     if (this._handlers.gamepad.disconnect) {
       this._handlers.gamepad.disconnect({ index: index });
     }
   }
 
-  protected _handleGamepadEventListener(controller: any) {
-    var self = this;
-
+  protected _handleGamepadEventListener(controller: Gamepad): void {
     if (controller && controller.connected) {
-      controller.buttons.forEach(function(button: any, index: any) {
-        var keys = findKeyMapping(index, self._keyMapping.gamepad);
+      controller.buttons.forEach((button: any, index: any) => {
+        const keys = findKeyMapping(index, this._keyMapping.gamepad);
 
         if (keys) {
-          keys.forEach(function(key) {
+          keys.forEach(function (key) {
             if (button.pressed) {
-              if (!self._events.gamepad[controller.index][key]) {
-                self._events.gamepad[controller.index][key] = {
+              if (!this._events.gamepad[controller.index][key]) {
+                this._events.gamepad[controller.index][key] = {
                   pressed: true,
                   hold: false,
                   released: false,
@@ -255,10 +255,10 @@ export class GameInput {
                 };
               }
 
-              self._events.gamepad[controller.index][key].value = button.value;
-            } else if (!button.pressed && self._events.gamepad[controller.index][key]) {
-              self._events.gamepad[controller.index][key].released = true;
-              self._events.gamepad[controller.index][key].hold = false;
+              this._events.gamepad[controller.index][key].value = button.value;
+            } else if (!button.pressed && this._events.gamepad[controller.index][key]) {
+              this._events.gamepad[controller.index][key].released = true;
+              this._events.gamepad[controller.index][key].hold = false;
             }
           });
         }
@@ -266,22 +266,22 @@ export class GameInput {
     }
   }
 
-  protected _handleGamepadAxisEventListener(controller: any) {
-    var self = this;
+  protected _handleGamepadAxisEventListener(controller: Gamepad): void {
+    // const self = this;
 
     if (controller && controller.connected) {
-      Object.keys(self._keyMapping.axes).forEach(function(key) {
-        var axes = Array.prototype.slice.apply(controller.axes, (self._keyMapping.axes as any)[key]);
+      Object.keys(this._keyMapping.axes).forEach((key) => {
+        const axes = Array.prototype.slice.apply(controller.axes, (this._keyMapping.axes as any)[key]);
 
-        if (Math.abs(axes[0]) > self._threshold || Math.abs(axes[1]) > self._threshold) {
-          self._events.axes[controller.index][key] = {
-            pressed: self._events.axes[controller.index][key] ? false : true,
-            hold: self._events.axes[controller.index][key] ? true : false,
+        if (Math.abs(axes[0]) > this._threshold || Math.abs(axes[1]) > this._threshold) {
+          this._events.axes[controller.index][key] = {
+            pressed: this._events.axes[controller.index][key] ? false : true,
+            hold: this._events.axes[controller.index][key] ? true : false,
             released: false,
             value: axes,
           };
-        } else if (self._events.axes[controller.index][key]) {
-          self._events.axes[controller.index][key] = {
+        } else if (this._events.axes[controller.index][key]) {
+          this._events.axes[controller.index][key] = {
             pressed: false,
             hold: false,
             released: true,
@@ -292,100 +292,96 @@ export class GameInput {
     }
   }
 
-  protected _handleKeyboardEventListener(e: KeyboardEvent) {
-    var self = this,
-      keys = findKeyMapping(e.keyCode, self._keyMapping.keyboard);
+  protected _handleKeyboardEventListener(e: KeyboardEvent): void {
+    const keys = findKeyMapping(e.keyCode, this._keyMapping.keyboard);
 
     if (keys) {
-      keys.forEach(function(key) {
-        if (e.type === 'keydown' && !(self._events.keyboard as any)[key]) {
-          (self._events.keyboard as any)[key] = {
+      keys.forEach((key) => {
+        if (e.type === 'keydown' && !(this._events.keyboard as any)[key]) {
+          (this._events.keyboard as any)[key] = {
             pressed: true,
             hold: false,
             released: false,
           };
-        } else if (e.type === 'keyup' && (self._events.keyboard as any)[key]) {
-          (self._events.keyboard as any)[key].released = true;
-          (self._events.keyboard as any)[key].hold = false;
+        } else if (e.type === 'keyup' && (this._events.keyboard as any)[key]) {
+          (this._events.keyboard as any)[key].released = true;
+          (this._events.keyboard as any)[key].hold = false;
         }
       });
     }
   }
 
-  protected _handleEvent(key: any, events: GameInputStateEvent, player: GameInputPlayer) {
-    if (events[key].pressed) {
-      this.trigger(GameInputEventType.PRESS, key, events[key].value, player);
+  protected _handleEvent(key: GameInputKey, events: GameInputStateEvent, player: GameInputPlayer): void {
+    if (events[key as any].pressed) {
+      this.trigger(GameInputEventType.PRESS, key, events[key as any].value, player);
 
-      events[key].pressed = false;
-      events[key].hold = true;
-    } else if (events[key].hold) {
-      this.trigger(GameInputEventType.HOLD, key, events[key].value, player);
-    } else if (events[key].released) {
-      this.trigger(GameInputEventType.RELEASE, key, events[key].value, player);
+      events[key as any].pressed = false;
+      events[key as any].hold = true;
+    } else if (events[key as any].hold) {
+      this.trigger(GameInputEventType.HOLD, key, events[key as any].value, player);
+    } else if (events[key as any].released) {
+      this.trigger(GameInputEventType.RELEASE, key, events[key as any].value, player);
 
-      delete events[key];
+      delete events[key as any];
     }
   }
 
-  protected _loop() {
-    const self = this,
-      gamepads = hasGamepadSupport ? window.navigator.getGamepads() : false,
+  protected _loop(): void {
+    const gamepads = hasGamepadSupport ? window.navigator.getGamepads() : false,
       length = 4; // length = gamepads.length;
     let i;
 
     if (gamepads) {
       for (i = 0; i < length; i = i + 1) {
         if (gamepads[i]) {
-          if (!self._events.gamepad[i]) {
-            self._handleGamepadConnected(i);
+          if (!this._events.gamepad[i]) {
+            this._handleGamepadConnected(i);
 
-            self._events.gamepad[i] = {};
-            self._events.axes[i] = {};
+            this._events.gamepad[i] = {};
+            this._events.axes[i] = {};
           }
 
-          self._handleGamepadEventListener(gamepads[i]);
-          self._handleGamepadAxisEventListener(gamepads[i]);
-        } else if (self._events.gamepad[i]) {
-          self._handleGamepadDisconnected(i);
+          this._handleGamepadEventListener(gamepads[i]);
+          this._handleGamepadAxisEventListener(gamepads[i]);
+        } else if (this._events.gamepad[i]) {
+          this._handleGamepadDisconnected(i);
 
-          self._events.gamepad[i] = null;
-          self._events.axes[i] = null;
+          this._events.gamepad[i] = null;
+          this._events.axes[i] = null;
         }
       }
 
-      self._events.gamepad.forEach(function(gamepad, player) {
+      this._events.gamepad.forEach((gamepad, player) => {
         if (gamepad) {
-          Object.keys(gamepad).forEach(function(key) {
-            self._handleEvent(key, gamepad, player);
+          Object.keys(gamepad).forEach((key: GameInputKey) => {
+            this._handleEvent(key, gamepad, player);
           });
         }
       });
 
-      self._events.axes.forEach(function(gamepad, player) {
+      this._events.axes.forEach((gamepad, player) => {
         if (gamepad) {
-          Object.keys(gamepad).forEach(function(key) {
-            self._handleEvent(key, gamepad, player);
+          Object.keys(gamepad).forEach((key: GameInputKey) => {
+            this._handleEvent(key, gamepad, player);
           });
         }
       });
     }
 
-    Object.keys(self._events.keyboard).forEach(function(key) {
-      self._handleEvent(key, self._events.keyboard, 'keyboard');
+    Object.keys(this._events.keyboard).forEach((key: GameInputKey) => {
+      this._handleEvent(key, this._events.keyboard, 'keyboard');
     });
 
-    if (self._requestAnimation) {
-      self._requestAnimation = _requestAnimationFrame(self._loop.bind(self));
+    if (this._requestAnimation) {
+      this._requestAnimation = _requestAnimationFrame(this._loop.bind(this));
     }
   }
   on(
     type: string | string[] | GameInputKey,
     button: GameInputKey | GameInputKey[] | ((e: GameInputEvent) => void),
     callback?: (e: GameInputEvent) => void,
-    options?: any,
-  ) {
-    var self = this;
-
+    options?: Object,
+  ): void {
     if (Object.keys(this._handlers.gamepad).indexOf(type as GameInputKey) !== -1 && typeof button === 'function') {
       (this._handlers.gamepad as any)[type as string] = button;
 
@@ -400,12 +396,12 @@ export class GameInput {
       }
 
       if (Array.isArray(type)) {
-        type.forEach(function(type) {
-          self.on(type, button, callback, options);
+        type.forEach((type) => {
+          this.on(type, button, callback, options);
         });
       } else if (Array.isArray(button)) {
-        button.forEach(function(button) {
-          self.on(type, button, callback, options);
+        button.forEach((button) => {
+          this.on(type, button, callback, options);
         });
       } else {
         this._listeners.push({
@@ -418,9 +414,7 @@ export class GameInput {
     }
   }
 
-  off(type: string | string[], button: GameInputKey | GameInputKey[]) {
-    var self = this;
-
+  off(type: string | string[], button: GameInputKey | GameInputKey[]): void {
     if (typeof type === 'string' && type.match(/\s+/)) {
       type = type.split(/\s+/g);
     }
@@ -430,21 +424,21 @@ export class GameInput {
     }
 
     if (Array.isArray(type)) {
-      type.forEach(function(type) {
-        self.off(type, button);
+      type.forEach((type) => {
+        this.off(type, button);
       });
     } else if (Array.isArray(button)) {
-      button.forEach(function(button) {
-        self.off(type, button);
+      button.forEach(function (button) {
+        this.off(type, button);
       });
     } else {
-      this._listeners = this._listeners.filter(function(listener) {
+      this._listeners = this._listeners.filter(function (listener) {
         return listener.type !== type && listener.button !== button;
       });
     }
   }
 
-  setCustomMapping(device: string, config: GameInputKeys) {
+  setCustomMapping(device: string, config: GameInputKeys): void {
     if ((this._keyMapping as any)[device] !== undefined) {
       (this._keyMapping as any) = config;
     } else {
@@ -452,13 +446,13 @@ export class GameInput {
     }
   }
 
-  setGlobalThreshold(num: any) {
+  setGlobalThreshold(num: string): void {
     this._threshold = parseFloat(num);
   }
 
-  trigger(type: GameInputEventType, button: GameInputKey, value: number, player: GameInputPlayer) {
+  trigger(type: GameInputEventType, button: GameInputKey, value: number, player: GameInputPlayer): void {
     if (this._listeners) {
-      this._listeners.forEach(function(listener: GameInputListenner) {
+      this._listeners.forEach(function (listener: GameInputListenner) {
         if (listener.type === type && listener.button === button) {
           listener.callback({
             type: listener.type,
@@ -473,7 +467,7 @@ export class GameInput {
     }
   }
 
-  pause() {
+  pause(): void {
     _cancelAnimationFrame(this._requestAnimation);
 
     this._requestAnimation = null;
@@ -482,14 +476,14 @@ export class GameInput {
     document.removeEventListener('keyup', this._handleKeyboardEventListener);
   }
 
-  resume() {
+  resume(): void {
     this._requestAnimation = _requestAnimationFrame(this._loop.bind(this));
 
     document.addEventListener('keydown', this._handleKeyboardEventListener);
     document.addEventListener('keyup', this._handleKeyboardEventListener);
   }
 
-  destroy() {
+  destroy(): void {
     this.pause();
 
     delete this._listeners;

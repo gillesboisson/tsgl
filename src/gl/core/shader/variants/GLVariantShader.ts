@@ -1,13 +1,13 @@
 import { AnyWebRenderingGLContext } from '../../GLHelpers';
 import { GLCore } from '../../GLCore';
-import { IGLCore } from '../../IGLCore';
 
 import { ICreateState } from '../IGLShader';
-import { GLShaderPrecompileFlags, GLShader } from '../GLShader';
+import { GLShaderPrecompileFlags } from '../GLShader';
 import { getDeclinaison } from './getDeclinaison';
 import { GLVariantShaderState, GLVariantShaderStateType } from './GLVariantShaderState';
 import { compileDeclinaison } from './compileDeclinaison';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 enum VariantColor {
   GREEN = 1,
   RED = 2,
@@ -31,7 +31,7 @@ export type VariantDeclinaison = {
 };
 
 export class GLVariantShader<VariantStateT extends GLVariantShaderState> extends GLCore implements ICreateState {
-  public get possibleVariants() {
+  public get possibleVariants(): VariantDeclinaison[] {
     return this._possibleVariants;
   }
 

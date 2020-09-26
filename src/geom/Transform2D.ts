@@ -1,4 +1,4 @@
-import { mat2d, mat4, quat, vec2 } from 'gl-matrix';
+import { mat2d, vec2 } from 'gl-matrix';
 import { ITransform } from '../gl/abstract/ITransform';
 import { IDispose } from '../core/IDispose';
 import { IReset } from '../core/IReset';
@@ -6,11 +6,11 @@ import { IReset } from '../core/IReset';
 const __ident: mat2d = mat2d.create();
 
 export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
-  protected _rotation: number = 0;
-  protected _cx: number = 0;
-  protected _cy: number = 0;
-  protected _sx: number = 0;
-  protected _sy: number = 0;
+  protected _rotation = 0;
+  protected _cx = 0;
+  protected _cy = 0;
+  protected _sx = 0;
+  protected _sy = 0;
 
   public position: vec2 = vec2.create();
   public scale: vec2 = vec2.create();
@@ -20,11 +20,11 @@ export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
   protected _dirty = false;
   protected _dirtyRotation = false;
 
-  get rotation() {
+  get rotation(): number {
     return this._rotation;
   }
 
-  set rotation(value) {
+  set rotation(value: number) {
     if (value !== this._rotation) {
       this._rotation = value;
       this._dirtyRotation = true;
@@ -44,7 +44,7 @@ export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
     this._dirty = true;
   }
 
-  reset() {
+  reset(): void {
     this._rotation = 0;
     this.pivot[0] = 0;
     this.pivot[1] = 0;
@@ -63,7 +63,7 @@ export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
     mat2d.identity(this._localMat);
   }
 
-  protected updateLocalMat() {
+  protected updateLocalMat(): void {
     if (this._dirtyRotation === true) this.updateRot();
 
     const mt = this._localMat;
@@ -74,66 +74,14 @@ export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
     mt[2] = this._cy * this.scale[1];
     mt[3] = this._sy * this.scale[1];
 
-    // update size when anchors has a size and there is an area
-
-    // var realArea = this.getDefaultArea(vec2_4);
-    // var containerArea = this.getContainerArea(vec2_4);
-
-    /*
-        if (this.area !== null) {
-
-          realArea = this.area;
-
-
-
-
-        } else {
-
-          realArea = containerArea;
-
-        }
-        */
-
-    // if (this.anchor[2] !== 0)
-    //     this.size[0] = this.requestedSize[0] = this.anchor[2] * realArea[0];
-    // else
-    //     this.requestedSize[0] = realArea[0];
-    //
-    // if (this.anchor[3] !== 0)
-    //     this.size[1] = this.requestedSize[1] = this.anchor[3] * realArea[1];
-    // else
-    //     this.requestedSize[1] = realArea[1];
-
-    //debugger;
-
-    // this.updateLayout(this);
-
     const px = this.size[0] !== 0 ? this.pivot[0] * this.size[0] : this.pivot[0];
     const py = this.size[1] !== 0 ? this.pivot[1] * this.size[1] : this.pivot[1];
 
-    // if (containerArea !== null &&
-    //     (
-    //         this.anchor[0] !== 0 ||
-    //         this.anchor[1] !== 0 ||
-    //         this.anchor[2] !== 0 ||
-    //         this.anchor[3] !== 0
-    //     )
-    // ) {
-    //     const aX = this.anchor[0] * containerArea[0];
-    //     const aY = this.anchor[1] * containerArea[1];
-    //
-    //
-    //     mt[4] = (this.position[0] + px) * this.scale[0] + aX - ((px * mt[0]) + (py * mt[2]));
-    //     mt[5] = (this.position[1] + py) * this.scale[1] + aY - ((px * mt[1]) + (py * mt[3]));
-    //
-    // } else {
     mt[4] = this.position[0] - (px * mt[0] + py * mt[2]);
     mt[5] = this.position[1] - (px * mt[1] + py * mt[3]);
-    //debugger;
-    // }
   }
 
-  dispose() {
+  dispose(): void {
     this.scale = null;
     this.position = null;
     this.pivot = null;
@@ -141,7 +89,7 @@ export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
     this._localMat = null;
   }
 
-  updateRot() {
+  updateRot(): void {
     this._dirtyRotation = false;
     this._cx = Math.cos(this._rotation);
     this._sx = Math.sin(this._rotation);
@@ -149,7 +97,7 @@ export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
     this._sy = this._cx; // sin, added PI/2
   }
 
-  updateWorldMat(worldMat: mat2d, parentMat = __ident) {
+  updateWorldMat(worldMat: mat2d, parentMat = __ident): void {
     this.updateLocalMat();
 
     const lc = this._localMat;

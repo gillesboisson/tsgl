@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack --watch",
+    "lint": "eslint src/**/*.ts --fix",
     "server": "node server.js",
     "build": "webpack --mode production"
   },
@@ -30,7 +31,12 @@
   "dependencies": {
     "@types/gl-matrix": "^2.4.5",
     "@types/webgl2": "^0.0.5",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
+    "eslint": "^7.9.0",
+    "eslint-config-prettier": "^6.12.0",
     "gl-matrix": "^2.4.1",
+    "prettier": "^2.1.2",
     "raw-loader": "^4.0.1",
     "spectorjs": "^0.9.17"
   }

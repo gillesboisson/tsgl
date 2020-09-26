@@ -1,5 +1,6 @@
 export function shaderVariantEnumProp(flagName: string, availableValues: any[]) {
-  return function(prototype: any, propName: string | Symbol) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  return function (prototype: any, propName: string | symbol): void {
     // init variant meta data
     if (prototype.__variantsDefinition === undefined) {
       prototype.__variantsDefinition = [];

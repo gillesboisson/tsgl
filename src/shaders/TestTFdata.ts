@@ -24,9 +24,13 @@ export class TestTFdata implements IInterleavedData {
   })
   public velocity: vec2;
   allocate(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     array: InterleavedDataArray<IInterleavedData>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     arrayBuffer: ArrayBuffer,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     offset: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     stride: number,
   ): void {}
 }

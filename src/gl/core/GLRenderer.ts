@@ -21,18 +21,18 @@ export class GLRenderer extends GLCore {
     return this._viewportStack;
   }
 
-  public registerShaderFactory(factory: IShaderRegisterer) {
+  public registerShaderFactory(factory: IShaderRegisterer): void {
     factory.register(this);
   }
 
   public registerShaderFactoryFunction(
     name: string,
     shaderFactory: (gl: AnyWebRenderingGLContext, name: string) => GLShader<IGLShaderState>,
-  ) {
+  ): void {
     if (this._shadersFactories[name] === undefined) this._shadersFactories[name] = shaderFactory;
   }
 
-  public registerShader(name: string, shader: GLShader<IGLShaderState>) {
+  public registerShader(name: string, shader: GLShader<IGLShaderState>): void {
     if (this._shaders[name] === undefined) this._shaders[name] = shader;
   }
 
@@ -50,7 +50,7 @@ export class GLRenderer extends GLCore {
   }
 
   public createShaderState<ShaderStateT extends IGLShaderState>(name: string): ShaderStateT {
-    let shader: GLShader<ShaderStateT> = this.getShader(name);
+    const shader: GLShader<ShaderStateT> = this.getShader(name);
     return shader.createState();
   }
 
@@ -115,7 +115,7 @@ export class GLRenderer extends GLCore {
     this.gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
   }
 
-  setup() {
+  setup(): void {
     const gl = this.gl;
     gl.enable(gl.CULL_FACE); // Active le test de profondeur
     gl.enable(gl.DEPTH_TEST); // Active le test de profondeur
@@ -129,7 +129,7 @@ export class GLRenderer extends GLCore {
     this._viewportStack.reset();
   }
 
-  clear(clearFlag: number = this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT) {
+  clear(clearFlag: number = this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT): void {
     this.gl.clear(clearFlag);
   }
 

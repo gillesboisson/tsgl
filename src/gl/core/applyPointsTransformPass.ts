@@ -4,7 +4,7 @@ export function applyPointsTransformPass(
   vaoIn: WebGLVertexArrayObject,
   bufferOut: WebGLBuffer,
   nbPoints: number,
-) {
+): void {
   gl.enable(gl.RASTERIZER_DISCARD);
   gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback);
   gl.bindVertexArray(vaoIn);

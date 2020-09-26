@@ -1,7 +1,6 @@
 import { SimpleElement } from './SimpleElement';
 import { SimpleSpriteBatchRenderable, SimpleSpriteBatch } from './SimpleSpriteBatch';
 import { SimpleWorldCoords } from './SimpleWorldCoords';
-import { vec4 } from 'gl-matrix';
 
 export class SimpleGroup extends SimpleElement implements SimpleSpriteBatchRenderable<SimpleWorldCoords> {
   protected _children: SimpleElement[] = [];
@@ -18,7 +17,7 @@ export class SimpleGroup extends SimpleElement implements SimpleSpriteBatchRende
     }
   }
 
-  addChild(child: SimpleElement, renderOrder?: number) {
+  addChild(child: SimpleElement, renderOrder?: number): void {
     if (this._children.indexOf(child) === -1) {
       if (child.parent !== undefined) child.parent.removeChild(this);
       if (renderOrder === undefined) {
@@ -31,7 +30,7 @@ export class SimpleGroup extends SimpleElement implements SimpleSpriteBatchRende
     }
   }
 
-  removeChild(child: SimpleElement) {
+  removeChild(child: SimpleElement): void {
     const ind = this._children.indexOf(child);
     if (ind !== -1) {
       this._children.splice(ind, 1);

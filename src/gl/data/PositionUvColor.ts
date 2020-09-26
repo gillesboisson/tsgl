@@ -1,9 +1,9 @@
 import { interleavedData, interleavedProp } from './InterleavedData.decorator';
 import { GLDefaultAttributesLocation } from '../core/data/GLDefaultAttributesLocation';
-import { vec2, vec3, vec4 } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { IInterleavedData, InterleavedDataArray } from './InterleavedData';
 import { GLInterleavedAttributes } from '../core/data/GLInterleavedAttributes';
-import { PositionUv } from './PositionUv';
+import {} from './PositionUv';
 
 @GLInterleavedAttributes()
 @interleavedData()
@@ -32,9 +32,13 @@ export class PositionUvColor implements IInterleavedData {
   }
 
   allocate(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     array: InterleavedDataArray<IInterleavedData>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     arrayBuffer: ArrayBuffer,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     offset: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     stride: number,
   ): void {}
 }

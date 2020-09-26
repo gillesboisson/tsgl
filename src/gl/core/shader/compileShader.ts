@@ -7,7 +7,7 @@ export function compileShader(
   flags?: GLShaderPrecompileFlags,
 ): WebGLShader {
   const shader = gl.createShader(shaderType);
-  let defines = ``;
+  let defines = '';
   if (flags !== undefined) {
     for (const key in flags) {
       if (flags.hasOwnProperty(key)) {

@@ -1,12 +1,13 @@
 import { GLVariantShader } from '../gl/core/shader/variants/GLVariantShader';
 import { shaderVariantBoolProp } from '../gl/core/shader/variants/shaderVariantBoolProp';
 import { shaderVariantEnumProp } from '../gl/core/shader/variants/shaderVariantEnumProp';
-import { SimpleColorShaderState } from './SimpleColorShader';
 import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLVariantShaderState } from '../gl/core/shader/variants/GLVariantShaderState';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/testVariant.frag').default;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/testVariant.vert').default;
 
 export enum ColorMode {
@@ -21,7 +22,7 @@ export class TestVariantShaderState extends GLVariantShaderState {
   colorMode: ColorMode = ColorMode.All;
 
   @shaderVariantBoolProp('ALPHA', 0.5, 1)
-  alpha: boolean = false;
+  alpha = false;
 
   textureInd: number;
 

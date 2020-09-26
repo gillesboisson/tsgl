@@ -16,41 +16,41 @@ export interface IStartStopPause extends IStartStop {
 export class Juggler implements IStartStop {
   protected _t: number;
   protected _children: IAnimated[] = [];
-  protected _active: boolean = false;
+  protected _active = false;
 
-  addChild(child: IAnimated) {
+  addChild(child: IAnimated): void {
     if (this._children.indexOf(child) === -1) {
       this._children.push(child);
     }
   }
 
-  removeChild(child: IAnimated) {
+  removeChild(child: IAnimated): void {
     const ind = this._children.indexOf(child);
     if (ind !== -1) {
       this._children.splice(ind, 1);
     }
   }
 
-  start() {
+  start(): void {
     this._t = 0;
     this._active = true;
-    for (let child of this._children) {
+    for (const child of this._children) {
       child.animationStart();
     }
   }
 
-  update(elapsedTime: number) {
+  update(elapsedTime: number): void {
     if (this._active === false) return;
     const t = this._t + elapsedTime;
-    for (let child of this._children) {
+    for (const child of this._children) {
       child.animationUpdate(t, elapsedTime);
     }
     this._t = t;
   }
 
-  stop() {
+  stop(): void {
     this._active = false;
-    for (let child of this._children) {
+    for (const child of this._children) {
       child.animationEnd(this._t);
     }
   }
