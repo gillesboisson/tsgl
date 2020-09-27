@@ -1,8 +1,9 @@
 import { SimpleElement } from './SimpleSpriteElement';
 import { SimpleWorldCoords } from './SimpleElementData';
-import { SpriteBatchRenderable, SpriteBatch } from '../SpriteBatch';
+import { SpriteBatch } from '../SpriteBatch';
+import { GroupI } from '../Group';
 
-export class SimpleGroup extends SimpleElement implements SpriteBatchRenderable<SimpleWorldCoords> {
+export class SimpleGroup extends SimpleElement implements GroupI<SimpleElement, SimpleWorldCoords> {
   protected _children: SimpleElement[] = [];
   constructor() {
     super(null);

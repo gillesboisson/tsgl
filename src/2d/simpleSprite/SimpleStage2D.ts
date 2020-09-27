@@ -1,29 +1,21 @@
 import { SimpleGroup } from './SimpleGroup';
 import { Camera2D } from '../Camera2D';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { SpriteShaderState } from '../../shaders/SpriteShader';
 import { SpriteBatch } from '../SpriteBatch';
+import { Stage2D } from '../Stage2D';
 
-export class SimpleStage2D extends SimpleGroup {
-  protected _cam: Camera2D;
-  protected _renderState: SpriteShaderState;
-  protected _gui: SimpleGroup;
-  protected _guiCam: Camera2D;
+export class SimpleStage2D extends Stage2D {
+  private _gui: SimpleGroup;
+
   constructor(
-    protected _renderer: GLRenderer,
-    protected _batch = new SpriteBatch(_renderer.getGL() as WebGL2RenderingContext),
-    protected _width: number,
-    protected _height: number,
+    renderer: GLRenderer,
+    batch = new SpriteBatch(renderer.getGL() as WebGL2RenderingContext),
+    width: number,
+    height: number,
   ) {
-    super();
-    this._cam = new Camera2D(_width, _height);
-    this._renderState = _renderer.createShaderState('simple_sprite');
+    super(renderer, batch, width, height, renderer.createShaderState('simple_sprite'));
     this._gui = new SimpleGroup();
-    this._guiCam = new Camera2D(_width, _height);
-  }
-
-  get cam(): Camera2D {
-    return this._cam;
+    this._guiCam = new Camera2D(width, height);
   }
 
   get gui(): SimpleGroup {
@@ -31,9 +23,7 @@ export class SimpleStage2D extends SimpleGroup {
   }
 
   render(cam?: Camera2D): void {
-    this._batch.begin(this._renderState, cam || this._cam);
-    super.draw(this._batch);
-    this._batch.end();
+    super.render(cam);
 
     this._batch.begin(this._renderState, this._guiCam);
     this._gui.draw(this._batch);

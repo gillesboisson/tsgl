@@ -2,10 +2,11 @@ import { vec2, vec4 } from 'gl-matrix';
 import { GLTexture } from '../../gl/core/GLTexture';
 import { SimpleWorldCoords } from './SimpleElementData';
 import { SimpleGroup } from './SimpleGroup';
-import { SpriteBatch, SpriteBatchRenderable } from '../SpriteBatch';
+import { SpriteBatch } from '../SpriteBatch';
+import { ElementI } from '../Group';
 // import { SpriteBatch, SpriteBatchRenderable } from './SpriteBatch';
 
-export abstract class SimpleElement implements SpriteBatchRenderable<SimpleWorldCoords> {
+export abstract class SimpleElement implements ElementI<SimpleGroup, SimpleWorldCoords> {
   protected position: vec2 = vec2.create();
   protected color: vec4 = vec4.fromValues(1, 1, 1, 1);
   _texture: WebGLTexture;
