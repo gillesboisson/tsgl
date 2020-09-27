@@ -1,16 +1,15 @@
 import { GLRenderer, GLRendererType } from '../gl/core/GLRenderer';
-import { SpriteBatch } from '../2d/SpriteBatch';
 import { SimpleStage2D } from '../2d/simpleSprite/SimpleStage2D';
 import { SpriteShader } from '../shaders/SpriteShader';
 import { SimpleSpriteShader } from '../shaders/SimpleSpriteShader';
 import { Juggler } from '../animation/Juggler';
 import { Camera2D } from '../2d/Camera2D';
 import { GLSupport } from '../gl/core/GLSupport';
-import { SimpleSpriteBatch } from '../2d/simpleSprite/SimpleSpriteBatch';
+import { SpriteBatch } from '../2d/SpriteBatch';
 
 export abstract class Base2DApp {
   protected _renderer: GLRenderer;
-  protected _batch: SimpleSpriteBatch;
+  protected _batch: SpriteBatch;
   protected _stage: SimpleStage2D;
   protected _t0: number;
   protected _t: number;
@@ -38,7 +37,7 @@ export abstract class Base2DApp {
     renderer.registerShaderFactory(SpriteShader);
     renderer.registerShaderFactory(SimpleSpriteShader);
 
-    const batch = (this._batch = new SimpleSpriteBatch(gl));
+    const batch = (this._batch = new SpriteBatch(gl));
     const stage = (this._stage = new SimpleStage2D(renderer, batch, canvas.width, canvas.height));
     this._cam = stage.cam;
 
@@ -53,7 +52,7 @@ export abstract class Base2DApp {
   get renderer(): GLRenderer {
     return this._renderer;
   }
-  get batch(): SimpleSpriteBatch {
+  get batch(): SpriteBatch {
     return this._batch;
   }
   get stage(): SimpleStage2D {
@@ -71,14 +70,14 @@ export abstract class Base2DApp {
     return this._cam;
   }
 
-  start() {
+  start(): void {
     this._t0 = this._t = new Date().getTime();
     this._active = true;
     this._juggler.start();
     this._refresh();
   }
 
-  stop() {
+  stop(): void {
     this._active = false;
     this._juggler.stop();
   }
@@ -86,7 +85,7 @@ export abstract class Base2DApp {
   abstract update(time: number, elapsedTime: number): void;
   abstract beforeRender(time: number, elapsedTime: number): void;
 
-  protected _refresh(requestAnimationFrame = true) {
+  protected _refresh(requestAnimationFrame = true): void {
     if (this._active === false) return;
     if (requestAnimationFrame) (self as any).requestAnimationFrame(this.__refresh);
 

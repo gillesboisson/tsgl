@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { SimpleElement } from './SimpleElement';
-import { SimpleSpriteBatchPullable, SimpleSpriteBatch, SimpleSpriteBatchData } from './SimpleSpriteBatch';
+import { SimpleElement } from './SimpleSpriteElement';
 import { SubTexture } from '../SubTexture';
+import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 
 export enum SimpleTextOverflow {
   WORD_WRAP,
@@ -57,7 +57,7 @@ export class SimpleTextFont {
   }
 }
 
-export class SimpleText extends SimpleElement implements SimpleSpriteBatchPullable {
+export class SimpleText extends SimpleElement implements SpriteBatchPullable {
   protected _width = -1;
   protected _height = -1;
 
@@ -101,10 +101,7 @@ export class SimpleText extends SimpleElement implements SimpleSpriteBatchPullab
     super(font.texture.glTexture);
   }
 
-  draw(
-    batch: import('./SimpleSpriteBatch').SimpleSpriteBatch,
-    parentWorldCoords?: import('./SimpleWorldCoords').SimpleWorldCoords,
-  ): void {
+  draw(batch: SpriteBatch, parentWorldCoords?: import('./SimpleElementData').SimpleWorldCoords): void {
     if (this._text.length === 0) return;
     const nbElements = this.text.length;
     this.calcWorldCoordinate(parentWorldCoords);
@@ -123,8 +120,8 @@ export class SimpleText extends SimpleElement implements SimpleSpriteBatchPullab
   }
 
   pull(
-    batch: SimpleSpriteBatch,
-    vertices: SimpleSpriteBatchData[],
+    batch: SpriteBatch,
+    vertices: SpriteBatchData[],
     indices: Uint16Array,
     vertexIndex: number,
     indicesIndex: number,

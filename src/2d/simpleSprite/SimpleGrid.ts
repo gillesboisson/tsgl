@@ -1,9 +1,10 @@
 import { vec2 } from 'gl-matrix';
 import { SubTexture } from '../SubTexture';
-import { SimpleElement } from './SimpleElement';
+import { SimpleElement } from './SimpleSpriteElement';
 import { Camera2D } from '../Camera2D';
-import { SimpleWorldCoords } from './SimpleWorldCoords';
-import { SimpleSpriteBatch, SimpleSpriteBatchPullable, SimpleSpriteBatchData } from './SimpleSpriteBatch';
+import { SimpleWorldCoords } from './SimpleElementData';
+import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
+// import { SpriteBatch, SpriteBatchPullable, SpriteBatchData } from './SpriteBatch';
 
 export type GridIndexMapper = (
   ind: number,
@@ -54,7 +55,7 @@ export function createConvolutionGridIndexMapper(
   kernelHeight: number,
   compare: KernelCompare = KernelCompareFuncs.base,
 ): GridIndexMapper {
-  if (kernel.length !== kernelWidth * kernelHeight) throw new Error('Kernel data doesn\' match provides dimensions');
+  if (kernel.length !== kernelWidth * kernelHeight) throw new Error("Kernel data doesn' match provides dimensions");
   const kernelLength = kernel.length;
   return function (ind: number, x: number, y: number, data: number[], gridWidth: number, gridHeight: number): number {
     let base = 0;
@@ -74,7 +75,7 @@ export function createConvolutionGridIndexMapper(
   };
 }
 
-export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullable {
+export class SimpleGrid extends SimpleElement implements SpriteBatchPullable {
   protected _grid: number[];
   protected _nbElementX: number;
   protected _nbElementY: number;
@@ -96,7 +97,7 @@ export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullab
     cam: Camera2D,
   ) {
     if (textures.length === 0) throw new Error('Empty subtexture collection');
-    if (grid.length !== nbElementX * nbElementY) throw new Error('Grid size doesn\'t have nb elements');
+    if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
 
     super(textures[0].glTexture);
     this._grid = grid;
@@ -151,7 +152,7 @@ export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullab
     return this._grid[x + y * this._nbElementX];
   }
 
-  draw(batch: SimpleSpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
+  draw(batch: SpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
     this.calcWorldCoordinate(parentWorldCoords);
     const gridWidth = Math.ceil(this._cam.viewportWidth / this._tileWidth);
     const gridHeight = Math.ceil(this._cam.viewportHeight / this._tileHeight);
@@ -163,8 +164,8 @@ export class SimpleGrid extends SimpleElement implements SimpleSpriteBatchPullab
     batch.push(nbIndices, nbVertices, this._texture, this);
   }
   pull(
-    batch: SimpleSpriteBatch,
-    vertices: SimpleSpriteBatchData[],
+    batch: SpriteBatch,
+    vertices: SpriteBatchData[],
     indices: Uint16Array,
     vertexIndex: number,
     indicesIndex: number,

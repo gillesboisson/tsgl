@@ -1,8 +1,8 @@
-import { SimpleSpriteBatchPullable, SimpleSpriteBatch, SimpleSpriteBatchData } from './SimpleSpriteBatch';
-import { SimpleElement } from './SimpleElement';
+import { SimpleElement } from './SimpleSpriteElement';
 import { Camera2D } from '../Camera2D';
-import { SimpleWorldCoords } from './SimpleWorldCoords';
+import { SimpleWorldCoords } from './SimpleElementData';
 import { SimpleTextFont } from './SimpleText';
+import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 
 export type GridIndexMapper = (
   ind: number,
@@ -13,7 +13,7 @@ export type GridIndexMapper = (
   gridHeight: number,
 ) => number;
 
-export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBatchPullable {
+export class SimpleGridDebugger extends SimpleElement implements SpriteBatchPullable {
   protected _grid: number[];
   protected _nbElementX: number;
   protected _nbElementY: number;
@@ -34,7 +34,7 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     tileHeight: number,
     cam: Camera2D,
   ) {
-    if (grid.length !== nbElementX * nbElementY) throw new Error('Grid size doesn\'t have nb elements');
+    if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
 
     super(font.texture.glTexture);
     this._grid = grid;
@@ -74,7 +74,7 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     this._grid[x + y * this._nbElementX] = val;
   }
 
-  draw(batch: SimpleSpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
+  draw(batch: SpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
     this.calcWorldCoordinate(parentWorldCoords);
     const gridWidth = Math.ceil(this._cam.viewportWidth / this._tileWidth);
     const gridHeight = Math.ceil(this._cam.viewportHeight / this._tileHeight);
@@ -86,8 +86,8 @@ export class SimpleGridDebugger extends SimpleElement implements SimpleSpriteBat
     batch.push(nbIndices, nbVertices, this._texture, this);
   }
   pull(
-    batch: SimpleSpriteBatch,
-    vertices: SimpleSpriteBatchData[],
+    batch: SpriteBatch,
+    vertices: SpriteBatchData[],
     indices: Uint16Array,
     vertexIndex: number,
     indicesIndex: number,

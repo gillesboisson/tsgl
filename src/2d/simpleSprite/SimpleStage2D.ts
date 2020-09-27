@@ -2,7 +2,7 @@ import { SimpleGroup } from './SimpleGroup';
 import { Camera2D } from '../Camera2D';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { SpriteShaderState } from '../../shaders/SpriteShader';
-import { SimpleSpriteBatch } from './SimpleSpriteBatch';
+import { SpriteBatch } from '../SpriteBatch';
 
 export class SimpleStage2D extends SimpleGroup {
   protected _cam: Camera2D;
@@ -11,7 +11,7 @@ export class SimpleStage2D extends SimpleGroup {
   protected _guiCam: Camera2D;
   constructor(
     protected _renderer: GLRenderer,
-    protected _batch = new SimpleSpriteBatch(_renderer.getGL() as WebGL2RenderingContext),
+    protected _batch = new SpriteBatch(_renderer.getGL() as WebGL2RenderingContext),
     protected _width: number,
     protected _height: number,
   ) {

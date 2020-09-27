@@ -1,10 +1,11 @@
-import { SimpleSpriteBatchPullable, SimpleSpriteBatch, SimpleSpriteBatchData } from './SimpleSpriteBatch';
+// import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from './SpriteBatch';
 import { vec2 } from 'gl-matrix';
 import { SubTexture } from '../SubTexture';
-import { SimpleElement } from './SimpleElement';
-import { SimpleWorldCoords } from './SimpleWorldCoords';
+import { SimpleElement } from './SimpleSpriteElement';
+import { SimpleWorldCoords } from './SimpleElementData';
+import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 
-export class SimpleSprite extends SimpleElement implements SimpleSpriteBatchPullable {
+export class SimpleSprite extends SimpleElement implements SpriteBatchPullable {
   constructor(protected _subTexture: SubTexture) {
     super(_subTexture.glTexture);
   }
@@ -20,14 +21,14 @@ export class SimpleSprite extends SimpleElement implements SimpleSpriteBatchPull
     }
   }
 
-  draw(batch: SimpleSpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
+  draw(batch: SpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
     this.calcWorldCoordinate(parentWorldCoords);
     batch.push(6, 4, this._texture, this);
   }
 
   pull(
-    batch: SimpleSpriteBatch,
-    vertices: SimpleSpriteBatchData[],
+    batch: SpriteBatch,
+    vertices: SpriteBatchData[],
     indices: Uint16Array,
     vertexIndex: number,
     indicesIndex: number,

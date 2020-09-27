@@ -1,7 +1,7 @@
 import { vec2 } from 'gl-matrix';
-import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { IGLSpriteShaderState } from '../../shaders/SpriteShader';
-import { Camera } from '../../3d/Camera';
+import { GLDefaultAttributesLocation } from '../src/gl/core/data/GLDefaultAttributesLocation';
+import { IGLSpriteShaderState } from '../src/shaders/SpriteShader';
+import { Camera } from '../src/3d/Camera';
 
 const VERTEX_BATCH_SIZE = 2300;
 const INDICES_BATCH_SIZE = 4500;

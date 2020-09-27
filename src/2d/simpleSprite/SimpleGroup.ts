@@ -1,14 +1,14 @@
-import { SimpleElement } from './SimpleElement';
-import { SimpleSpriteBatchRenderable, SimpleSpriteBatch } from './SimpleSpriteBatch';
-import { SimpleWorldCoords } from './SimpleWorldCoords';
+import { SimpleElement } from './SimpleSpriteElement';
+import { SimpleWorldCoords } from './SimpleElementData';
+import { SpriteBatchRenderable, SpriteBatch } from '../SpriteBatch';
 
-export class SimpleGroup extends SimpleElement implements SimpleSpriteBatchRenderable<SimpleWorldCoords> {
+export class SimpleGroup extends SimpleElement implements SpriteBatchRenderable<SimpleWorldCoords> {
   protected _children: SimpleElement[] = [];
   constructor() {
     super(null);
   }
 
-  draw(batch: SimpleSpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
+  draw(batch: SpriteBatch, parentWorldCoords?: SimpleWorldCoords): void {
     this.calcWorldCoordinate(parentWorldCoords);
     for (const child of this._children) {
       if (child.visible === true) {

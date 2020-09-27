@@ -1,11 +1,11 @@
 import { vec2, vec4 } from 'gl-matrix';
 import { GLTexture } from '../../gl/core/GLTexture';
-import { SimpleWorldCoords } from './SimpleWorldCoords';
+import { SimpleWorldCoords } from './SimpleElementData';
 import { SimpleGroup } from './SimpleGroup';
-import { SimpleSpriteBatch, SimpleSpriteBatchRenderable } from './SimpleSpriteBatch';
-import { SubTexture } from '../SubTexture';
+import { SpriteBatch, SpriteBatchRenderable } from '../SpriteBatch';
+// import { SpriteBatch, SpriteBatchRenderable } from './SpriteBatch';
 
-export abstract class SimpleElement implements SimpleSpriteBatchRenderable<SimpleWorldCoords> {
+export abstract class SimpleElement implements SpriteBatchRenderable<SimpleWorldCoords> {
   protected position: vec2 = vec2.create();
   protected color: vec4 = vec4.fromValues(1, 1, 1, 1);
   _texture: WebGLTexture;
@@ -26,7 +26,7 @@ export abstract class SimpleElement implements SimpleSpriteBatchRenderable<Simpl
     if (texture) this._texture = texture.texture;
   }
 
-  abstract draw(batch: SimpleSpriteBatch, parentWorldCoords?: SimpleWorldCoords): void;
+  abstract draw(batch: SpriteBatch, parentWorldCoords?: SimpleWorldCoords): void;
 
   get x(): number {
     return this.position[0];
