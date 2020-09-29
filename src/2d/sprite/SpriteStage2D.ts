@@ -1,12 +1,12 @@
-import { SimpleGroup } from './SimpleGroup';
+import { SpriteGroup } from './SpriteGroup';
 import { Camera2D } from '../Camera2D';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { SpriteBatch } from '../SpriteBatch';
 import { SpriteLayer } from '../Stage2D';
 
 export class SimpleStage2D extends SpriteLayer {
-  readonly gui: SimpleGroup;
-  protected guiCam: Camera2D;
+  readonly gui: SpriteGroup;
+  readonly guiCam: Camera2D;
 
   constructor(
     renderer: GLRenderer,
@@ -15,7 +15,7 @@ export class SimpleStage2D extends SpriteLayer {
     height: number,
   ) {
     super(renderer, width, height, batch, renderer.createShaderState('simple_sprite'));
-    this.gui = new SimpleGroup();
+    this.gui = new SpriteGroup();
     this.guiCam = new Camera2D(width, height);
   }
 

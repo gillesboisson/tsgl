@@ -2,7 +2,7 @@ import { SimpleElement } from './SimpleSpriteElement';
 import { Camera2D } from '../Camera2D';
 import { SimpleWorldCoords } from './SimpleElementData';
 import { SimpleTextFont } from './SimpleText';
-import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
+import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 
 export type GridIndexMapper = (
   ind: number,
@@ -13,7 +13,7 @@ export type GridIndexMapper = (
   gridHeight: number,
 ) => number;
 
-export class SimpleGridDebugger extends SimpleElement implements SpriteBatchPullable {
+export class SimpleGridDebugger extends SimpleElement implements ISpriteBatchPullable {
   protected _grid: number[];
   protected _nbElementX: number;
   protected _nbElementY: number;

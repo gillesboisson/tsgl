@@ -3,7 +3,7 @@ import { SubTexture } from '../SubTexture';
 import { SimpleElement } from './SimpleSpriteElement';
 import { Camera2D } from '../Camera2D';
 import { SimpleWorldCoords } from './SimpleElementData';
-import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
+import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 // import { SpriteBatch, SpriteBatchPullable, SpriteBatchData } from './SpriteBatch';
 
 export type GridIndexMapper = (
@@ -75,7 +75,7 @@ export function createConvolutionGridIndexMapper(
   };
 }
 
-export class SimpleGrid extends SimpleElement implements SpriteBatchPullable {
+export class SimpleGrid extends SimpleElement implements ISpriteBatchPullable {
   protected _grid: number[];
   protected _nbElementX: number;
   protected _nbElementY: number;

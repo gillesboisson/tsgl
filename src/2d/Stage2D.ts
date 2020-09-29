@@ -1,36 +1,43 @@
 import { Group } from './Group';
 import { Camera2D } from './Camera2D';
 import { GLRenderer } from '../gl/core/GLRenderer';
-import { SpriteShaderState } from '../shaders/SpriteShader';
-import { SpriteBatch } from './SpriteBatch';
+import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
+import { IBatch, SpriteBatch } from './SpriteBatch';
+import { IGLSpriteShaderState } from '../shaders/SpriteShader';
 
 export interface IStage {
-  cam: Camera2D;
+  readonly cam: Camera2D;
   render(cam?: Camera2D): void;
 }
 
-export class Stage2D extends Group implements IStage {
-  protected _cam: Camera2D;
-  protected _guiCam: Camera2D;
-  constructor(
-    protected _renderer: GLRenderer,
-    protected _batch = new SpriteBatch(_renderer.getGL() as WebGL2RenderingContext),
-    protected _width: number,
-    protected _height: number,
-    protected _renderState: SpriteShaderState = _renderer.createShaderState('sprite'),
-  ) {
-    super();
-    this._cam = new Camera2D(_width, _height);
-    this._guiCam = new Camera2D(_width, _height);
-  }
+interface IRenderLayer<ShaderStateT extends IGLShaderState, BatchT extends IBatch<ShaderStateT>> {
+  readonly cam: Camera2D;
+  readonly renderState: ShaderStateT;
+  readonly batch: BatchT;
+  readonly width: number;
+  readonly height: number;
 
-  get cam(): Camera2D {
-    return this._cam;
+  render(cam?: Camera2D): void;
+}
+
+export class SpriteLayer implements IRenderLayer<IGLSpriteShaderState, SpriteBatch> {
+  readonly cam: Camera2D;
+
+  readonly mainGroup: Group = new Group();
+
+  constructor(
+    readonly renderer: GLRenderer,
+    readonly width: number,
+    readonly height: number,
+    readonly batch: SpriteBatch = new SpriteBatch(renderer.getGL() as WebGL2RenderingContext),
+    readonly renderState: IGLSpriteShaderState = renderer.createShaderState('sprite'),
+  ) {
+    this.cam = new Camera2D(width, height);
   }
 
   render(cam?: Camera2D): void {
-    this._batch.begin(this._renderState, cam || this._cam);
-    super.draw(this._batch);
-    this._batch.end();
+    this.batch.begin(this.renderState, cam || this.cam);
+    this.mainGroup.draw(this.batch);
+    this.batch.end();
   }
 }

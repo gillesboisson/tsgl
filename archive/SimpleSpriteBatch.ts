@@ -159,6 +159,7 @@ export class SimpleSpriteBatch {
       gl.bindVertexArray(this.vao);
       gl.useProgram(this.currentShaderState.getProgram());
       gl.bindTexture(gl.TEXTURE_2D, this.currentTexture);
+      debugger;
       this.currentPassCam.vp(this.currentShaderState.mvp);
       this.currentShaderState.syncUniforms();
       gl.drawElements(gl.TRIANGLES, this.indicesInd, gl.UNSIGNED_SHORT, 0);

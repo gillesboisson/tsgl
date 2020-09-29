@@ -6,11 +6,12 @@ import { Juggler } from '../animation/Juggler';
 import { Camera2D } from '../2d/Camera2D';
 import { GLSupport } from '../gl/core/GLSupport';
 import { SpriteBatch } from '../2d/SpriteBatch';
+import { SpriteLayer } from '../2d/Stage2D';
 
 export abstract class Base2DApp {
   protected _renderer: GLRenderer;
   protected _batch: SpriteBatch;
-  protected _stage: SimpleStage2D;
+  protected _stage: SpriteLayer;
   protected _t0: number;
   protected _t: number;
   protected _juggler: Juggler;
@@ -38,7 +39,7 @@ export abstract class Base2DApp {
     renderer.registerShaderFactory(SimpleSpriteShader);
 
     const batch = (this._batch = new SpriteBatch(gl));
-    const stage = (this._stage = new SimpleStage2D(renderer, batch, canvas.width, canvas.height));
+    const stage = (this._stage = new SpriteLayer(renderer, canvas.width, canvas.height, batch));
     this._cam = stage.cam;
 
     gl.disable(gl.CULL_FACE);
@@ -55,7 +56,7 @@ export abstract class Base2DApp {
   get batch(): SpriteBatch {
     return this._batch;
   }
-  get stage(): SimpleStage2D {
+  get stage(): SpriteLayer {
     return this._stage;
   }
 

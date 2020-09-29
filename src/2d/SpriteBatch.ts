@@ -2,6 +2,8 @@ import { vec2, vec4 } from 'gl-matrix';
 import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { IGLSpriteShaderState } from '../shaders/SpriteShader';
 import { Camera } from '../3d/Camera';
+import { IDestroyable } from '../pool/Pool';
+import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 
 const VERTEX_BATCH_SIZE = 10448;
 const INDICES_BATCH_SIZE = 10448;
@@ -11,6 +13,11 @@ const VERTEX_STRIDE = BATCH_DATA_NB_FLOAT * Float32Array.BYTES_PER_ELEMENT;
 const VERTEX_BUFFER_SIZE = VERTEX_BATCH_SIZE * VERTEX_STRIDE;
 
 const INDICES_BUFFER_SIZE = INDICES_BATCH_SIZE * Uint16Array.BYTES_PER_ELEMENT;
+
+export interface SpriteDataType<T> extends Function {
+  new (bitOffset: number, buffer: ArrayBuffer): T;
+}
+
 export class SpriteBatchData {
   pos: vec2;
   uv: vec2;
@@ -22,21 +29,30 @@ export class SpriteBatchData {
   }
 }
 
-export interface SpriteBatchPullable {
-  pull(
-    batch: SpriteBatch,
-    vertices: SpriteBatchData[],
-    indices: Uint16Array,
-    vertexIndex: number,
-    indicesIndex: number,
-  ): void;
+export interface IBatchPullable<
+  MainShaderStateT extends IGLShaderState,
+  BatchT extends IBatch<MainShaderStateT>,
+  SpriteDataT,
+  indicesT = Uint16Array
+> {
+  pull(batch: BatchT, vertices: SpriteDataT[], indices: indicesT, vertexIndex: number, indicesIndex: number): void;
 }
+
+export interface ISpriteBatchPullable
+  extends IBatchPullable<IGLSpriteShaderState, SpriteBatch, SpriteBatchData, Uint16Array> {}
 
 export interface SpriteBatchRenderable<WorldCoordsT> {
   draw(batch: SpriteBatch, parentWorldCoords?: WorldCoordsT): void;
 }
 
-export class SpriteBatch {
+export interface IBatch<MainShaderStateT extends IGLShaderState = IGLShaderState> {
+  begin<ShaderStateT extends MainShaderStateT>(shaderState: ShaderStateT, cam?: Camera): void;
+  push(nbIndices: number, nbVertex: number, texture: WebGLTexture, pullable: ISpriteBatchPullable): void;
+  changeShader<ShaderStateT extends MainShaderStateT>(shaderState: ShaderStateT): void;
+  end(): void;
+}
+
+export class SpriteBatch implements IBatch<IGLSpriteShaderState>, IDestroyable {
   private vao: WebGLVertexArrayObject;
   private verticesBuffer: WebGLBuffer;
   private indicesBuffer: WebGLBuffer;
@@ -131,7 +147,7 @@ export class SpriteBatch {
 
   // private render() {}
 
-  push(nbIndices: number, nbVertex: number, texture: WebGLTexture, pullable: SpriteBatchPullable): void {
+  push(nbIndices: number, nbVertex: number, texture: WebGLTexture, pullable: ISpriteBatchPullable): void {
     if (
       this.currentTexture !== null &&
       (this.currentTexture !== texture ||

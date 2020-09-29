@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SimpleElement } from './SimpleSpriteElement';
 import { SubTexture } from '../SubTexture';
-import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
+import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 
 export enum SimpleTextOverflow {
   WORD_WRAP,
@@ -57,7 +57,7 @@ export class SimpleTextFont {
   }
 }
 
-export class SimpleText extends SimpleElement implements SpriteBatchPullable {
+export class SimpleText extends SimpleElement implements ISpriteBatchPullable {
   protected _width = -1;
   protected _height = -1;
 
