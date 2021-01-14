@@ -1,4 +1,5 @@
 import { GLTexture } from '../gl/core/GLTexture';
+import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 
 export function createSubTextureGrid(
   texture: GLTexture,
@@ -46,6 +47,13 @@ export function createGridAlignedSubTextures(
 }
 
 export class SubTexture {
+  static async load(gl: AnyWebRenderingGLContext, url: string, type?: GLenum): Promise<SubTexture> {
+    return GLTexture.load(gl, url, type).then((glTexture) => this.fromGLTexture(glTexture));
+  }
+  static fromGLTexture(glTexture: GLTexture): SubTexture {
+    return new SubTexture(glTexture, 0, 0, glTexture.width, glTexture.height);
+  }
+
   get x(): number {
     return this.uv[0] * this._texture.width;
   }
