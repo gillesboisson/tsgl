@@ -55,19 +55,19 @@ export class SubTexture {
   }
 
   get x(): number {
-    return this.uv[0] * this._texture.width;
+    return Math.round(this.uv[0] * this._texture.width);
   }
 
   get y(): number {
-    return this.uv[1] * this._texture.height;
+    return Math.round(this.uv[1] * this._texture.height);
   }
 
   get width(): number {
-    return (this.uv[2] - this.uv[0]) * this._texture.width;
+    return Math.round((this.uv[2] - this.uv[0]) * this._texture.width);
   }
 
   get height(): number {
-    return (this.uv[3] - this.uv[1]) * this._texture.height;
+    return Math.round((this.uv[3] - this.uv[1]) * this._texture.height);
   }
 
   get glTexture(): GLTexture {

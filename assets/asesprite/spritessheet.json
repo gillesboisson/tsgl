@@ -1,0 +1,30 @@
+{ "frames": {
+   "spritessheet.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 384, "h": 384 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 384, "h": 384 },
+    "sourceSize": { "w": 384, "h": 384 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.25-x64",
+  "image": "spritessheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 384, "h": 384 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "ninja slice", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 240, "w": 32, "h": 32 } }] },
+   { "name": "ninja", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 32, "w": 384, "h": 208 } }] },
+   { "name": "circle", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 32, "h": 32 } }] },
+   { "name": "square", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 32, "y": 0, "w": 32, "h": 32 } }] }
+  ]
+ }
+}

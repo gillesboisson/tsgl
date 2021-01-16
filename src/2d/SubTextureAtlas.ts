@@ -5,6 +5,7 @@
 
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLTexture } from '../gl/core/GLTexture';
+import { SpriteDataType } from './SpriteBatch';
 import { SubTexture } from './SubTexture';
 
 type TexturePackerFrame = {
@@ -49,6 +50,82 @@ type JsonAtlasData = {
   atlas: { [key: string]: JsonAtlasFrame };
 };
 
+/*
+
+{ "frames": {
+   "spritessheet.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 384, "h": 384 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 384, "h": 384 },
+    "sourceSize": { "w": 384, "h": 384 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.25-x64",
+  "image": "spritessheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 384, "h": 384 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "ninja slice", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 240, "w": 32, "h": 32 } }] },
+   { "name": "ninja", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 32, "w": 384, "h": 208 } }] },
+   { "name": "circle", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 32, "h": 32 } }] },
+   { "name": "square", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 32, "y": 0, "w": 32, "h": 32 } }] }
+  ]
+ }
+}
+
+
+*/
+
+type AseSpriteRect = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+type AseSpriteSize = {
+  w: number;
+  h: number;
+};
+
+type AseSpriteLayer = { name: string; opacity: number; blendMode: string };
+
+type AseSpriteSlice = { name: string; color: string; keys: { frame: number; bounds: AseSpriteRect }[] };
+
+type AseSpriteData = {
+  frames: {
+    'spritessheet.aseprite': {
+      frame: AseSpriteRect;
+      rotated: boolean;
+      trimmed: boolean;
+      spriteSourceSize: AseSpriteRect;
+      sourceSize: AseSpriteSize;
+      duration: number;
+    };
+  };
+  meta: {
+    app: string;
+    version: string;
+    image: string;
+    format: string;
+    size: AseSpriteSize;
+    scale: string;
+    frameTags: string[];
+    layer: AseSpriteLayer[];
+    slices: AseSpriteSlice[];
+  };
+};
+
 export default class SubTextureAtlas {
   static async load(gl: AnyWebRenderingGLContext, path: string): Promise<SubTextureAtlas> {
     const jsonPath = path + '.json';
@@ -63,10 +140,21 @@ export default class SubTextureAtlas {
     [key: string]: SubTexture;
   } = {};
 
-  constructor(readonly data: JsonAtlasData | TexturePackerAtlasData, readonly texture: GLTexture) {
-    let textureName;
-    const isFromTexturePacker = this.data.hasOwnProperty('frames');
+  constructor(readonly data: JsonAtlasData | TexturePackerAtlasData | AseSpriteData, readonly texture: GLTexture) {
+    const isAseSprite =
+      this.data.hasOwnProperty('frames') && (this.data as AseSpriteData).frames.hasOwnProperty('spritessheet.aseprite');
 
+    if (isAseSprite) {
+      this.initFromAsepriteAtlasData(data as AseSpriteData, texture);
+    } else {
+      this.initFromAtlasData(data as JsonAtlasData | TexturePackerAtlasData, texture);
+    }
+  }
+
+  protected initFromAtlasData(data: JsonAtlasData | TexturePackerAtlasData, texture: GLTexture): void {
+    let textureName;
+
+    const isFromTexturePacker = this.data.hasOwnProperty('frames');
     const cleanFrame = isFromTexturePacker ? (data as TexturePackerAtlasData).frames : (data as JsonAtlasData).atlas;
 
     for (const textureNameFile in cleanFrame)
@@ -81,26 +169,51 @@ export default class SubTextureAtlas {
 
         const textureData = cleanFrame[textureNameFile];
 
-        let l, t, r, b;
+        let x, y, width, height;
 
         if (isFromTexturePacker) {
           // detect Texture packer format
 
-          l = (textureData as TexturePackerFrame).frame.x / texture.width;
-          t = (textureData as TexturePackerFrame).frame.y / texture.height;
-          r =
-            ((textureData as TexturePackerFrame).frame.x + (textureData as TexturePackerFrame).frame.w) / texture.width;
-          b =
-            ((textureData as TexturePackerFrame).frame.y + (textureData as TexturePackerFrame).frame.h) /
-            texture.height;
+          x = (textureData as TexturePackerFrame).frame.x;
+          y = (textureData as TexturePackerFrame).frame.y;
+          width = (textureData as TexturePackerFrame).frame.w;
+          height = (textureData as TexturePackerFrame).frame.h;
         } else {
-          l = (textureData as JsonAtlasFrame).x / texture.width;
-          t = (textureData as JsonAtlasFrame).y / texture.height;
-          r = ((textureData as JsonAtlasFrame).x + (textureData as JsonAtlasFrame).width) / texture.width;
-          b = ((textureData as JsonAtlasFrame).y + (textureData as JsonAtlasFrame).height) / texture.height;
+          x = (textureData as JsonAtlasFrame).x;
+          y = (textureData as JsonAtlasFrame).y;
+          width = (textureData as JsonAtlasFrame).width;
+          height = (textureData as JsonAtlasFrame).height;
         }
 
-        this.subTextures[textureName] = new SubTexture(texture, l, t, r - l, b - t);
+        this.subTextures[textureName] = new SubTexture(texture, x, y, width, height);
       }
+  }
+
+  protected initFromAsepriteAtlasData(data: AseSpriteData, texture: GLTexture): void {
+    const slices = data.meta.slices;
+
+    for (const slice of slices) {
+      const animated = slice.keys.length > 1;
+
+      if (animated) {
+        for (const frame of slice.keys) {
+          this.subTextures[`${slice.name}-${frame.frame}`] = new SubTexture(
+            texture,
+            frame.bounds.x,
+            frame.bounds.y,
+            frame.bounds.w,
+            frame.bounds.h,
+          );
+        }
+      } else {
+        this.subTextures[`${slice.name}`] = new SubTexture(
+          texture,
+          slice.keys[0].bounds.x,
+          slice.keys[0].bounds.y,
+          slice.keys[0].bounds.w,
+          slice.keys[0].bounds.h,
+        );
+      }
+    }
   }
 }

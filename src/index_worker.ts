@@ -17,6 +17,7 @@ import { DebuggerText } from './game/DebuggerText';
 import { GameInputState, emptyInputState } from './game/GameInputStateManager';
 import { Sprite } from './2d/sprite/Sprite';
 import { SpriteGroup } from './2d/sprite/SpriteGroup';
+import SubTextureAtlas from './2d/SubTextureAtlas';
 // import { SPECTOR } from 'spectorjs';
 
 // var SPECTOR = require('spectorjs');
@@ -59,19 +60,25 @@ class PandaGame extends Base2DApp {
     const texture = await GLTexture.load(gl, '../images/dungeon.png');
     texture.active(0);
 
-    const sprite = (this.sprite = new Sprite(new SubTexture(texture, 0, 0, 16, 16)));
+    const spriteAtlas = await SubTextureAtlas.load(gl, './images/spritessheet');
+
+    // console.log('spriteAtlas', spriteAtlas);
+
+    const sprite = (this.sprite = new Sprite(spriteAtlas.subTextures.ninja));
+
+    console.log('sprite', sprite);
 
     const group = (this.group = new SpriteGroup());
 
-    group.setPosition(0, 0);
-    group.setScale(2, 2);
+    // group.setPosition(0, 0);
+    // group.setScale(2, 2);
 
-    // sprite.setAnchor(0.5, 0.5);
-    sprite.setPosition(8, 0);
-    // sprite.rotation = Math.PI / 4;
-    sprite.setScale(0.5, 0.5);
-    this.stage.mainGroup.addChild(group);
-    group.addChild(sprite);
+    // // sprite.setAnchor(0.5, 0.5);
+    // sprite.setPosition(8, 0);
+    // // sprite.rotation = Math.PI / 4;
+    // sprite.setScale(0.5, 0.5);
+    this.stage.mainGroup.addChild(sprite);
+    // group.addChild(sprite);
   }
 
   update(time: number, elapsedTime: number): void {
