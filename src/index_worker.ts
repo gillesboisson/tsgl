@@ -1,25 +1,16 @@
 import { GLTexture } from './gl/core/GLTexture';
-import { SimpleGrid } from './2d/simpleSprite/SimpleGrid';
-import { SubTexture, createSubTextureGrid, createGridAlignedSubTextures } from './2d/SubTexture';
-import { TiledMap } from './2d/tiled/TiledMap';
-import { TiledTileLayer } from './2d/tiled/TiledTileLayer';
-import { SimpleGroup } from './2d//simpleSprite/SimpleGroup';
-import { Panda } from './game/Panda';
-import { SimpleTextFont, SimpleText } from './2d//simpleSprite/SimpleText';
-import { AnimatedMap } from './animation/AnimatedMap';
 import { Base2DApp } from './game/Base2DApp';
-import { Bomb } from './game/Bomb';
-import { Explosion } from './game/Explosion';
-import { SimpleGridDebugger } from './2d//simpleSprite/SimpleGridDebugger';
 import { ExplosionMap } from './game/ExplosionMap';
-import { CollisionManager, CollisionFlag } from './game/CollisionManager';
-import { DebuggerText } from './game/DebuggerText';
+import { CollisionManager } from './game/CollisionManager';
 import { GameInputState, emptyInputState } from './game/GameInputStateManager';
 import { Sprite } from './2d/sprite/Sprite';
 import { SpriteGroup } from './2d/sprite/SpriteGroup';
 import SubTextureAtlas from './2d/SubTextureAtlas';
 import BitmapFont from './2d/text/BitmapFont';
 import BitmapText from './2d/text/BitmapText';
+import MSDFBitmapFont from './2d/text/MSDFBitmapFont';
+import { MSDFShader } from './shaders/MSDFShader';
+import { SpriteBatch } from './2d/SpriteBatch';
 // import { SPECTOR } from 'spectorjs';
 
 // var SPECTOR = require('spectorjs');
@@ -33,6 +24,9 @@ class PandaGame extends Base2DApp {
   protected _inputState: GameInputState = emptyInputState();
   sprite: Sprite;
   group: SpriteGroup;
+  private _msdfShaderState: import('/home/gilles/Projects/sandbox/TsGL2D/src/shaders/MSDFShader').MSDFShaderState;
+  private _textBatch: SpriteBatch;
+  private _text: BitmapText;
 
   static init(canvas?: HTMLCanvasElement): PandaGame {
     this._instance = new PandaGame(canvas);
@@ -62,6 +56,11 @@ class PandaGame extends Base2DApp {
     const texture = await GLTexture.load(gl, '../images/dungeon.png');
     texture.active(0);
 
+    MSDFShader.register(this._renderer);
+
+    this._msdfShaderState = (this._renderer.getShader('msdf') as MSDFShader).createState();
+    this._textBatch = new SpriteBatch(gl as WebGL2RenderingContext);
+
     const spriteAtlas = await SubTextureAtlas.load(gl, './images/spritessheet');
 
     // console.log('spriteAtlas', spriteAtlas);
@@ -69,10 +68,16 @@ class PandaGame extends Base2DApp {
     const font = await BitmapFont.load(gl, './images/arial-latin-extended', spriteAtlas.subTextures.arial);
     const font12 = await BitmapFont.load(gl, './images/arial-latin-extended-12', spriteAtlas.subTextures['arial-12']);
 
-    const text = new BitmapText(font12, `Jean Michel\nJosio`, true);
-    text.setColor(1, 0, 0, 1);
-    text.setScale(1, 1);
-    text.width = 30;
+    const msdfFont = await MSDFBitmapFont.load(gl, './images/ChampagneLimousines-msdf');
+
+    const text = (this._text = new BitmapText(msdfFont, `AJean michel`, true));
+
+    text.fontSize = 230;
+    text.lineHeight = 230 + 5;
+
+    // text.setColor(1, 0, 0, 1);
+    // text.setScale(1, 1);
+    // text.width = 30;
     // text.fontSize = 12;
 
     console.log('font', text.fontSize);
@@ -90,7 +95,7 @@ class PandaGame extends Base2DApp {
     // sprite.setPosition(8, 0);
     // // sprite.rotation = Math.PI / 4;
     // sprite.setScale(0.5, 0.5);
-    this.stage.mainGroup.addChild(text);
+    // this.stage.mainGroup.addChild(text);
     // group.addChild(text);
   }
 
@@ -101,6 +106,15 @@ class PandaGame extends Base2DApp {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   beforeRender(time: number, elapsedTime: number): void {
     // throw new Error('Method not implemented.');
+
+    this._textBatch.begin(this._msdfShaderState, this._cam);
+  }
+
+  afterRender(time: number, elapsedTime: number): void {
+    // throw new Error('Method not implemented.');
+
+    this._text.draw(this._textBatch);
+    this._textBatch.end();
   }
 }
 

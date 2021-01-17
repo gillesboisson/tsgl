@@ -5,14 +5,13 @@ import { Poly } from '../sprite/Poly';
 import { SpriteBatch, ISpriteBatchPullable, SpriteBatchData } from '../SpriteBatch';
 import { WorldCoords } from '../sprite/ElementData';
 import { SpriteElement } from '../sprite/SpriteElement';
+import { BitmapFontRaw, fontDataStride } from './BitmapFontRaw';
 
 export enum Align {
   left = 0,
   right = 1,
   center = 2,
 }
-
-const fontDataStride = 12;
 
 const vec2_1 = vec2.create();
 const vec2_2 = vec2.create();
@@ -71,7 +70,7 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
   //   }
 
   constructor(
-    protected _font: BitmapFont,
+    protected _font: BitmapFontRaw,
     protected _text = '',
     protected _wordWrap = false,
     protected _autoHeight = true,
@@ -106,8 +105,8 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
   _reset(): void {
     this._width = 0;
     this._height = 0;
-    this._fontSize = this.font.info.size as number;
-    this._lineHeight = this.font.common.lineHeight as number;
+    this._fontSize = this.font.baseFontSize as number;
+    this._lineHeight = this.font.baseLineHeight as number;
     this._align = Align.left;
 
     vec4.set(this._color, 0, 0, 0, 1);
@@ -137,10 +136,7 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
     }
   }
 
-  /**
-   * @returns {BitmapFont}
-   */
-  get font(): BitmapFont {
+  get font(): BitmapFontRaw {
     return this._font;
   }
 
@@ -317,7 +313,7 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
     this._dirty = false;
 
     const raw = this.font.raw;
-    const fontScale = this.fontSize / (this.font.info.size as number);
+    const fontScale = this.fontSize / (this.font.baseFontSize as number);
 
     const cursorPos = vec2_1;
     vec2.set(cursorPos, 0, 0);

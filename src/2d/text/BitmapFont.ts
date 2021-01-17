@@ -1,8 +1,8 @@
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { SubTexture } from '../SubTexture';
-const fontDataStride = 12;
+import { BitmapFontRaw, fontDataStride } from './BitmapFontRaw';
 
-export default class BitmapFont {
+export default class BitmapFont implements BitmapFontRaw {
   info: { [key: string]: string | number | boolean };
   common: { [key: string]: string | number | boolean };
   raw: Float32Array;
@@ -25,6 +25,14 @@ export default class BitmapFont {
     if (subTexture === null) {
       return SubTexture.load(gl, texturePath).then((subTexture) => loadFnt(subTexture));
     } else return loadFnt(subTexture);
+  }
+
+  get baseFontSize(): number {
+    return this.info.size as number;
+  }
+
+  get baseLineHeight(): number {
+    return this.common.lineHeight as number;
   }
 
   /**

@@ -85,6 +85,7 @@ export abstract class Base2DApp {
 
   abstract update(time: number, elapsedTime: number): void;
   abstract beforeRender(time: number, elapsedTime: number): void;
+  abstract afterRender(time: number, elapsedTime: number): void;
 
   protected _refresh(requestAnimationFrame = true): void {
     if (this._active === false) return;
@@ -104,6 +105,7 @@ export abstract class Base2DApp {
     const timeR = t1 - this._t0;
     this.beforeRender(timeR, elapsedTimeR);
     this._stage.render();
+    this.afterRender(timeR, elapsedTimeR);
     this._t = t1;
   }
 }
