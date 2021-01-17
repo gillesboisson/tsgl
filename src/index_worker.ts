@@ -18,6 +18,8 @@ import { GameInputState, emptyInputState } from './game/GameInputStateManager';
 import { Sprite } from './2d/sprite/Sprite';
 import { SpriteGroup } from './2d/sprite/SpriteGroup';
 import SubTextureAtlas from './2d/SubTextureAtlas';
+import BitmapFont from './2d/text/BitmapFont';
+import BitmapText from './2d/text/BitmapText';
 // import { SPECTOR } from 'spectorjs';
 
 // var SPECTOR = require('spectorjs');
@@ -64,6 +66,17 @@ class PandaGame extends Base2DApp {
 
     // console.log('spriteAtlas', spriteAtlas);
 
+    const font = await BitmapFont.load(gl, './images/arial-latin-extended', spriteAtlas.subTextures.arial);
+    const font12 = await BitmapFont.load(gl, './images/arial-latin-extended-12', spriteAtlas.subTextures['arial-12']);
+
+    const text = new BitmapText(font12, `Jean Michel\nJosio`, true);
+    text.setColor(1, 0, 0, 1);
+    text.setScale(1, 1);
+    text.width = 30;
+    // text.fontSize = 12;
+
+    console.log('font', text.fontSize);
+
     const sprite = (this.sprite = new Sprite(spriteAtlas.subTextures.ninja));
 
     console.log('sprite', sprite);
@@ -77,8 +90,8 @@ class PandaGame extends Base2DApp {
     // sprite.setPosition(8, 0);
     // // sprite.rotation = Math.PI / 4;
     // sprite.setScale(0.5, 0.5);
-    this.stage.mainGroup.addChild(sprite);
-    // group.addChild(sprite);
+    this.stage.mainGroup.addChild(text);
+    // group.addChild(text);
   }
 
   update(time: number, elapsedTime: number): void {

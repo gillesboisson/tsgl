@@ -24,7 +24,8 @@
    { "name": "ninja", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 240, "w": 32, "h": 32 } }] },
    { "name": "arial", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 32, "w": 384, "h": 208 } }] },
    { "name": "circle", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 32, "h": 32 } }] },
-   { "name": "square", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 32, "y": 0, "w": 32, "h": 32 } }] }
+   { "name": "square", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 32, "y": 0, "w": 32, "h": 32 } }] },
+   { "name": "arial-12", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 32, "y": 240, "w": 256, "h": 48 } }] }
   ]
  }
 }

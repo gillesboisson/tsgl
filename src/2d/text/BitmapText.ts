@@ -30,7 +30,7 @@ const positionBufferSize = 8 * maxChars;
 //  * @class
 //  * @memberOf Text
 //  * */
-class Text extends SpriteElement implements ISpriteBatchPullable {
+export default class BitmapText extends SpriteElement implements ISpriteBatchPullable {
   protected _dirty = true;
   protected _positionBuffer: Float32Array;
   protected _uvBuffer: Float32Array;
@@ -313,6 +313,7 @@ class Text extends SpriteElement implements ISpriteBatchPullable {
   }
 
   updateLocalGeometry(): void {
+    console.log('> updateLocalGeometry');
     this._dirty = false;
 
     const raw = this.font.raw;
@@ -485,7 +486,6 @@ class Text extends SpriteElement implements ISpriteBatchPullable {
   draw(batch: SpriteBatch, parentWorldCoords?: WorldCoords): void {
     this.calcWorldCoordinate(parentWorldCoords);
     batch.push(this._nbTriangles * 3, this._nbPoints, this._texture, this);
-    throw new Error('Method not implemented.');
   }
 
   pull(

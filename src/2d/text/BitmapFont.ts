@@ -33,7 +33,7 @@ export default class BitmapFont {
    * @returns {{}}
    */
   static parseFontFile(fontString: string, texture: SubTexture): BitmapFontData {
-    const lines = fontString.split('\n');
+    const lines = fontString.split(/\n/g);
     let spl = null;
     let charIndex = 0;
     let lineType = '';
@@ -57,6 +57,7 @@ export default class BitmapFont {
 
       for (const attr of spl) {
         attrSpl = attr.split('=');
+        if (attrSpl.length < 2) continue;
         const val = attrSpl[1].split('"').join('') as any;
         lineData[attrSpl[0]] = isNaN(val * 1) ? val : val * 1;
       }
