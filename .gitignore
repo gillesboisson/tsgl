@@ -4,3 +4,5 @@ dist/lib/gli.all.css
 dist/lib/gli.all.js
 dist/lib/assets/*
 .DS_Store
+.idea
+.vscode
