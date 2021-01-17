@@ -5,7 +5,7 @@ import { Poly } from '../sprite/Poly';
 import { SpriteBatch, ISpriteBatchPullable, SpriteBatchData } from '../SpriteBatch';
 import { WorldCoords } from '../sprite/ElementData';
 import { SpriteElement } from '../sprite/SpriteElement';
-import { BitmapFontRaw, fontDataStride } from './BitmapFontRaw';
+import { BitmapFontRaw, fontDataStride, kerningDataStride } from './BitmapFontRaw';
 
 export enum Align {
   left = 0,
@@ -14,26 +14,15 @@ export enum Align {
 }
 
 const vec2_1 = vec2.create();
-const vec2_2 = vec2.create();
-
-// let worldMat = Poly.__worldMat;
-// let invWorldMat = Poly.__invWworldMat;
-
-const rect_1 = rect.create();
 
 const maxChars = 10000;
 const uvBufferSize = 8 * maxChars;
 const positionBufferSize = 8 * maxChars;
 
-// /**
-//  * @class
-//  * @memberOf Text
-//  * */
 export default class BitmapText extends SpriteElement implements ISpriteBatchPullable {
   protected _dirty = true;
   protected _positionBuffer: Float32Array;
   protected _uvBuffer: Float32Array;
-  // protected _transform: vec2;
   protected _width = 0;
   protected _height = 0;
   protected _fontSize = 0;
@@ -47,28 +36,6 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
   private _vecs: vec2[];
   private _uvs: vec2[];
 
-  //   static createText(
-  //     font,
-  //     fontSize,
-  //     lineHeight,
-  //     align = Align.left,
-  //     color = null,
-  //     text = '',
-  //     wordWrap = false,
-  //     autoHeight = true,
-  //   ) {
-  //     var textField = new this(font, text, wordWrap, autoHeight);
-  //     textField.fontSize = fontSize;
-  //     textField.lineHeight = lineHeight;
-
-  //     if (color !== null) textField.color = color;
-
-  //     textField.align = align;
-
-  //     // debugger;
-  //     return textField;
-  //   }
-
   constructor(
     protected _font: BitmapFontRaw,
     protected _text = '',
@@ -77,32 +44,22 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
   ) {
     super(_font.texture.glTexture);
 
-    /**
-     * @type {Float32Array}
-     */
     this._positionBuffer = new Float32Array(uvBufferSize);
     this._vecs = new Array(uvBufferSize / 2);
     for (let i = 0; i < this._vecs.length; i++) {
       this._vecs[i] = new Float32Array(this._positionBuffer.buffer, Float32Array.BYTES_PER_ELEMENT * i * 2, 2) as vec2;
     }
 
-    /**
-     * @type {Float32Array}
-     */
     this._uvBuffer = new Float32Array(positionBufferSize);
     this._uvs = new Array(positionBufferSize / 2);
     for (let i = 0; i < this._uvs.length; i++) {
       this._uvs[i] = new Float32Array(this._uvBuffer.buffer, Float32Array.BYTES_PER_ELEMENT * i * 2, 2) as vec2;
     }
-    // this._transform.area = vec2.create();
 
     this._reset();
   }
 
-  /**
-   * @private
-   */
-  _reset(): void {
+  private _reset(): void {
     this._width = 0;
     this._height = 0;
     this._fontSize = this.font.baseFontSize as number;
@@ -119,16 +76,10 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
     this._reset();
   }
 
-  /**
-   * @returns {bool}
-   */
   get autoHeight(): boolean {
     return this._autoHeight;
   }
 
-  /**
-   * @param {bool} value
-   */
   set autoHeight(value) {
     if (value !== this._autoHeight) {
       this._dirty = true;
@@ -140,70 +91,42 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
     return this._font;
   }
 
-  /**
-   * @param {BitmapFont} value
-   */
-  set font(value) {
+  set font(value: BitmapFontRaw) {
     this._dirty = true;
     this._font = value;
   }
 
-  /**
-   * @returns {Number}
-   */
   get lineHeight(): number {
     return this._lineHeight;
   }
-
-  /**
-   * @param {Number} value
-   */
 
   set lineHeight(value: number) {
     this._dirty = true;
     this._lineHeight = value;
   }
 
-  /**
-   * @returns {int}
-   */
   get fontSize(): number {
     return this._fontSize;
   }
 
-  /**
-   * @param {int} value
-   */
   set fontSize(value: number) {
     this._dirty = true;
     this._fontSize = value;
   }
 
-  /**
-   * @returns {string}
-   */
   get text(): string {
     return this._text;
   }
 
-  /**
-   * @param {string} value
-   */
   set text(value: string) {
     this._dirty = true;
     this._text = value;
   }
 
-  /**
-   * @returns {number}
-   */
   get width(): number {
     return this._width;
   }
 
-  /**
-   * @param {number} value
-   */
   set width(value: number) {
     if (value !== this._width) {
       this._dirty = true;
@@ -212,16 +135,10 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
     }
   }
 
-  /**
-   * @returns {number}
-   */
   get height(): number {
     return this._height;
   }
 
-  /**
-   * @param {number} value
-   */
   set height(value: number) {
     if (value !== this._height && !this._autoHeight) {
       this._dirty = true;
@@ -230,67 +147,34 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
     }
   }
 
-  /**
-   * @returns {int}
-   */
   get align(): Align {
     return this._align;
   }
 
-  /**
-   * @param {int} value
-   */
   set align(value: Align) {
     this._dirty = true;
 
     this._align = value;
   }
 
-  /**
-   * @returns {bool}
-   */
   get wordWrap(): boolean {
     return this._wordWrap;
   }
 
-  /**
-   * @param {bool} value
-   */
   set wordWrap(value: boolean) {
     this._dirty = true;
 
     this._wordWrap = value;
   }
 
-  /**
-   * @param {Batch} batch
-   * @returns {boolean}
-   */
-  // needToCompletePreviousBatch(batch) {
-  //   return batch.material.texture !== this.font.texture.texture;
-  // }
-
-  // /**
-  //  * @param {vec2} cursorPos
-  //  * @param {int} lgbI
-  //  * @param {int} gbI
-  //  * @private
-  //  */
-
-  _newLine(cursorPos: vec2, lgbI: number, gbI: number): void {
+  private _newLine(cursorPos: vec2, lgbI: number, gbI: number): void {
     this._alignLine(cursorPos, lgbI, gbI);
 
     cursorPos[0] = 0;
     cursorPos[1] += this.lineHeight;
   }
 
-  /**
-   * @param {vec2} cursorPos
-   * @param {int} lgbI
-   * @param {int} gbI
-   * @private
-   */
-  _alignLine(cursorPos: vec2, lgbI: number, gbI: number) {
+  private _alignLine(cursorPos: vec2, lgbI: number, gbI: number) {
     const lineWidth = this._positionBuffer[gbI - 2];
     let alignPadding = 0;
 
@@ -309,7 +193,6 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
   }
 
   updateLocalGeometry(): void {
-    console.log('> updateLocalGeometry');
     this._dirty = false;
 
     const raw = this.font.raw;
@@ -317,6 +200,11 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
 
     const cursorPos = vec2_1;
     vec2.set(cursorPos, 0, 0);
+
+    let previewCharCode = -1;
+    let kerning;
+
+    const kernings = this.font.kernings;
 
     let xOffset = 0,
       yOffset = 0,
@@ -346,9 +234,23 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
       }
 
       const charCode = this._text.charCodeAt(i);
+      kerning = 0;
+      // console.log('> kerning', previewCharCode, charCode);
+
+      if (i > 0) {
+        for (let f = 0; f < kernings.length; f += kerningDataStride) {
+          // console.log(' >> kerning', kernings[f], kernings[f + 1]);
+          if (kernings[f] === previewCharCode && kernings[f + 1] === charCode) {
+            kerning = kernings[f + 2];
+            break;
+          }
+        }
+      }
+
       for (let f = 0; f < raw.length; f += fontDataStride) {
         if (raw[f] === charCode) {
           // get char data
+          // console.log('kerning', previewCharCode, charCode, kerning);
           xOffset = raw[f + 1];
           yOffset = raw[f + 2];
           xAdvance = raw[f + 3];
@@ -388,6 +290,8 @@ export default class BitmapText extends SpriteElement implements ISpriteBatchPul
           break;
         }
       }
+
+      previewCharCode = charCode;
     }
 
     this._alignLine(cursorPos, lgbi, gbi);

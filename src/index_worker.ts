@@ -8,7 +8,6 @@ import { SpriteGroup } from './2d/sprite/SpriteGroup';
 import SubTextureAtlas from './2d/SubTextureAtlas';
 import BitmapFont from './2d/text/BitmapFont';
 import BitmapText from './2d/text/BitmapText';
-import MSDFBitmapFont from './2d/text/MSDFBitmapFont';
 import { MSDFShader } from './shaders/MSDFShader';
 import { SpriteBatch } from './2d/SpriteBatch';
 // import { SPECTOR } from 'spectorjs';
@@ -65,10 +64,15 @@ class PandaGame extends Base2DApp {
 
     // console.log('spriteAtlas', spriteAtlas);
 
-    const font = await BitmapFont.load(gl, './images/arial-latin-extended', spriteAtlas.subTextures.arial);
-    const font12 = await BitmapFont.load(gl, './images/arial-latin-extended-12', spriteAtlas.subTextures['arial-12']);
+    const font = await BitmapFont.loadFnt(gl, './images/arial-latin-extended', spriteAtlas.subTextures.arial);
+    const font12 = await BitmapFont.loadFnt(
+      gl,
+      './images/arial-latin-extended-12',
+      spriteAtlas.subTextures['arial-12'],
+    );
 
-    const msdfFont = await MSDFBitmapFont.load(gl, './images/ChampagneLimousines-msdf');
+    const msdfFont = await BitmapFont.loadJson(gl, './images/ChampagneLimousines-msdf');
+    console.log('msdfFont', msdfFont);
 
     const text = (this._text = new BitmapText(msdfFont, `AJean michel`, true));
 
