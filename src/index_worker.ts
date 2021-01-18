@@ -64,14 +64,14 @@ class PandaGame extends Base2DApp {
 
     // console.log('spriteAtlas', spriteAtlas);
 
-    const font = await BitmapFont.loadFnt(gl, './images/arial-latin-extended', spriteAtlas.subTextures.arial);
+    // const font = await BitmapFont.loadFnt(gl, './images/valeria-medium', spriteAtlas.subTextures.arial);
     const font12 = await BitmapFont.loadFnt(
       gl,
       './images/arial-latin-extended-12',
       spriteAtlas.subTextures['arial-12'],
     );
 
-    const msdfFont = await BitmapFont.loadJson(gl, './images/ChampagneLimousines-msdf');
+    const msdfFont = await BitmapFont.loadJson(gl, './images/valeria-medium');
     console.log('msdfFont', msdfFont);
 
     const text = (this._text = new BitmapText(msdfFont, `AJean michel`, true));
