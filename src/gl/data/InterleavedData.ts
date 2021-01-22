@@ -51,10 +51,10 @@ export class InterleavedDataArray<DataT extends IInterleavedData> {
       this._bufferView = new Uint8Array(this._byteLength);
       arrayBuffer = this._bufferView.buffer;
     } else {
-      this._bufferView = new Uint8Array(arrayBuffer);
       if (this._byteLength > arrayBuffer.byteLength) {
         throw new Error('buffer size is out of provided array buffer range');
       }
+      this._bufferView = new Uint8Array(arrayBuffer);
     }
 
     this._arrayBuffer = arrayBuffer;
