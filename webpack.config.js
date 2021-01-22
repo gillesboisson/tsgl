@@ -5,7 +5,7 @@ module.exports = {
 
   entry: {
     index: './index.ts',
-    index_worker: './index_worker.ts',
+    //index_worker: './index_worker.ts',
   },
 
   devtool: 'inline-source-map',
