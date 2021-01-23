@@ -9,6 +9,6 @@
     "target": "es5",
     "allowJs": true,
     "experimentalDecorators": true,
-    "lib": ["webworker", "es6", "dom"]
+    "lib": ["webworker", "es2019", "dom"]
   }
 }
