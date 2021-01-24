@@ -16,10 +16,7 @@ export class SceneInstance3D<TransformT extends ITransform<mat4> = Transform3D> 
     const localMat = this.transform.getLocalMat();
 
     if (this._parent === null) {
-      if (worldMat !== undefined) {
-        mat4.copy(worldMat, localMat);
-      }
-      return localMat;
+      return mat4.copy(worldMat !== undefined ? worldMat : this._worldMat, localMat);
     } else {
       return mat4.multiply(worldMat !== undefined ? worldMat : this._worldMat, parentMap, localMat);
     }
