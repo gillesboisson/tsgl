@@ -69,6 +69,11 @@ export class Transform3D implements ITransform<mat4> {
     this._dirty = true;
   }
 
+  public setRotationQuat(x: number, y: number, z: number, w: number): void {
+    quat.set(this._rotation, x, y, z, w);
+    this._dirty = true;
+  }
+
   public rotateEuler(x: number, y: number, z: number): void {
     quat.rotateX(this._rotation, this._rotation, x);
     quat.rotateY(this._rotation, this._rotation, y);
