@@ -22,7 +22,7 @@ export class SimpleFlatShaderState extends GLShaderState implements IGLSimpleFla
     const uniformsLocations = this._uniformsLocation;
 
     gl.uniformMatrix4fv(uniformsLocations.mvp, false, this.mvp);
-    gl.uniform1i(uniformsLocations.texture, this.textureInd);
+    gl.uniform1i(uniformsLocations.tex, this.textureInd);
   }
 
   mvp: mat4 = mat4.create();
