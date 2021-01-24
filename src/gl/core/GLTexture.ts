@@ -1,4 +1,4 @@
-import { GLCore } from './GLCore';
+import { GLCore, GLType } from './GLCore';
 import { AnyWebRenderingGLContext } from './GLHelpers';
 
 export interface ImageSource {
@@ -14,8 +14,8 @@ export class GLTexture extends GLCore {
       type !== undefined
         ? type
         : EXT_DEFAULT_ALPHA.indexOf(url.split('.').pop().toLowerCase()) !== -1
-          ? gl.RGBA
-          : gl.RGB;
+        ? gl.RGBA
+        : gl.RGB;
 
     return fetch(url)
       .then((response) => response.blob())
@@ -26,6 +26,8 @@ export class GLTexture extends GLCore {
         return texture;
       });
   }
+
+  glType = GLType.Texture;
 
   get texture(): WebGLTexture {
     return this._texture;
@@ -38,8 +40,6 @@ export class GLTexture extends GLCore {
   get height(): number {
     return this._height;
   }
-
-  private _texture: WebGLTexture;
 
   constructor(
     gl: AnyWebRenderingGLContext,
@@ -132,4 +132,6 @@ export class GLTexture extends GLCore {
   unbind(): void {
     this.gl.bindTexture(this._textureType, null);
   }
+
+  private _texture: WebGLTexture;
 }

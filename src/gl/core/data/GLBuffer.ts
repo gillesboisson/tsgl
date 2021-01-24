@@ -1,12 +1,14 @@
 import { GLConfig } from '../GLConfig';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
-import { GLCore } from '../GLCore';
+import { GLCore, GLType } from '../GLCore';
 
 export class GLBuffer extends GLCore {
   protected _bufferIndex: WebGLBuffer;
   protected _data: ArrayBufferView;
   protected _drawType: GLenum;
   protected _target: GLenum;
+
+  glType: GLType.Buffer;
 
   constructor(gl: AnyWebRenderingGLContext, _target: GLenum, _drawType: GLenum, _data?: ArrayBufferView) {
     super(gl);

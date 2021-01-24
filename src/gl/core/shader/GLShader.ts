@@ -1,5 +1,5 @@
 import { AnyWebRenderingGLContext } from '../GLHelpers';
-import { GLCore } from '../GLCore';
+import { GLCore, GLType } from '../GLCore';
 import { ICreateState } from './IGLShader';
 import { compileProgram } from './compileProgram';
 import { GLShaderStateType } from './GLShaderStateType';
@@ -20,6 +20,8 @@ export class GLShader<ShaderStateT extends IGLShaderState>
   implements ICreateState, IShaderProgram, ISyncUniform {
   protected _program: WebGLProgram;
   protected _state: ShaderStateT;
+
+  glType = GLType.Shader;
 
   constructor(
     gl: AnyWebRenderingGLContext,

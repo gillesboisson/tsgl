@@ -1,5 +1,5 @@
 import { GLBuffer } from './GLBuffer';
-import { GLCore } from '../GLCore';
+import { GLCore, GLType } from '../GLCore';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLAttribute } from './GLAttribute';
 
@@ -9,6 +9,8 @@ export enum VaoSupportType {
 }
 
 export class GLVao extends GLCore {
+  glType = GLType.Vao;
+
   get attributes(): GLAttribute[] {
     return this._attributes;
   }
