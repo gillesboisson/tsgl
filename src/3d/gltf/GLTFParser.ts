@@ -1,21 +1,13 @@
 import { GLAttribute } from '../../gl/core/data/GLAttribute';
 import { GLBuffer } from '../../gl/core/data/GLBuffer';
-import {
-  getDefaultAttributeLocation,
-  GLDefaultAttributesLocation,
-} from '../../gl/core/data/GLDefaultAttributesLocation';
+import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLVao } from '../../gl/core/data/GLVao';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import {
-  GLTFData,
-  GLTFDataAccessor,
-  GLTFDataBuffer,
-  GLTFDataBufferView,
-  GLTFDataMesh,
-  GLTFDataMeshPrimitive,
-} from './GLFTSchema';
+import { GLTFData, GLTFDataAccessor, GLTFDataBufferView, GLTFDataMesh, GLTFDataMeshPrimitive } from './GLFTSchema';
+import { GLTFMesh } from './GLTFMesh';
+import { GLTFPrimitive } from './GLTFPrimitive';
 
-export function parse(gltfData: GLTFData) {}
+// export function parse(gltfData: GLTFData) {}
 
 export async function loadBuffers(
   gltfData: GLTFData,
@@ -31,6 +23,7 @@ export async function loadBuffers(
 
   if (bufferToload === 0) return Promise.resolve(result);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return new Promise((resolve, reject) => {
     let currentBufferInd = 0;
 
@@ -60,7 +53,7 @@ export async function loadBuffers(
 }
 
 // set proper target value based on mesh : set it as ELEMENT_ARRAY_BUFFER if its use to store indices, ARRAY_BUFFER if it used to store vertices
-export function setBufferViewTargetFromMesh(gl: AnyWebRenderingGLContext, gltfData: GLTFData) {
+export function setBufferViewTargetFromMesh(gl: AnyWebRenderingGLContext, gltfData: GLTFData): void {
   // get a flat of all bufferview indices used for mesh indices
   const indicesBufferViewInd = gltfData.meshes
     .map((mesh) => mesh.primitives.map((p) => p.indices))
@@ -129,17 +122,9 @@ export function loadBufferView(
   return new GLBuffer(
     gl,
     target,
-    finalDrawType,
+    finalDrawType as number,
     new Uint8Array(arrayBuffer, gltfBufferView.byteOffset, gltfBufferView.byteLength),
   );
-}
-
-interface GLTFAttribute {
-  name: string;
-  attributeLocation: GLDefaultAttributesLocation;
-  accessor: GLTFDataAccessor;
-  bufferView: GLTFDataBufferView;
-  bufferViewGL: GLBuffer;
 }
 
 // mapping table between default gltf attribute naming and TSGL default attribute location
@@ -199,13 +184,48 @@ export function accessorToGLAttribute(
   );
 }
 
+export function createPrimitive(
+  gl: AnyWebRenderingGLContext,
+  primitiveData: GLTFDataMeshPrimitive,
+  accessors: GLTFDataAccessor[],
+  bufferViews: GLTFDataBufferView[],
+  glBuffers: GLBuffer[],
+): GLTFPrimitive {
+  const verticesAccessors = Object.keys(primitiveData.attributes).map(
+    (key) => accessors[primitiveData.attributes[key]],
+  );
+  const indicesAccessor = accessors[primitiveData.indices];
+
+  return new GLTFPrimitive(
+    gl,
+    primitiveData,
+    primitiveToVao(gl, primitiveData, accessors, bufferViews, glBuffers),
+    verticesAccessors,
+    indicesAccessor,
+  );
+}
+
+export function createMesh(
+  gl: AnyWebRenderingGLContext,
+  meshData: GLTFDataMesh,
+  accessors: GLTFDataAccessor[],
+  bufferViews: GLTFDataBufferView[],
+  glBuffers: GLBuffer[],
+): GLTFMesh {
+  const primitives = meshData.primitives.map((primitive) =>
+    createPrimitive(gl, primitive, accessors, bufferViews, glBuffers),
+  );
+
+  return new GLTFMesh(primitives, meshData);
+}
+
 export function primitiveToVao(
   gl: AnyWebRenderingGLContext,
   primitive: GLTFDataMeshPrimitive,
   accessors: GLTFDataAccessor[],
   bufferViews: GLTFDataBufferView[],
   glBuffers: GLBuffer[],
-) {
+): GLVao {
   const attributes = Object.keys(primitive.attributes).map((name) => {
     const accessor = accessors[primitive.attributes[name]];
     const bufferView = bufferViews[accessor.bufferView];

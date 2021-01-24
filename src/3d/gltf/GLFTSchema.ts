@@ -16,7 +16,7 @@ export interface GLTFDataAccessorSparseIndices {
    */
   componentType: 5121 | 5123 | 5125 | number;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -32,7 +32,7 @@ export interface GLTFDataAccessorSparseValues {
    */
   byteOffset?: number;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -52,7 +52,7 @@ export interface GLTFDataAccessorSparse {
    */
   values: GLTFDataAccessorSparseValues;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -97,7 +97,7 @@ export interface GLTFDataAccessor {
   sparse?: GLTFDataAccessorSparse;
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -113,7 +113,7 @@ export interface GLTFDataAnimationChannelTarget {
    */
   path: 'translation' | 'rotation' | 'scale' | 'weights' | string;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -129,7 +129,7 @@ export interface GLTFDataAnimationChannel {
    */
   target: GLTFDataAnimationChannelTarget;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -149,7 +149,7 @@ export interface GLTFDataAnimationSampler {
    */
   output: GlTfId;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -166,7 +166,7 @@ export interface GLTFDataAnimation {
   samplers: GLTFDataAnimationSampler[];
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -190,7 +190,7 @@ export interface GLTFDataAsset {
    */
   minVersion?: string;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -207,7 +207,7 @@ export interface GLTFDataBuffer {
   byteLength: number;
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -236,7 +236,7 @@ export interface GLTFDataBufferView {
   target?: 34962 | 34963 | number;
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -260,7 +260,7 @@ export interface GLTFDataCameraOrthographic {
    */
   znear: number;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -284,7 +284,7 @@ export interface GLTFDataCameraPerspective {
    */
   znear: number;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -305,7 +305,7 @@ export interface GLTFDataCamera {
   type: 'perspective' | 'orthographic' | string;
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -326,7 +326,7 @@ export interface GLTFDataImage {
   bufferView?: GlTfId;
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -342,7 +342,7 @@ export interface GLTFDataTextureInfo {
    */
   texCoord?: number;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -370,7 +370,7 @@ export interface GLTFDataMaterialPbrMetallicRoughness {
    */
   metallicRoughnessTexture?: GLTFDataTextureInfo;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 export interface GLTFDataMaterialNormalTextureInfo {
@@ -381,7 +381,7 @@ export interface GLTFDataMaterialNormalTextureInfo {
    */
   scale?: number;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 export interface GLTFDataMaterialOcclusionTextureInfo {
@@ -392,7 +392,7 @@ export interface GLTFDataMaterialOcclusionTextureInfo {
    */
   strength?: number;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -401,7 +401,7 @@ export interface GLTFDataMaterialOcclusionTextureInfo {
 export interface GLTFDataMaterial {
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   /**
    * A set of parameter values that are used to define the metallic-roughness material model from Physically-Based Rendering (PBR) methodology. When not specified, all the default values of `pbrMetallicRoughness` apply.
    */
@@ -465,7 +465,7 @@ export interface GLTFDataMeshPrimitive {
     [k: string]: GlTfId;
   }[];
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -482,7 +482,7 @@ export interface GLTFDataMesh {
   weights?: number[];
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -527,7 +527,7 @@ export interface GLTFDataNode {
   weights?: number[];
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -552,7 +552,7 @@ export interface GLTFDataSampler {
   wrapT?: 33071 | 33648 | 10497 | number;
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -565,7 +565,7 @@ export interface GLTFDataScene {
   nodes?: GlTfId[];
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -586,7 +586,7 @@ export interface GLTFDataSkin {
   joints: GlTfId[];
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -603,7 +603,7 @@ export interface GLTFDataTexture {
   source?: GlTfId;
   name?: any;
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
 /**
@@ -679,6 +679,6 @@ export interface GLTFData {
    */
   textures?: GLTFDataTexture[];
   extensions?: any;
-  extras?: any;
+  extras?: { [key: string]: number | string };
   [k: string]: any;
 }
