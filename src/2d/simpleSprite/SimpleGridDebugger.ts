@@ -145,7 +145,6 @@ export class SimpleGridDebugger extends SimpleElement implements ISpriteBatchPul
         const y = yOffset + iY * tileHeight;
 
         // if (indStr !== '0') debugger;
-        // console.log(indStr, x, y);
 
         for (let glyphI = 0; glyphI < indStr.length; glyphI++) {
           const v0 = vertices[vertexIndex];
@@ -154,7 +153,6 @@ export class SimpleGridDebugger extends SimpleElement implements ISpriteBatchPul
           const v3 = vertices[vertexIndex + 3];
 
           const char = indStr.substr(glyphI, 1);
-          // console.log('char : ', char);
           const glyphGeomInd = glyphs.indexOf(char) * 4;
           const uvX0 = glyphGeom[glyphGeomInd];
           const uxX1 = glyphGeom[glyphGeomInd + 1];

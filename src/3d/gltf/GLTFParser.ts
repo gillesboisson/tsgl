@@ -3,6 +3,7 @@ import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLVao } from '../../gl/core/data/GLVao';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
+import { GLTexture } from '../../gl/core/GLTexture';
 import { GLTFData, GLTFDataAccessor, GLTFDataBufferView, GLTFDataMesh, GLTFDataMeshPrimitive } from './GLFTSchema';
 import { GLTFMesh } from './GLTFMesh';
 import { GLTFPrimitive } from './GLTFPrimitive';
@@ -18,6 +19,7 @@ export async function loadBuffers(
   let bufferToload = bufferData.length;
 
   const result = new Array(bufferToload);
+  const buffersCount = bufferToload;
 
   const parrallelLoad = 4;
 
@@ -30,7 +32,7 @@ export async function loadBuffers(
     const loadBuffer = (ind: number) => {
       fetch(`${assetDirectory}/${bufferData[currentBufferInd].uri}`)
         .then((data) => data.arrayBuffer())
-        .then((arraBuffer) => loaded(ind, arraBuffer));
+        .then((arrayBuffer) => loaded(ind, arrayBuffer));
     };
 
     const loaded = (ind: number, data: ArrayBuffer) => {
@@ -40,7 +42,7 @@ export async function loadBuffers(
 
       if (bufferToload === 0) {
         resolve(result);
-      } else {
+      } else if (currentBufferInd < buffersCount) {
         loadBuffer(currentBufferInd);
         currentBufferInd++;
       }
@@ -48,6 +50,61 @@ export async function loadBuffers(
 
     for (currentBufferInd; currentBufferInd < bufferToload && currentBufferInd < parrallelLoad; currentBufferInd++) {
       loadBuffer(currentBufferInd);
+    }
+  });
+}
+
+export async function loadTexture(
+  gl: AnyWebRenderingGLContext,
+  data: GLTFData,
+  assetDirectory: string,
+  textureLoaded?: (ind: number, buffer: GLTexture) => void,
+): Promise<GLTexture[]> {
+  const textures = data.textures;
+
+  if (!textures) return Promise.resolve([]);
+
+  const images = data.images;
+
+  let texturesToload = images.length;
+  const texturesLength = images.length;
+
+  const result = new Array(texturesLength);
+
+  const parrallelLoad = 4;
+
+  if (texturesToload === 0) return Promise.resolve(result);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return new Promise((resolve, reject) => {
+    let currentTextureInd = 0;
+
+    const loadBuffer = (ind: number) => {
+      GLTexture.load(gl, `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`).then((texture) =>
+        loaded(ind, texture),
+      );
+    };
+
+    const loaded = (ind: number, data: GLTexture) => {
+      if (textureLoaded !== undefined) textureLoaded(ind, data);
+      result[ind] = data;
+      texturesToload--;
+
+      if (texturesToload === 0) {
+        resolve(result);
+      } else if (currentTextureInd < texturesLength) {
+        loadBuffer(currentTextureInd);
+        currentTextureInd++;
+      }
+    };
+
+    for (
+      currentTextureInd;
+      currentTextureInd < texturesToload && currentTextureInd < parrallelLoad;
+      currentTextureInd++
+    ) {
+      console.log('currentImageInd', currentTextureInd);
+      loadBuffer(currentTextureInd);
     }
   });
 }

@@ -8,8 +8,9 @@ import { GLTFDataNode } from './GLFTSchema';
 import { IGLTFCore } from './GLTFCore';
 import { GLTFMesh } from './GLTFMesh';
 import { fontDataStride } from '../../2d/text/BitmapFontRaw';
+import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
 
-export class GLTFNode<MaterialT extends IMaterial<IGLMVPShaderState> = IMaterial<IGLMVPShaderState>>
+export class GLTFNode<MaterialT extends IMaterial<IGLShaderState> = IMaterial<IGLShaderState>>
   extends SceneInstance3D
   implements IRenderableInstance3D, IGLTFCore<GLTFDataNode> {
   _material: MaterialT;
