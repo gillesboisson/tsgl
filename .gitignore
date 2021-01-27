@@ -6,3 +6,4 @@ dist/lib/assets/*
 .DS_Store
 .idea
 .vscode
+remote-profile
