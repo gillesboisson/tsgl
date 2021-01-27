@@ -39,6 +39,6 @@ export class SimpleFlatShader extends GLShader<SimpleFlatShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, SimpleFlatShaderState, getDefaultAttributeLocation(['position', 'uv']));
+    super(gl, vertSrc, fragSrc, SimpleFlatShaderState);
   }
 }

@@ -1,142 +1,149 @@
 {
-  "asset": {
-    "generator": "Khronos glTF Blender I/O v1.4.40",
-    "version": "2.0"
-  },
-  "scene": 0,
-  "scenes": [
-    {
-      "extras": {
-        "glTF2ExportSettings": {
-          "export_animations": 0,
-          "export_extras": 1,
-          "export_format": "GLTF_SEPARATE",
-          "export_morph": 0,
-          "export_skins": 0
-        }
-      },
-      "name": "Scene",
-      "nodes": [0]
-    }
-  ],
-  "nodes": [
-    {
-      "extras": {
-        "obj_prop": 3.1
-      },
-      "mesh": 0,
-      "name": "Cube",
-      "rotation": [0.00826538261026144, 0.026019718497991562, -0.0176741611212492, 0.9994710087776184],
-      "scale": [0.20000000298023224, 0.4000000059604645, 0.30000001192092896],
-      "translation": [-1, -1, 1]
-    }
-  ],
-  "materials": [
-    {
-      "doubleSided": true,
-      "name": "Material",
-      "pbrMetallicRoughness": {
-        "baseColorTexture": {
-          "index": 0,
-          "texCoord": 0
-        },
-        "metallicFactor": 0,
-        "roughnessFactor": 0.4000000059604645
-      }
-    }
-  ],
-  "meshes": [
-    {
-      "extras": {
-        "custom_prop": 2.3
-      },
-      "name": "Cube",
-      "primitives": [
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.4.40",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
         {
-          "attributes": {
-            "POSITION": 0,
-            "NORMAL": 1,
-            "TEXCOORD_0": 2
-          },
-          "indices": 3,
-          "material": 0
+            "extras" : {
+                "glTF2ExportSettings" : {
+                    "export_animations" : 0,
+                    "export_extras" : 1,
+                    "export_format" : "GLTF_SEPARATE",
+                    "export_morph" : 0,
+                    "export_skins" : 0
+                }
+            },
+            "name" : "Scene",
+            "nodes" : [
+                0
+            ]
         }
-      ]
-    }
-  ],
-  "textures": [
-    {
-      "sampler": 0,
-      "source": 0
-    }
-  ],
-  "images": [
-    {
-      "mimeType": "image/png",
-      "name": "cube-color",
-      "uri": "cube-color.png"
-    }
-  ],
-  "accessors": [
-    {
-      "bufferView": 0,
-      "componentType": 5126,
-      "count": 34,
-      "max": [1, 1, 1],
-      "min": [-1, -1, -1],
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 1,
-      "componentType": 5126,
-      "count": 34,
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 2,
-      "componentType": 5126,
-      "count": 34,
-      "type": "VEC2"
-    },
-    {
-      "bufferView": 3,
-      "componentType": 5123,
-      "count": 60,
-      "type": "SCALAR"
-    }
-  ],
-  "bufferViews": [
-    {
-      "buffer": 0,
-      "byteLength": 408,
-      "byteOffset": 0
-    },
-    {
-      "buffer": 0,
-      "byteLength": 408,
-      "byteOffset": 408
-    },
-    {
-      "buffer": 0,
-      "byteLength": 272,
-      "byteOffset": 816
-    },
-    {
-      "buffer": 0,
-      "byteLength": 120,
-      "byteOffset": 1088
-    }
-  ],
-  "samplers": [
-    {
-      "magFilter": 9729,
-      "minFilter": 9986
-    }
-  ],
-  "buffers": [
-    {
-      "byteLength": 1208,
-      "uri": "test-v.bin"
-    }
-  ]
+    ],
+    "nodes" : [
+        {
+            "extras" : {
+                "obj_prop" : 3.1
+            },
+            "mesh" : 0,
+            "name" : "Cube"
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "name" : "Material",
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 0,
+                    "texCoord" : 0
+                },
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.4000000059604645
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "extras" : {
+                "custom_prop" : 2.3
+            },
+            "name" : "Cube",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "sampler" : 0,
+            "source" : 0
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "cube-color",
+            "uri" : "cube-color.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 34,
+            "max" : [
+                1,
+                1,
+                1
+            ],
+            "min" : [
+                -1,
+                -1,
+                -1
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 34,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 34,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 60,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 408,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 408,
+            "byteOffset" : 408
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 272,
+            "byteOffset" : 816
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 120,
+            "byteOffset" : 1088
+        }
+    ],
+    "samplers" : [
+        {
+            "magFilter" : 9729,
+            "minFilter" : 9986
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 1208,
+            "uri" : "test-v.bin"
+        }
+    ]
 }

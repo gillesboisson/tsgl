@@ -68,6 +68,12 @@ export class Camera extends SceneInstance3D<CameraTransform3D> {
     mat4.multiply(out, this._vpMat, modelMat);
   }
 
+  normalMat(out: mat4, modelMat: mat4): mat4 {
+    mat4.invert(out, modelMat);
+    mat4.transpose(out, out);
+    return out;
+  }
+
   mv(out: mat4, modelMat: mat4, cachedWorldMat = true): void {
     mat4.multiply(out, cachedWorldMat ? this._worldMat : this.calcWorldMat(), modelMat);
   }

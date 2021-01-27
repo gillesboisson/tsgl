@@ -40,7 +40,6 @@ export class MSDFShader extends GLShader<MSDFShaderState> {
 
   constructor(gl: AnyWebRenderingGLContext) {
     const ext = gl.getExtension('OES_standard_derivatives');
-    console.log('ext', ext);
     if (!ext) throw new Error('MSDF Shader needs OES_standard_derivatives webgl extension to be supported');
     super(gl, vertSrc, fragSrc, MSDFShaderState, getDefaultAttributeLocation(['position', 'uv', 'color']));
   }
