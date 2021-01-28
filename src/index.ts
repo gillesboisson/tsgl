@@ -16,6 +16,7 @@ import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLVao } from './gl/core/data/GLVao';
 import { GLRenderer } from './gl/core/GLRenderer';
 import { GLTexture } from './gl/core/GLTexture';
+import { FirstPersonCameraController } from './input/CameraController';
 import { SimpleFlatShader } from './shaders/SimpleFlatShader';
 import { SimpleLamberianShader } from './shaders/SimpleLamberianShader';
 
@@ -27,14 +28,17 @@ class TestApp extends Base3DApp {
   meshVao: GLVao;
   cubeTransform: Transform3D;
   private _node: GLTFNode<SimpleLamberianMaterial>;
+  private _camController: FirstPersonCameraController;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
     this.cubeTransform = new Transform3D();
 
     // this.cubeTransform.setPosition(0, 0, -10);
-    this._cam.transform.setPosition(0, 0, 2);
+    this._cam.transform.setPosition(0, 0, -2);
 
     this.loadScene().then(() => this.start());
+
+    this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
 
     // const gl = this._renderer.getGL();
 
@@ -91,6 +95,7 @@ class TestApp extends Base3DApp {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(time: number, elapsedTime: number): void {
+    this._camController.update(elapsedTime);
     //
     this._node.transform.rotateEuler(0, elapsedTime * 0.001, 0);
     this._cam.updateWorldMat();
