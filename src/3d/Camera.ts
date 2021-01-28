@@ -1,6 +1,7 @@
 import { SceneInstance3D } from './SceneInstance3D';
-import { CameraTransform3D } from '../geom/CameraTransform3D';
+import { Transform3D } from '../geom/Transform3D';
 import { mat4 } from 'gl-matrix';
+import { CameraTransform3D } from '../geom/CameraTransform3D';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tmat4 = mat4.create();
@@ -8,6 +9,7 @@ const tmat4 = mat4.create();
 export class Camera extends SceneInstance3D<CameraTransform3D> {
   protected _projectionMat: mat4 = mat4.create();
   protected _vpMat: mat4 = mat4.create();
+  protected _invertWorldMap = mat4.create();
   protected _dirtyVP = true;
 
   static createOrtho(left: number, right: number, bottom: number, top: number, near?: number, far?: number): Camera {
@@ -49,22 +51,24 @@ export class Camera extends SceneInstance3D<CameraTransform3D> {
 
   updateWorldMat(parentMap: mat4 = null, worldMat?: mat4): mat4 {
     const wm = super.updateWorldMat(parentMap, worldMat);
-    // if (this._dirtyVP === true) {
-    mat4.multiply(this._vpMat, this._projectionMat, wm);
-    this._dirtyVP = false;
-    // }
+
+    mat4.invert(this._invertWorldMap, wm);
     return wm;
   }
 
   vp(out: mat4): void {
+    // if (this._dirtyVP) {
+    mat4.multiply(this._vpMat, this._projectionMat, this._invertWorldMap);
+    this._dirtyVP = false;
+    // }
     mat4.copy(out, this._vpMat);
   }
 
-  mvp(out: mat4, modelMat: mat4, cachedWorldMat = true): void {
-    if (this._dirtyVP === true || !cachedWorldMat) {
-      mat4.multiply(this._vpMat, this._projectionMat, cachedWorldMat ? this._worldMat : this.calcWorldMat());
-      this._dirtyVP = false;
-    }
+  mvp(out: mat4, modelMat: mat4): void {
+    // if (this._dirtyVP) {
+    mat4.multiply(this._vpMat, this._projectionMat, this._invertWorldMap);
+    this._dirtyVP = false;
+    // }
     mat4.multiply(out, this._vpMat, modelMat);
   }
 
