@@ -19,10 +19,10 @@ export interface IGLSpriteShaderState extends IGLShaderState {
 export class SpriteShaderState extends GLShaderState implements IGLSpriteShaderState {
   syncUniforms(): void {
     const gl = this.gl;
-    const uniformsLocations = this._uniformsLocation;
+    const uniformsLocations = this._uniformsLocations;
 
-    gl.uniformMatrix4fv(uniformsLocations.mvp, false, this.mvp);
-    gl.uniform1i(uniformsLocations.texture, this.textureInd);
+    gl.uniformMatrix4fv(uniformsLocations.u_mvp, false, this.mvp);
+    gl.uniform1i(uniformsLocations.u_texture, this.textureInd);
   }
 
   mvp: mat4 = mat4.create();
@@ -39,6 +39,6 @@ export class SpriteShader extends GLShader<SpriteShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, SpriteShaderState, getDefaultAttributeLocation(['position', 'uv', 'color']));
+    super(gl, vertSrc, fragSrc, SpriteShaderState, getDefaultAttributeLocation(['a_position', 'a_uv', 'a_color']));
   }
 }

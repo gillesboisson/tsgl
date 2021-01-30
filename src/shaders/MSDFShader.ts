@@ -19,7 +19,7 @@ export interface IGLMSDFShaderState extends IGLShaderState {
 export class MSDFShaderState extends GLShaderState implements IGLMSDFShaderState {
   syncUniforms(): void {
     const gl = this.gl;
-    const uniformsLocations = this._uniformsLocation;
+    const uniformsLocations = this._uniformsLocations;
 
     gl.uniformMatrix4fv(uniformsLocations.mvp, false, this.mvp);
     gl.uniform1i(uniformsLocations.texture, this.textureInd);
@@ -29,10 +29,12 @@ export class MSDFShaderState extends GLShaderState implements IGLMSDFShaderState
   textureInd = 0;
 }
 
+export const MSDFShaderID = 'msdf';
+
 export class MSDFShader extends GLShader<MSDFShaderState> {
   static register(renderer: GLRenderer): void {
     renderer.registerShaderFactoryFunction(
-      'msdf',
+      MSDFShaderID,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (gl: AnyWebRenderingGLContext, name: string) => new MSDFShader(gl),
     );

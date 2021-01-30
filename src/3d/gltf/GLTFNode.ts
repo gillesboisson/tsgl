@@ -64,7 +64,7 @@ export class GLTFNode<MaterialT extends IMaterial<IGLShaderState> = IMaterial<IG
     material.prepare(gl, cam, this._worldMat);
 
     for (const primitive of primitives) {
-      material.draw(gl, primitive.vao, primitive.nbElements, primitive.indicesType);
+      material.drawVao(gl, primitive.vao, primitive.nbElements, primitive.indicesType);
     }
 
     material.unbind(gl);

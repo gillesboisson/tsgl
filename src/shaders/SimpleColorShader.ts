@@ -12,7 +12,7 @@ const vertSrc = require('./glsl/simpleColor.vert').default;
 export class SimpleColorShaderState extends GLShaderState {
   syncUniforms(): void {
     const gl = this.gl;
-    const uniformsLocations = this._uniformsLocation;
+    const uniformsLocations = this._uniformsLocations;
 
     gl.uniform1i(uniformsLocations.textureInd, this.textureInd);
     gl.uniform4fv(uniformsLocations.color, this.color);

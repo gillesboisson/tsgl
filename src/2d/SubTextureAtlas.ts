@@ -131,9 +131,10 @@ export default class SubTextureAtlas {
     const jsonPath = path + '.json';
     const imgPath = path + '.png';
 
-    return Promise.all([fetch(jsonPath).then((response) => response.json()), GLTexture.load(gl, imgPath)]).then(
-      (results) => new SubTextureAtlas(results[0], results[1]),
-    );
+    return Promise.all([
+      fetch(jsonPath).then((response) => response.json()),
+      GLTexture.loadTexture2D(gl, imgPath),
+    ]).then((results) => new SubTextureAtlas(results[0], results[1]));
   }
 
   readonly subTextures: {

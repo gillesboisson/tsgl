@@ -1,3 +1,6 @@
+import { GLShader } from '../shader/GLShader';
+import { IGLShaderState } from '../shader/IGLShaderState';
+
 export enum GLDefaultAttributesLocation {
   POSITION = 0,
   UV = 1,
@@ -15,6 +18,7 @@ export enum GLDefaultAttributesLocation {
 }
 
 const defaultAttributes: { [name: string]: number } = {
+  // deprecated attributes name
   position: GLDefaultAttributesLocation.POSITION,
   uv: GLDefaultAttributesLocation.UV,
   uv2: GLDefaultAttributesLocation.UV2,
@@ -28,6 +32,20 @@ const defaultAttributes: { [name: string]: number } = {
   ivelocity: GLDefaultAttributesLocation.IVELOCITY,
   icolor: GLDefaultAttributesLocation.ICOLOR,
   iscale: GLDefaultAttributesLocation.ISCALE,
+
+  a_position: GLDefaultAttributesLocation.POSITION,
+  a_uv: GLDefaultAttributesLocation.UV,
+  a_uv2: GLDefaultAttributesLocation.UV2,
+  a_normal: GLDefaultAttributesLocation.NORMAL,
+  a_color: GLDefaultAttributesLocation.COLOR,
+  a_tangent: GLDefaultAttributesLocation.TANGENT,
+  a_joint: GLDefaultAttributesLocation.JOINT,
+  a_weight: GLDefaultAttributesLocation.WEIGHT,
+  a_iposition: GLDefaultAttributesLocation.IPOSITION,
+  a_iorientation: GLDefaultAttributesLocation.IORIENTATION,
+  a_ivelocity: GLDefaultAttributesLocation.IVELOCITY,
+  a_icolor: GLDefaultAttributesLocation.ICOLOR,
+  a_iscale: GLDefaultAttributesLocation.ISCALE,
 };
 
 export function getDefaultAttributeLocation(only?: string[]): { [name: string]: number } {
@@ -43,4 +61,56 @@ export function getDefaultAttributeLocation(only?: string[]): { [name: string]: 
 
     return res;
   }
+}
+
+export enum GLDefaultTextureLocation {
+  COLOR = 0,
+  NORMAL = 1,
+  POSITION = 2,
+  DEPTH = 3,
+
+  PBR_0 = 4,
+  PBR_1 = 5,
+  PBR_2 = 6,
+  AMBIANT_OCCLUSION = 7,
+
+  PLANAR_REFLECTION = 10,
+
+  POST_PROCESS_0 = 20,
+  POST_PROCESS_1 = 21,
+  POST_PROCESS_2 = 22,
+  POST_PROCESS_3 = 23,
+  POST_PROCESS_4 = 24,
+}
+
+const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
+  u_texture: GLDefaultTextureLocation.COLOR,
+  u_normal_map: GLDefaultTextureLocation.NORMAL,
+};
+
+export function setDefaultTextureLocation(
+  shader: GLShader<IGLShaderState>,
+  only?: string[],
+): { [name: string]: GLDefaultTextureLocation } {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const res: { [name: string]: GLDefaultTextureLocation } = {};
+  if (only === undefined) only = Object.keys(defaultTextureLocation);
+
+  const uniformsLocations = shader.getUniformsLocations();
+  shader.use();
+  const gl = shader.getGL();
+
+  only.forEach((name) => {
+    const location = defaultTextureLocation[name];
+
+    if (location === undefined) throw new Error('no default texture location for ' + name);
+
+    const uniformLocation = uniformsLocations[name];
+
+    if (uniformLocation === undefined) console.warn('No uniform location for ' + name);
+    gl.uniform1i(uniformLocation, location);
+
+    res[name] = location;
+  });
+  return res;
 }

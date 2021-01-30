@@ -1,6 +1,6 @@
 import { InterleavedDataArray } from '../gl/data/InterleavedData';
 import { vec2 } from 'gl-matrix';
-import { TestTFdata } from './TestTFdata';
+import { TestTFdata } from './deprecated/TestTFdata';
 export function generateRandomData(length: number): InterleavedDataArray<TestTFdata> {
   const bufferData = new InterleavedDataArray<TestTFdata>(TestTFdata, length, TestTFdata.__byteLength);
   const collection = bufferData.collection;

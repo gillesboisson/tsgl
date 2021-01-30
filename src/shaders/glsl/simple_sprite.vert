@@ -1,13 +1,14 @@
 precision mediump float;
 
-uniform mat4 mvp;
-attribute vec2 position;
-attribute vec2 uv;
+uniform mat4 u_mvp;
 
-varying vec4 vcolor;
-varying vec2 vuv;
+attribute vec2 a_position;
+attribute vec2 a_uv;
+
+varying vec4 v_color;
+varying vec2 v_uv;
 
 void main(){
-    vuv = uv;
-    gl_Position = mvp * vec4(position,0.0,1.0);
+    v_uv = a_uv;
+    gl_Position = u_mvp * vec4(a_position,0.0,1.0);
 }

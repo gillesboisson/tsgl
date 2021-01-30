@@ -8,17 +8,31 @@ export interface GLViewportState {
   y?: number;
   width?: number;
   height?: number;
-  setGlState?: (gl: AnyWebRenderingGLContext) => void;
+  // setGlState?: (gl: AnyWebRenderingGLContext) => void;
+  viewportBinded?: (gl: AnyWebRenderingGLContext) => void;
+  viewportUnbinded?: (gl: AnyWebRenderingGLContext) => void;
 }
 
 export class GLViewportStack {
   protected _stack: GLViewportState[] = [];
 
-  constructor(protected _gl: AnyWebRenderingGLContext, protected _mainViewportState: GLViewportState) {}
+  protected _currentState: GLViewportState;
 
-  protected updateViewportState(state: GLViewportState): void {
+  get currentState(): GLViewportState {
+    return this._currentState;
+  }
+
+  constructor(protected _gl: AnyWebRenderingGLContext, protected _mainViewportState: GLViewportState) {
+    this._currentState = _mainViewportState;
+  }
+
+  protected changeCurrentState(state: GLViewportState, unbindPreviousState = true): void {
     const gl = this._gl;
-    const { frameBuffer, x, y, width, height, setGlState } = state;
+    const { frameBuffer, x, y, width, height } = state;
+
+    if (unbindPreviousState && this._currentState.viewportUnbinded !== undefined)
+      this._currentState.viewportUnbinded(this._gl);
+    this._currentState = state;
 
     if (frameBuffer !== undefined) {
       if (width === undefined || height === undefined) {
@@ -31,32 +45,35 @@ export class GLViewportStack {
       gl.viewport(x || 0, y || 0, width, height);
     }
 
-    if (setGlState !== undefined) setGlState(gl);
+    if (state.viewportBinded !== undefined) state.viewportBinded(gl);
   }
 
   reset(): void {
+    this._stack.forEach((s) => {
+      if (s.viewportUnbinded !== undefined) s.viewportUnbinded(this._gl);
+    });
     this._stack.splice(0);
-    this.updateViewportState(this._mainViewportState);
+    this.changeCurrentState(this._mainViewportState, false);
   }
 
   pushState(state: GLViewportState): void {
-    this.updateViewportState(state);
+    this.changeCurrentState(state);
     this._stack.push(state);
   }
 
   changeState(state: GLViewportState): void {
-    if (this._stack.length === 0) throw new Error('changeState : Main viewport state can\'t be replaced');
-    this.updateViewportState(state);
+    if (this._stack.length === 0) throw new Error("changeState : Main viewport state can't be replaced");
+    this.changeCurrentState(state);
     this._stack[this._stack.length - 1] = state;
   }
 
   popState(): GLViewportState {
     if (this._stack.length === 0) {
-      this.updateViewportState(this._mainViewportState);
+      this.changeCurrentState(this._mainViewportState);
       return this._mainViewportState;
     } else {
       const state = this._stack.pop();
-      this.updateViewportState(state);
+      this.changeCurrentState(state);
       return state;
     }
   }

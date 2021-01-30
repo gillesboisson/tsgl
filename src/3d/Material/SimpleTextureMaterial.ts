@@ -2,15 +2,15 @@ import { mat4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { GLTexture } from '../../gl/core/GLTexture';
-import { SimpleFlatShaderState } from '../../shaders/SimpleFlatShader';
+import { SimpleTextureShaderID, SimpleTextureShaderState } from '../../shaders/SimpleTextureShader';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 
-export class SimpleTextureMaterial extends AMaterial<SimpleFlatShaderState> {
+export class SimpleTextureMaterial extends AMaterial<SimpleTextureShaderState> {
   constructor(renderer: GLRenderer, public texture: GLTexture) {
     super();
 
-    this._shaderState = renderer.getShader('simple_flat').createState() as SimpleFlatShaderState;
+    this._shaderState = renderer.getShader(SimpleTextureShaderID).createState() as SimpleTextureShaderState;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

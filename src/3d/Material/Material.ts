@@ -16,7 +16,7 @@ export abstract class AMaterial<ShaderStateT extends IGLShaderState = IGLShaderS
 
   abstract prepare(gl: AnyWebRenderingGLContext, cam: Camera, transformMat: mat4): void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  draw(
+  drawVao(
     gl: AnyWebRenderingGLContext,
     vao: GLVao,
     count: number,
@@ -34,7 +34,7 @@ export abstract class AMaterial<ShaderStateT extends IGLShaderState = IGLShaderS
 
   abstract unbind(gl: AnyWebRenderingGLContext): void;
 
-  render(
+  renderVao(
     gl: AnyWebRenderingGLContext,
     cam: Camera,
     transformMat: mat4,
@@ -44,7 +44,7 @@ export abstract class AMaterial<ShaderStateT extends IGLShaderState = IGLShaderS
     drawMode?: number,
   ): void {
     this.prepare(gl, cam, transformMat);
-    this.draw(gl, vao, count, drawType, drawMode);
+    this.drawVao(gl, vao, count, drawType, drawMode);
     this.unbind(gl);
   }
 }

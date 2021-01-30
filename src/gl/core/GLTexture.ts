@@ -8,8 +8,15 @@ export interface ImageSource {
 
 const EXT_DEFAULT_ALPHA = ['png', 'gif'];
 
+type TextureCompatibleImage =
+  | HTMLImageElement
+  | HTMLCanvasElement
+  | ArrayBufferView
+  | ImageData
+  | ImageBitmap
+  | HTMLVideoElement;
 export class GLTexture extends GLCore {
-  static async load(gl: AnyWebRenderingGLContext, url: string, type?: GLenum): Promise<GLTexture> {
+  static async loadTexture2D(gl: AnyWebRenderingGLContext, url: string, type?: GLenum): Promise<GLTexture> {
     const finalType =
       type !== undefined
         ? type
@@ -24,6 +31,46 @@ export class GLTexture extends GLCore {
         const texture = new GLTexture(gl, gl.TEXTURE_2D, image.width, image.height);
         texture.uploadImage(image, finalType);
         return texture;
+      });
+  }
+
+  // image order  posx.*, negx.*, posy.*, negy.*, posz.* and negz.*
+  static async loadCubeMap(gl: AnyWebRenderingGLContext, urls: string[], format?: GLenum) {
+    if (urls.length !== 6) throw new Error('6 images URL has to be provided in order to load 6 cube map faces');
+    const texture = new GLTexture(gl, gl.TEXTURE_CUBE_MAP);
+    const textureGL = texture.texture;
+
+    const finalFormat =
+      format !== undefined
+        ? format
+        : EXT_DEFAULT_ALPHA.indexOf(urls[0].split('.').pop().toLowerCase()) !== -1
+        ? gl.RGBA
+        : gl.RGB;
+
+    return Promise.all(
+      urls.map((url, ind) =>
+        fetch(url)
+          .then((response) => response.blob())
+          .then((blob) => createImageBitmap(blob))
+          .then((image) => {
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, textureGL);
+            gl.texImage2D(
+              gl.TEXTURE_CUBE_MAP_POSITIVE_X + ind,
+              0,
+              finalFormat,
+              finalFormat,
+              gl.UNSIGNED_BYTE,
+              image as any,
+            );
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+            return image;
+          }),
+      ),
+    )
+      .then((images) => texture)
+      .catch((err) => {
+        texture.destroy();
+        throw err;
       });
   }
 
@@ -43,9 +90,9 @@ export class GLTexture extends GLCore {
 
   constructor(
     gl: AnyWebRenderingGLContext,
-    protected _textureType: GLenum,
-    protected _width: number,
-    protected _height: number,
+    protected _textureTarget: GLenum,
+    protected _width?: number,
+    protected _height?: number,
     protected _mipmap: boolean = false,
     protected _linearFiltering: boolean = true,
     protected _wrapMode: GLenum = gl.CLAMP_TO_EDGE,
@@ -68,39 +115,39 @@ export class GLTexture extends GLCore {
     this.bind();
     if (enableMimap) {
       this.gl.texParameteri(
-        this._textureType,
+        this._textureTarget,
         this.gl.TEXTURE_MIN_FILTER,
         linearFiltering ? this.gl.NEAREST_MIPMAP_LINEAR : this.gl.NEAREST_MIPMAP_NEAREST,
       );
       this.gl.texParameteri(
-        this._textureType,
+        this._textureTarget,
         this.gl.TEXTURE_MAG_FILTER,
         linearFiltering ? this.gl.LINEAR : this.gl.NEAREST,
       );
 
-      this.gl.generateMipmap(this._textureType);
+      this.gl.generateMipmap(this._textureTarget);
     } else {
       this.gl.texParameteri(
-        this._textureType,
+        this._textureTarget,
         this.gl.TEXTURE_MIN_FILTER,
         linearFiltering ? this.gl.LINEAR : this.gl.NEAREST,
       );
       this.gl.texParameteri(
-        this._textureType,
+        this._textureTarget,
         this.gl.TEXTURE_MAG_FILTER,
         linearFiltering ? this.gl.LINEAR : this.gl.NEAREST,
       );
     }
 
-    this.gl.texParameteri(this._textureType, this.gl.TEXTURE_WRAP_S, wrapMode);
-    this.gl.texParameteri(this._textureType, this.gl.TEXTURE_WRAP_T, wrapMode);
+    this.gl.texParameteri(this._textureTarget, this.gl.TEXTURE_WRAP_S, wrapMode);
+    this.gl.texParameteri(this._textureTarget, this.gl.TEXTURE_WRAP_T, wrapMode);
 
     this.unbind();
   }
 
   setEmpty(format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE): void {
-    this.gl.texImage2D(this._textureType, 0, format, format, type, null);
-    if (this._mipmap) this.gl.generateMipmap(this._textureType);
+    this.gl.texImage2D(this._textureTarget, 0, format, format, type, null);
+    if (this._mipmap) this.gl.generateMipmap(this._textureTarget);
   }
 
   resize(width: number, height: number): void {
@@ -109,14 +156,20 @@ export class GLTexture extends GLCore {
     this.setEmpty(this.gl.RGBA);
   }
 
-  uploadImage(
-    image: HTMLImageElement | HTMLCanvasElement | ArrayBufferView | ImageData | ImageBitmap | HTMLVideoElement,
-    format: GLenum,
-    type: GLenum = this.gl.UNSIGNED_BYTE,
-  ): void {
+  uploadImage(image: TextureCompatibleImage, format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE): void {
     this.bind();
-    this.gl.texImage2D(this._textureType, 0, format, format, type, image as any);
-    if (this._mipmap) this.gl.generateMipmap(this._textureType);
+    this.gl.texImage2D(this._textureTarget, 0, format, format, type, image as any);
+    if (this._mipmap) this.gl.generateMipmap(this._textureTarget);
+    this.unbind();
+  }
+
+  // image order  posx.*, negx.*, posy.*, negy.*, posz.* and negz.*
+  uploadCubemap(images: TextureCompatibleImage[], format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE): void {
+    this.bind();
+    images.forEach((image: TextureCompatibleImage, ind: number) => {
+      this.gl.texImage2D(this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + ind, 0, format, format, type, image as any);
+    });
+    if (this._mipmap) this.gl.generateMipmap(this._textureTarget);
     this.unbind();
   }
 
@@ -126,11 +179,11 @@ export class GLTexture extends GLCore {
   }
 
   bind(): void {
-    this.gl.bindTexture(this._textureType, this.texture);
+    this.gl.bindTexture(this._textureTarget, this._texture);
   }
 
   unbind(): void {
-    this.gl.bindTexture(this._textureType, null);
+    this.gl.bindTexture(this._textureTarget, null);
   }
 
   private _texture: WebGLTexture;

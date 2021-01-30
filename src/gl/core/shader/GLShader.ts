@@ -6,6 +6,7 @@ import { GLShaderStateType } from './GLShaderStateType';
 import { IShaderProgram, ISyncUniform } from './IShaderProgram';
 import { IGLShaderState } from './IGLShaderState';
 import { GLRenderer } from '../GLRenderer';
+import { getUniformsLocation } from './getUniformsLocation';
 
 export type GLShaderPrecompileFlags = {
   [key: string]: string;
@@ -22,6 +23,7 @@ export class GLShader<ShaderStateT extends IGLShaderState>
   protected _state: ShaderStateT;
 
   glType = GLType.Shader;
+  private _uniformsLocations: { [name: string]: WebGLUniformLocation };
 
   constructor(
     gl: AnyWebRenderingGLContext,
@@ -33,6 +35,12 @@ export class GLShader<ShaderStateT extends IGLShaderState>
   ) {
     super(gl);
     this._program = compileProgram(gl, vertexSrc, fragmentSrc, attributesLocations, flags);
+
+    this._uniformsLocations = getUniformsLocation(this.gl, this._program);
+  }
+
+  getUniformsLocations(): { [name: string]: WebGLUniformLocation } {
+    return this._uniformsLocations;
   }
 
   createState(): ShaderStateT {

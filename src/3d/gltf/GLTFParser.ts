@@ -80,9 +80,10 @@ export async function loadTexture(
     let currentTextureInd = 0;
 
     const loadBuffer = (ind: number) => {
-      GLTexture.load(gl, `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`).then((texture) =>
-        loaded(ind, texture),
-      );
+      GLTexture.loadTexture2D(
+        gl,
+        `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`,
+      ).then((texture) => loaded(ind, texture));
     };
 
     const loaded = (ind: number, data: GLTexture) => {
@@ -103,7 +104,6 @@ export async function loadTexture(
       currentTextureInd < texturesToload && currentTextureInd < parrallelLoad;
       currentTextureInd++
     ) {
-      console.log('currentImageInd', currentTextureInd);
       loadBuffer(currentTextureInd);
     }
   });
@@ -170,12 +170,6 @@ export function loadBufferView(
           gltfBufferView.byteLength / Float32Array.BYTES_PER_ELEMENT,
         );
 
-  console.log(
-    target,
-    ab,
-    gltfBufferView.byteLength / Uint16Array.BYTES_PER_ELEMENT,
-    gltfBufferView.byteLength / Float32Array.BYTES_PER_ELEMENT,
-  );
   return new GLBuffer(
     gl,
     target,

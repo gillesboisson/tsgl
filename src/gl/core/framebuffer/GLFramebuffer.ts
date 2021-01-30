@@ -3,8 +3,9 @@ import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLTexture } from '../GLTexture';
 import { GLSupport } from '../GLSupport';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
+import { GLViewportState } from './GLViewportState';
 
-export class GLFramebuffer extends GLCore implements IGLFrameBuffer {
+export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportState {
   get depthTexture(): GLTexture {
     return this._depthTexture;
   }
@@ -26,6 +27,12 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer {
 
   private _depthTexture: GLTexture;
   private _previousViewport: Int32Array = null;
+
+  // viewport state binding
+
+  viewportBinded: () => void;
+  viewportUnbinded: () => void;
+
   constructor(
     gl: AnyWebRenderingGLContext,
     protected _width: number,
@@ -54,6 +61,9 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer {
     if (!_useDepthTexture && _depthEnabled) {
       this._depthRenderBuffer = gl.createRenderbuffer();
     }
+
+    this.viewportBinded = this.bind;
+    this.viewportUnbinded = this.unbind;
 
     this.updateSettings();
   }

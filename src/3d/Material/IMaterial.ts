@@ -10,7 +10,7 @@ export interface IMaterial<ShaderStateT extends IGLShaderState = IGLShaderState>
 
   prepare(gl: AnyWebRenderingGLContext, cam: Camera, transformMat: mat4): void;
 
-  draw(gl: AnyWebRenderingGLContext, vao: GLVao, count: number, drawType?: GLenum, drawMode?: GLenum): void;
+  drawVao(gl: AnyWebRenderingGLContext, vao: GLVao, count: number, drawType?: GLenum, drawMode?: GLenum): void;
 
   unbind(gl: AnyWebRenderingGLContext): void;
 }

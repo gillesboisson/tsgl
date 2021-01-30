@@ -2,18 +2,18 @@
 
 precision mediump float;
 
-uniform mat4 mvp;
-uniform sampler2D texture;
+uniform mat4 u_mvp;
+uniform sampler2D u_texture;
 
-varying vec4 vcolor;
-varying vec2 vuv;
+varying vec4 v_color;
+varying vec2 v_vuv;
 
 float median(float r, float g, float b) {
     return max(min(r, g), min(max(r, g), b));
 }
 
 void main(){
-    vec4 tcolor = texture2D(texture,vuv);
+    vec4 tcolor = texture2D(u_texture,v_vuv);
 
 
 
@@ -23,7 +23,7 @@ void main(){
 
     if(opacity < 0.005) discard;
 
-    gl_FragColor = vec4(vcolor.rgb * opacity, opacity * vcolor.a);
+    gl_FragColor = vec4(v_color.rgb * opacity, opacity * v_color.a);
 
 
 }
