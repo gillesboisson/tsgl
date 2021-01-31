@@ -134,24 +134,56 @@ export function createQuadMesh(
   return new GLMesh(gl, 4, 2, attrs, quadIndexB);
 }
 
-export function createWiredBoxMesh(
-  gl: AnyWebRenderingGLContext,
-  scaleX: number,
-  scaleY: number,
-  scaleZ: number,
-  drawType: GLenum = gl.STATIC_DRAW,
-): GLMesh {
-  const quadB = new GLBuffer(gl, gl.ARRAY_BUFFER, drawType);
-  quadB.bufferData(new Float32Array([-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]));
+// export function createWiredBoxMesh(
+//   gl: AnyWebRenderingGLContext,
+//   scaleX: number,
+//   scaleY: number,
+//   scaleZ: number,
+//   drawType: GLenum = gl.STATIC_DRAW,
+// ): GLMesh {
+//   const quadB = new GLBuffer(gl, gl.ARRAY_BUFFER, drawType);
+//   quadB.bufferData(new Float32Array([-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]));
 
-  const quadIndex = new Uint16Array([0, 1, 2, 1, 3, 2]);
-  const quadIndexB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, drawType);
-  quadIndexB.bufferData(quadIndex);
+//   const quadIndex = new Uint16Array([0, 1, 2, 1, 3, 2]);
+//   const quadIndexB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, drawType);
+//   quadIndexB.bufferData(quadIndex);
 
-  const attrs = [
-    new GLAttribute(gl, quadB, GLDefaultAttributesLocation.POSITION, 'position', 3, 5 * 4),
-    new GLAttribute(gl, quadB, GLDefaultAttributesLocation.UV, 'uv', 2, 5 * 4, 3 * 4),
+//   const attrs = [
+//     new GLAttribute(gl, quadB, GLDefaultAttributesLocation.POSITION, 'position', 3, 5 * 4),
+//     new GLAttribute(gl, quadB, GLDefaultAttributesLocation.UV, 'uv', 2, 5 * 4, 3 * 4),
+//   ];
+
+//   return new GLMesh(gl, 4, 2, attrs, quadIndexB);
+// }
+
+export function createSkyBoxMesh(gl: AnyWebRenderingGLContext): GLMesh{
+  const position = new Float32Array([
+    -1,1,1,
+    1,1,1,
+    -1,-1,1,
+    1,-1,1,
+    1,1,-1,
+    -1,1,-1,
+    1,-1,-1,
+    -1,-1,-1,
+  ]);
+
+  const indices = new Uint16Array([
+    0,1,2, 1,3,2,
+    4,5,6, 5,7,6,
+    1,4,3, 4,6,3,
+    5,0,7, 0,2,7,
+    5,4,0, 4,1,0,
+    2,3,7, 3,6,7,
+  ]);
+
+  const positionBuffer = new GLBuffer(gl,gl.ARRAY_BUFFER,gl.STATIC_DRAW,position);
+  const indexBuffer = new GLBuffer(gl,gl.ELEMENT_ARRAY_BUFFER,gl.STATIC_DRAW,indices);
+
+  const attributes = [
+    new GLAttribute(gl, positionBuffer, GLDefaultAttributesLocation.POSITION, 'position', 3, 12),
   ];
 
-  return new GLMesh(gl, 4, 2, attrs, quadIndexB);
+  return new GLMesh(gl,8,12, attributes,indexBuffer);
+  
 }

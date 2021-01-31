@@ -8,4 +8,5 @@ layout(location = 0) out vec4 colorOut;
 
 void main(void){
   colorOut = texture(u_tex,v_uv);
+  colorOut = vec4(1.0,1.0,1.0,1.0);
 }

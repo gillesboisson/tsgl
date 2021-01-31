@@ -89,18 +89,23 @@ export class GLTexture extends GLCore {
   }
 
   constructor(
-    gl: AnyWebRenderingGLContext,
+    context: AnyWebRenderingGLContext | { gl: AnyWebRenderingGLContext; texture: WebGLTexture },
     protected _textureTarget: GLenum,
     protected _width?: number,
     protected _height?: number,
     protected _mipmap: boolean = false,
     protected _linearFiltering: boolean = true,
-    protected _wrapMode: GLenum = gl.CLAMP_TO_EDGE,
+    protected _wrapMode: GLenum = (context as any).CLAMP_TO_EDGE || (context as any).gl.CLAMP_TO_EDGE,
   ) {
-    super(gl);
+    super((context as any).gl ? (context as any).gl : (context as AnyWebRenderingGLContext));
 
-    this._texture = gl.createTexture();
-    this.setup();
+    // this._wrapMode = wrapMode | ((gl as any).gl ? )
+    if ((context as any).gl) {
+      this._texture = (context as any).texture;
+    } else {
+      this._texture = (context as AnyWebRenderingGLContext).createTexture();
+      this.setup();
+    }
   }
 
   destroy(): void {
@@ -150,10 +155,16 @@ export class GLTexture extends GLCore {
     if (this._mipmap) this.gl.generateMipmap(this._textureTarget);
   }
 
-  resize(width: number, height: number): void {
+  /**
+   *
+   * @param width texture width
+   * @param height texture height
+   * @param setEmpty update WebGLTexture size by emptying : default is true can be set to false if WebGLTexture properties is handled manually
+   */
+  resize(width: number, height: number, setEmpty = true): void {
     this._width = width;
     this._height = height;
-    this.setEmpty(this.gl.RGBA);
+    if (setEmpty) this.setEmpty(this.gl.RGBA);
   }
 
   uploadImage(image: TextureCompatibleImage, format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE): void {

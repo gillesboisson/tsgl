@@ -23,10 +23,10 @@ invariant gl_Position;
 void main(void){
 
   
-  vec3 normal = normalize(a_Normal);
+  vec3 normal = normalize(a_normal);
   v_uv = a_uv;
-  vNormal = normalize((u_normalMat * vec4(normal,1.0)).xyz);
-  vPosition = (u_modelMat * vec4(a_position,1.0)).xyz;
+  v_normal = normalize((u_normalMat * vec4(normal,1.0)).xyz);
+  v_position = (u_modelMat * vec4(a_position,1.0)).xyz;
 
   // define TBD (Tangent Bitangent Normal) mat
   vec3 tangent = normalize(a_tangent).xyz;

@@ -1,6 +1,6 @@
 import { GLShader } from '../gl/core/shader/GLShader';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { getDefaultAttributeLocation } from '../gl/core/data/GLDefaultAttributesLocation';
+import { getDefaultAttributeLocation, setDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { mat4, vec3 } from 'gl-matrix';
 import { GLShaderState } from '../gl/core/shader/GLShaderState';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
@@ -66,5 +66,8 @@ export class SimpleLamberianShader extends GLShader<SimpleLamberianShaderState> 
       SimpleLamberianShaderState,
       getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv']),
     );
+
+    setDefaultTextureLocation(this,['u_diffuseMap','u_normalMap','u_pbrMap']);
+
   }
 }

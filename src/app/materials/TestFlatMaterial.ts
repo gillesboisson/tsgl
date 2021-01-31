@@ -17,7 +17,6 @@ export class TestFlatMaterial extends AMaterial<TestFlatShaderState> {
   prepare(gl: AnyWebRenderingGLContext, cam: Camera, transformMat: mat4): void {
     const ss = this._shaderState;
     ss.use();
-    cam.mvp(ss.mvp, transformMat);
     ss.syncUniforms();
   }
 

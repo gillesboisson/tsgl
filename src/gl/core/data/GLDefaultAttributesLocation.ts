@@ -75,6 +75,8 @@ export enum GLDefaultTextureLocation {
   AMBIANT_OCCLUSION = 7,
 
   PLANAR_REFLECTION = 10,
+  SKYBOX = 11,
+  IRRADIANCE_BOX = 12,
 
   POST_PROCESS_0 = 20,
   POST_PROCESS_1 = 21,
@@ -85,7 +87,11 @@ export enum GLDefaultTextureLocation {
 
 const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
   u_texture: GLDefaultTextureLocation.COLOR,
-  u_normal_map: GLDefaultTextureLocation.NORMAL,
+  u_diffuseMap: GLDefaultTextureLocation.COLOR,
+  u_normalMap: GLDefaultTextureLocation.NORMAL,
+  u_skyboxMap: GLDefaultTextureLocation.SKYBOX,
+  u_pbrMap: GLDefaultTextureLocation.PBR_0,
+  u_irradianceMap: GLDefaultTextureLocation.IRRADIANCE_BOX,
 };
 
 export function setDefaultTextureLocation(

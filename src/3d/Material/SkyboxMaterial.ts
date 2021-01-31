@@ -3,35 +3,34 @@ import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributes
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { GLTexture } from '../../gl/core/GLTexture';
-import { SimpleLamberianShaderState } from '../../shaders/SimpleLamberianShader';
+import { SkyboxShaderID, SkyboxShaderState } from '../../shaders/SkyboxShader';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 
-export class SimpleLamberianMaterial extends AMaterial<SimpleLamberianShaderState> {
-  constructor(renderer: GLRenderer, public diffuseMap: GLTexture, public normalMap: GLTexture, public pbrMap: GLTexture) {
-    super();
+export class SkyboxMaterial extends AMaterial<SkyboxShaderState> {
 
-    this._shaderState = renderer.getShader('simple_lamberian').createState() as SimpleLamberianShaderState;
+  /**
+   * 
+   * @param renderer renderer 
+   * @param texture Cubemap texture
+   */
+  constructor(renderer: GLRenderer, public texture: GLTexture) {
+    super();
+    
+    this._shaderState = renderer.getShader(SkyboxShaderID).createState() as SkyboxShaderState;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   prepare(gl: AnyWebRenderingGLContext, cam: Camera, transformMat: mat4): void {
     const ss = this._shaderState;
     ss.use();
-    this.diffuseMap.active(GLDefaultTextureLocation.COLOR);
-    this.normalMap.active(GLDefaultTextureLocation.NORMAL);
-    this.pbrMap.active(GLDefaultTextureLocation.PBR_0);
-    
+    this.texture.active(GLDefaultTextureLocation.SKYBOX);
     cam.mvp(ss.mvpMat, transformMat);
-    cam.normalMat(ss.normalMat, transformMat);
-    ss.modelMat = transformMat;
-    ss.cameraPos = cam.transform.getRawPosition();
-
     ss.syncUniforms();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   unbind(gl: AnyWebRenderingGLContext): void {
-    this.diffuseMap.unbind();
+    this.texture.unbind();
   }
 }

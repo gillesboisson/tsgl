@@ -13,7 +13,7 @@ import { SimpleLamberianMaterial } from './3d/Material/SimpleLamberianMaterial';
 import { SimpleTextureMaterial } from './3d/Material/SimpleTextureMaterial';
 import { MeshNode } from './3d/SceneInstance3D';
 import { Base3DApp } from './app/Base3DApp';
-import { createQuadMesh, createUVCropMesh } from './geom/MeshHelpers';
+import { createQuadMesh, createSkyBoxMesh, createUVCropMesh } from './geom/MeshHelpers';
 import { Transform3D } from './geom/Transform3D';
 import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLVao } from './gl/core/data/GLVao';
@@ -27,6 +27,11 @@ import { SimpleLamberianShader } from './shaders/SimpleLamberianShader';
 import { MSDFShader } from './shaders/MSDFShader';
 import { TestFlatID, TestFlatShader, TestFlatShaderState } from './app/shaders/TestFlatShader';
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
+import { CubeMapPatronHelper } from './geom/CubeMapPatronHelper';
+import { IrradianceHelper } from './geom/IrradianceHelper';
+import { TestIrradianceShader } from './app/shaders/TestIrradianceShader';
+import { SkyboxMaterial } from './3d/Material/SkyboxMaterial';
+import { SkyboxShader } from './shaders/SkyboxShader';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -40,15 +45,18 @@ class TestApp extends Base3DApp {
   private _cubeMap: GLTexture;
   fb: GLFramebuffer;
   vps: GLViewportStack;
-  quad: import('/home/gilles/Projects/sandbox/TsGL2D/src/gl/core/data/GLMesh').GLMesh;
   private _flatMat: TestFlatMaterial;
   private _flatShaderState: TestFlatShaderState;
+  cubePHelper: CubeMapPatronHelper;
+  private _cubeMapPatron: GLTexture;
+  private _irradianceHelper: IrradianceHelper;
+  private _skybox: MeshNode;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
     this.cubeTransform = new Transform3D();
 
     // this.cubeTransform.setPosition(0, 0, -10);
-    this._cam.transform.setPosition(0, 0, -10);
+    this._cam.transform.setPosition(0, 0, -2);
 
     this.loadScene().then(() => this.start());
 
@@ -72,79 +80,48 @@ class TestApp extends Base3DApp {
     const dir = './models/Corset/glTF';
 
     const gltfData: GLTFData = await fetch(`${dir}/Corset.gltf`).then((response) => response.json());
-    // setBufferViewTargetFromMesh(gl, gltfData);
+    setBufferViewTargetFromMesh(gl, gltfData);
 
-    // const glBuffers: GLBuffer[] = new Array(gltfData.bufferViews.length);
+    const glBuffers: GLBuffer[] = new Array(gltfData.bufferViews.length);
 
-    // await loadBuffers(gltfData, dir, (ind, buffer) => {
-    //   getBufferViewsDataLinkedToBuffer(gltfData, ind).forEach((bufferViewData) => {
-    //     glBuffers[bufferViewData.ind] = loadBufferView(gl, bufferViewData.bufferView, buffer);
-    //   });
-    // });
+    await loadBuffers(gltfData, dir, (ind, buffer) => {
+      getBufferViewsDataLinkedToBuffer(gltfData, ind).forEach((bufferViewData) => {
+        glBuffers[bufferViewData.ind] = loadBufferView(gl, bufferViewData.bufferView, buffer);
+      });
+    });
 
     const textures = await loadTextures(gl, gltfData, dir);
 
-    // const mesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
+    const mesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
 
-    // // this._node = new GLTFNode(mesh, new SimpleLamberianMaterial(this._renderer, textures[2]), gltfData.nodes[0]);
-
-    const xQ = 1 / 4;
-    const yT = 1 / 3;
-
-    const xS = new Array(5);
-    const yS = new Array(4);
-
-    for (let i = 0; i < xS.length; i++) {
-      xS[i] = i / 4;
-    }
-
-    for (let i = 0; i < yS.length; i++) {
-      yS[i] = 1 - i / 3;
-    }
-
-    const x0 = 0;
-    const x1 = xQ;
-    const x2 = xQ * 2;
-    const x3 = xQ * 3;
-    const x4 = 1;
-
-    const y0 = 1;
-    const y1 = yT * 2;
-    const y2 = yT;
-    const y3 = 0;
-
-    this.quad = createUVCropMesh(
-      gl,
-      new Float32Array([
-        -1, -1, -0.5, -1, -1, -0.5, -0.5, -0.5,
-        -0.5, -1, -0, -1, -0.5, -0.5, -0, -0.5,
-      ]),
-      new Float32Array([
-        xS[0], yS[1], xS[1], yS[1], xS[0], yS[2], xS[1], yS[2],
-        xS[1], yS[1], xS[2], yS[1], xS[1], yS[2], xS[2], yS[2],
-      ]),
+    this._node = new GLTFNode(
+      mesh,
+      new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]),
+      gltfData.nodes[0],
     );
+    this._node.transform.setScale(20);
+    this._node.transform.setPosition(0, -0.5, 0);
 
-    this._node = new MeshNode(new SimpleTextureMaterial(this._renderer, textures[0]), this.quad);
+    // this._node = new MeshNode(new SimpleTextureMaterial(this._renderer, textures[0]), this.quad);
 
     const bufferSize = 512;
 
-    this.fb = new GLFramebuffer(gl, bufferSize, bufferSize, false, true, true, false);
-
-    this.vps = new GLViewportStack(gl, this._renderer);
-
-    // this._flatMat = new TestFlatMaterial(this._renderer, textures[0]);
-
     this._flatShaderState = this._renderer.getShader(TestFlatID).createState() as TestFlatShaderState;
 
-    const cubeMapPatron = await GLTexture.loadTexture2D(
-      this._renderer.getGL(),
-      './images/circus/hdri/StandardCubeMap.png',
-    );
-    cubeMapPatron.active();
+    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.getGL(), './images/circus/hdri/StandardCubeMap.png');
 
-    // this._node.transform.setScale(20);
-    // this._node.transform.setPosition(0, -0.5, 0);
+    this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
+    this.cubePHelper.unwrap(cubeMapPatron);
+
+    this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
+    this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
+
+    this._skybox = new MeshNode(
+      new SkyboxMaterial(this._renderer, this._irradianceHelper.framebufferTexture),
+      createSkyBoxMesh(this._renderer.getGL()),
+    );
+
+    this._skybox.transform.setScale(50);
 
     // this._cubeMap = await GLTexture.loadCubeMap(gl, [
     //   './images/circus/hdri/px.png',
@@ -175,6 +152,8 @@ class TestApp extends Base3DApp {
     SimpleLamberianShader.register(renderer);
     MSDFShader.register(renderer);
     TestFlatShader.register(renderer);
+    TestIrradianceShader.register(renderer);
+    SkyboxShader.register(renderer);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(time: number, elapsedTime: number): void {
@@ -183,24 +162,25 @@ class TestApp extends Base3DApp {
     this._node.transform.rotateEuler(0, elapsedTime * 0.001, 0);
     this._cam.updateWorldMat();
     this._node.updateWorldMat();
+    this._skybox.updateWorldMat();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   render(time: number, elapsedTime: number): void {
     // this.stop();
 
-    this._flatShaderState.use();
+    // this._flatShaderState.use();
 
-    this.quad.draw();
+    // this.cubePHelper.meshes[5].draw();
+
+    // this.quad.draw();
 
     // this.fb.bind();
 
-    // this._node.render(this._renderer.getGL(), this._cam);
-    // this.flatShaderState.use();
-    // this._cam.mvp(this.flatShaderState.mvp, this.cubeTransform.getLocalMat(), false);
-    // this.flatShaderState.syncUniforms();
-    // this.meshVao.bind();
-    // const gl = this._renderer.getGL();
-    // gl.drawElements(gl.TRIANGLES, 60, gl.UNSIGNED_SHORT, 0);
+    this._irradianceHelper.framebufferTexture.active(9);
+    this._renderer.getGL().viewport(0, 0, 1280, 720);
+
+    this._skybox.render(this._renderer.getGL(),this._cam);
+    this._node.render(this._renderer.getGL(), this._cam);
   }
 }
