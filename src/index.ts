@@ -29,7 +29,7 @@ import { TestFlatID, TestFlatShader, TestFlatShaderState } from './app/shaders/T
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
 import { CubeMapPatronHelper } from './geom/CubeMapPatronHelper';
 import { IrradianceHelper } from './geom/IrradianceHelper';
-import { TestIrradianceShader } from './app/shaders/TestIrradianceShader';
+import { IrradianceShader } from './app/shaders/TestIrradianceShader';
 import { SkyboxMaterial } from './3d/Material/SkyboxMaterial';
 import { SkyboxShader } from './shaders/SkyboxShader';
 
@@ -152,7 +152,7 @@ class TestApp extends Base3DApp {
     SimpleLamberianShader.register(renderer);
     MSDFShader.register(renderer);
     TestFlatShader.register(renderer);
-    TestIrradianceShader.register(renderer);
+    IrradianceShader.register(renderer);
     SkyboxShader.register(renderer);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

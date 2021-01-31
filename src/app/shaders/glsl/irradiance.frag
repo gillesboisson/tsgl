@@ -1,12 +1,7 @@
-
+#define PI 3.141592653589793
 precision mediump float;
-#define SAMPLE_X 6
-#define SAMPLE_Y 6
-#define SAMPLE_STRENGH 1/36
-#define SAMPLE_OFFSET 0.01227184630308513
 
 varying vec3 v_normal;
-varying vec2 v_position;
 
 uniform samplerCube u_texture;
 
@@ -45,14 +40,7 @@ vec4 outQuat;
 
 vec3 transformQuat(vec3 a, vec4 q) {
   vec3 outVec;
-  // benchmarks: https://jsperf.com/quaternion-transform-vec3-implementations-fixed
-  // let qx = q[0],
-  //   qy = q[1],
-  //   qz = q[2],
-  //   qw = q[3];
-  // let x = a[0],
-  //   y = a[1],
-  //   z = a[2];
+  
   // var qvec = [qx, qy, qz];
   // var uv = vec3.cross([], qvec, a);
   float uvx = q.y * a.z - q.z * a.y;
@@ -80,33 +68,39 @@ vec3 transformQuat(vec3 a, vec4 q) {
 
 void main(void){
 
-
+  // based variables
   vec3 color = vec3(0.0);
   vec4 ident_quat = vec4(0.0,0.0,0.0,1.0);
   vec4 final_quat;
   vec3 normal;
 
-  const int sampleLim = 32;
-  const float colorRat = (float(sampleLim) * 2.0 + 1.0) * (float(sampleLim) * 2.0 + 1.0);
+  // nb sample for each line
+  const int sampleAxeAmount = 32;
+  const int sampleAxeAmountHalf = sampleAxeAmount / 2;  
 
-  for(int i=-sampleLim; i <= sampleLim;i++){
-    for(int f=-sampleLim; f <= sampleLim;f++){
+  // iradiance field angle  
+  const float sampleOm = PI / 4.0;
+  // angle between each sample                          
+  const float sampleOffset = float(sampleOm) / float(sampleAxeAmount);    
+
+  // total sample is square of (sampleAxeAmount + original target) 
+  const float totalSampleAmount = (float(sampleAxeAmount) + 1.0) * (float(sampleAxeAmount) + 1.0 );
+
+  // iterate through samples
+  for(int i=-sampleAxeAmountHalf; i <= sampleAxeAmountHalf;i++){
+    for(int f=-sampleAxeAmountHalf; f <= sampleAxeAmountHalf;f++){
+       // apply rotation in both axes
        final_quat = rotateX(ident_quat,float(i) * 0.03);
        final_quat = rotateY(final_quat,float(f) * 0.03);
+
+       // transform normal
        normal = transformQuat(normalize(v_normal),final_quat);
+
+       // get sample and add to color
        vec3 sampleColor = textureCube(u_texture,normalize(normal)).xyz ;
-       color += vec3(sampleColor.x / colorRat,sampleColor.y / colorRat,sampleColor.z / colorRat);
+       color += vec3(sampleColor.x / totalSampleAmount,sampleColor.y / totalSampleAmount,sampleColor.z / totalSampleAmount);
     }
   }
 
   gl_FragColor = vec4(color,1.0);
-
-  // final_quat = rotateX(ident_quat,0.03);
-  // normal = transformQuat(normalize(v_normal),final_quat);
-  // gl_FragColor = vec4(normalize(normal) / vec3(2.0) + vec3(0.5),1.0);
-
-  // gl_FragColor = textureCube(u_texture,normalize(v_normal));
-  // gl_FragColor = vec4(normalize(v_normal) / vec3(2.0) + vec3(0.5),1.0);
-
-  // gl_FragColor = vec4(v_uv,0.0,1.0);
 }

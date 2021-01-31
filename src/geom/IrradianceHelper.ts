@@ -1,4 +1,4 @@
-import { TestIrradianceID, TestIrradianceShaderState } from '../app/shaders/TestIrradianceShader';
+import { TestIrradianceID, IrradianceShaderState } from '../app/shaders/TestIrradianceShader';
 import { GLAttribute } from '../gl/core/data/GLAttribute';
 import { GLBuffer } from '../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributesLocation';
@@ -14,7 +14,7 @@ import { CubeMapFramebuffer } from './CubeMapFramebuffer';
 export class IrradianceHelper extends CubeMapFramebuffer {
   private _meshes: GLMesh[];
   readonly gl: AnyWebRenderingGLContext;
-  private _irradianceSS: TestIrradianceShaderState;
+  private _irradianceSS: IrradianceShaderState;
   get meshes(): GLMesh[] {
     return this._meshes;
   }
@@ -23,7 +23,7 @@ export class IrradianceHelper extends CubeMapFramebuffer {
     super(renderer.getGL(), size);
     this.createMesh(renderer.getGL());
 
-    this._irradianceSS = renderer.getShader(TestIrradianceID).createState() as TestIrradianceShaderState;
+    this._irradianceSS = renderer.getShader(TestIrradianceID).createState() as IrradianceShaderState;
     // new Float)
   }
 
