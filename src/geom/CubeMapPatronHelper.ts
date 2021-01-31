@@ -61,6 +61,7 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
 
 
     // mesh order  posx.*, negx.*, posy.*, negy.*, posz.* and negz.*
+    // !! uvY is inverted from flat patron to cubemap 
     // create separate uv data for each face using grid position
     const uvPosX = new Float32Array([xS[2], yS[2], xS[3], yS[2], xS[2], yS[1], xS[3], yS[1]]);
     const uvNegX = new Float32Array([xS[0], yS[2], xS[1], yS[2], xS[0], yS[1], xS[1], yS[1]]);

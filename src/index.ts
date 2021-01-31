@@ -108,7 +108,7 @@ class TestApp extends Base3DApp {
 
     this._flatShaderState = this._renderer.getShader(TestFlatID).createState() as TestFlatShaderState;
 
-    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.getGL(), './images/circus/hdri/StandardCubeMap.png');
+    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.getGL(), './images/circus/hdri/test_cmap.jpeg');
 
     this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
     this.cubePHelper.unwrap(cubeMapPatron);
