@@ -20,9 +20,9 @@ export abstract class Base3DApp {
 
   constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement) {
     const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL2));
-    GLSupport.VAOSupported(this._renderer.getGL(), true, true);
+    GLSupport.VAOSupported(this._renderer.gl, true, true);
 
-    const gl = renderer.getGL() as WebGL2RenderingContext;
+    const gl = renderer.gl as WebGL2RenderingContext;
 
     this.registeShader(gl, renderer);
 

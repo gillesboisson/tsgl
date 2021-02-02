@@ -21,7 +21,7 @@ export abstract class Base2DApp {
 
   constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement) {
     const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL));
-    GLSupport.VAOSupported(this._renderer.getGL(), true, true);
+    GLSupport.VAOSupported(this._renderer.gl, true, true);
     // let canvasRatio = canvas.height / canvas.width;
     // let vpRatio = window.innerHeight / window.innerWidth;
     // update canvas size;
@@ -33,7 +33,7 @@ export abstract class Base2DApp {
     //   canvas.style.height = window.innerWidth * canvasRatio + 'px';
     // }
 
-    const gl = renderer.getGL() as WebGL2RenderingContext;
+    const gl = renderer.gl as WebGL2RenderingContext;
 
     renderer.registerShaderFactory(SpriteShader);
     renderer.registerShaderFactory(SimpleSpriteShader);

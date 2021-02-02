@@ -1,26 +1,25 @@
 import { IGLCore } from '../IGLCore';
-import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLBuffer } from './GLBuffer';
 
 export class GLUbo implements IGLCore {
   protected _uboIndex: number;
 
-  constructor(protected _gl: WebGL2RenderingContext, id: string | number, program?: WebGLProgram) {
+  constructor(readonly gl: WebGL2RenderingContext, id: string | number, program?: WebGLProgram) {
     if (typeof id === 'string') {
       if (program === undefined) throw new Error('When id is provided as string in UBO, a program is required');
-      this._uboIndex = _gl.getUniformBlockIndex(program, id);
+      this._uboIndex = gl.getUniformBlockIndex(program, id);
     } else {
       this._uboIndex = id;
     }
   }
 
   bindBufferRange(buffer: GLBuffer, offset: number, size: number): void {
-    const gl = this._gl;
+    const gl = this.gl;
     gl.bindBufferRange(gl.UNIFORM_BUFFER, this._uboIndex, buffer.bufferIndex, offset, size);
   }
 
   bindBufferBase(buffer: GLBuffer): void {
-    const gl = this._gl;
+    const gl = this.gl;
     gl.bindBufferBase(gl.UNIFORM_BUFFER, this._uboIndex, buffer.bufferIndex);
   }
 
@@ -28,8 +27,5 @@ export class GLUbo implements IGLCore {
     return this._uboIndex;
   }
 
-  getGL(): AnyWebRenderingGLContext {
-    return this._gl;
-  }
   destroy(): void {}
 }

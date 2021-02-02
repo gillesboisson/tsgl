@@ -80,7 +80,7 @@ class TestApp extends Base3DApp {
   async loadTexture(): Promise<void> {}
 
   protected async loadScene(): Promise<void> {
-    const gl = this._renderer.getGL();
+    const gl = this._renderer.gl;
 
     const dir = './models/Corset/glTF';
 
@@ -110,7 +110,7 @@ class TestApp extends Base3DApp {
 
     // cubemap size
     // const bufferSize = 512;
-    // const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.getGL(), './images/circus/hdri/test_cmap.jpeg');
+    // const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
     // this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
     // this.cubePHelper.unwrap(cubeMapPatron);
 
@@ -120,7 +120,7 @@ class TestApp extends Base3DApp {
     // create skybox
     // this._skybox = new MeshNode(
     //   new SkyboxMaterial(this._renderer, this._irradianceHelper.framebufferTexture),
-    //   createSkyBoxMesh(this._renderer.getGL()),
+    //   createSkyBoxMesh(this._renderer.gl),
     // );
 
     // this._skybox.transform.setScale(50);
@@ -170,9 +170,9 @@ class TestApp extends Base3DApp {
 
 
     // this._irradianceHelper.framebufferTexture.active(9);
-    // this._renderer.getGL().viewport(0, 0, 1280, 720);
+    // this._renderer.gl.viewport(0, 0, 1280, 720);
 
-    // this._skybox.render(this._renderer.getGL(),this._cam);
-    // this._corsetNode.render(this._renderer.getGL(), this._cam);
+    // this._skybox.render(this._renderer.gl,this._cam);
+    // this._corsetNode.render(this._renderer.gl, this._cam);
   }
 }

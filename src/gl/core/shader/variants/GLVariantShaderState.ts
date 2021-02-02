@@ -40,7 +40,7 @@ export abstract class GLVariantShaderState extends GLCore implements IGLShaderSt
   protected _uniformsLocation: { [name: string]: WebGLUniformLocation };
 
   constructor(protected _shaderVariant: GLVariantShader<GLVariantShaderState>) {
-    super(_shaderVariant.getGL());
+    super(_shaderVariant.gl);
     this._possibleVariants = _shaderVariant.possibleVariants;
   }
 

@@ -9,11 +9,10 @@ export enum GLType {
 }
 export abstract class GLCore implements IGLCore {
   readonly glType: GLType;
+  
 
-  constructor(protected gl: AnyWebRenderingGLContext) {}
-  getGL(): AnyWebRenderingGLContext {
-    return this.gl;
-  }
+  constructor(readonly gl: AnyWebRenderingGLContext) {}
+  
 
   abstract destroy(): void;
 }

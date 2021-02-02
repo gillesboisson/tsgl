@@ -10,7 +10,7 @@ export class SimpleStage2D extends SpriteLayer {
 
   constructor(
     renderer: GLRenderer,
-    batch = new SpriteBatch(renderer.getGL() as WebGL2RenderingContext),
+    batch = new SpriteBatch(renderer.gl as WebGL2RenderingContext),
     width: number,
     height: number,
   ) {

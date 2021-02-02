@@ -29,7 +29,7 @@ export class SpriteLayer implements IRenderLayer<IGLSpriteShaderState, SpriteBat
     readonly renderer: GLRenderer,
     readonly width: number,
     readonly height: number,
-    readonly batch: SpriteBatch = new SpriteBatch(renderer.getGL() as WebGL2RenderingContext),
+    readonly batch: SpriteBatch = new SpriteBatch(renderer.gl as WebGL2RenderingContext),
     readonly renderState: IGLSpriteShaderState = renderer.createShaderState('sprite'),
   ) {
     this.cam = new Camera2D(width, height);

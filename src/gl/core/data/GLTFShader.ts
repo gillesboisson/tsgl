@@ -20,7 +20,7 @@ export abstract class GLTransformFeedbackShaderState extends GLCore implements I
     this.gl.useProgram(this._program);
   }
   constructor(shader: GLTransformFeedbackShader<GLTransformFeedbackShaderState>) {
-    super(shader.getGL());
+    super(shader.gl);
     this._program = shader.getProgram();
   }
 

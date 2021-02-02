@@ -104,7 +104,7 @@ export function setDefaultTextureLocation(
 
   const uniformsLocations = shader.getUniformsLocations();
   shader.use();
-  const gl = shader.getGL();
+  const gl = shader.gl;
 
   only.forEach((name) => {
     const location = defaultTextureLocation[name];

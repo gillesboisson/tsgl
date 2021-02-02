@@ -20,8 +20,8 @@ export class IrradianceHelper extends CubeMapFramebuffer {
   }
 
   constructor(readonly renderer: GLRenderer,size: number) {
-    super(renderer.getGL(), size);
-    this.createMesh(renderer.getGL());
+    super(renderer.gl, size);
+    this.createMesh(renderer.gl);
 
     this._irradianceSS = renderer.getShader(TestIrradianceID).createState() as IrradianceShaderState;
     // new Float)

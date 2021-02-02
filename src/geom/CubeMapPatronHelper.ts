@@ -20,8 +20,8 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
   }
 
   constructor(readonly renderer: GLRenderer, size: number) {
-    super(renderer.getGL(), size);
-    this.createMesh(renderer.getGL());
+    super(renderer.gl, size);
+    this.createMesh(renderer.gl);
 
     this._patronSS = renderer.getShader('test_flat').createState() as SimpleSpriteShaderState;
     // new Float)
