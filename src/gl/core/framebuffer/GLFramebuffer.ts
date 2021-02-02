@@ -33,6 +33,11 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
   viewportBinded: () => void;
   viewportUnbinded: () => void;
 
+  get glFrameBuffer(): WebGLFramebuffer{
+    return this._frameBuffer;
+    
+  }
+
   constructor(
     gl: AnyWebRenderingGLContext,
     protected _width: number,

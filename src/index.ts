@@ -32,6 +32,8 @@ import { IrradianceHelper } from './geom/IrradianceHelper';
 import { IrradianceShader } from './app/shaders/TestIrradianceShader';
 import { SkyboxMaterial } from './3d/Material/SkyboxMaterial';
 import { SkyboxShader } from './shaders/SkyboxShader';
+import { PlaneSpaceToModelSpaceNormalShader, PlaneSpaceToModelSpaceNormalShaderID, PlaneSpaceToModelSpaceNormalShaderState } from './shaders/PlaceSpaceToModelSpaceNormalShader';
+import { GLDefaultTextureLocation } from './gl/core/data/GLDefaultAttributesLocation';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -40,39 +42,42 @@ window.addEventListener('load', async () => {
 class TestApp extends Base3DApp {
   meshVao: GLVao;
   cubeTransform: Transform3D;
-  private _node: IRenderableInstance3D;
+  private _corsetNode: GLTFNode;private _modelSpaceFramebuffer: GLFramebuffer;
+;
   private _camController: FirstPersonCameraController;
   private _cubeMap: GLTexture;
   fb: GLFramebuffer;
   vps: GLViewportStack;
   private _flatMat: TestFlatMaterial;
-  private _flatShaderState: TestFlatShaderState;
   cubePHelper: CubeMapPatronHelper;
   private _cubeMapPatron: GLTexture;
   private _irradianceHelper: IrradianceHelper;
   private _skybox: MeshNode;
+  private _ppTomsNormal: PlaneSpaceToModelSpaceNormalShaderState;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
     this.cubeTransform = new Transform3D();
 
-    // this.cubeTransform.setPosition(0, 0, -10);
     this._cam.transform.setPosition(0, 0, -2);
 
-    this.loadScene().then(() => this.start());
+    this.loadScene();
+    //this.loadScene().then(() => this.start());
 
     this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
-
-    // const gl = this._renderer.getGL();
-
-    // gl.enable(gl.CULL_FACE);
-    // gl.disable(gl.DEPTH_TEST);
   }
-  async loadTexture(): Promise<void> {
-    // this.flatShaderState = this.renderer.getShader('simple_flat').createState() as SimpleFlatShaderState;
-    // this.flatShaderState.textureInd = 0;
-    // this.cam.transform.setPosition(0, 0, -10);
-    // texture.active(0);
+
+
+  registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
+    SimpleTextureShader.register(renderer);
+    SimpleLamberianShader.register(renderer);
+    MSDFShader.register(renderer);
+    TestFlatShader.register(renderer);
+    IrradianceShader.register(renderer);
+    SkyboxShader.register(renderer);
+    PlaneSpaceToModelSpaceNormalShader.register(renderer);
   }
+
+  async loadTexture(): Promise<void> {}
 
   protected async loadScene(): Promise<void> {
     const gl = this._renderer.getGL();
@@ -92,95 +97,82 @@ class TestApp extends Base3DApp {
 
     const textures = await loadTextures(gl, gltfData, dir);
 
-    const mesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
+    const corsetMesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
 
-    this._node = new GLTFNode(
-      mesh,
+    this._corsetNode = new GLTFNode(
+      corsetMesh,
       new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]),
       gltfData.nodes[0],
     );
-    this._node.transform.setScale(20);
-    this._node.transform.setPosition(0, -0.5, 0);
+    this._corsetNode.transform.setScale(20);
+    this._corsetNode.transform.setPosition(0, -0.5, 0);
 
-    // this._node = new MeshNode(new SimpleTextureMaterial(this._renderer, textures[0]), this.quad);
 
-    const bufferSize = 512;
+    // cubemap size
+    // const bufferSize = 512;
+    // const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.getGL(), './images/circus/hdri/test_cmap.jpeg');
+    // this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
+    // this.cubePHelper.unwrap(cubeMapPatron);
 
-    this._flatShaderState = this._renderer.getShader(TestFlatID).createState() as TestFlatShaderState;
+    // this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
+    // this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
 
-    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.getGL(), './images/circus/hdri/test_cmap.jpeg');
+    // create skybox
+    // this._skybox = new MeshNode(
+    //   new SkyboxMaterial(this._renderer, this._irradianceHelper.framebufferTexture),
+    //   createSkyBoxMesh(this._renderer.getGL()),
+    // );
 
-    this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
-    this.cubePHelper.unwrap(cubeMapPatron);
+    // this._skybox.transform.setScale(50);
+    const corsetNormalMap = textures[2];
 
-    this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
-    this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
 
-    this._skybox = new MeshNode(
-      new SkyboxMaterial(this._renderer, this._irradianceHelper.framebufferTexture),
-      createSkyBoxMesh(this._renderer.getGL()),
-    );
 
-    this._skybox.transform.setScale(50);
+    this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
+    this._modelSpaceFramebuffer = new GLFramebuffer(gl,corsetNormalMap.width,corsetNormalMap.height,false,true,false,false);
+    const normalImageData = new Uint8Array(corsetNormalMap.width * corsetNormalMap.height * 4);
 
-    // this._cubeMap = await GLTexture.loadCubeMap(gl, [
-    //   './images/circus/hdri/px.png',
-    //   './images/circus/hdri/nx.png',
-    //   './images/circus/hdri/py.png',
-    //   './images/circus/hdri/ny.png',
-    //   './images/circus/hdri/pz.png',
-    //   './images/circus/hdri/nz.png',
-    // ]);
+    this._modelSpaceFramebuffer.bind();
+    // const format = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
+    // const type = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
 
-    // this._cubeMap.active(9);
+    gl.disable(gl.CULL_FACE);
+    this._ppTomsNormal.use();
+    corsetMesh.vaos[0].bind();
+    textures[2].active(GLDefaultTextureLocation.NORMAL);
+    gl.drawElements(gl.TRIANGLES,corsetMesh.primitives[0].nbElements,gl.UNSIGNED_SHORT,0);
+    
 
-    /*
-    const primitive = gltfData.meshes[0].primitives[0];
+    gl.enable(gl.CULL_FACE);
+    this._modelSpaceFramebuffer.unbind();
 
-    this.meshVao = primitiveToVao(gl, primitive, gltfData.accessors, gltfData.bufferViews, glBuffers);
 
-    // fetch('./images/test-v.gltf')
-    //   .then((response) => response.json())
-    //   .then((gltf: GLTFData) => loadBuffers(gltf, './images'))
-    //   .then((buffers) => {
-    //   });
-    */
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this._modelSpaceFramebuffer.glFrameBuffer);
+    gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,normalImageData);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+
+    setTimeout(() => console.log(normalImageData),2000);
   }
 
-  registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
-    SimpleTextureShader.register(renderer);
-    SimpleLamberianShader.register(renderer);
-    MSDFShader.register(renderer);
-    TestFlatShader.register(renderer);
-    IrradianceShader.register(renderer);
-    SkyboxShader.register(renderer);
-  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(time: number, elapsedTime: number): void {
     this._camController.update(elapsedTime);
     //
-    this._node.transform.rotateEuler(0, elapsedTime * 0.001, 0);
-    this._cam.updateWorldMat();
-    this._node.updateWorldMat();
-    this._skybox.updateWorldMat();
+    // this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
+    // this._cam.updateWorldMat();
+    // this._corsetNode.updateWorldMat();
+    // this._skybox.updateWorldMat();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   render(time: number, elapsedTime: number): void {
     // this.stop();
 
-    // this._flatShaderState.use();
 
-    // this.cubePHelper.meshes[5].draw();
+    // this._irradianceHelper.framebufferTexture.active(9);
+    // this._renderer.getGL().viewport(0, 0, 1280, 720);
 
-    // this.quad.draw();
-
-    // this.fb.bind();
-
-    this._irradianceHelper.framebufferTexture.active(9);
-    this._renderer.getGL().viewport(0, 0, 1280, 720);
-
-    this._skybox.render(this._renderer.getGL(),this._cam);
-    this._node.render(this._renderer.getGL(), this._cam);
+    // this._skybox.render(this._renderer.getGL(),this._cam);
+    // this._corsetNode.render(this._renderer.getGL(), this._cam);
   }
 }
