@@ -35,6 +35,7 @@ import { SkyboxShader } from './shaders/SkyboxShader';
 import { PlaneSpaceToModelSpaceNormalShader, PlaneSpaceToModelSpaceNormalShaderID, PlaneSpaceToModelSpaceNormalShaderState } from './shaders/PlaceSpaceToModelSpaceNormalShader';
 import { GLDefaultTextureLocation } from './gl/core/data/GLDefaultAttributesLocation';
 import { LambertVShader, TestVariantShaderMaterial } from './app/shaders/VariantShaderTest';
+import { vec3 } from 'gl-matrix';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -104,8 +105,9 @@ class TestApp extends Base3DApp {
     // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
     const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
 
-    corsetMaterial.shadeMode = 'vertex';
-    corsetMaterial.extraColor = 'blue';
+    corsetMaterial.shadeMode = 'fragment';
+    corsetMaterial.extraColor = 'red';
+    vec3.set(corsetMaterial.lightPos,5,5,5);
 
     this._corsetNode = new GLTFNode(
       corsetMesh,
