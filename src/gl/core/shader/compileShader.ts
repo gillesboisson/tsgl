@@ -13,7 +13,7 @@ export function compileShader(
       if (flags.hasOwnProperty(key)) {
         let val = flags[key];
         if (typeof val === 'string') val = `"${val}"`;
-        defines += `#define ${key} ${flags[key]} \n`;
+        defines += `#define ${key} ${flags[key] === true ? '' : flags[key]} \n`;
       }
     }
     const srcSPL = src.split('\n');

@@ -3,22 +3,24 @@ import { GLCore, GLType } from '../GLCore';
 import { ICreateState } from './IGLShader';
 import { compileProgram } from './compileProgram';
 import { GLShaderStateType } from './GLShaderStateType';
-import { IShaderProgram, ISyncUniform } from './IShaderProgram';
+import { IShaderCreateState, IShaderProgram, ISyncUniform } from './IShaderProgram';
 import { IGLShaderState } from './IGLShaderState';
 import { GLRenderer } from '../GLRenderer';
 import { getUniformsLocation } from './getUniformsLocation';
 
 export type GLShaderPrecompileFlags = {
-  [key: string]: string;
+  [key: string]: string | boolean;
 };
 
 export interface IShaderRegisterer {
   register(renderer: GLRenderer): void;
 }
 
+
+
 export class GLShader<ShaderStateT extends IGLShaderState>
   extends GLCore
-  implements ICreateState, IShaderProgram, ISyncUniform {
+  implements ICreateState, IShaderProgram, ISyncUniform, IShaderCreateState<ShaderStateT> {
   protected _program: WebGLProgram;
   protected _state: ShaderStateT;
 

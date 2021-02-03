@@ -1,3 +1,5 @@
+import { IGLShaderState } from './IGLShaderState';
+
 export interface IUse {
   use(): void;
 }
@@ -8,4 +10,8 @@ export interface ISyncUniform {
 
 export interface IShaderProgram extends IUse {
   getProgram(): WebGLProgram;
+}
+
+export interface IShaderCreateState<ShaderStateT extends IGLShaderState>{
+  createState(): ShaderStateT;
 }

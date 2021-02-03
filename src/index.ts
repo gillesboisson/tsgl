@@ -34,6 +34,7 @@ import { SkyboxMaterial } from './3d/Material/SkyboxMaterial';
 import { SkyboxShader } from './shaders/SkyboxShader';
 import { PlaneSpaceToModelSpaceNormalShader, PlaneSpaceToModelSpaceNormalShaderID, PlaneSpaceToModelSpaceNormalShaderState } from './shaders/PlaceSpaceToModelSpaceNormalShader';
 import { GLDefaultTextureLocation } from './gl/core/data/GLDefaultAttributesLocation';
+import { LambertVShader, TestVariantShaderMaterial } from './app/shaders/VariantShaderTest';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -43,7 +44,7 @@ class TestApp extends Base3DApp {
   meshVao: GLVao;
   cubeTransform: Transform3D;
   private _corsetNode: GLTFNode;private _modelSpaceFramebuffer: GLFramebuffer;
-;
+
   private _camController: FirstPersonCameraController;
   private _cubeMap: GLTexture;
   fb: GLFramebuffer;
@@ -60,8 +61,8 @@ class TestApp extends Base3DApp {
 
     this._cam.transform.setPosition(0, 0, -2);
 
-    this.loadScene();
-    //this.loadScene().then(() => this.start());
+    // this.loadScene();
+    this.loadScene().then(() => this.start());
 
     this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
   }
@@ -75,6 +76,7 @@ class TestApp extends Base3DApp {
     IrradianceShader.register(renderer);
     SkyboxShader.register(renderer);
     PlaneSpaceToModelSpaceNormalShader.register(renderer);
+    LambertVShader.register(renderer);
   }
 
   async loadTexture(): Promise<void> {}
@@ -99,9 +101,15 @@ class TestApp extends Base3DApp {
 
     const corsetMesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
 
+    // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
+    const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
+
+    corsetMaterial.shadeMode = 'vertex';
+    corsetMaterial.extraColor = 'blue';
+
     this._corsetNode = new GLTFNode(
       corsetMesh,
-      new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]),
+      corsetMaterial,
       gltfData.nodes[0],
     );
     this._corsetNode.transform.setScale(20);
@@ -109,21 +117,21 @@ class TestApp extends Base3DApp {
 
 
     // cubemap size
-    // const bufferSize = 512;
-    // const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
-    // this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
-    // this.cubePHelper.unwrap(cubeMapPatron);
+    const bufferSize = 512;
+    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
+    this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
+    this.cubePHelper.unwrap(cubeMapPatron);
 
-    // this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
-    // this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
+    this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
+    this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
 
     // create skybox
-    // this._skybox = new MeshNode(
-    //   new SkyboxMaterial(this._renderer, this._irradianceHelper.framebufferTexture),
-    //   createSkyBoxMesh(this._renderer.gl),
-    // );
+    this._skybox = new MeshNode(
+      new SkyboxMaterial(this._renderer, this._irradianceHelper.framebufferTexture),
+      createSkyBoxMesh(this._renderer.gl),
+    );
 
-    // this._skybox.transform.setScale(50);
+    this._skybox.transform.setScale(50);
     const corsetNormalMap = textures[2];
 
 
@@ -148,20 +156,21 @@ class TestApp extends Base3DApp {
 
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._modelSpaceFramebuffer.glFrameBuffer);
-    gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,normalImageData);
+    // gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,normalImageData);
     gl.bindFramebuffer(gl.FRAMEBUFFER,null);
 
-    setTimeout(() => console.log(normalImageData),2000);
+    // setTimeout(() => console.log(normalImageData),2000);
+
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(time: number, elapsedTime: number): void {
     this._camController.update(elapsedTime);
     //
-    // this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
-    // this._cam.updateWorldMat();
-    // this._corsetNode.updateWorldMat();
-    // this._skybox.updateWorldMat();
+    this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
+    this._cam.updateWorldMat();
+    this._corsetNode.updateWorldMat();
+    this._skybox.updateWorldMat();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -173,6 +182,6 @@ class TestApp extends Base3DApp {
     // this._renderer.gl.viewport(0, 0, 1280, 720);
 
     // this._skybox.render(this._renderer.gl,this._cam);
-    // this._corsetNode.render(this._renderer.gl, this._cam);
+    this._corsetNode.render(this._renderer.gl, this._cam);
   }
 }
