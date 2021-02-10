@@ -8,12 +8,9 @@ import {
   loadTexture as loadTextures,
   setBufferViewTargetFromMesh,
 } from './3d/gltf/GLTFParser';
-import { IRenderableInstance3D } from './3d/IRenderableInstance3D';
-import { SimpleLamberianMaterial } from './3d/Material/SimpleLamberianMaterial';
-import { SimpleTextureMaterial } from './3d/Material/SimpleTextureMaterial';
 import { MeshNode } from './3d/SceneInstance3D';
 import { Base3DApp } from './app/Base3DApp';
-import { createQuadMesh, createSkyBoxMesh, createUVCropMesh } from './geom/MeshHelpers';
+import {  createSkyBoxMesh } from './geom/MeshHelpers';
 import { Transform3D } from './geom/Transform3D';
 import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLVao } from './gl/core/data/GLVao';
@@ -25,7 +22,6 @@ import { FirstPersonCameraController } from './input/CameraController';
 import { SimpleTextureShader } from './shaders/SimpleTextureShader';
 import { SimpleLamberianShader } from './shaders/SimpleLamberianShader';
 import { MSDFShader } from './shaders/MSDFShader';
-import { TestFlatID, TestFlatShader, TestFlatShaderState } from './app/shaders/TestFlatShader';
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
 import { CubeMapPatronHelper } from './geom/CubeMapPatronHelper';
 import { IrradianceHelper } from './geom/IrradianceHelper';
@@ -36,6 +32,9 @@ import { PlaneSpaceToModelSpaceNormalShader, PlaneSpaceToModelSpaceNormalShaderI
 import { GLDefaultTextureLocation } from './gl/core/data/GLDefaultAttributesLocation';
 import { LambertVShader, TestVariantShaderMaterial } from './app/shaders/VariantShaderTest';
 import { vec3 } from 'gl-matrix';
+import { PhongBlinnShader } from './shaders/PhongBlinnShader';
+import { PhongBlinnMaterial } from './app/materials/BlinnPhongMaterial';
+import { TestFlatShader } from './app/shaders/TestFlatShader';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -72,8 +71,9 @@ class TestApp extends Base3DApp {
   registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
     SimpleTextureShader.register(renderer);
     SimpleLamberianShader.register(renderer);
-    MSDFShader.register(renderer);
     TestFlatShader.register(renderer);
+    MSDFShader.register(renderer);
+    PhongBlinnShader.register(renderer);
     IrradianceShader.register(renderer);
     SkyboxShader.register(renderer);
     PlaneSpaceToModelSpaceNormalShader.register(renderer);
@@ -105,18 +105,28 @@ class TestApp extends Base3DApp {
     // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
     const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
 
+    const phongBlinnMaterial = new PhongBlinnMaterial(this._renderer, textures[0], {
+      position: vec3.fromValues(10,10,10),
+      color: vec3.fromValues(0.7,0.3,0.3),
+      specularColor: vec3.fromValues(0.8,0.0,0.0),
+      shininess: 64.0,
+      ambiantColor: vec3.fromValues(0.1,0.1,0.1),
+    });
+
     corsetMaterial.shadeMode = 'fragment';
-    corsetMaterial.extraColor = 'red';
-    vec3.set(corsetMaterial.lightPos,5,5,5);
+    corsetMaterial.extraColor = 'green';
+    vec3.set(corsetMaterial.lightPos,5,10,5);
 
     this._corsetNode = new GLTFNode(
       corsetMesh,
-      corsetMaterial,
+      phongBlinnMaterial,
       gltfData.nodes[0],
     );
     this._corsetNode.transform.setScale(20);
     this._corsetNode.transform.setPosition(0, -0.5, 0);
 
+
+   
 
     // cubemap size
     const bufferSize = 512;
