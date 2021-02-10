@@ -19,7 +19,7 @@ vec3 blinnPhong(vec3 modelPosition,
       vec3 diffuse = lightColor * diff;
 
       // specular
-      float spec = pow(max(dot(modelNormal, halfwayDir), 0.0), shininess);
+      float spec = max(pow(max(dot(modelNormal, halfwayDir), 0.0), shininess),0.0);
       vec3 specular = specularColor * spec;
 
       return specular+diffuse;

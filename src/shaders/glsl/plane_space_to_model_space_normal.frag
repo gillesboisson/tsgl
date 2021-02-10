@@ -8,7 +8,7 @@ uniform sampler2D u_normalMap;
 
 void main(void){
   
-  vec3 normal, t, b, ng;
+  vec3 normal, t, b, ng;  
 
   
   // TBN split

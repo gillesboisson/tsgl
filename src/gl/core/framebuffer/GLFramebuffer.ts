@@ -164,18 +164,18 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
     this._previousViewport = null;
   }
 
-  destroy(): void {
-    this.gl.deleteFramebuffer(this._frameBuffer);
-    if (this._useColorTexture) this._colorTexture.destroy();
-    if (this._useDepthTexture) {
+  destroy(destroyFramebuffer = true, destroyRenderBuffer = true, destroyTexture = true): void {
+    if(destroyFramebuffer) this.gl.deleteFramebuffer(this._frameBuffer);
+    if (this._useColorTexture && destroyTexture) this._colorTexture.destroy();
+    if (this._useDepthTexture && destroyTexture) {
       this._depthTexture.destroy();
     }
 
-    if (this._depthRenderBuffer !== undefined) {
+    if (this._depthRenderBuffer !== undefined && destroyRenderBuffer) {
       this.gl.deleteRenderbuffer(this._depthRenderBuffer);
     }
 
-    if (this._colorRenderBuffer !== undefined) {
+    if (this._colorRenderBuffer !== undefined && destroyRenderBuffer) {
       this.gl.deleteRenderbuffer(this._colorRenderBuffer);
     }
   }

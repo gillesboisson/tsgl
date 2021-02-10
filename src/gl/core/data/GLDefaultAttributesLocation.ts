@@ -1,5 +1,7 @@
+import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLShader } from '../shader/GLShader';
 import { IGLShaderState } from '../shader/IGLShaderState';
+import { GLShaderVariants } from '../shader/variants/GLShaderVariants';
 
 export enum GLDefaultAttributesLocation {
   POSITION = 0,
@@ -119,4 +121,38 @@ export function setDefaultTextureLocation(
     res[name] = location;
   });
   return res;
+}
+
+export function setDefaultTextureLocationForAllVariantShader(
+  shaderVariants: GLShaderVariants<IGLShaderState, any>,
+  only?: string[],
+): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const res: { [name: string]: GLDefaultTextureLocation } = {};
+  if (only === undefined) only = Object.keys(defaultTextureLocation);
+
+  const shaders = shaderVariants.shaders;
+
+  Object.keys(shaders).forEach((slug) => {
+    const shaderD = shaders[slug];
+    const uniformsLocations = shaderD.uniformsLocation;
+    
+    const gl = shaderD.gl;
+
+
+    gl.useProgram(shaderD.program);
+
+    only.forEach((name) => {
+      const location = defaultTextureLocation[name];
+
+      if (location === undefined) return;
+
+      const uniformLocation = uniformsLocations[name];
+
+      gl.uniform1i(uniformLocation, location);
+
+      res[name] = location;
+    });
+    
+  });
 }

@@ -35,6 +35,8 @@ import { vec3 } from 'gl-matrix';
 import { PhongBlinnShader } from './shaders/PhongBlinnShader';
 import { PhongBlinnMaterial } from './app/materials/BlinnPhongMaterial';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
+import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
+import { PhongBlinnVMaterial, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -73,7 +75,8 @@ class TestApp extends Base3DApp {
     SimpleLamberianShader.register(renderer);
     TestFlatShader.register(renderer);
     MSDFShader.register(renderer);
-    PhongBlinnShader.register(renderer);
+    // PhongBlinnShader.register(renderer);
+    PhongBlinnVShader.register(renderer);
     IrradianceShader.register(renderer);
     SkyboxShader.register(renderer);
     PlaneSpaceToModelSpaceNormalShader.register(renderer);
@@ -101,17 +104,31 @@ class TestApp extends Base3DApp {
     const textures = await loadTextures(gl, gltfData, dir);
 
     const corsetMesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
+    const corsetNormalMap = textures[2];
+    const corsetModelSpaceNormalMap = convertPlaceSpaceToModelSpaceNormalMap(this._renderer,corsetMesh.vaos[0],corsetMesh.primitives[0].nbElements,corsetNormalMap);
+    
+
 
     // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
     const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
 
-    const phongBlinnMaterial = new PhongBlinnMaterial(this._renderer, textures[0], {
+    // const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, corsetModelSpaceNormalMap, {
+    //   position: vec3.fromValues(10,10,10),
+    //   color: vec3.create(),
+    //   specularColor: vec3.create(),
+    //   shininess: 0.0,
+    //   ambiantColor: vec3.fromValues(1,1,1),
+    // });
+
+    const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, textures[0], {
       position: vec3.fromValues(10,10,10),
       color: vec3.fromValues(0.7,0.3,0.3),
       specularColor: vec3.fromValues(0.8,0.0,0.0),
       shininess: 64.0,
       ambiantColor: vec3.fromValues(0.1,0.1,0.1),
     });
+
+    phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
 
     corsetMaterial.shadeMode = 'fragment';
     corsetMaterial.extraColor = 'green';
@@ -144,32 +161,29 @@ class TestApp extends Base3DApp {
     );
 
     this._skybox.transform.setScale(50);
-    const corsetNormalMap = textures[2];
+    
+    // this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
+    // this._modelSpaceFramebuffer = new GLFramebuffer(gl,corsetNormalMap.width,corsetNormalMap.height,false,true,false,false);
+    // const normalImageData = new Uint8Array(corsetNormalMap.width * corsetNormalMap.height * 4);
 
+    // this._modelSpaceFramebuffer.bind();
+    // // const format = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
+    // // const type = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
 
-
-    this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
-    this._modelSpaceFramebuffer = new GLFramebuffer(gl,corsetNormalMap.width,corsetNormalMap.height,false,true,false,false);
-    const normalImageData = new Uint8Array(corsetNormalMap.width * corsetNormalMap.height * 4);
-
-    this._modelSpaceFramebuffer.bind();
-    // const format = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
-    // const type = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
-
-    gl.disable(gl.CULL_FACE);
-    this._ppTomsNormal.use();
-    corsetMesh.vaos[0].bind();
-    textures[2].active(GLDefaultTextureLocation.NORMAL);
-    gl.drawElements(gl.TRIANGLES,corsetMesh.primitives[0].nbElements,gl.UNSIGNED_SHORT,0);
+    // gl.disable(gl.CULL_FACE);
+    // this._ppTomsNormal.use();
+    // corsetMesh.vaos[0].bind();
+    // textures[2].active(GLDefaultTextureLocation.NORMAL);
+    // gl.drawElements(gl.TRIANGLES,corsetMesh.primitives[0].nbElements,gl.UNSIGNED_SHORT,0);
     
 
-    gl.enable(gl.CULL_FACE);
-    this._modelSpaceFramebuffer.unbind();
+    // gl.enable(gl.CULL_FACE);
+    // this._modelSpaceFramebuffer.unbind();
 
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this._modelSpaceFramebuffer.glFrameBuffer);
-    // gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,normalImageData);
-    gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, this._modelSpaceFramebuffer.glFrameBuffer);
+    // // gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,normalImageData);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER,null);
 
     // setTimeout(() => console.log(normalImageData),2000);
 

@@ -42,6 +42,7 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnShaderState> {
 
     this.texture.active(GLDefaultTextureLocation.COLOR);
 
+
     ss.syncUniforms();
   }
 

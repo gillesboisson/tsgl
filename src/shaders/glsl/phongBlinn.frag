@@ -19,12 +19,38 @@ uniform vec3 u_ambiantColor;
 
 
 varying vec3 v_position;
-varying vec3 v_normal;
+
 varying vec2 v_uv;
 
+#ifdef NORMAL_VERTEX
+varying vec3 v_normal;
+#endif
+
+#ifdef NORMAL_MAP
+uniform sampler2D u_normalMap;
+uniform mat4 u_normalMat;
+
+#endif
+
+
+
 void main(){
+
+    #ifdef NORMAL_VERTEX
     vec3 normal = normalize(v_normal); 
-      v_position;
+    #endif
+    #ifdef NORMAL_MAP
+    vec3 normal = normalize(
+        (
+          u_normalMat *
+          vec4(
+            texture2D(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0),
+            1.0
+          )
+        ).xyz
+
+      ); 
+    #endif
 
     vec4 color = vec4(blinnPhong(
       v_position,
@@ -38,6 +64,8 @@ void main(){
 
     vec4 diffuse = texture2D(u_diffuseMap,v_uv);
 
-    // gl_FragColor = diffuse * color * diffuse.a;
-    gl_FragColor = vec4(color.rgb,1.0);
+    gl_FragColor = diffuse * color * diffuse.a;
+    #ifdef NORMAL_MAP
+    // gl_FragColor = vec4(texture2D(u_normalMap,v_uv).rgb,1.0);
+    #endif
 }
