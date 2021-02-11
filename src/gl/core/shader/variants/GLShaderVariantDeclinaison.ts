@@ -32,6 +32,8 @@ export class GLShaderVariantDeclinaison {
     try {
       this._program = compileProgram(gl, vertexSrc, fragmentSrc, attributesLocations, _declinaison.flags);
       this._uniformsLocations = getUniformsLocation(this.gl, this._program);
+
+      // console.log(this._slug, this._uniformsLocations);
     } catch (e) {
       throw new Error('Shader variant init failed for ' + this._slug + ' : ' + e.message);
     }

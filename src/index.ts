@@ -105,6 +105,7 @@ class TestApp extends Base3DApp {
 
     const corsetMesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
     const corsetNormalMap = textures[2];
+    const corsetPbrMap = textures[1];
     const corsetModelSpaceNormalMap = convertPlaceSpaceToModelSpaceNormalMap(this._renderer,corsetMesh.vaos[0],corsetMesh.primitives[0].nbElements,corsetNormalMap);
     
 
@@ -122,13 +123,18 @@ class TestApp extends Base3DApp {
 
     const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, textures[0], {
       position: vec3.fromValues(10,10,10),
-      color: vec3.fromValues(0.7,0.3,0.3),
-      specularColor: vec3.fromValues(0.8,0.0,0.0),
+      color: vec3.fromValues(0.2,0.2,0.2),
+      specularColor: vec3.fromValues(0.5,0.0,0.0),
       shininess: 64.0,
-      ambiantColor: vec3.fromValues(0.1,0.1,0.1),
+      ambiantColor: vec3.fromValues(1,1,1),
     });
 
     phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
+    
+    // enable ambiant occlusionMap
+    phongBlinnMaterial.extraMap = corsetPbrMap;
+    phongBlinnMaterial.occlusionMapEnabled = true;
+
 
     corsetMaterial.shadeMode = 'fragment';
     corsetMaterial.extraColor = 'green';
@@ -147,7 +153,7 @@ class TestApp extends Base3DApp {
 
     // cubemap size
     const bufferSize = 512;
-    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
+    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/StandardCubeMap.png');
     this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
     this.cubePHelper.unwrap(cubeMapPatron);
 
@@ -161,6 +167,8 @@ class TestApp extends Base3DApp {
     );
 
     this._skybox.transform.setScale(50);
+
+    phongBlinnMaterial.irradianceMap = this._irradianceHelper.framebufferTexture;
     
     // this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
     // this._modelSpaceFramebuffer = new GLFramebuffer(gl,corsetNormalMap.width,corsetNormalMap.height,false,true,false,false);

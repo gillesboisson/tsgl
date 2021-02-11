@@ -8,7 +8,7 @@ import { GLShaderVariantKeyValue } from './GLVariantShaderTypes';
 
 
 export abstract class ShaderVariantsState<ValuesT> extends GLCore implements IGLShaderState {
-  private _variantValues: GLShaderVariantKeyValue;
+  protected _variantValues: GLShaderVariantKeyValue;
   private _dirtyVariant: boolean;
   protected _variantShader: GLShaderVariantDeclinaison;
 

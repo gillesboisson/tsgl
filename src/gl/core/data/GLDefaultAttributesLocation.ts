@@ -138,16 +138,16 @@ export function setDefaultTextureLocationForAllVariantShader(
     const uniformsLocations = shaderD.uniformsLocation;
     
     const gl = shaderD.gl;
-
+    
 
     gl.useProgram(shaderD.program);
-
     only.forEach((name) => {
       const location = defaultTextureLocation[name];
 
       if (location === undefined) return;
 
       const uniformLocation = uniformsLocations[name];
+
 
       gl.uniform1i(uniformLocation, location);
 
