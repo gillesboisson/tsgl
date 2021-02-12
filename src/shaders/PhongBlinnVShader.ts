@@ -1,7 +1,6 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Camera } from '../3d/Camera';
 import { AMaterial } from '../3d/Material/Material';
-import { PhongBlinnLightInterface } from '../app/materials/BlinnPhongMaterial';
 import {
   getDefaultAttributeLocation,
   GLDefaultTextureLocation,
@@ -13,6 +12,14 @@ import { GLTexture } from '../gl/core/GLTexture';
 import { GLShaderVariants } from '../gl/core/shader/variants/GLShaderVariants';
 import { GLVariantValueDefinition } from '../gl/core/shader/variants/GLVariantShaderTypes';
 import { ShaderVariantsState } from '../gl/core/shader/variants/ShaderVariantsState';
+
+export interface PhongBlinnLightInterface {
+  direction: vec3;
+  color: vec3;
+  specularColor: vec3;
+  ambiantColor: vec3;
+  shininess: number;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/phongBlinn.frag').default;
@@ -26,7 +33,7 @@ class PhongBlinnVShadersState extends ShaderVariantsState<PhongBlinnVariant> {
 
   cameraPosition: vec3 = vec3.create();
 
-  lightPosition: vec3 = vec3.create();
+  lightDirection: vec3 = vec3.create();
   lightColor: vec3 = vec3.create();
   specularColor: vec3 = vec3.create();
   lightShininess: number;
@@ -43,7 +50,7 @@ class PhongBlinnVShadersState extends ShaderVariantsState<PhongBlinnVariant> {
 
     gl.uniform3fv(uniformsLocations.u_cameraPosition, this.cameraPosition);
 
-    gl.uniform3fv(uniformsLocations.u_lightPosition, this.lightPosition);
+    gl.uniform3fv(uniformsLocations.u_lightDirection, this.lightDirection);
     gl.uniform3fv(uniformsLocations.u_lightColor, this.lightColor);
     gl.uniform3fv(uniformsLocations.u_specularColor, this.specularColor);
 
@@ -75,6 +82,13 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
 
           flags: {
             NORMAL_MAP: true,
+          },
+        },
+        {
+          value: 'tbn',
+
+          flags: {
+            NORMAL_TBN: true,
           },
         },
       ],
@@ -109,8 +123,8 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
             OCCLUSION_PBR_SPEC_MAP: false,
             OCCLUSION_MAP: false,
           },
-        }
-      ]
+        },
+      ],
     };
 
     super(
@@ -119,10 +133,10 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
       fragSrc,
       PhongBlinnVShadersState,
       valueDefTest,
-      getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv']),
+      getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv','a_tangent']),
     );
 
-    setDefaultTextureLocationForAllShaderVariants(this, ['u_textureMap', 'u_normalMap', 'u_irradianceMap','u_pbrMap']);
+    setDefaultTextureLocationForAllShaderVariants(this, ['u_textureMap', 'u_normalMap', 'u_irradianceMap', 'u_pbrMap']);
   }
 
   static register(renderer: GLRenderer): void {
@@ -145,7 +159,11 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
   protected _irradianceMap: GLTexture;
   protected _extraMap: GLTexture;
 
-  protected _occlusionMapEnabled  = false;
+  // occlusion map enabled (extra map need to be provided)
+  protected _occlusionMapEnabled = false;
+
+  // Tangent, Bilinear tangent, normal enabled (normal map need to be provided)
+  protected _tbnEnabled = false;
 
   get normalMap(): GLTexture {
     return this._normalMap;
@@ -154,7 +172,18 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
   set normalMap(val: GLTexture) {
     if (val !== this._normalMap) {
       this._normalMap = val;
-      this._shaderState?.setVariantValue('normal', val ? 'map' : 'vertex');
+      this.updateNormalMode();
+    }
+  }
+
+  get tbnEnabled(): boolean {
+    return this._tbnEnabled;
+  }
+
+  set tbnEnabled(val: boolean) {
+    if (val !== this._tbnEnabled) {
+      this._tbnEnabled = val;
+      this.updateNormalMode();
     }
   }
 
@@ -191,7 +220,21 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
     }
   }
 
-  protected updateOcclusionMap(): void{
+  protected updateNormalMode(): void {
+    switch (true) {
+      case this._normalMap && this._tbnEnabled:
+        this._shaderState?.setVariantValue('normal', 'tbn');
+        break;
+      case this._normalMap && !this._tbnEnabled:
+        this._shaderState?.setVariantValue('normal', 'map');
+        break;
+      default:
+        this._shaderState?.setVariantValue('normal', 'vertex');
+        break;
+    }
+  }
+
+  protected updateOcclusionMap(): void {
     this._shaderState?.setVariantValue('occlusionMap', this._extraMap && this._occlusionMapEnabled);
   }
 
@@ -202,7 +245,7 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
     ss.use();
 
     // light
-    ss.lightPosition = light.position;
+    ss.lightDirection = light.direction;
     ss.lightColor = light.color;
     ss.specularColor = light.specularColor;
     ss.ambiantColor = light.ambiantColor;
@@ -223,7 +266,7 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
       this._irradianceMap.active(GLDefaultTextureLocation.IRRADIANCE_BOX);
     }
 
-    if(this._extraMap) {
+    if (this._extraMap) {
       this._extraMap.active(GLDefaultTextureLocation.PBR_0);
     }
 
