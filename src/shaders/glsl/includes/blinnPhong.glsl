@@ -2,14 +2,13 @@
 
 vec3 blinnPhong(vec3 modelPosition,
  vec3 modelNormal,
- vec3 lightPosition,
+ vec3 lightDir,
  vec3 lightColor,
  vec3 specularColor,
  vec3 cameraPosition,
  float shininess){
       
       // calculate base vectors
-      vec3 lightDir   = normalize(lightPosition - modelPosition);
       vec3 viewDir    = normalize(cameraPosition - modelPosition);
       vec3 halfwayDir = normalize(lightDir + viewDir);
       
