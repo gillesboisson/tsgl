@@ -120,16 +120,22 @@ class TestApp extends Base3DApp {
     //   shininess: 0.0,
     //   ambiantColor: vec3.fromValues(1,1,1),
     // });
+    
+    
 
     const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, textures[0], {
-      position: vec3.fromValues(10,10,10),
-      color: vec3.fromValues(0.2,0.2,0.2),
-      specularColor: vec3.fromValues(0.5,0.0,0.0),
+      direction: vec3.normalize(vec3.create(),vec3.fromValues(1,1,1)),
+      color: vec3.fromValues(0.4,0.4,0.4),
+      specularColor: vec3.fromValues(0.1,0.1,0.1),
       shininess: 64.0,
-      ambiantColor: vec3.fromValues(1,1,1),
+      ambiantColor: vec3.fromValues(0.7,0.7,0.7),
     });
 
-    phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
+    phongBlinnMaterial.normalMap = corsetNormalMap;
+    phongBlinnMaterial.tbnEnabled = true;
+    
+    // phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
+    // phongBlinnMaterial.tbnEnabled = false;
     
     // enable ambiant occlusionMap
     phongBlinnMaterial.extraMap = corsetPbrMap;
@@ -153,7 +159,7 @@ class TestApp extends Base3DApp {
 
     // cubemap size
     const bufferSize = 512;
-    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/StandardCubeMap.png');
+    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
     this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
     this.cubePHelper.unwrap(cubeMapPatron);
 
@@ -162,7 +168,7 @@ class TestApp extends Base3DApp {
 
     // create skybox
     this._skybox = new MeshNode(
-      new SkyboxMaterial(this._renderer, this._irradianceHelper.framebufferTexture),
+      new SkyboxMaterial(this._renderer, this.cubePHelper.framebufferTexture),
       createSkyBoxMesh(this._renderer.gl),
     );
 
@@ -215,7 +221,7 @@ class TestApp extends Base3DApp {
     // this._irradianceHelper.framebufferTexture.active(9);
     // this._renderer.gl.viewport(0, 0, 1280, 720);
 
-    // this._skybox.render(this._renderer.gl,this._cam);
+    this._skybox.render(this._renderer.gl,this._cam);
     this._corsetNode.render(this._renderer.gl, this._cam);
   }
 }
