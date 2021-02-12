@@ -100,9 +100,10 @@ void main(){
     vec3 ambiantColor = textureCube(u_irradianceMap,normal).xyz * u_ambiantColor;
     #endif
 
-      
+    #ifdef OCCLUSION_PBR_SPEC_MAP  
     #ifdef OCCLUSION_MAP
     ambiantColor *= pbrMap.r;
+    #endif
     #endif
 
     vec3 color = blinnPhong(

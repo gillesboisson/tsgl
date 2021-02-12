@@ -102,6 +102,7 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           default: true,
           flags: {
             AMBIANT_COLOR: true,
+            
           },
         },
         {
@@ -124,8 +125,8 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           value: false,
           default: true,
           flags: {
-            OCCLUSION_PBR_SPEC_MAP: false,
-            OCCLUSION_MAP: false,
+            // OCCLUSION_PBR_SPEC_MAP: false,
+            // OCCLUSION_MAP: false,
           },
         },
       ],
@@ -331,8 +332,27 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
     }
 
     ss.syncUniforms();
+
+    console.log('ss',ss.getVariantValue('occlusionMap'));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  unbind(gl: AnyWebRenderingGLContext): void {}
+  unbind(gl: AnyWebRenderingGLContext): void {
+
+    if (this._diffuseMap) {
+      this._diffuseMap.unbind();
+    }
+
+    if (this._normalMap) {
+      this._normalMap.unbind();
+    }
+
+    if (this._irradianceMap) {
+      this._irradianceMap.unbind();
+    }
+
+    if (this._extraMap) {
+      this._extraMap.unbind();
+    }
+  }
 }

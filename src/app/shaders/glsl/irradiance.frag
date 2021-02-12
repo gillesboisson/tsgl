@@ -75,7 +75,7 @@ void main(void){
   vec3 normal;
 
   // nb sample for each line
-  const int sampleAxeAmount = 32;
+  const int sampleAxeAmount = 64;
   const int sampleAxeAmountHalf = sampleAxeAmount / 2;  
 
   // iradiance field angle  

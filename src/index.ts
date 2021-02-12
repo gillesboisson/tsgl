@@ -8,7 +8,7 @@ import {
   loadTexture as loadTextures,
   setBufferViewTargetFromMesh,
 } from './3d/gltf/GLTFParser';
-import { MeshNode } from './3d/SceneInstance3D';
+import { MeshNode, SceneInstance3D } from './3d/SceneInstance3D';
 import { Base3DApp } from './app/Base3DApp';
 import {  createSkyBoxMesh } from './geom/MeshHelpers';
 import { Transform3D } from './geom/Transform3D';
@@ -34,6 +34,7 @@ import { vec3 } from 'gl-matrix';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
 import { PhongBlinnVMaterial, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
+import { buildSphereGeomMesh } from './geom/buildSphereGeomMesh';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -54,6 +55,7 @@ class TestApp extends Base3DApp {
   private _irradianceHelper: IrradianceHelper;
   private _skybox: MeshNode;
   private _ppTomsNormal: PlaneSpaceToModelSpaceNormalShaderState;
+  private _sphere: MeshNode;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
     this.cubeTransform = new Transform3D();
@@ -108,7 +110,7 @@ class TestApp extends Base3DApp {
 
 
     // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
-    const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
+    // const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
 
     // const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, corsetModelSpaceNormalMap, {
     //   position: vec3.fromValues(10,10,10),
@@ -119,14 +121,15 @@ class TestApp extends Base3DApp {
     // });
     
     
-
-    const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, {
+    const light = {
       direction: vec3.normalize(vec3.create(),vec3.fromValues(1,1,1)),
       color: vec3.fromValues(0.4,0.4,0.4),
       specularColor: vec3.fromValues(0.1,0.1,0.1),
       shininess: 64.0,
       ambiantColor: vec3.fromValues(0.7,0.7,0.7),
-    });
+    };
+
+    const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, light);
 
 
     phongBlinnMaterial.normalMap = corsetNormalMap;
@@ -141,9 +144,9 @@ class TestApp extends Base3DApp {
     phongBlinnMaterial.occlusionMapEnabled = true;
 
 
-    corsetMaterial.shadeMode = 'fragment';
-    corsetMaterial.extraColor = 'green';
-    vec3.set(corsetMaterial.lightPos,5,10,5);
+    // corsetMaterial.shadeMode = 'fragment';
+    // corsetMaterial.extraColor = 'green';
+    // vec3.set(corsetMaterial.lightPos,5,10,5);
 
     this._corsetNode = new GLTFNode(
       corsetMesh,
@@ -200,6 +203,11 @@ class TestApp extends Base3DApp {
 
     // setTimeout(() => console.log(normalImageData),2000);
 
+    const sphereMesh = buildSphereGeomMesh(gl,1,64,32);
+    const sphereMat = new PhongBlinnVMaterial(this._renderer,light);
+    sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
+    this._sphere = new MeshNode(sphereMat,sphereMesh);
+
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -210,6 +218,7 @@ class TestApp extends Base3DApp {
     this._cam.updateWorldMat();
     this._corsetNode.updateWorldMat();
     this._skybox.updateWorldMat();
+    this._sphere.updateWorldMat();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -221,6 +230,7 @@ class TestApp extends Base3DApp {
     // this._renderer.gl.viewport(0, 0, 1280, 720);
 
     this._skybox.render(this._renderer.gl,this._cam);
-    this._corsetNode.render(this._renderer.gl, this._cam);
+    // this._corsetNode.render(this._renderer.gl, this._cam);
+    this._sphere.render(this._renderer.gl,this._cam);
   }
 }
