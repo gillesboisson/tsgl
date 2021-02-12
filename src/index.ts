@@ -28,12 +28,9 @@ import { IrradianceHelper } from './geom/IrradianceHelper';
 import { IrradianceShader } from './app/shaders/TestIrradianceShader';
 import { SkyboxMaterial } from './3d/Material/SkyboxMaterial';
 import { SkyboxShader } from './shaders/SkyboxShader';
-import { PlaneSpaceToModelSpaceNormalShader, PlaneSpaceToModelSpaceNormalShaderID, PlaneSpaceToModelSpaceNormalShaderState } from './shaders/PlaceSpaceToModelSpaceNormalShader';
-import { GLDefaultTextureLocation } from './gl/core/data/GLDefaultAttributesLocation';
+import { PlaneSpaceToModelSpaceNormalShader, PlaneSpaceToModelSpaceNormalShaderState } from './shaders/PlaceSpaceToModelSpaceNormalShader';
 import { LambertVShader, TestVariantShaderMaterial } from './app/shaders/VariantShaderTest';
 import { vec3 } from 'gl-matrix';
-import { PhongBlinnShader } from './shaders/PhongBlinnShader';
-import { PhongBlinnMaterial } from './app/materials/BlinnPhongMaterial';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
 import { PhongBlinnVMaterial, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
@@ -123,7 +120,7 @@ class TestApp extends Base3DApp {
     
     
 
-    const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, textures[0], {
+    const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, {
       direction: vec3.normalize(vec3.create(),vec3.fromValues(1,1,1)),
       color: vec3.fromValues(0.4,0.4,0.4),
       specularColor: vec3.fromValues(0.1,0.1,0.1),
@@ -131,8 +128,10 @@ class TestApp extends Base3DApp {
       ambiantColor: vec3.fromValues(0.7,0.7,0.7),
     });
 
+
     phongBlinnMaterial.normalMap = corsetNormalMap;
     phongBlinnMaterial.tbnEnabled = true;
+    phongBlinnMaterial.diffuseMap = textures[0];
     
     // phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
     // phongBlinnMaterial.tbnEnabled = false;

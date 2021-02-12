@@ -4,7 +4,14 @@ precision mediump float;
 #pragma glslify: tbnMatToNormal = require(./includes/tbnMatToNormal.glsl)
 
 
+#ifdef DIFFUSE_MAP
 uniform sampler2D u_diffuseMap;
+#endif
+
+#ifdef DIFFUSE_COLOR
+  uniform vec4 u_diffuseColor;
+#endif
+
 
 // cam
 uniform vec3 u_cameraPosition;
@@ -108,11 +115,16 @@ void main(){
       u_lightShininess
     );
     
-
+    #ifdef DIFFUSE_MAP
     vec4 diffuse = texture2D(u_diffuseMap,v_uv);
+    #endif
+
+    #ifdef DIFFUSE_COLOR
+    vec4 diffuse = u_diffuseColor;
+    #endif
 
     gl_FragColor = diffuse * (vec4(ambiantColor + color,1.0)) * diffuse.a;
-    // gl_FragColor = vec4(color,1.0);
+
 
     // #ifdef NORMAL_TBN
     // gl_FragColor = vec4(normal * vec3(0.5) + vec3(0.5),1.0);

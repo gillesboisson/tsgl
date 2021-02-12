@@ -39,6 +39,8 @@ class PhongBlinnVShadersState extends ShaderVariantsState<PhongBlinnVariant> {
   lightShininess: number;
 
   ambiantColor: vec3 = vec3.create();
+  diffuseColor: vec4 = vec4.create();
+
 
   syncUniforms(): void {
     const uniformsLocations = this._variantShader.uniformsLocation;
@@ -55,8 +57,10 @@ class PhongBlinnVShadersState extends ShaderVariantsState<PhongBlinnVariant> {
     gl.uniform3fv(uniformsLocations.u_specularColor, this.specularColor);
 
     gl.uniform3fv(uniformsLocations.u_ambiantColor, this.ambiantColor);
+    gl.uniform4fv(uniformsLocations.u_diffuseColor, this.diffuseColor);
 
     gl.uniform1f(uniformsLocations.u_lightShininess, this.lightShininess);
+    
   }
 }
 
@@ -125,6 +129,22 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           },
         },
       ],
+      diffuse:[
+        {
+          value: 'color',
+          default: true,
+          flags: {
+            DIFFUSE_COLOR: true,
+          }
+        },
+        {
+          value: 'texture',
+          
+          flags: {
+            DIFFUSE_MAP: true,
+          }
+        }
+      ]
     };
 
     super(
@@ -149,7 +169,7 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
 }
 
 export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
-  constructor(renderer: GLRenderer, public texture: GLTexture, public light: PhongBlinnLightInterface) {
+  constructor(renderer: GLRenderer, public light: PhongBlinnLightInterface) {
     super();
 
     this._shaderState = renderer.getShader(PhongBlinnVShaderID).createState() as PhongBlinnVShadersState;
@@ -158,12 +178,48 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
   protected _normalMap: GLTexture;
   protected _irradianceMap: GLTexture;
   protected _extraMap: GLTexture;
+  
+  
+  protected _diffuseMap: GLTexture;
+
+  protected _diffuseColor: vec4 = vec4.fromValues(1,1,1,1);
+
+
+  public setDiffuseColor(r:number,g = r, b = r, a = 1): void{
+    vec4.set(this._diffuseColor,r,g,b,a);
+  }
+
+  public copyDiffuseColor(sourceColor: vec4): void{
+    vec4.copy(this._diffuseColor,sourceColor);
+  }
+
+  get rawDiffuseColor():vec4{
+    return this._diffuseColor;
+  }
+
+  get diffuseColor():vec4{
+    return vec4.clone(this._diffuseColor);
+  }
+
+
+
 
   // occlusion map enabled (extra map need to be provided)
   protected _occlusionMapEnabled = false;
 
   // Tangent, Bilinear tangent, normal enabled (normal map need to be provided)
   protected _tbnEnabled = false;
+
+  get diffuseMap(): GLTexture {
+    return this._diffuseMap;
+  }
+
+  set diffuseMap(val: GLTexture) {
+    if (val !== this._diffuseMap) {
+      this._diffuseMap = val;
+      this._shaderState?.setVariantValue('diffuse', val ? 'texture' : 'color');
+    }
+  }
 
   get normalMap(): GLTexture {
     return this._normalMap;
@@ -250,13 +306,17 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
     ss.specularColor = light.specularColor;
     ss.ambiantColor = light.ambiantColor;
     ss.lightShininess = light.shininess;
+    ss.diffuseColor = this._diffuseColor;
 
     cam.mvp(ss.mvpMat, transformMat);
     cam.normalMat(ss.normalMat, transformMat);
     ss.modelMat = transformMat;
     vec3.negate(ss.cameraPosition, cam.transform.getRawPosition());
 
-    this.texture.active(GLDefaultTextureLocation.COLOR);
+
+    if (this._diffuseMap) {
+      this._diffuseMap.active(GLDefaultTextureLocation.COLOR);
+    }
 
     if (this._normalMap) {
       this._normalMap.active(GLDefaultTextureLocation.NORMAL);
