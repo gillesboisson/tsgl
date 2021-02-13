@@ -17,7 +17,7 @@ export class SceneInstance3D<TransformT extends ITransform<mat4> = Transform3D> 
     super(mat4, TransformClass);
   }
 
-  updateWorldMat(parentMap: mat4 = null, worldMat?: mat4): mat4 {
+  protected updateWorldMat(parentMap: mat4 = null, worldMat?: mat4): mat4 {
     const localMat = this.transform.getLocalMat();
 
     if (this._parent === null) {

@@ -49,7 +49,7 @@ export class Camera extends SceneInstance3D<CameraTransform3D> {
     this._dirtyVP = true;
   }
 
-  updateWorldMat(parentMap: mat4 = null, worldMat?: mat4): mat4 {
+  protected updateWorldMat(parentMap: mat4 = null, worldMat?: mat4): mat4 {
     const wm = super.updateWorldMat(parentMap, worldMat);
 
     mat4.invert(this._invertWorldMap, wm);

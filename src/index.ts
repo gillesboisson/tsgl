@@ -38,6 +38,7 @@ import { createSphereMesh } from './geom/mesh/createSphereMesh';
 import { createPlaneMesh } from './geom/mesh/createPlaneMesh';
 import { createCylinderMesh } from './geom/mesh/createCylinderMesh';
 import { createBoxMesh, cubeSquarePatronUv } from './geom/mesh/createBoxMesh';
+import { IRenderableInstance3D } from './3d/IRenderableInstance3D';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -59,6 +60,7 @@ class TestApp extends Base3DApp {
   private _skybox: MeshNode;
   private _ppTomsNormal: PlaneSpaceToModelSpaceNormalShaderState;
   private _sphere: MeshNode;
+  private _sceneRenderables: SceneInstance3D;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
     this.cubeTransform = new Transform3D();
@@ -179,6 +181,8 @@ class TestApp extends Base3DApp {
 
     this._skybox.transform.setScale(50);
 
+
+
     phongBlinnMaterial.irradianceMap = this._irradianceHelper.framebufferTexture;
     
     // this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
@@ -217,6 +221,14 @@ class TestApp extends Base3DApp {
     sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
     this._sphere = new MeshNode(sphereMat,cubeMesh);
 
+
+    this._sceneRenderables = new SceneInstance3D();
+
+
+    [this._skybox,this._sphere,this._corsetNode].forEach((node) => this._sceneRenderables.addChild(node));
+
+    
+
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -224,10 +236,8 @@ class TestApp extends Base3DApp {
     this._camController.update(elapsedTime);
     //
     this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
-    this._cam.updateWorldMat();
-    this._corsetNode.updateWorldMat();
-    this._skybox.updateWorldMat();
-    this._sphere.updateWorldMat();
+    this._cam.updateTransform();
+    this._sceneRenderables.updateTransform();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -238,8 +248,15 @@ class TestApp extends Base3DApp {
     // this._irradianceHelper.framebufferTexture.active(9);
     // this._renderer.gl.viewport(0, 0, 1280, 720);
 
-    this._skybox.render(this._renderer.gl,this._cam);
+    // this._skybox.render(this._renderer.gl,this._cam);
     // this._corsetNode.render(this._renderer.gl, this._cam);
-    this._sphere.render(this._renderer.gl,this._cam);
+    // this._sphere.render(this._renderer.gl,this._cam);
+
+    this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => this.renderElement(node));
+
+  }
+
+  renderElement(renderable: IRenderableInstance3D){
+    renderable.render(this._renderer.gl,this._cam);
   }
 }
