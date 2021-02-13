@@ -126,6 +126,7 @@ void main(){
 
     gl_FragColor = diffuse * (vec4(ambiantColor + color,1.0)) * diffuse.a;
 
+    // gl_FragColor = vec4(color,1.0);
 
     // #ifdef NORMAL_TBN
     // gl_FragColor = vec4(normal * vec3(0.5) + vec3(0.5),1.0);

@@ -1,13 +1,13 @@
 import { vec3 } from 'gl-matrix';
-import { GLAttribute } from '../gl/core/data/GLAttribute';
-import { GLBuffer } from '../gl/core/data/GLBuffer';
-import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributesLocation';
-import { GLMesh } from '../gl/core/data/GLMesh';
-import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
+import { GLAttribute } from '../../gl/core/data/GLAttribute';
+import { GLBuffer } from '../../gl/core/data/GLBuffer';
+import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
+import { GLMesh } from '../../gl/core/data/GLMesh';
+import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 
 
 
-export function buildSphereGeomMesh(
+export function createSphereMesh(
   gl: AnyWebRenderingGLContext,
   radius = 1,
   widthSegments = 8,

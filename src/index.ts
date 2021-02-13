@@ -10,7 +10,6 @@ import {
 } from './3d/gltf/GLTFParser';
 import { MeshNode, SceneInstance3D } from './3d/SceneInstance3D';
 import { Base3DApp } from './app/Base3DApp';
-import {  createSkyBoxMesh } from './geom/MeshHelpers';
 import { Transform3D } from './geom/Transform3D';
 import { GLBuffer } from './gl/core/data/GLBuffer';
 import { GLVao } from './gl/core/data/GLVao';
@@ -34,7 +33,11 @@ import { vec3 } from 'gl-matrix';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
 import { PhongBlinnVMaterial, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
-import { buildSphereGeomMesh } from './geom/buildSphereGeomMesh';
+import { createSkyBoxMesh } from './geom/mesh/createSkyBoxMesh';
+import { createSphereMesh } from './geom/mesh/createSphereMesh';
+import { createPlaneMesh } from './geom/mesh/createPlaneMesh';
+import { createCylinderMesh } from './geom/mesh/createCylinderMesh';
+import { createBoxMesh, cubeSquarePatronUv } from './geom/mesh/createBoxMesh';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -124,7 +127,7 @@ class TestApp extends Base3DApp {
     const light = {
       direction: vec3.normalize(vec3.create(),vec3.fromValues(1,1,1)),
       color: vec3.fromValues(0.4,0.4,0.4),
-      specularColor: vec3.fromValues(0.1,0.1,0.1),
+      specularColor: vec3.fromValues(0.8,0.8,0.8),
       shininess: 64.0,
       ambiantColor: vec3.fromValues(0.7,0.7,0.7),
     };
@@ -203,10 +206,16 @@ class TestApp extends Base3DApp {
 
     // setTimeout(() => console.log(normalImageData),2000);
 
-    const sphereMesh = buildSphereGeomMesh(gl,1,64,32);
+    const cubePatronTexture = await GLTexture.loadTexture2D(gl, 'images/base-cube-patron.jpg');
+
+    const sphereMesh = createSphereMesh(gl,1,64,32);
+    const cylinderMesh = createCylinderMesh(gl,1,1,1,32,1);
+    const planeMesh = createPlaneMesh(gl);
+    const cubeMesh = createBoxMesh(gl,1,1,1,3,3,3,cubeSquarePatronUv);
     const sphereMat = new PhongBlinnVMaterial(this._renderer,light);
+    sphereMat.diffuseMap =cubePatronTexture;
     sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
-    this._sphere = new MeshNode(sphereMat,sphereMesh);
+    this._sphere = new MeshNode(sphereMat,cubeMesh);
 
   }
 

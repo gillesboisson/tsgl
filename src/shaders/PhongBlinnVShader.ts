@@ -333,7 +333,6 @@ export class PhongBlinnVMaterial extends AMaterial<PhongBlinnVShadersState> {
 
     ss.syncUniforms();
 
-    console.log('ss',ss.getVariantValue('occlusionMap'));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
