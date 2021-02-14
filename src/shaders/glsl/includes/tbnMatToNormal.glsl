@@ -13,10 +13,10 @@ vec3 tbnMatToNormal(
   b = normalize(tbnMat[1]);
   ng = normalize(tbnMat[2]);
 
-  float facing = step(0.0, dot(eyeDirection, ng)) * 2.0 - 1.0;
-  t *= facing;
-  b *= facing;
-  ng *= facing;
+  // float facing = step(dot(eyeDirection, ng),0.0) * 2.0 - 1.0;
+  // t *= facing;
+  // b *= facing;
+  // ng *= facing;
 
   return mat3(t, b, ng) * normalize(normal);
 }

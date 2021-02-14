@@ -37,6 +37,9 @@ export class FirstPersonCameraController {
 
   private _orientationVec = vec3.create();
 
+  private _mouseXOffset = 0;
+  private _mouseYOffset = 0;
+
   constructor(
     readonly cam: Camera,
     readonly dom: HTMLElement,
@@ -60,8 +63,9 @@ export class FirstPersonCameraController {
 
   drag(clientX: number, clientY: number): void {
     const { x, y } = this.inputState.mouse;
-
-    this.cam.transform.rotateEuler((clientY - y) * -this.rotationSpeed, (clientX - x) * -this.rotationSpeed, 0);
+    
+    this._mouseXOffset+=clientX - x;
+    this._mouseYOffset+=clientY - y;
 
     this.inputState.mouse.x = clientX;
     this.inputState.mouse.y = clientY;
@@ -70,24 +74,24 @@ export class FirstPersonCameraController {
   onKeyUpdate(e: KeyboardEvent, state: boolean) {
     switch (e.code) {
       case 'KeyQ':
-        this._orientationVec[1] = state ? 1 : 0;
+        this._orientationVec[1] = state ? -1 : 0;
         break;
       case 'KeyE':
-        this._orientationVec[1] = state ? -1 : 0;
+        this._orientationVec[1] = state ? 1 : 0;
 
         break;
       case 'KeyA':
-        this._orientationVec[0] = state ? 1 : 0;
+        this._orientationVec[0] = state ? -1 : 0;
         break;
       case 'KeyD':
-        this._orientationVec[0] = state ? -1 : 0;
+        this._orientationVec[0] = state ? 1 : 0;
 
         break;
       case 'KeyW':
-        this._orientationVec[2] = state ? 1 : 0;
+        this._orientationVec[2] = state ? -1 : 0;
         break;
       case 'KeyS':
-        this._orientationVec[2] = state ? -1 : 0;
+        this._orientationVec[2] = state ? 1 : 0;
 
         break;
     }
@@ -117,6 +121,11 @@ export class FirstPersonCameraController {
         __tempVec31[1] * this.translationSpeed,
         __tempVec31[2] * this.translationSpeed,
       );
+    }
+
+    if(this._mouseXOffset !== 0 || this._mouseYOffset !== 0){
+      this.cam.transform.rotateEuler(this._mouseYOffset * -this.rotationSpeed, this._mouseXOffset * -this.rotationSpeed, 0);
+      this._mouseXOffset = this._mouseYOffset = 0;
     }
   }
 

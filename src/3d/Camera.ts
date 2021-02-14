@@ -2,11 +2,14 @@ import { SceneInstance3D } from './SceneInstance3D';
 import { Transform3D } from '../geom/Transform3D';
 import { mat4 } from 'gl-matrix';
 import { CameraTransform3D } from '../geom/CameraTransform3D';
+import { Type } from '../core/Type';
+import { ITransform } from '../gl/abstract/ITransform';
+import { TranslateRotateTransform3D } from '../geom/TranslateRotateTransform3D';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tmat4 = mat4.create();
 
-export class Camera extends SceneInstance3D<CameraTransform3D> {
+export class Camera<TransformT  extends ITransform<mat4> = CameraTransform3D> extends SceneInstance3D<TransformT> {
   protected _projectionMat: mat4 = mat4.create();
   protected _vpMat: mat4 = mat4.create();
   protected _invertWorldMap = mat4.create();
@@ -30,23 +33,26 @@ export class Camera extends SceneInstance3D<CameraTransform3D> {
     return cam;
   }
 
-  protected constructor() {
-    super(CameraTransform3D);
+  constructor(TransformClass: Type<TransformT> = (TranslateRotateTransform3D as unknown) as Type<TransformT>) {
+    super(TransformClass);
   }
 
-  setOrtho(left: number, right: number, bottom: number, top: number, near = 0.001, far = 100): void {
+  setOrtho(left: number, right: number, bottom: number, top: number, near = 0.001, far = 100): Camera<TransformT> {
     mat4.ortho(this._projectionMat, left, right, bottom, top, near, far);
     this._dirtyVP = true;
+    return this;
   }
 
-  setDimension2d(width: number, height: number, near = 0.001, far = 100): void {
+  setDimension2d(width: number, height: number, near = 0.001, far = 100):  Camera<TransformT> {
     mat4.ortho(this._projectionMat, 0, width, height, 0, near, far);
     this._dirtyVP = true;
+    return this;
   }
 
-  setPerspective(fovy: number, aspect: number, near = 0.001, far = 100): void {
+  setPerspective(fovy: number, aspect: number, near = 0.001, far = 100):  Camera<TransformT> {
     mat4.perspective(this._projectionMat, fovy, aspect, near, far);
     this._dirtyVP = true;
+    return this;
   }
 
   protected updateWorldMat(parentMap: mat4 = null, worldMat?: mat4): mat4 {

@@ -27,9 +27,12 @@ import { IrradianceHelper } from './geom/IrradianceHelper';
 import { IrradianceShader } from './app/shaders/TestIrradianceShader';
 import { SkyboxMaterial } from './3d/Material/SkyboxMaterial';
 import { SkyboxShader } from './shaders/SkyboxShader';
-import { PlaneSpaceToModelSpaceNormalShader, PlaneSpaceToModelSpaceNormalShaderState } from './shaders/PlaceSpaceToModelSpaceNormalShader';
+import {
+  PlaneSpaceToModelSpaceNormalShader,
+  PlaneSpaceToModelSpaceNormalShaderState,
+} from './shaders/PlaceSpaceToModelSpaceNormalShader';
 import { LambertVShader, TestVariantShaderMaterial } from './app/shaders/VariantShaderTest';
-import { vec3 } from 'gl-matrix';
+import { mat3, mat4, quat, vec3 } from 'gl-matrix';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
 import { PhongBlinnVMaterial, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
@@ -39,15 +42,20 @@ import { createPlaneMesh } from './geom/mesh/createPlaneMesh';
 import { createCylinderMesh } from './geom/mesh/createCylinderMesh';
 import { createBoxMesh, cubeSquarePatronUv } from './geom/mesh/createBoxMesh';
 import { IRenderableInstance3D } from './3d/IRenderableInstance3D';
+import { Camera } from './3d/Camera';
+import { CameraLookAtTransform3D, CameraTargetTransform3D } from './geom/CameraTargetTransform3D';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
 });
 
+
+
 class TestApp extends Base3DApp {
   meshVao: GLVao;
   cubeTransform: Transform3D;
-  private _corsetNode: GLTFNode;private _modelSpaceFramebuffer: GLFramebuffer;
+  private _corsetNode: GLTFNode;
+  private _modelSpaceFramebuffer: GLFramebuffer;
 
   private _camController: FirstPersonCameraController;
   private _cubeMap: GLTexture;
@@ -61,18 +69,26 @@ class TestApp extends Base3DApp {
   private _ppTomsNormal: PlaneSpaceToModelSpaceNormalShaderState;
   private _sphere: MeshNode;
   private _sceneRenderables: SceneInstance3D;
+  private _shadowFB: GLFramebuffer;
+  _shadowCam: Camera;
+  private _lcam: Camera<CameraLookAtTransform3D>;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
     this.cubeTransform = new Transform3D();
 
-    this._cam.transform.setPosition(0, 0, -2);
+    this._cam.transform.setPosition(0, 0, 3);
 
     // this.loadScene();
-    this.loadScene().then(() => this.start());
-
-    this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
+    this.loadScene().then(() => {
+      this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(70, this._renderer.width / this._renderer.height,0.1, 100);
+      this._lcam.transform.setPosition(0, 0, 2);
+      // this._lcam.transform.setTargetPosition(0,0,0);
+      this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
+      this.start();
+    });
   }
 
+  
 
   registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
     SimpleTextureShader.register(renderer);
@@ -110,8 +126,17 @@ class TestApp extends Base3DApp {
     const corsetMesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
     const corsetNormalMap = textures[2];
     const corsetPbrMap = textures[1];
-    const corsetModelSpaceNormalMap = convertPlaceSpaceToModelSpaceNormalMap(this._renderer,corsetMesh.vaos[0],corsetMesh.primitives[0].nbElements,corsetNormalMap);
-    
+    const corsetModelSpaceNormalMap = convertPlaceSpaceToModelSpaceNormalMap(
+      this._renderer,
+      corsetMesh.vaos[0],
+      corsetMesh.primitives[0].nbElements,
+      corsetNormalMap,
+    );
+
+    this._shadowFB = new GLFramebuffer(gl, 512, 512, true, false, true, false);
+    this._shadowCam = Camera.createOrtho(-2, 2, -2, 2, 0.001, 30);
+
+    // this._shadowCam.transform.setPosition(-10,-10,-10);
 
 
     // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
@@ -124,45 +149,35 @@ class TestApp extends Base3DApp {
     //   shininess: 0.0,
     //   ambiantColor: vec3.fromValues(1,1,1),
     // });
-    
-    
+
     const light = {
-      direction: vec3.normalize(vec3.create(),vec3.fromValues(1,1,1)),
-      color: vec3.fromValues(0.4,0.4,0.4),
-      specularColor: vec3.fromValues(0.8,0.8,0.8),
+      direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, -1)),
+      color: vec3.fromValues(0.4, 0.4, 0.4),
+      specularColor: vec3.fromValues(0.8, 0.8, 0.8),
       shininess: 64.0,
-      ambiantColor: vec3.fromValues(0.7,0.7,0.7),
+      ambiantColor: vec3.fromValues(0.7, 0.7, 0.7),
     };
 
     const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, light);
 
-
     phongBlinnMaterial.normalMap = corsetNormalMap;
     phongBlinnMaterial.tbnEnabled = true;
     phongBlinnMaterial.diffuseMap = textures[0];
-    
+
     // phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
     // phongBlinnMaterial.tbnEnabled = false;
-    
+
     // enable ambiant occlusionMap
     phongBlinnMaterial.extraMap = corsetPbrMap;
     phongBlinnMaterial.occlusionMapEnabled = true;
-
 
     // corsetMaterial.shadeMode = 'fragment';
     // corsetMaterial.extraColor = 'green';
     // vec3.set(corsetMaterial.lightPos,5,10,5);
 
-    this._corsetNode = new GLTFNode(
-      corsetMesh,
-      phongBlinnMaterial,
-      gltfData.nodes[0],
-    );
+    this._corsetNode = new GLTFNode(corsetMesh, phongBlinnMaterial, gltfData.nodes[0]);
     this._corsetNode.transform.setScale(20);
     this._corsetNode.transform.setPosition(0, -0.5, 0);
-
-
-   
 
     // cubemap size
     const bufferSize = 512;
@@ -181,10 +196,8 @@ class TestApp extends Base3DApp {
 
     this._skybox.transform.setScale(50);
 
-
-
     phongBlinnMaterial.irradianceMap = this._irradianceHelper.framebufferTexture;
-    
+
     // this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
     // this._modelSpaceFramebuffer = new GLFramebuffer(gl,corsetNormalMap.width,corsetNormalMap.height,false,true,false,false);
     // const normalImageData = new Uint8Array(corsetNormalMap.width * corsetNormalMap.height * 4);
@@ -198,11 +211,9 @@ class TestApp extends Base3DApp {
     // corsetMesh.vaos[0].bind();
     // textures[2].active(GLDefaultTextureLocation.NORMAL);
     // gl.drawElements(gl.TRIANGLES,corsetMesh.primitives[0].nbElements,gl.UNSIGNED_SHORT,0);
-    
 
     // gl.enable(gl.CULL_FACE);
     // this._modelSpaceFramebuffer.unbind();
-
 
     // gl.bindFramebuffer(gl.FRAMEBUFFER, this._modelSpaceFramebuffer.glFrameBuffer);
     // // gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,normalImageData);
@@ -212,22 +223,23 @@ class TestApp extends Base3DApp {
 
     const cubePatronTexture = await GLTexture.loadTexture2D(gl, 'images/base-cube-patron.jpg');
 
-    const sphereMesh = createSphereMesh(gl,1,64,32);
-    const cylinderMesh = createCylinderMesh(gl,1,1,1,32,1);
+    const sphereMesh = createSphereMesh(gl, 1, 64, 32);
+    const cylinderMesh = createCylinderMesh(gl, 1, 1, 1, 32, 1);
     const planeMesh = createPlaneMesh(gl);
-    const cubeMesh = createBoxMesh(gl,1,1,1,3,3,3,cubeSquarePatronUv);
-    const sphereMat = new PhongBlinnVMaterial(this._renderer,light);
-    sphereMat.diffuseMap =cubePatronTexture;
+    const cubeMesh = createBoxMesh(gl, 1, 1, 1, 3, 3, 3, cubeSquarePatronUv);
+    const sphereMat = new PhongBlinnVMaterial(this._renderer, light);
+    sphereMat.diffuseMap = cubePatronTexture;
     sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
-    this._sphere = new MeshNode(sphereMat,cubeMesh);
-
+    this._sphere = new MeshNode(sphereMat, cubeMesh);
+    this._sphere.transform.translate(2,0,0);
 
     this._sceneRenderables = new SceneInstance3D();
 
+    this._shadowCam.transform.setPosition(-10,-10,-10);
+    // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
 
-    [this._skybox,this._sphere,this._corsetNode].forEach((node) => this._sceneRenderables.addChild(node));
 
-    
+    [this._skybox, this._sphere, this._corsetNode].forEach((node) => this._sceneRenderables.addChild(node));
 
   }
 
@@ -236,14 +248,30 @@ class TestApp extends Base3DApp {
     this._camController.update(elapsedTime);
     //
     this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
+
+    // const camQuat = this._cam.transform.getRawRotation();
+
+    // // console.log('camQuat',camQuat);
+    // const diff = vec3.create();
+    
+    // vec3.normalize(diff, this._cam.transform.getRawPosition());
+
+
+
+    // quat.rotationTo(camQuat,vec3.fromValues(0,0,-1), diff);
+
+    // this._cam.transform.rotationTo(vec3.create());
+    // this._lcam.transform.translate(0.01,0,0);
     this._cam.updateTransform();
+    this._lcam.updateTransform();
+
+    this._shadowCam.updateTransform();
     this._sceneRenderables.updateTransform();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   render(time: number, elapsedTime: number): void {
     // this.stop();
-
 
     // this._irradianceHelper.framebufferTexture.active(9);
     // this._renderer.gl.viewport(0, 0, 1280, 720);
@@ -256,7 +284,7 @@ class TestApp extends Base3DApp {
 
   }
 
-  renderElement(renderable: IRenderableInstance3D){
-    renderable.render(this._renderer.gl,this._cam);
+  renderElement(renderable: IRenderableInstance3D) {
+    renderable.render(this._renderer.gl, this._lcam as any);
   }
 }
