@@ -7,8 +7,8 @@ import {
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { GLShaderVariantDeclinaison } from '../gl/core/shader/variants/GLShaderVariantDeclinaison';
-import { BOOSTRAP_BUILD_MODE, GLShaderVariants } from '../gl/core/shader/variants/GLShaderVariants';
-import { GLVariantDeclinaison, GLVariantValueDefinition } from '../gl/core/shader/variants/GLVariantShaderTypes';
+import { GLShaderVariants } from '../gl/core/shader/variants/GLShaderVariants';
+import {  GLVariantValueDefinition } from '../gl/core/shader/variants/GLVariantShaderTypes';
 import { PhongBlinnVShadersState } from './PhongBlinnVShadersState';
 
 export interface PhongBlinnLightInterface {

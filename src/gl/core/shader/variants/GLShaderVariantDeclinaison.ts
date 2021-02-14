@@ -3,7 +3,7 @@ import { compileProgram } from '../compileProgram';
 import { getUniformsLocation } from '../getUniformsLocation';
 import { IGLShaderState } from '../IGLShaderState';
 import { createShaderVariantSlug } from './createShaderVariantSlug';
-import { BOOSTRAP_BUILD_MODE, GLShaderVariants } from './GLShaderVariants';
+import { GLShaderVariants } from './GLShaderVariants';
 import { GLVariantDeclinaison } from './GLVariantShaderTypes';
 
 
@@ -13,7 +13,7 @@ export class GLShaderVariantDeclinaison {
   protected _slug: string;
   
   get program(): WebGLProgram {
-    if(!this._program && BOOSTRAP_BUILD_MODE){
+    if(!this._program && this._shader.buildOnDemand){
       this.build();
     }
     return this._program;
@@ -35,7 +35,7 @@ export class GLShaderVariantDeclinaison {
     private _attributesLocations?: { [name: string]: number; }
   ) {
     this._slug = createShaderVariantSlug(_declinaison.values);
-    if(BOOSTRAP_BUILD_MODE === false){
+    if(_shader.buildOnDemand === false){
       this.build();
     }
   }
