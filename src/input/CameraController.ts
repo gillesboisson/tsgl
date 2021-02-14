@@ -2,8 +2,8 @@ import { vec3 } from 'gl-matrix';
 import { Camera } from '../3d/Camera';
 
 const __tempVec31 = vec3.create();
-const __tempVec32 = vec3.create();
-const __tempVec33 = vec3.create();
+// const __tempVec32 = vec3.create();
+// const __tempVec33 = vec3.create();
 
 export class FirstPersonCameraController {
   private __mouseMoveHandler: (e: MouseEvent) => void;
@@ -71,46 +71,47 @@ export class FirstPersonCameraController {
     this.inputState.mouse.y = clientY;
   }
 
-  onKeyUpdate(e: KeyboardEvent, state: boolean) {
+  onKeyUpdate(e: KeyboardEvent, state: boolean): void {
     switch (e.code) {
-      case 'KeyQ':
-        this._orientationVec[1] = state ? -1 : 0;
-        break;
-      case 'KeyE':
-        this._orientationVec[1] = state ? 1 : 0;
+        case 'KeyQ':
+          this._orientationVec[1] = state ? -1 : 0;
+          break;
+        case 'KeyE':
+          this._orientationVec[1] = state ? 1 : 0;
 
-        break;
-      case 'KeyA':
-        this._orientationVec[0] = state ? -1 : 0;
-        break;
-      case 'KeyD':
-        this._orientationVec[0] = state ? 1 : 0;
+          break;
+        case 'KeyA':
+          this._orientationVec[0] = state ? -1 : 0;
+          break;
+        case 'KeyD':
+          this._orientationVec[0] = state ? 1 : 0;
 
-        break;
-      case 'KeyW':
-        this._orientationVec[2] = state ? -1 : 0;
-        break;
-      case 'KeyS':
-        this._orientationVec[2] = state ? 1 : 0;
+          break;
+        case 'KeyW':
+          this._orientationVec[2] = state ? -1 : 0;
+          break;
+        case 'KeyS':
+          this._orientationVec[2] = state ? 1 : 0;
 
-        break;
+          break;
     }
   }
-  onMouseDown(e: MouseEvent) {
+  onMouseDown(e: MouseEvent): void {
     this.inputState.mouse.down = true;
     this.inputState.mouse.x = e.clientX;
     this.inputState.mouse.y = e.clientY;
   }
-  onMouseUp(e: MouseEvent) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onMouseUp(e: MouseEvent): void {
     this.inputState.mouse.down = false;
   }
-  onMouseMove(e: MouseEvent) {
+  onMouseMove(e: MouseEvent): void {
     if (this.inputState.mouse.down) {
       this.drag(e.clientX, e.clientY);
     }
   }
 
-  update(elapsedTime: number) {
+  update(elapsedTime: number): void {
     if (this._orientationVec[0] !== 0 || this._orientationVec[1] !== 0 || this._orientationVec[2] !== 0) {
       vec3.transformQuat(__tempVec31, this._orientationVec, this.cam.transform.getRawRotation());
       vec3.scale(__tempVec31, __tempVec31, elapsedTime / 16);
@@ -129,7 +130,12 @@ export class FirstPersonCameraController {
     }
   }
 
-  destroy() {
-    throw new Error('Method not implemented.');
+  destroy(): void {
+    this.dom.addEventListener('mousemove', this.__mouseMoveHandler);
+    this.dom.addEventListener('mousedown', this.__mouseDownHandler);
+    document.addEventListener('mouseup', this.__mouseUpHandler);
+
+    document.addEventListener('keydown', this.__keyDownHandler);
+    document.addEventListener('keyup', this.__keyUpHandler);
   }
 }
