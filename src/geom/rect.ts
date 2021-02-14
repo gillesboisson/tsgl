@@ -59,7 +59,7 @@ export class rect extends Float32Array {
     out[3] = pos[1];
   }
 
-  static includePoint(out: rect, pos: vec2) {
+  static includePoint(out: rect, pos: vec2): void {
     if (out[0] > pos[0]) out[0] = pos[0];
     if (out[1] > pos[1]) out[1] = pos[1];
 

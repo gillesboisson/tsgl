@@ -5,7 +5,6 @@
 
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLTexture } from '../gl/core/GLTexture';
-import { SpriteDataType } from './SpriteBatch';
 import { SubTexture } from './SubTexture';
 
 type TexturePackerFrame = {

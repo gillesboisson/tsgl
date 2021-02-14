@@ -1,5 +1,4 @@
 import { SceneInstance3D } from './SceneInstance3D';
-import { Transform3D } from '../geom/Transform3D';
 import { mat4 } from 'gl-matrix';
 import { CameraTransform3D } from '../geom/CameraTransform3D';
 import { Type } from '../core/Type';

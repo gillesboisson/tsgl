@@ -1,5 +1,4 @@
-import { Transform3D } from './Transform3D';
-import { mat4, quat, vec3 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { TranslateRotateTransform3D } from './TranslateRotateTransform3D';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

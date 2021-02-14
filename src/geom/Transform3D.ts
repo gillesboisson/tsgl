@@ -6,8 +6,8 @@ export const IDENT_MAT4 = mat4.create();
 export const __quat1: quat = quat.create();
 
 export const __vec31: vec3 = vec3.create();
-const __vec32: vec3 = vec3.create();
-const __vec33: vec3 = vec3.create();
+// const __vec32: vec3 = vec3.create();
+// const __vec33: vec3 = vec3.create();
 export const __lookAtBaseVec = vec3.fromValues(0, 0, 1);
 
 

@@ -1,12 +1,6 @@
 import { GLRenderer, GLRendererType } from '../gl/core/GLRenderer';
-import { SimpleStage2D } from '../2d/simpleSprite/SimpleStage2D';
-import { SpriteShader } from '../shaders/SpriteShader';
-import { SimpleSpriteShader } from '../shaders/SimpleSpriteShader';
 import { Juggler } from '../animation/Juggler';
-import { Camera2D } from '../2d/Camera2D';
 import { GLSupport } from '../gl/core/GLSupport';
-import { SpriteBatch } from '../2d/SpriteBatch';
-import { SpriteLayer } from '../2d/Stage2D';
 import { Camera } from '../3d/Camera';
 
 export abstract class Base3DApp {

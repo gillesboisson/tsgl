@@ -1,4 +1,4 @@
-import { mat4, quat, vec3 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { ITransform } from '../gl/abstract/ITransform';
 
 export const IDENT_MAT4 = mat4.create();

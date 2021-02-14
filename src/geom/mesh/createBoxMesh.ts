@@ -1,4 +1,4 @@
-import { vec2, vec3 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import { GLAttribute } from '../../gl/core/data/GLAttribute';
 import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';

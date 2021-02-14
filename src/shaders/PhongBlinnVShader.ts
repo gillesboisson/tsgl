@@ -1,7 +1,6 @@
 import { vec3 } from 'gl-matrix';
 import {
   getDefaultAttributeLocation,
-  setDefaultTextureLocationForAllVariantShader as setDefaultTextureLocationForAllShaderVariants,
   setDefaultTextureLocationForVariantShader,
 } from '../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';

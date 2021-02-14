@@ -1,5 +1,4 @@
 import { GLRenderer, GLRendererType } from '../gl/core/GLRenderer';
-import { SimpleStage2D } from '../2d/simpleSprite/SimpleStage2D';
 import { SpriteShader } from '../shaders/SpriteShader';
 import { SimpleSpriteShader } from '../shaders/SimpleSpriteShader';
 import { Juggler } from '../animation/Juggler';

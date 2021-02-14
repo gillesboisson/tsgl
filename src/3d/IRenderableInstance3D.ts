@@ -1,6 +1,6 @@
 import { mat4 } from 'gl-matrix';
 import { Transform3D } from '../geom/Transform3D';
-import { ISceneInstance } from "../gl/abstract/ISceneInstance";
+import { ISceneInstance } from '../gl/abstract/ISceneInstance';
 import { ITransform } from '../gl/abstract/ITransform';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { Camera } from './Camera';
