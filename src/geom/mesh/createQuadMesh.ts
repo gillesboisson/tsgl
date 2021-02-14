@@ -22,24 +22,25 @@ export function createQuadMesh(
     quadTop,
     quadDepth,
     uvLeft,
-    uvTop,
+    uvBottom,
     quadRight,
     quadTop,
     quadDepth,
     uvRight,
-    uvTop,
+    uvBottom,
     quadLeft,
     quadBottom,
     quadDepth,
     uvLeft,
-    uvBottom,
+    uvTop,
     quadRight,
     quadBottom,
     quadDepth,
     uvRight,
-    uvBottom,
+    uvTop,
   ]);
 
+  
   quadB.bufferData(new Float32Array(bData));
 
   const quadIndex = new Uint16Array([0, 1, 2, 1, 3, 2]);

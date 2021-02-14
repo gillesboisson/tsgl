@@ -9,10 +9,12 @@ import { IGLTFCore } from './GLTFCore';
 import { GLTFMesh } from './GLTFMesh';
 import { fontDataStride } from '../../2d/text/BitmapFontRaw';
 import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
+import { mat4 } from 'gl-matrix';
+import { ITransform } from '../../gl/abstract/ITransform';
 
-export class GLTFNode<MaterialT extends IMaterial<IGLShaderState> = IMaterial<IGLShaderState>>
+export class GLTFNode<MaterialT extends IMaterial = IMaterial>
   extends SceneInstance3D
-  implements IRenderableInstance3D, IGLTFCore<GLTFDataNode> {
+  implements IRenderableInstance3D<ITransform<mat4>, MaterialT>, IGLTFCore<GLTFDataNode> {
   _material: MaterialT;
 
   protected _mesh: GLTFMesh;
@@ -55,11 +57,10 @@ export class GLTFNode<MaterialT extends IMaterial<IGLShaderState> = IMaterial<IG
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render(gl: AnyWebRenderingGLContext, cam: Camera): void {
+  render(gl: AnyWebRenderingGLContext, cam: Camera, material: MaterialT = this._material): void {
     // cam.mvp(this._material.shaderState.mvp, this._worldMat);
 
     const primitives = this._mesh.primitives;
-    const material = this._material;
 
     material.prepare(gl, cam, this._worldMat);
 

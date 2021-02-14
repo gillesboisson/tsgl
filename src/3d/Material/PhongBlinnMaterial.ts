@@ -137,7 +137,7 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
         this._shaderState?.setVariantValue('normal', 'map');
         break;
       default:
-        this._shaderState?.setVariantValue('normal', 'vertex');
+        this._shaderState?.setVariantValue('normal' , 'vertex');
         break;
     }
   }

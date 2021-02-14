@@ -6,11 +6,11 @@ import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { Camera } from './Camera';
 import { IMaterial } from './Material/IMaterial';
 
-export interface IRenderableInstance3D<TransformT extends ITransform<mat4> = Transform3D> extends ISceneInstance<mat4> {
+export interface IRenderableInstance3D<TransformT extends ITransform<mat4> = Transform3D, MaterialT extends IMaterial = IMaterial> extends ISceneInstance<mat4> {
   readonly transform: TransformT;
-  readonly material: IMaterial;
+  readonly material: MaterialT;
 
   // updateWorldMat(parentMap?: mat4, worldMat?: mat4): mat4;
 
-  render(renderer: AnyWebRenderingGLContext, cam: Camera): void;
+  render(renderer: AnyWebRenderingGLContext, cam: Camera<any>, material?: MaterialT): void;
 }

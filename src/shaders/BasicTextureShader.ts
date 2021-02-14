@@ -1,18 +1,17 @@
 import { GLShader } from '../gl/core/shader/GLShader';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { mat4, vec3, vec4 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 import { GLShaderState } from '../gl/core/shader/GLShaderState';
-import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { getDefaultAttributeLocation, setDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./glsl/flatTexture.frag').default;
+const fragSrc = require('./glsl/basic_texture.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./glsl/simpleMVP.vert').default;
+const vertSrc = require('./glsl/basic_texture.vert').default;
 
 
-export class SimpleTextureShaderState extends GLShaderState{
+export class BasicTextureShaderState extends GLShaderState{
   syncUniforms(): void {
     const gl = this.gl;
     const uniformsLocations = this._uniformsLocations;
@@ -24,19 +23,19 @@ export class SimpleTextureShaderState extends GLShaderState{
   textureInd = 0;
 }
 
-export const SimpleTextureShaderID = 'simple_texture';
+export const BasicTextureShaderID = 'basic_texture';
 
-export class SimpleTextureShader extends GLShader<SimpleTextureShaderState> {
+export class BasicTextureShader extends GLShader<BasicTextureShaderState> {
   static register(renderer: GLRenderer): void {
     renderer.registerShaderFactoryFunction(
-      SimpleTextureShaderID,
+      BasicTextureShaderID,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      (gl: AnyWebRenderingGLContext, name: string) => new SimpleTextureShader(gl),
+      (gl: AnyWebRenderingGLContext, name: string) => new BasicTextureShader(gl),
     );
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, SimpleTextureShaderState,getDefaultAttributeLocation(['a_position']));
+    super(gl, vertSrc, fragSrc, BasicTextureShaderState,getDefaultAttributeLocation(['a_position','a_uv']));
     setDefaultTextureLocation(this,['u_texture']);
   }
 }

@@ -25,7 +25,7 @@ export class GLShader<ShaderStateT extends IGLShaderState>
   protected _state: ShaderStateT;
 
   glType = GLType.Shader;
-  private _uniformsLocations: { [name: string]: WebGLUniformLocation };
+  protected _uniformsLocations: { [name: string]: WebGLUniformLocation };
 
   constructor(
     gl: AnyWebRenderingGLContext,

@@ -106,15 +106,27 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
 
       gl.bindTexture(gl.TEXTURE_2D, depthTexture);
 
+      // gl.texImage2D(
+      //   gl.TEXTURE_2D,
+      //   0,
+      //   (gl as any).depthTextureExt !== undefined ? gl.DEPTH_COMPONENT : gl.DEPTH_COMPONENT16,
+      //   this._width,
+      //   this._height,
+      //   0,
+      //   gl.DEPTH_COMPONENT,
+      //   gl.UNSIGNED_SHORT,
+      //   null,
+      // );
+
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
-        (gl as any).depthTextureExt !== undefined ? gl.DEPTH_COMPONENT : gl.DEPTH_COMPONENT16,
+        (gl as any).depthTextureExt !== undefined ? gl.DEPTH_COMPONENT : (gl as WebGL2RenderingContext).DEPTH_COMPONENT24,
         this._width,
         this._height,
         0,
         gl.DEPTH_COMPONENT,
-        gl.UNSIGNED_SHORT,
+        gl.UNSIGNED_INT,
         null,
       );
 

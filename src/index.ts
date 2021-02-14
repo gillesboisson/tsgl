@@ -18,7 +18,7 @@ import { GLViewportStack } from './gl/core/framebuffer/GLViewportState';
 import { GLRenderer } from './gl/core/GLRenderer';
 import { GLTexture } from './gl/core/GLTexture';
 import { FirstPersonCameraController } from './input/CameraController';
-import { SimpleTextureShader } from './shaders/SimpleTextureShader';
+import { SimpleTextureShader, SimpleTextureShaderID, SimpleTextureShaderState } from './shaders/SimpleTextureShader';
 import { SimpleLamberianShader } from './shaders/SimpleLamberianShader';
 import { MSDFShader } from './shaders/MSDFShader';
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
@@ -43,14 +43,21 @@ import { createCylinderMesh } from './geom/mesh/createCylinderMesh';
 import { createBoxMesh, cubeSquarePatronUv } from './geom/mesh/createBoxMesh';
 import { IRenderableInstance3D } from './3d/IRenderableInstance3D';
 import { Camera } from './3d/Camera';
-import { CameraLookAtTransform3D, CameraTargetTransform3D } from './geom/CameraTargetTransform3D';
 import { PhongBlinnMaterial } from './3d/Material/PhongBlinnMaterial';
+import { DepthOnlyShader } from './shaders/DepthOnlyShader';
+import { DepthOnlyMaterial } from './3d/Material/DepthOnlyMaterial';
+import { createQuadMesh } from './geom/mesh/createQuadMesh';
+import { GLMesh } from './gl/core/data/GLMesh';
+import { IGLShaderState } from './gl/core/shader/IGLShaderState';
+import { BasicTextureShader, BasicTextureShaderID, BasicTextureShaderState } from './shaders/BasicTextureShader';
+import { CameraLookAtTransform3D } from './geom/CameraTargetTransform3D';
+import { ShadowMap } from './3d/ShadowMap';
+import { ShadowOnlyMaterial } from './3d/Material/ShadownOnlyMaterial';
+import { ShadowOnlyShader } from './shaders/ShadowOnlyShader';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
 });
-
-
 
 class TestApp extends Base3DApp {
   meshVao: GLVao;
@@ -70,9 +77,11 @@ class TestApp extends Base3DApp {
   private _ppTomsNormal: PlaneSpaceToModelSpaceNormalShaderState;
   private _sphere: MeshNode;
   private _sceneRenderables: SceneInstance3D;
-  private _shadowFB: GLFramebuffer;
-  _shadowCam: Camera;
   private _lcam: Camera<CameraLookAtTransform3D>;
+  private _quad: GLMesh;
+  private _quadSS: BasicTextureShaderState;
+  private _shadowMap: ShadowMap;
+  private _shadowMat: ShadowOnlyMaterial;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
     this.cubeTransform = new Transform3D();
@@ -81,15 +90,18 @@ class TestApp extends Base3DApp {
 
     // this.loadScene();
     this.loadScene().then(() => {
-      this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(70, this._renderer.width / this._renderer.height,0.1, 100);
+      this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
+        70,
+        this._renderer.width / this._renderer.height,
+        0.1,
+        100,
+      );
       this._lcam.transform.setPosition(0, 0, 2);
       // this._lcam.transform.setTargetPosition(0,0,0);
       this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
       this.start();
     });
   }
-
-  
 
   registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
     SimpleTextureShader.register(renderer);
@@ -102,6 +114,9 @@ class TestApp extends Base3DApp {
     SkyboxShader.register(renderer);
     PlaneSpaceToModelSpaceNormalShader.register(renderer);
     LambertVShader.register(renderer);
+    DepthOnlyShader.register(renderer);
+    BasicTextureShader.register(renderer);
+    ShadowOnlyShader.register(renderer);
   }
 
   async loadTexture(): Promise<void> {}
@@ -134,11 +149,17 @@ class TestApp extends Base3DApp {
       corsetNormalMap,
     );
 
-    this._shadowFB = new GLFramebuffer(gl, 512, 512, true, false, true, false);
-    this._shadowCam = Camera.createOrtho(-2, 2, -2, 2, 0.001, 30);
+    this._shadowMap = new ShadowMap(this.renderer,2048,2048,3,0.001,10);
+    this._shadowMap.setPosition(2, 2, 2);
+    this._shadowMap.setLookAt(-1, -1, -1);
 
-    // this._shadowCam.transform.setPosition(-10,-10,-10);
+    this._shadowMat = new ShadowOnlyMaterial(this._renderer,this._shadowMap);
 
+
+    // this._shadowFB = new GLFramebuffer(gl, 512, 512, true, false, true, false);
+    // this._shadowCam = new Camera(CameraLookAtTransform3D).setOrtho(-3, 3, -3, 3, 0.001, 5);
+    // this._shadowCam.transform.setPosition(2, 2, 2);
+    // this._shadowCam.transform.setLookAt(-1, -1, -1);
 
     // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
     // const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
@@ -158,6 +179,8 @@ class TestApp extends Base3DApp {
       shininess: 32.0,
       ambiantColor: vec3.fromValues(0.7, 0.7, 0.7),
     };
+
+    // this._shadowCam.transform.copyLookAt(light.direction);
 
     const phongBlinnMaterial = new PhongBlinnMaterial(this._renderer, light);
 
@@ -201,6 +224,9 @@ class TestApp extends Base3DApp {
 
     phongBlinnMaterial.irradianceMap = this._irradianceHelper.framebufferTexture;
 
+    this._quad = createQuadMesh(gl);
+    this._quadSS = this.renderer.getShader(BasicTextureShaderID).createState() as BasicTextureShaderState;
+
     // this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
     // this._modelSpaceFramebuffer = new GLFramebuffer(gl,corsetNormalMap.width,corsetNormalMap.height,false,true,false,false);
     // const normalImageData = new Uint8Array(corsetNormalMap.width * corsetNormalMap.height * 4);
@@ -223,27 +249,35 @@ class TestApp extends Base3DApp {
     // gl.bindFramebuffer(gl.FRAMEBUFFER,null);
 
     // setTimeout(() => console.log(normalImageData),2000);
+    const depthMaterial = new DepthOnlyMaterial(this._renderer);
 
     const cubePatronTexture = await GLTexture.loadTexture2D(gl, 'images/base-cube-patron.jpg');
 
     const sphereMesh = createSphereMesh(gl, 1, 64, 32);
     const cylinderMesh = createCylinderMesh(gl, 1, 1, 1, 32, 1);
-    const planeMesh = createPlaneMesh(gl);
     const cubeMesh = createBoxMesh(gl, 1, 1, 1, 3, 3, 3, cubeSquarePatronUv);
     const sphereMat = new PhongBlinnMaterial(this._renderer, light);
     sphereMat.diffuseMap = cubePatronTexture;
     sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
     this._sphere = new MeshNode(sphereMat, cubeMesh);
-    this._sphere.transform.translate(2,0,1);
+    this._sphere.transform.translate(2, 0, 1);
+
+
+    const planeMesh = createPlaneMesh(gl);
+    const plane = new MeshNode(sphereMat, planeMesh);
+
+    plane.transform.rotateEuler(-Math.PI / 2, 0 , 0);
+    plane.transform.setScale(5);
+    plane.transform.setPosition(0,-1,0);
 
     this._sceneRenderables = new SceneInstance3D();
 
-    this._shadowCam.transform.setPosition(-10,-10,-10);
+    
+
+    // this._shadowCam.transform.setPosition(-10,-10,-10);
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
 
-
-    [this._skybox, this._sphere, this._corsetNode].forEach((node) => this._sceneRenderables.addChild(node));
-
+    [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -256,10 +290,8 @@ class TestApp extends Base3DApp {
 
     // // console.log('camQuat',camQuat);
     // const diff = vec3.create();
-    
+
     // vec3.normalize(diff, this._cam.transform.getRawPosition());
-
-
 
     // quat.rotationTo(camQuat,vec3.fromValues(0,0,-1), diff);
 
@@ -268,7 +300,8 @@ class TestApp extends Base3DApp {
     this._cam.updateTransform();
     this._lcam.updateTransform();
 
-    this._shadowCam.updateTransform();
+    this._shadowMap.updateTransform();
+
     this._sceneRenderables.updateTransform();
   }
 
@@ -282,12 +315,40 @@ class TestApp extends Base3DApp {
     // this._skybox.render(this._renderer.gl,this._cam);
     // this._corsetNode.render(this._renderer.gl, this._cam);
     // this._sphere.render(this._renderer.gl,this._cam);
+    const renderer = this._renderer;
+    const gl = this._renderer.gl;
 
-    this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => this.renderElement(node));
+    // this._shadowFB.bind();
+    // // renderable.
+    // this._renderer.clear();
+    // this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._shadowCam));
+    // this._shadowFB.unbind();
+
+
+    this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
+
+
+    this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam, this._shadowMat));
+
+
+    // this._quadSS.use();
+    // this._shadowMap.depthTexture.active(0);
+    // // mat4.identity(this._quadSS.mvp);
+    // this._quadSS.syncUniforms();
+    // this._quad.draw();
+    // this._shadowFB.colorTexture.unbind();
+
 
   }
 
   renderElement(renderable: IRenderableInstance3D) {
-    renderable.render(this._renderer.gl, this._cam as any);
+    // renderable.render(this._renderer.gl, this._shadowCam as any);
+    // this._shadowFB.unbind();
+
+    // this._shadowFB.colorTexture.active(0);
+    // mat4.identity(this._quadSS.mvp);
+    // this._quadSS.use();
+    // this._quadSS.syncUniforms();
+    // this._quad.draw();
   }
 }

@@ -80,6 +80,9 @@ export enum GLDefaultTextureLocation {
   PLANAR_REFLECTION = 10,
   SKYBOX = 11,
   IRRADIANCE_BOX = 12,
+  SHADOW_MAP_0 = 15,
+  SHADOW_MAP_1 = 16,
+  SHADOW_MAP_2 = 17,
 
   POST_PROCESS_0 = 20,
   POST_PROCESS_1 = 21,
@@ -95,6 +98,10 @@ const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
   u_skyboxMap: GLDefaultTextureLocation.SKYBOX,
   u_pbrMap: GLDefaultTextureLocation.PBR_0,
   u_irradianceMap: GLDefaultTextureLocation.IRRADIANCE_BOX,
+  u_shadowMap: GLDefaultTextureLocation.SHADOW_MAP_0,
+  u_shadowMap0: GLDefaultTextureLocation.SHADOW_MAP_0,
+  u_shadowMap1: GLDefaultTextureLocation.SHADOW_MAP_1,
+  u_shadowMap2: GLDefaultTextureLocation.SHADOW_MAP_2,
 };
 
 export function setDefaultTextureLocation(
@@ -116,7 +123,9 @@ export function setDefaultTextureLocation(
 
     const uniformLocation = uniformsLocations[name];
 
-    if (uniformLocation === undefined) console.warn('No uniform location for ' + name);
+    if (uniformLocation === undefined) {
+      console.warn('No uniform location for ' + name);
+    }
     gl.uniform1i(uniformLocation, location);
 
     res[name] = location;

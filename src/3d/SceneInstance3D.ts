@@ -28,13 +28,13 @@ export class SceneInstance3D<TransformT extends ITransform<mat4> = Transform3D> 
   }
 }
 
-export class MeshNode extends SceneInstance3D<Transform3D> implements IRenderableInstance3D {
-  constructor(public material: IMaterial, public mesh: GLMesh) {
+export class MeshNode<MaterialT extends IMaterial = IMaterial> extends SceneInstance3D<Transform3D> implements IRenderableInstance3D<Transform3D, MaterialT> {
+  constructor(public material: MaterialT, public mesh: GLMesh) {
     super(Transform3D);
   }
 
-  render(gl: AnyWebRenderingGLContext, cam: Camera): void {
-    const material = this.material;
+  render(gl: AnyWebRenderingGLContext, cam: Camera<any>, material: MaterialT = this.material): void {
+    // const material = this.material;
 
     material.prepare(gl, cam, this._worldMat);
     this.mesh.draw();
