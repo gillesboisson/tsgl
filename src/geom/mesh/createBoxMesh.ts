@@ -28,8 +28,8 @@ export const cubeSquarePatronUv: CubeMeshUvDefinition = [
   { left: 0 / 4, right: 1 / 4, top: 2 / 4, bottom: 1 / 4 },
   { left: 1 / 4, right: 2 / 4, top: 1 / 4, bottom: 0 / 4 },
   { left: 1 / 4, right: 2 / 4, top: 3 / 4, bottom: 2 / 4 },
-  { left: 3 / 4, right: 4 / 4, top: 2 / 4, bottom: 1 / 4 },
   { left: 1 / 4, right: 2 / 4, top: 2 / 4, bottom: 1 / 4 },
+  { left: 3 / 4, right: 4 / 4, top: 2 / 4, bottom: 1 / 4 },
 
 
 

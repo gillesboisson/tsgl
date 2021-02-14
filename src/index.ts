@@ -35,7 +35,7 @@ import { LambertVShader, TestVariantShaderMaterial } from './app/shaders/Variant
 import { mat3, mat4, quat, vec3 } from 'gl-matrix';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
-import { PhongBlinnVMaterial, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
+import { PhongBlinnShaderDebug, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
 import { createSkyBoxMesh } from './geom/mesh/createSkyBoxMesh';
 import { createSphereMesh } from './geom/mesh/createSphereMesh';
 import { createPlaneMesh } from './geom/mesh/createPlaneMesh';
@@ -44,6 +44,7 @@ import { createBoxMesh, cubeSquarePatronUv } from './geom/mesh/createBoxMesh';
 import { IRenderableInstance3D } from './3d/IRenderableInstance3D';
 import { Camera } from './3d/Camera';
 import { CameraLookAtTransform3D, CameraTargetTransform3D } from './geom/CameraTargetTransform3D';
+import { PhongBlinnMaterial } from './3d/Material/PhongBlinnMaterial';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -153,12 +154,12 @@ class TestApp extends Base3DApp {
     const light = {
       direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, -1)),
       color: vec3.fromValues(0.4, 0.4, 0.4),
-      specularColor: vec3.fromValues(0.8, 0.8, 0.8),
-      shininess: 64.0,
+      specularColor: vec3.fromValues(0.3, 0.3, 0.3),
+      shininess: 32.0,
       ambiantColor: vec3.fromValues(0.7, 0.7, 0.7),
     };
 
-    const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, light);
+    const phongBlinnMaterial = new PhongBlinnMaterial(this._renderer, light);
 
     phongBlinnMaterial.normalMap = corsetNormalMap;
     phongBlinnMaterial.tbnEnabled = true;
@@ -170,6 +171,8 @@ class TestApp extends Base3DApp {
     // enable ambiant occlusionMap
     phongBlinnMaterial.extraMap = corsetPbrMap;
     phongBlinnMaterial.occlusionMapEnabled = true;
+
+    // phongBlinnMaterial.debug = PhongBlinnShaderDebug.ambiant
 
     // corsetMaterial.shadeMode = 'fragment';
     // corsetMaterial.extraColor = 'green';
@@ -227,11 +230,11 @@ class TestApp extends Base3DApp {
     const cylinderMesh = createCylinderMesh(gl, 1, 1, 1, 32, 1);
     const planeMesh = createPlaneMesh(gl);
     const cubeMesh = createBoxMesh(gl, 1, 1, 1, 3, 3, 3, cubeSquarePatronUv);
-    const sphereMat = new PhongBlinnVMaterial(this._renderer, light);
+    const sphereMat = new PhongBlinnMaterial(this._renderer, light);
     sphereMat.diffuseMap = cubePatronTexture;
     sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
     this._sphere = new MeshNode(sphereMat, cubeMesh);
-    this._sphere.transform.translate(2,0,0);
+    this._sphere.transform.translate(2,0,1);
 
     this._sceneRenderables = new SceneInstance3D();
 
@@ -285,6 +288,6 @@ class TestApp extends Base3DApp {
   }
 
   renderElement(renderable: IRenderableInstance3D) {
-    renderable.render(this._renderer.gl, this._lcam as any);
+    renderable.render(this._renderer.gl, this._cam as any);
   }
 }

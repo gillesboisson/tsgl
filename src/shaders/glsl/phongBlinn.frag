@@ -124,16 +124,27 @@ void main(){
     vec4 diffuse = u_diffuseColor;
     #endif
 
+
+    #ifndef DEBUG
     gl_FragColor = diffuse * (vec4(ambiantColor + color,1.0)) * diffuse.a;
+    #endif
 
-    // gl_FragColor = vec4(color,1.0);
+    #ifdef DEBUG_NORMAL
+    gl_FragColor = vec4( normal * 0.5 + 0.5 ,1.0);
+    #endif
 
-    // #ifdef NORMAL_TBN
-    // gl_FragColor = vec4(normal * vec3(0.5) + vec3(0.5),1.0);
-    // #endif
+    #ifdef DEBUG_OCCLUSION
+    #ifdef OCCLUSION_MAP
+    gl_FragColor = vec4(vec3(pbrMap.r),1.0);
+    #endif
+    #endif
 
-    // gl_FragColor = diffuse * color * diffuse.a;
-    // #ifdef OCCLUSION_MAP
-    // gl_FragColor = vec4(pbrMap.r);
-    // #endif
+
+    #ifdef DEBUG_LIGHT_DIFFUSE_SPEC
+    gl_FragColor = vec4(color,1.0);
+    #endif
+
+    #ifdef DEBUG_LIGHT_AMBIANT
+    gl_FragColor = vec4(ambiantColor,1.0);
+    #endif
 }

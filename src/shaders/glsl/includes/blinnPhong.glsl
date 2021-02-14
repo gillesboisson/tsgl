@@ -9,7 +9,7 @@ vec3 blinnPhong(vec3 modelPosition,
  float shininess){
       
       // calculate base vectors
-      vec3 viewDir    = normalize(cameraPosition - modelPosition);
+      vec3 viewDir    = normalize(modelPosition - cameraPosition);
       vec3 halfwayDir = normalize(lightDir + viewDir);
       
       // diffuse
@@ -21,7 +21,19 @@ vec3 blinnPhong(vec3 modelPosition,
       float spec = max(pow(max(dot(modelNormal, halfwayDir), 0.0), shininess),0.0);
       vec3 specular = specularColor * spec;
 
-      return specular+diffuse;
+
+      #ifndef DEBUG_LIGHT_DIFFUSE_SPEC
+      return specular + diffuse;
+      #endif
+
+      #ifdef DEBUG_LIGHT_DIFFUSE
+      return diffuse;
+      #endif
+
+      #ifdef DEBUG_LIGHT_SPECULAR
+      return specular;
+      #endif
+
 }
 
 #pragma glslify: export(blinnPhong)
