@@ -36,6 +36,7 @@ export enum PhongBlinnShaderDebug{
   specular =  'specular',
   ambiant =  'ambiant',
   occlusion =  'occlusion',
+  shadow =  'shadow',
 }
 
 export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState, PhongBlinnVariant> {
@@ -82,6 +83,27 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           flags: {
             DEBUG: true,
             DEBUG_OCCLUSION: true,
+          },
+        },
+        {
+          value: PhongBlinnShaderDebug.shadow,
+          flags: {
+            DEBUG: true,
+            DEBUG_SHADOW: true,
+          },
+        },
+      ],
+      shadowMap: [
+        {
+          value: 'off',
+          default: true,
+          flags: {},
+        },
+        {
+          value: 'pcf',
+          default: true,
+          flags: {
+            SHADOW_MAP: true
           },
         },
       ],
@@ -176,7 +198,7 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   programBuilt(declinaison: GLShaderVariantDeclinaison,program: WebGLProgram): void{
-    setDefaultTextureLocationForVariantShader(declinaison,  ['u_textureMap', 'u_normalMap', 'u_irradianceMap', 'u_pbrMap']);
+    setDefaultTextureLocationForVariantShader(declinaison,  ['u_textureMap', 'u_normalMap', 'u_irradianceMap', 'u_pbrMap','u_shadowMap']);
   }
 
   static register(renderer: GLRenderer): void {

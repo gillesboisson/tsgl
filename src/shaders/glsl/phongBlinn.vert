@@ -31,8 +31,16 @@ varying mat3 v_TBN;
 
 #endif
 
+#ifdef SHADOW_MAP
+varying vec3 v_shadowCoord;
+uniform mat4 u_depthBiasMvpMat;
+#endif
+
+
 
 void main(){
+    vec4 position =  vec4(a_position,1.0);
+    
     v_uv = a_uv;
     
     v_position = (u_modelMat * vec4(a_position, 1.0)).xyz;
@@ -45,5 +53,9 @@ void main(){
     v_TBN = tbnMat(a_normal,a_tangent, u_normalMat,  u_modelMat);
     #endif
 
-    gl_Position = u_mvpMat * vec4(a_position,1.0);
+    #ifdef SHADOW_MAP
+    v_shadowCoord = (u_depthBiasMvpMat * position).xyz;
+    #endif
+
+    gl_Position = u_mvpMat * position;
 }

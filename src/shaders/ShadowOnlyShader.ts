@@ -1,7 +1,7 @@
 import { GLShader } from '../gl/core/shader/GLShader';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { getDefaultAttributeLocation, setDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLocation';
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec2, vec3 } from 'gl-matrix';
 import { GLShaderState } from '../gl/core/shader/GLShaderState';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 import { GLRenderer } from '../gl/core/GLRenderer';
@@ -21,6 +21,7 @@ export class ShadowOnlyShaderState extends GLShaderState {
     gl.uniformMatrix4fv(uniformsLocations.u_depthBiasMvpMat, false, this.depthBiasMvpMat);
     gl.uniformMatrix4fv(uniformsLocations.u_normalMat, false, this.normalMat);
     gl.uniform3fv(uniformsLocations.u_lightDirection, this.lightDirection);
+    gl.uniform2fv(uniformsLocations.u_pixelSize, this.pixelSize);
     
   }
 
@@ -28,6 +29,7 @@ export class ShadowOnlyShaderState extends GLShaderState {
   normalMat: mat4 = mat4.create();
   depthBiasMvpMat: mat4 = mat4.create();
   lightDirection: vec3 = vec3.create();
+  pixelSize: vec2 = vec2.create();
 }
 
 export const ShadowOnlyShaderID = 'shadow_only';

@@ -149,7 +149,7 @@ class TestApp extends Base3DApp {
       corsetNormalMap,
     );
 
-    this._shadowMap = new ShadowMap(this.renderer,2048,2048,3,0.001,10);
+    this._shadowMap = new ShadowMap(this.renderer,1024,1024,3,0.001,10);
     this._shadowMap.setPosition(2, 2, 2);
     this._shadowMap.setLookAt(-1, -1, -1);
 
@@ -188,6 +188,8 @@ class TestApp extends Base3DApp {
     phongBlinnMaterial.tbnEnabled = true;
     phongBlinnMaterial.diffuseMap = textures[0];
 
+    // phongBlinnMaterial.debug = PhongBlinnShaderDebug.shadow;
+
     // phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
     // phongBlinnMaterial.tbnEnabled = false;
 
@@ -207,7 +209,7 @@ class TestApp extends Base3DApp {
 
     // cubemap size
     const bufferSize = 512;
-    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
+    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/StandardCubeMap.png');
     this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
     this.cubePHelper.unwrap(cubeMapPatron);
 
@@ -260,7 +262,7 @@ class TestApp extends Base3DApp {
     sphereMat.diffuseMap = cubePatronTexture;
     sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
     this._sphere = new MeshNode(sphereMat, cubeMesh);
-    this._sphere.transform.translate(2, 0, 1);
+    this._sphere.transform.translate(0.5, 1, 1);
 
 
     const planeMesh = createPlaneMesh(gl);
@@ -272,7 +274,9 @@ class TestApp extends Base3DApp {
 
     this._sceneRenderables = new SceneInstance3D();
 
-    
+    sphereMat.shadowMap = this._shadowMap;
+    // sphereMat.debug = PhongBlinnShaderDebug.shadow;
+    phongBlinnMaterial.shadowMap = this._shadowMap;
 
     // this._shadowCam.transform.setPosition(-10,-10,-10);
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
@@ -328,7 +332,7 @@ class TestApp extends Base3DApp {
     this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 
 
-    this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam, this._shadowMat));
+    this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
 
 
     // this._quadSS.use();

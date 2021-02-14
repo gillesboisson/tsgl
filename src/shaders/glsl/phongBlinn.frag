@@ -2,6 +2,7 @@ precision mediump float;
 
 #pragma glslify: blinnPhong = require(./includes/blinnPhong.glsl)
 #pragma glslify: tbnMatToNormal = require(./includes/tbnMatToNormal.glsl)
+#pragma glslify: pcfShadow = require(./includes/pcfShadow.glsl)
 
 
 #ifdef DIFFUSE_MAP
@@ -54,6 +55,15 @@ varying mat3 v_TBN;
 // occlusion 
 #ifdef OCCLUSION_PBR_SPEC_MAP
 uniform sampler2D u_pbrMap;
+#endif
+
+
+#ifdef SHADOW_MAP
+
+uniform sampler2D u_shadowMap;
+uniform vec2 u_shadowMapPixelSize;
+varying vec3 v_shadowCoord;
+
 #endif
 
 
@@ -115,6 +125,11 @@ void main(){
       u_cameraPosition,
       u_lightShininess
     );
+
+    #ifdef SHADOW_MAP
+    float visibility = pcfShadow(u_shadowMap,v_shadowCoord.z,v_shadowCoord.xy,u_shadowMapPixelSize,normal, u_lightDirection);
+    color *= visibility;
+    #endif
     
     #ifdef DIFFUSE_MAP
     vec4 diffuse = texture2D(u_diffuseMap,v_uv);
@@ -136,6 +151,12 @@ void main(){
     #ifdef DEBUG_OCCLUSION
     #ifdef OCCLUSION_MAP
     gl_FragColor = vec4(vec3(pbrMap.r),1.0);
+    #endif
+    #endif
+
+    #ifdef DEBUG_SHADOW
+    #ifdef SHADOW_MAP
+    gl_FragColor = vec4(texture2D(u_shadowMap,v_shadowCoord.xy).xxx,1.0);
     #endif
     #endif
 

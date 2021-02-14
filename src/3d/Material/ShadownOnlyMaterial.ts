@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec2, vec3 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
@@ -29,16 +29,19 @@ export class ShadowOnlyMaterial extends AMaterial<ShadowOnlyShaderState> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   prepare(gl: AnyWebRenderingGLContext, cam: Camera, transformMat: mat4): void {
     const ss = this._shaderState;
+    const shadowMap = this._shadowMap;
+    const depthTexture = shadowMap.depthTexture;
     ss.use();
     cam.mvp(ss.mvpMat, transformMat);
     cam.normalMat(ss.normalMat, transformMat);
+
+    vec2.set(ss.pixelSize,1 / depthTexture.width, 1 / depthTexture.height);
     // ss.lightDirection = this.lightDirection;
     
-    vec3.negate(ss.lightDirection, this._shadowMap.getRawLookAt());
-    // vec3.copy(ss.lightDirection, this._shadowMap.getRawLookAt());
+    vec3.negate(ss.lightDirection, shadowMap.getRawLookAt());
 
-    this._shadowMap.depthBiasMvp(ss.depthBiasMvpMat,transformMat);
-    this._shadowMap.depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);
+    shadowMap.depthBiasMvp(ss.depthBiasMvpMat,transformMat);
+    depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);
     ss.syncUniforms();
   }
 

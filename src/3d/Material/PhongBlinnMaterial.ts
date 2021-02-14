@@ -1,4 +1,4 @@
-import { mat4, vec3, vec4 } from 'gl-matrix';
+import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
@@ -7,10 +7,12 @@ import { GLRenderer } from '../../gl/core/GLRenderer';
 import { GLTexture } from '../../gl/core/GLTexture';
 import { PhongBlinnVShadersState } from '../../shaders/PhongBlinnVShadersState';
 import { PhongBlinnLightInterface, PhongBlinnShaderDebug, PhongBlinnVShaderID } from '../../shaders/PhongBlinnVShader';
+import { ShadowMap } from '../ShadowMap';
 
 
 export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
   private _debug: PhongBlinnShaderDebug;
+  private _shadowMap: ShadowMap;
   constructor(renderer: GLRenderer, public light: PhongBlinnLightInterface) {
     super();
 
@@ -60,6 +62,17 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     if (val !== this._diffuseMap) {
       this._diffuseMap = val;
       this._shaderState?.setVariantValue('diffuse', val ? 'texture' : 'color');
+    }
+  }
+  
+  get shadowMap(): ShadowMap {
+    return this._shadowMap;
+  }
+
+  set shadowMap(val: ShadowMap) {
+    if (val !== this._shadowMap) {
+      this._shadowMap = val;
+      this._shaderState?.setVariantValue('shadowMap', val ? 'pcf' : 'off');
     }
   }
 
@@ -165,6 +178,11 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     ss.modelMat = transformMat;
     vec3.negate(ss.cameraPosition, cam.transform.getRawPosition());
 
+    if(this._shadowMap){
+      this._shadowMap.depthBiasMvp(ss.depthBiasMvpMat,transformMat);
+      vec2.set(ss.shadowMapPixelSize,1 / this.shadowMap.depthTexture.width,1 / this.shadowMap.depthTexture.height);
+      this._shadowMap.depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);
+    }
 
     if (this._diffuseMap) {
       this._diffuseMap.active(GLDefaultTextureLocation.COLOR);
