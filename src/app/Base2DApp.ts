@@ -1,11 +1,11 @@
-import { GLRenderer, GLRendererType } from '../gl/core/GLRenderer';
-import { SpriteShader } from '../shaders/SpriteShader';
-import { SimpleSpriteShader } from '../shaders/SimpleSpriteShader';
-import { Juggler } from '../animation/Juggler';
-import { Camera2D } from '../2d/Camera2D';
-import { GLSupport } from '../gl/core/GLSupport';
-import { SpriteBatch } from '../2d/SpriteBatch';
-import { SpriteLayer } from '../2d/Stage2D';
+import { Camera2D } from '../tsgl/2d/Camera2D';
+import { SpriteBatch } from '../tsgl/2d/SpriteBatch';
+import { SpriteLayer } from '../tsgl/2d/Stage2D';
+import { Juggler } from '../tsgl/animation/Juggler';
+import { GLRenderer, GLRendererType } from '../tsgl/gl/core/GLRenderer';
+import { GLSupport } from '../tsgl/gl/core/GLSupport';
+import { SimpleSpriteShader } from '../tsgl/shaders/SimpleSpriteShader';
+import { SpriteShader } from '../tsgl/shaders/SpriteShader';
 
 export abstract class Base2DApp {
   protected _renderer: GLRenderer;

@@ -1,7 +1,7 @@
 import { SceneInstance3D } from './SceneInstance3D';
 import { mat4 } from 'gl-matrix';
 import { CameraTransform3D } from '../geom/CameraTransform3D';
-import { Type } from '../core/Type';
+import { Type } from '../base/Type';
 import { ITransform } from '../gl/abstract/ITransform';
 import { TranslateRotateTransform3D } from '../geom/TranslateRotateTransform3D';
 

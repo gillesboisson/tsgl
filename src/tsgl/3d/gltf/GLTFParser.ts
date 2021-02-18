@@ -54,7 +54,7 @@ export async function loadBuffers(
   });
 }
 
-export async function loadTexture(
+export async function loadTextures(
   gl: AnyWebRenderingGLContext,
   data: GLTFData,
   assetDirectory: string,

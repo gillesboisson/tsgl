@@ -1,7 +1,7 @@
-import { GLRenderer, GLRendererType } from '../gl/core/GLRenderer';
-import { Juggler } from '../animation/Juggler';
-import { GLSupport } from '../gl/core/GLSupport';
-import { Camera } from '../3d/Camera';
+import { Camera } from '../tsgl/3d/Camera';
+import { Juggler } from '../tsgl/animation/Juggler';
+import { GLRenderer, GLRendererType } from '../tsgl/gl/core/GLRenderer';
+import { GLSupport } from '../tsgl/gl/core/GLSupport';
 
 export abstract class Base3DApp {
   protected _renderer: GLRenderer;

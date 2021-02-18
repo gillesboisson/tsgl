@@ -1,9 +1,9 @@
 import { mat4 } from 'gl-matrix';
-import { Camera } from '../../3d/Camera';
-import { AMaterial } from '../../3d/Material/Material';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { Camera } from '../../tsgl/3d/Camera';
+import { AMaterial } from '../../tsgl/3d/Material/Material';
+import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
+import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
+import { GLTexture } from '../../tsgl/gl/core/GLTexture';
 import { TestFlatShaderState, TestFlatID } from '../shaders/TestFlatShader';
 
 export class TestFlatMaterial extends AMaterial<TestFlatShaderState> {

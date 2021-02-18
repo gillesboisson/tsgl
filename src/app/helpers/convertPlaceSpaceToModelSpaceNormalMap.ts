@@ -1,9 +1,10 @@
-import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { GLVao } from '../../gl/core/data/GLVao';
-import { GLFramebuffer } from '../../gl/core/framebuffer/GLFramebuffer';
-import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
-import { PlaneSpaceToModelSpaceNormalShaderID, PlaneSpaceToModelSpaceNormalShaderState } from '../../shaders/PlaceSpaceToModelSpaceNormalShader';
+
+import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
+import { GLVao } from '../../tsgl/gl/core/data/GLVao';
+import { GLFramebuffer } from '../../tsgl/gl/core/framebuffer/GLFramebuffer';
+import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
+import { GLTexture } from '../../tsgl/gl/core/GLTexture';
+import { PlaneSpaceToModelSpaceNormalShaderID, PlaneSpaceToModelSpaceNormalShaderState } from '../../tsgl/shaders/PlaceSpaceToModelSpaceNormalShader';
 
 export function convertPlaceSpaceToModelSpaceNormalMap(rendererer: GLRenderer, refMeshVao: GLVao, refMeshNbElements: number, normalMap: GLTexture): GLTexture{
   const gl = rendererer.gl;

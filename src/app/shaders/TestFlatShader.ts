@@ -1,15 +1,14 @@
-import { mat4 } from 'gl-matrix';
-import { setDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLShader } from '../../gl/core/shader/GLShader';
-import { GLShaderState } from '../../gl/core/shader/GLShaderState';
-import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
+import { setDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
+import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
+import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
+import { GLShader } from '../../tsgl/gl/core/shader/GLShader';
+import { GLShaderState } from '../../tsgl/gl/core/shader/GLShaderState';
+import { IGLShaderState } from '../../tsgl/gl/core/shader/IGLShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/test_flat.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('../../shaders/glsl/flat_2d.vert').default;
+const vertSrc = require('../../tsgl/shaders/glsl/flat_2d.vert').default;
 
 export class TestFlatShaderState extends GLShaderState implements IGLShaderState {
   syncUniforms(): void {}

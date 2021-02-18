@@ -1,59 +1,49 @@
-import { GLTFData } from './3d/gltf/GLFTSchema';
-import { GLTFNode } from './3d/gltf/GLTFNode';
-import {
-  createMesh,
-  getBufferViewsDataLinkedToBuffer,
-  loadBuffers,
-  loadBufferView,
-  loadTexture as loadTextures,
-  setBufferViewTargetFromMesh,
-} from './3d/gltf/GLTFParser';
-import { MeshNode, SceneInstance3D } from './3d/SceneInstance3D';
+import { vec3 } from 'gl-matrix';
 import { Base3DApp } from './app/Base3DApp';
-import { Transform3D } from './geom/Transform3D';
-import { GLBuffer } from './gl/core/data/GLBuffer';
-import { GLVao } from './gl/core/data/GLVao';
-import { GLFramebuffer } from './gl/core/framebuffer/GLFramebuffer';
-import { GLViewportStack } from './gl/core/framebuffer/GLViewportState';
-import { GLRenderer } from './gl/core/GLRenderer';
-import { GLTexture } from './gl/core/GLTexture';
-import { FirstPersonCameraController } from './input/CameraController';
-import { SimpleTextureShader, SimpleTextureShaderID, SimpleTextureShaderState } from './shaders/SimpleTextureShader';
-import { SimpleLamberianShader } from './shaders/SimpleLamberianShader';
-import { MSDFShader } from './shaders/MSDFShader';
-import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
-import { CubeMapPatronHelper } from './geom/CubeMapPatronHelper';
-import { IrradianceHelper } from './geom/IrradianceHelper';
-import { IrradianceShader } from './app/shaders/TestIrradianceShader';
-import { SkyboxMaterial } from './3d/Material/SkyboxMaterial';
-import { SkyboxShader } from './shaders/SkyboxShader';
-import {
-  PlaneSpaceToModelSpaceNormalShader,
-  PlaneSpaceToModelSpaceNormalShaderState,
-} from './shaders/PlaceSpaceToModelSpaceNormalShader';
-import { LambertVShader, TestVariantShaderMaterial } from './app/shaders/VariantShaderTest';
-import { mat3, mat4, quat, vec3 } from 'gl-matrix';
-import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
-import { PhongBlinnShaderDebug, PhongBlinnVShader } from './shaders/PhongBlinnVShader';
-import { createSkyBoxMesh } from './geom/mesh/createSkyBoxMesh';
-import { createSphereMesh } from './geom/mesh/createSphereMesh';
-import { createPlaneMesh } from './geom/mesh/createPlaneMesh';
-import { createCylinderMesh } from './geom/mesh/createCylinderMesh';
-import { createBoxMesh, cubeSquarePatronUv } from './geom/mesh/createBoxMesh';
-import { IRenderableInstance3D } from './3d/IRenderableInstance3D';
-import { Camera } from './3d/Camera';
-import { PhongBlinnMaterial } from './3d/Material/PhongBlinnMaterial';
-import { DepthOnlyShader } from './shaders/DepthOnlyShader';
-import { DepthOnlyMaterial } from './3d/Material/DepthOnlyMaterial';
-import { createQuadMesh } from './geom/mesh/createQuadMesh';
-import { GLMesh } from './gl/core/data/GLMesh';
-import { IGLShaderState } from './gl/core/shader/IGLShaderState';
-import { BasicTextureShader, BasicTextureShaderID, BasicTextureShaderState } from './shaders/BasicTextureShader';
-import { CameraLookAtTransform3D } from './geom/CameraTargetTransform3D';
-import { ShadowMap } from './3d/ShadowMap';
-import { ShadowOnlyMaterial } from './3d/Material/ShadownOnlyMaterial';
-import { ShadowOnlyShader } from './shaders/ShadowOnlyShader';
+import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
+import { TestFlatShader } from './app/shaders/TestFlatShader';
+import { LambertVShader } from './app/shaders/VariantShaderTest';
+import { Camera } from './tsgl/3d/Camera';
+import { GLTFData } from './tsgl/3d/gltf/GLFTSchema';
+import { GLTFNode } from './tsgl/3d/gltf/GLTFNode';
+import { setBufferViewTargetFromMesh, loadBuffers, getBufferViewsDataLinkedToBuffer, loadBufferView, createMesh, loadTextures } from './tsgl/3d/gltf/GLTFParser';
+import { IRenderableInstance3D } from './tsgl/3d/IRenderableInstance3D';
+import { DepthOnlyMaterial } from './tsgl/3d/Material/DepthOnlyMaterial';
+import { PhongBlinnMaterial } from './tsgl/3d/Material/PhongBlinnMaterial';
+import { ShadowOnlyMaterial } from './tsgl/3d/Material/ShadownOnlyMaterial';
+import { SkyboxMaterial } from './tsgl/3d/Material/SkyboxMaterial';
+import { MeshNode, SceneInstance3D } from './tsgl/3d/SceneInstance3D';
+import { ShadowMap } from './tsgl/3d/ShadowMap';
+import { CameraLookAtTransform3D } from './tsgl/geom/CameraTargetTransform3D';
+import { CubeMapPatronHelper } from './tsgl/geom/CubeMapPatronHelper';
+import { IrradianceHelper } from './tsgl/geom/IrradianceHelper';
+import { createBoxMesh, cubeSquarePatronUv } from './tsgl/geom/mesh/createBoxMesh';
+import { createCylinderMesh } from './tsgl/geom/mesh/createCylinderMesh';
+import { createPlaneMesh } from './tsgl/geom/mesh/createPlaneMesh';
+import { createQuadMesh } from './tsgl/geom/mesh/createQuadMesh';
+import { createSkyBoxMesh } from './tsgl/geom/mesh/createSkyBoxMesh';
+import { createSphereMesh } from './tsgl/geom/mesh/createSphereMesh';
+import { Transform3D } from './tsgl/geom/Transform3D';
+import { GLBuffer } from './tsgl/gl/core/data/GLBuffer';
+import { GLMesh } from './tsgl/gl/core/data/GLMesh';
+import { GLVao } from './tsgl/gl/core/data/GLVao';
+import { GLFramebuffer } from './tsgl/gl/core/framebuffer/GLFramebuffer';
+import { GLViewportStack } from './tsgl/gl/core/framebuffer/GLViewportState';
+import { GLRenderer } from './tsgl/gl/core/GLRenderer';
+import { GLTexture } from './tsgl/gl/core/GLTexture';
+import { FirstPersonCameraController } from './tsgl/input/CameraController';
+import { BasicTextureShaderState, BasicTextureShader, BasicTextureShaderID } from './tsgl/shaders/BasicTextureShader';
+import { DepthOnlyShader } from './tsgl/shaders/DepthOnlyShader';
+import { MSDFShader } from './tsgl/shaders/MSDFShader';
+import { PhongBlinnVShader } from './tsgl/shaders/PhongBlinnVShader';
+import { PlaneSpaceToModelSpaceNormalShaderState, PlaneSpaceToModelSpaceNormalShader } from './tsgl/shaders/PlaceSpaceToModelSpaceNormalShader';
+import { ShadowOnlyShader } from './tsgl/shaders/ShadowOnlyShader';
+import { SimpleLamberianShader } from './tsgl/shaders/SimpleLamberianShader';
+import { SimpleTextureShader } from './tsgl/shaders/SimpleTextureShader';
+import { SkyboxShader } from './tsgl/shaders/SkyboxShader';
+import { IrradianceShader } from './tsgl/shaders/TestIrradianceShader';
+
 
 window.addEventListener('load', async () => {
   const app = new TestApp();

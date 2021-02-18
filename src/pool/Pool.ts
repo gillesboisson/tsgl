@@ -1,19 +1,8 @@
-export interface IDestroyable {
-  destroy(): void;
-}
+import { IDestroy } from '../tsgl/base/IDestroy';
+import { IPoolable } from './IPoolable';
+import { PoolableType } from './PoolableType';
 
-export interface IPoolable extends IDestroyable {
-  reset(): void;
-
-  released?: () => void;
-  release?: () => void;
-}
-
-export interface PoolableType<T extends IPoolable> {
-  new (): T;
-}
-
-export class Pool<T extends IPoolable> implements IDestroyable {
+export class Pool<T extends IPoolable> implements IDestroy {
   protected _pool: T[] = [];
   protected _available: T[] = [];
   protected _used: T[] = [];

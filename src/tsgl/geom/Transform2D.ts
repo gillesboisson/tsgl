@@ -1,11 +1,11 @@
 import { mat2d, vec2 } from 'gl-matrix';
 import { ITransform } from '../gl/abstract/ITransform';
-import { IDispose } from '../core/IDispose';
-import { IReset } from '../core/IReset';
+import { IReset } from '../base/IReset';
+import { IDestroy as IDestroy } from "../base/IDestroy";
 
 const __ident: mat2d = mat2d.create();
 
-export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
+export class Transform2D implements ITransform<mat2d>, IDestroy, IReset {
   protected _rotation = 0;
   protected _cx = 0;
   protected _cy = 0;
@@ -81,7 +81,7 @@ export class Transform2D implements ITransform<mat2d>, IDispose, IReset {
     mt[5] = this.position[1] - (px * mt[1] + py * mt[3]);
   }
 
-  dispose(): void {
+  destroy(): void {
     this.scale = null;
     this.position = null;
     this.pivot = null;

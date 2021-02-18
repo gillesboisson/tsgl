@@ -1,6 +1,6 @@
 import { ASceneInstance } from '../gl/abstract/ASceneInstance';
 import { mat4 } from 'gl-matrix';
-import { Type } from '../core/Type';
+import { Type } from '../base/Type';
 import { ITransform } from '../gl/abstract/ITransform';
 import { Transform3D } from '../geom/Transform3D';
 import { IMaterial } from './Material/IMaterial';

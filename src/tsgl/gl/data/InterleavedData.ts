@@ -1,6 +1,6 @@
 import { AnyWebRenderingGLContext } from '../core/GLHelpers';
 import { vec2, vec3, vec4 } from 'gl-matrix';
-import { Type } from '../../core/Type';
+import { Type } from '../../base/Type';
 import { GLBuffer } from '../core/data/GLBuffer';
 import { GLAttribute } from '../core/data/GLAttribute';
 

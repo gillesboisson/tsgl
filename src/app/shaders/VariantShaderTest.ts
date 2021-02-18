@@ -1,15 +1,13 @@
-import { mat4, vec3, vec4 } from 'gl-matrix';
-import { Camera } from '../../3d/Camera';
-import { AMaterial } from '../../3d/Material/Material';
-import { getDefaultAttributeLocation, GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
-import { GLShaderVariants } from '../../gl/core/shader/variants/GLShaderVariants';
-import { GLVariantValueDefinition } from '../../gl/core/shader/variants/GLVariantShaderTypes';
-import { shaderVariantProp } from '../../gl/core/shader/variants/shaderVariantProp';
-import { ShaderVariantsState } from '../../gl/core/shader/variants/ShaderVariantsState';
-import { SimpleLamberianShaderState } from '../../shaders/SimpleLamberianShader';
+import { vec3, vec4, mat4 } from 'gl-matrix';
+import { Camera } from '../../tsgl/3d/Camera';
+import { AMaterial } from '../../tsgl/3d/Material/Material';
+import { getDefaultAttributeLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
+import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
+import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
+import { GLShaderVariants } from '../../tsgl/gl/core/shader/variants/GLShaderVariants';
+import { GLVariantValueDefinition } from '../../tsgl/gl/core/shader/variants/GLVariantShaderTypes';
+import { ShaderVariantsState } from '../../tsgl/gl/core/shader/variants/ShaderVariantsState';
+
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/variant_shader_test.frag').default;

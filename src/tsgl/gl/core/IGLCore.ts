@@ -1,5 +1,5 @@
 import { AnyWebRenderingGLContext } from './GLHelpers';
-import { IDestroyable } from '../../pool/Pool';
-export interface IGLCore extends IDestroyable {
+import { IDestroy } from "../../base/IDestroy";
+export interface IGLCore extends IDestroy {
   readonly gl: AnyWebRenderingGLContext;
 }

@@ -2,7 +2,7 @@ import { vec2, vec4 } from 'gl-matrix';
 import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { IGLSpriteShaderState } from '../shaders/SpriteShader';
 import { Camera } from '../3d/Camera';
-import { IDestroyable } from '../pool/Pool';
+import { IDestroy } from "../base/IDestroy";
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
 
 const VERTEX_BATCH_SIZE = 10448;
@@ -52,7 +52,7 @@ export interface IBatch<MainShaderStateT extends IGLShaderState = IGLShaderState
   end(): void;
 }
 
-export class SpriteBatch implements IBatch<IGLSpriteShaderState>, IDestroyable {
+export class SpriteBatch implements IBatch<IGLSpriteShaderState>, IDestroy {
   private vao: WebGLVertexArrayObject;
   private verticesBuffer: WebGLBuffer;
   private indicesBuffer: WebGLBuffer;
