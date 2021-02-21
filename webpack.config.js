@@ -2,7 +2,11 @@ const path = require('path');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: false,
+    port: 8080,
+  },
   entry: {
     index: './index.ts',
     //index_worker: './index_worker.ts',
