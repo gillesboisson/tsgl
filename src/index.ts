@@ -12,6 +12,7 @@ import { IRenderableInstance3D } from './tsgl/3d/IRenderableInstance3D';
 import { DepthOnlyMaterial } from './tsgl/3d/Material/DepthOnlyMaterial';
 import { PhongBlinnMaterial } from './tsgl/3d/Material/PhongBlinnMaterial';
 import { ShadowOnlyMaterial } from './tsgl/3d/Material/ShadownOnlyMaterial';
+import { SimplePBRMaterial } from './tsgl/3d/Material/SimplePBRMaterial';
 import { SkyboxMaterial } from './tsgl/3d/Material/SkyboxMaterial';
 import { MeshNode, SceneInstance3D } from './tsgl/3d/SceneInstance3D';
 import { ShadowMap } from './tsgl/3d/ShadowMap';
@@ -40,6 +41,7 @@ import { PhongBlinnVShader } from './tsgl/shaders/PhongBlinnVShader';
 import { PlaneSpaceToModelSpaceNormalShaderState, PlaneSpaceToModelSpaceNormalShader } from './tsgl/shaders/PlaceSpaceToModelSpaceNormalShader';
 import { ShadowOnlyShader } from './tsgl/shaders/ShadowOnlyShader';
 import { SimpleLamberianShader } from './tsgl/shaders/SimpleLamberianShader';
+import { SimplePBRShader } from './tsgl/shaders/SimplePBRShader';
 import { SimpleTextureShader } from './tsgl/shaders/SimpleTextureShader';
 import { SkyboxShader } from './tsgl/shaders/SkyboxShader';
 import { IrradianceShader } from './tsgl/shaders/TestIrradianceShader';
@@ -107,6 +109,7 @@ class TestApp extends Base3DApp {
     DepthOnlyShader.register(renderer);
     BasicTextureShader.register(renderer);
     ShadowOnlyShader.register(renderer);
+    SimplePBRShader.register(renderer);
   }
 
   async loadTexture(): Promise<void> {}
@@ -145,6 +148,7 @@ class TestApp extends Base3DApp {
 
     this._shadowMat = new ShadowOnlyMaterial(this._renderer,this._shadowMap);
 
+    
 
     // this._shadowFB = new GLFramebuffer(gl, 512, 512, true, false, true, false);
     // this._shadowCam = new Camera(CameraLookAtTransform3D).setOrtho(-3, 3, -3, 3, 0.001, 5);
@@ -164,11 +168,14 @@ class TestApp extends Base3DApp {
 
     const light = {
       direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, -1)),
-      color: vec3.fromValues(0.4, 0.4, 0.4),
+      color: vec3.fromValues(1.0, 1.0, 1.0),
       specularColor: vec3.fromValues(0.3, 0.3, 0.3),
       shininess: 32.0,
       ambiantColor: vec3.fromValues(0.7, 0.7, 0.7),
     };
+
+    
+
 
     // this._shadowCam.transform.copyLookAt(light.direction);
 
@@ -268,10 +275,37 @@ class TestApp extends Base3DApp {
     // sphereMat.debug = PhongBlinnShaderDebug.shadow;
     phongBlinnMaterial.shadowMap = this._shadowMap;
 
+
+    
+
     // this._shadowCam.transform.setPosition(-10,-10,-10);
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
 
-    [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
+    // [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
+    [plane].forEach((node) => this._sceneRenderables.addChild(node));
+
+
+    const step = 5;
+
+    for(let i = 0 ; i < step ; i++){
+    for(let f = 0 ; f < step ; f++){
+      const pbrMat = new SimplePBRMaterial(this.renderer, light);
+      // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
+      
+
+      pbrMat.metalic = i / step;
+      pbrMat.roughness = f / step;
+      
+      const pbrSphere = new MeshNode(pbrMat, createSphereMesh(this._renderer.gl,0.4,32,32 ));
+
+      pbrSphere.transform.translate(i,f,0);
+
+      this._sceneRenderables.addChild(pbrSphere);
+
+      
+    }
+    }
+
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
