@@ -1,4 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
+import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { GLTexture } from '../../gl/core/GLTexture';
@@ -23,9 +24,10 @@ export class SimplePBRMaterial extends AMaterial<SimplePBRShaderState> {
 
   metalic = 0;
   roughness = 0;
-  ao = 0.2;
+  ao = 1;
 
-  
+  irradianceMap: GLTexture;
+  refelexionMap: GLTexture;
   
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,12 +49,21 @@ export class SimplePBRMaterial extends AMaterial<SimplePBRShaderState> {
     ss.metallic = this.metalic;
 
     // apply base mapping 
-    ss.roughness = (this.roughness + 1) * (this.roughness + 1) / 8;
+    ss.roughness = this.roughness;
+    // ss.roughness = (this.roughness + 1) * (this.roughness + 1) / 8;
     // ss.roughness = this.roughness * this.roughness  / 2;
     ss.ao = this.ao;
 
     vec3.copy(ss.cameraPosition, cam.transform.getRawPosition());
 
+
+    if(this.irradianceMap){
+      this.irradianceMap.active(GLDefaultTextureLocation.IRRADIANCE_BOX);
+    }
+
+    if(this.refelexionMap){
+      this.refelexionMap.active(GLDefaultTextureLocation.RELEXION_BOX);
+    }
 
     
     ss.syncUniforms();

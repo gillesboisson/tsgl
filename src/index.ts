@@ -206,7 +206,7 @@ class TestApp extends Base3DApp {
 
     // cubemap size
     const bufferSize = 512;
-    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/StandardCubeMap.png');
+    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
     this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
     this.cubePHelper.unwrap(cubeMapPatron);
 
@@ -282,21 +282,29 @@ class TestApp extends Base3DApp {
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
 
     // [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
-    [plane].forEach((node) => this._sceneRenderables.addChild(node));
+    [plane, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
 
 
     const step = 5;
 
-    for(let i = 0 ; i < step ; i++){
-    for(let f = 0 ; f < step ; f++){
-      const pbrMat = new SimplePBRMaterial(this.renderer, light);
+
+    for(let i = 0 ; i <= step ; i++){
+    for(let f = 0 ; f <= step ; f++){
       // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
       
+      const pbrMat = new SimplePBRMaterial(this.renderer, light);
 
-      pbrMat.metalic = i / step;
-      pbrMat.roughness = f / step;
+      pbrMat.irradianceMap = this._irradianceHelper.framebufferTexture;
+      pbrMat.refelexionMap = this.cubePHelper.framebufferTexture;
+      
+  
+      vec3.set(pbrMat.color,1,1,1);
+
+      pbrMat.metalic = f / step;
+      pbrMat.roughness = i / step;
       
       const pbrSphere = new MeshNode(pbrMat, createSphereMesh(this._renderer.gl,0.4,32,32 ));
+      // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
 
       pbrSphere.transform.translate(i,f,0);
 

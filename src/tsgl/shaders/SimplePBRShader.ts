@@ -64,5 +64,8 @@ export class SimplePBRShader extends GLShader<SimplePBRShaderState> {
   constructor(gl: AnyWebRenderingGLContext) {
     super(gl, vertSrc, fragSrc, SimplePBRShaderState,getDefaultAttributeLocation(['a_position','a_uv','a_normal']));
 
+    setDefaultTextureLocation(this,['u_irradianceMap','u_reflexionMap'])
+    
+
   }
 }
