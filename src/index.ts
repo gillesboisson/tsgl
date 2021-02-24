@@ -1,8 +1,10 @@
-import { vec3 } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Base3DApp } from './app/Base3DApp';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
+import { createMimapMapFbs } from './app/helpers/specularIBL';
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
+import { TestLodShader, TestLodShaderID, TestLodShaderState } from './app/shaders/TestLodShader';
 import { LambertVShader } from './app/shaders/VariantShaderTest';
 import { Camera } from './tsgl/3d/Camera';
 import { GLTFData } from './tsgl/3d/gltf/GLFTSchema';
@@ -34,6 +36,7 @@ import { GLViewportStack } from './tsgl/gl/core/framebuffer/GLViewportState';
 import { GLRenderer } from './tsgl/gl/core/GLRenderer';
 import { GLTexture } from './tsgl/gl/core/GLTexture';
 import { FirstPersonCameraController } from './tsgl/input/CameraController';
+import { BasicColorShader, BasicColorShaderID, BasicColorShaderState } from './tsgl/shaders/BasicColorShader';
 import { BasicTextureShaderState, BasicTextureShader, BasicTextureShaderID } from './tsgl/shaders/BasicTextureShader';
 import { DepthOnlyShader } from './tsgl/shaders/DepthOnlyShader';
 import { MSDFShader } from './tsgl/shaders/MSDFShader';
@@ -81,18 +84,24 @@ class TestApp extends Base3DApp {
     this._cam.transform.setPosition(0, 0, 3);
 
     // this.loadScene();
-    this.loadScene().then(() => {
-      this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
-        70,
-        this._renderer.width / this._renderer.height,
-        0.1,
-        100,
-      );
-      this._lcam.transform.setPosition(0, 0, 2);
-      // this._lcam.transform.setTargetPosition(0,0,0);
-      this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
-      this.start();
-    });
+    // this.loadScene().then(() => {
+    //   this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
+    //     70,
+    //     this._renderer.width / this._renderer.height,
+    //     0.1,
+    //     100,
+    //   );
+    //   this._lcam.transform.setPosition(0, 0, 2);
+    //   // this._lcam.transform.setTargetPosition(0,0,0);
+    //   this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
+
+
+
+
+    //   // this.start();
+    // });
+
+    requestAnimationFrame(() => this.testRenderLod());
   }
 
   registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
@@ -110,9 +119,82 @@ class TestApp extends Base3DApp {
     BasicTextureShader.register(renderer);
     ShadowOnlyShader.register(renderer);
     SimplePBRShader.register(renderer);
+    BasicColorShader.register(renderer);
+    TestLodShader.register(renderer);
   }
 
-  async loadTexture(): Promise<void> {}
+  testRenderLod() {
+    const gl = this.renderer.gl as WebGL2RenderingContext;
+
+    const quad = createQuadMesh(gl);
+
+    const shaderState = this.renderer.getShader<BasicColorShaderState>(BasicColorShaderID).createState();
+    const lodShader = this.renderer.getShader<TestLodShaderState>(TestLodShaderID).createState();
+
+    
+
+    const width = 100;
+    const height = 100;
+
+    // const {framebuffer, texture, depthRenderBuffer} = createLodFB(gl, width,height);
+    const levels = 4;
+
+    const { framebuffers, texture } = createMimapMapFbs(gl, width, height, levels);
+
+
+    const colors = [
+      vec4.fromValues(1, 0, 0, 1),
+      vec4.fromValues(0, 1, 0, 1),
+      vec4.fromValues(0, 0, 1, 1),
+      vec4.fromValues(1, 0, 1, 1),
+    ]
+
+
+
+    for (let level = 0; level < levels ; level++) {
+      vec4.copy(shaderState.color, colors[level]);
+      
+      const mWidth = width / Math.pow(2, level);
+      const mHeight = height / Math.pow(2, level);
+
+      gl.viewport(0, 0, mWidth, mHeight);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffers[level]);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+      shaderState.use();
+      shaderState.syncUniforms();
+      quad.draw();
+    }
+
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0,0,this.renderer.width, this.renderer.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    lodShader.use();
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    
+    lodShader.syncUniforms();
+    
+    quad.draw();
+
+
+
+
+    /*
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.viewport(0,0,100,100);
+    this.renderer.clear();
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    */
+
+  }
+
+  async loadTexture(): Promise<void> { }
 
   protected async loadScene(): Promise<void> {
     const gl = this._renderer.gl;
@@ -142,13 +224,13 @@ class TestApp extends Base3DApp {
       corsetNormalMap,
     );
 
-    this._shadowMap = new ShadowMap(this.renderer,1024,1024,3,0.001,10);
+    this._shadowMap = new ShadowMap(this.renderer, 1024, 1024, 3, 0.001, 10);
     this._shadowMap.setPosition(2, 2, 2);
     this._shadowMap.setLookAt(-1, -1, -1);
 
-    this._shadowMat = new ShadowOnlyMaterial(this._renderer,this._shadowMap);
+    this._shadowMat = new ShadowOnlyMaterial(this._renderer, this._shadowMap);
 
-    
+
 
     // this._shadowFB = new GLFramebuffer(gl, 512, 512, true, false, true, false);
     // this._shadowCam = new Camera(CameraLookAtTransform3D).setOrtho(-3, 3, -3, 3, 0.001, 5);
@@ -174,7 +256,7 @@ class TestApp extends Base3DApp {
       ambiantColor: vec3.fromValues(0.7, 0.7, 0.7),
     };
 
-    
+
 
 
     // this._shadowCam.transform.copyLookAt(light.direction);
@@ -265,9 +347,9 @@ class TestApp extends Base3DApp {
     const planeMesh = createPlaneMesh(gl);
     const plane = new MeshNode(sphereMat, planeMesh);
 
-    plane.transform.rotateEuler(-Math.PI / 2, 0 , 0);
+    plane.transform.rotateEuler(-Math.PI / 2, 0, 0);
     plane.transform.setScale(5);
-    plane.transform.setPosition(0,-1,0);
+    plane.transform.setPosition(0, -1, 0);
 
     this._sceneRenderables = new SceneInstance3D();
 
@@ -276,7 +358,8 @@ class TestApp extends Base3DApp {
     phongBlinnMaterial.shadowMap = this._shadowMap;
 
 
-    
+
+
 
     // this._shadowCam.transform.setPosition(-10,-10,-10);
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
@@ -288,30 +371,30 @@ class TestApp extends Base3DApp {
     const step = 5;
 
 
-    for(let i = 0 ; i <= step ; i++){
-    for(let f = 0 ; f <= step ; f++){
-      // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
-      
-      const pbrMat = new SimplePBRMaterial(this.renderer, light);
+    for (let i = 0; i <= step; i++) {
+      for (let f = 0; f <= step; f++) {
+        // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
 
-      pbrMat.irradianceMap = this._irradianceHelper.framebufferTexture;
-      pbrMat.refelexionMap = this.cubePHelper.framebufferTexture;
-      
-  
-      vec3.set(pbrMat.color,1,1,1);
+        const pbrMat = new SimplePBRMaterial(this.renderer, light);
 
-      pbrMat.metalic = f / step;
-      pbrMat.roughness = i / step;
-      
-      const pbrSphere = new MeshNode(pbrMat, createSphereMesh(this._renderer.gl,0.4,32,32 ));
-      // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
+        pbrMat.irradianceMap = this._irradianceHelper.framebufferTexture;
+        pbrMat.refelexionMap = this.cubePHelper.framebufferTexture;
 
-      pbrSphere.transform.translate(i,f,0);
 
-      this._sceneRenderables.addChild(pbrSphere);
+        vec3.set(pbrMat.color, 1, 1, 1);
 
-      
-    }
+        pbrMat.metalic = f / step;
+        pbrMat.roughness = i / step;
+
+        const pbrSphere = new MeshNode(pbrMat, createSphereMesh(this._renderer.gl, 0.4, 32, 32));
+        // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
+
+        pbrSphere.transform.translate(i, f, 0);
+
+        // this._sceneRenderables.addChild(pbrSphere);
+
+
+      }
     }
 
   }
@@ -361,7 +444,7 @@ class TestApp extends Base3DApp {
     // this._shadowFB.unbind();
 
 
-    this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
+    // this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 
 
     this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
