@@ -1,8 +1,9 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Base3DApp } from './app/Base3DApp';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
-import { createMimapMapFbs } from './app/helpers/specularIBL';
+import { createEmptyTextureWithLinearFilter, createFBAndFlippableTexture, createImageTextureWithLinearFilter, createMimapMapFbs, createMipmapMax } from './app/helpers/specularIBL';
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
+import { TestBlurShader, TestBlurShaderID, TestBlurShaderState } from './app/shaders/TestBlurShader';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { TestLodShader, TestLodShaderID, TestLodShaderState } from './app/shaders/TestLodShader';
 import { LambertVShader } from './app/shaders/VariantShaderTest';
@@ -101,7 +102,7 @@ class TestApp extends Base3DApp {
     //   // this.start();
     // });
 
-    requestAnimationFrame(() => this.testRenderLod());
+    requestAnimationFrame(() => this.testBlur());
   }
 
   registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
@@ -121,6 +122,109 @@ class TestApp extends Base3DApp {
     SimplePBRShader.register(renderer);
     BasicColorShader.register(renderer);
     TestLodShader.register(renderer);
+    TestBlurShader.register(renderer,3);
+  }
+
+  async testmipmapMax() {
+    const gl = this.renderer.gl as WebGL2RenderingContext;
+
+    const quad = createQuadMesh(gl);
+
+    // const shaderState = this.renderer.getShader<BasicColorShaderState>(BasicColorShaderID).createState();
+    const lodShader = this.renderer.getShader<TestLodShaderState>(TestLodShaderID).createState();
+
+
+    const { width, height, texture } = await createMipmapMax(gl, './images/panda-wallpaper.jpg');
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    lodShader.use();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    lodShader.syncUniforms();
+
+    quad.draw();
+
+
+  }
+
+  async testBlur() {
+    const gl = this._renderer.gl as WebGL2RenderingContext;
+
+    const shaderState = this.renderer.getShader<TestBlurShaderState>(TestBlurShaderID).createState();
+
+
+
+
+    const image = await fetch('./images/panda-wallpaper.jpg')
+      .then((response) => response.blob())
+      .then((blob) => createImageBitmap(blob));
+
+    
+    const {texture: textureSource, width, height}  = createImageTextureWithLinearFilter(gl,image);
+    
+    const { texture1, texture2, framebuffer } = createFBAndFlippableTexture(gl, width, height);
+
+    const ratio = shaderState
+
+
+
+    shaderState.textureWidth = width;
+    shaderState.textureHeight = height;
+    shaderState.kernel = new Float32Array(new Array(25).fill(1 / 25));
+    shaderState.radius = 2;
+
+    const quad = createQuadMesh(gl);
+
+    const draw = () => {
+      gl.viewport(0,0,width, height);
+      this._renderer.clear();
+      
+      shaderState.radius = 8;
+      
+
+      // gl.bindTexture(gl.TEXTURE_2D, texture1);
+      // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
+
+      const nbPass = 8;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      let sourceT : WebGLTexture;
+      let destT : WebGLTexture;
+      for (let i = 0; i < nbPass; i++) {
+        sourceT = i === 0 ? textureSource : i % 2 === 0 ? texture1 : texture2;
+
+        
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, sourceT);
+
+        destT = i % 2 === 0 ? texture2 : texture1;
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, destT, 0);
+
+        this._renderer.clear();
+        shaderState.use();
+        shaderState.syncUniforms();
+        quad.draw();
+      }
+
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0,0,this._renderer.width, this._renderer.height);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, destT);
+
+
+      shaderState.radius = 0;
+
+      shaderState.use();
+      shaderState.syncUniforms();
+      quad.draw();
+
+      window.requestAnimationFrame(draw);
+    };
+
+    draw();
+
+
+
   }
 
   testRenderLod() {
@@ -131,7 +235,7 @@ class TestApp extends Base3DApp {
     const shaderState = this.renderer.getShader<BasicColorShaderState>(BasicColorShaderID).createState();
     const lodShader = this.renderer.getShader<TestLodShaderState>(TestLodShaderID).createState();
 
-    
+
 
     const width = 100;
     const height = 100;
@@ -151,9 +255,9 @@ class TestApp extends Base3DApp {
 
 
 
-    for (let level = 0; level < levels ; level++) {
+    for (let level = 0; level < levels; level++) {
       vec4.copy(shaderState.color, colors[level]);
-      
+
       const mWidth = width / Math.pow(2, level);
       const mHeight = height / Math.pow(2, level);
 
@@ -168,7 +272,7 @@ class TestApp extends Base3DApp {
 
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.viewport(0,0,this.renderer.width, this.renderer.height);
+    gl.viewport(0, 0, this.renderer.width, this.renderer.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     lodShader.use();
@@ -176,9 +280,9 @@ class TestApp extends Base3DApp {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    
+
     lodShader.syncUniforms();
-    
+
     quad.draw();
 
 
