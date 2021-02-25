@@ -19,6 +19,7 @@ export class TestBlurShaderState extends GLShaderState {
     gl.uniform1f(uniformsLocations.u_radius, this.radius);
     gl.uniform1f(uniformsLocations.u_textureWidth, this.textureWidth);
     gl.uniform1f(uniformsLocations.u_textureHeight, this.textureHeight);
+    gl.uniform1f(uniformsLocations.u_textureLod, this.textureLod);
     gl.uniform1fv(uniformsLocations['u_kernel[0]'], this.kernel);
 
 
@@ -28,6 +29,7 @@ export class TestBlurShaderState extends GLShaderState {
   radius = 1.001;
   textureWidth = 0;
   textureHeight = 0;
+  textureLod = 0;
   kernel = new Float32Array([0,0.25,0,0.25,0,0.25,0,0.25,0]);
   // color: vec4 = vec4.create();
 }

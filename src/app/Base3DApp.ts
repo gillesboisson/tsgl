@@ -57,6 +57,8 @@ export abstract class Base3DApp {
     this._juggler.stop();
   }
 
+  
+
   abstract update(time: number, elapsedTime: number): void;
   // abstract beforeRender(time: number, elapsedTime: number): void;
   abstract render(time: number, elapsedTime: number): void;

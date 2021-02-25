@@ -1,8 +1,9 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Base3DApp } from './app/Base3DApp';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
-import { createEmptyTextureWithLinearFilter, createFBAndFlippableTexture, createImageTextureWithLinearFilter, createMimapMapFbs, createMipmapMax } from './app/helpers/specularIBL';
+import { createEmptyTextureWithLinearFilter, createFBAndFlippableTexture, createImageTextureWithLinearFilter, createMimapMapFbs, createMipmapMax, createMipmapTextureForStorage } from './app/helpers/specularIBL';
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
+import { CopyShader, CopyShaderID, CopyShaderState } from './app/shaders/CopyShader';
 import { TestBlurShader, TestBlurShaderID, TestBlurShaderState } from './app/shaders/TestBlurShader';
 import { TestFlatShader } from './app/shaders/TestFlatShader';
 import { TestLodShader, TestLodShaderID, TestLodShaderState } from './app/shaders/TestLodShader';
@@ -102,7 +103,7 @@ class TestApp extends Base3DApp {
     //   // this.start();
     // });
 
-    requestAnimationFrame(() => this.testBlur());
+    requestAnimationFrame(() => this.testLodBlur());
   }
 
   registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
@@ -122,7 +123,8 @@ class TestApp extends Base3DApp {
     SimplePBRShader.register(renderer);
     BasicColorShader.register(renderer);
     TestLodShader.register(renderer);
-    TestBlurShader.register(renderer,3);
+    TestBlurShader.register(renderer,4);
+    CopyShader.register(renderer);
   }
 
   async testmipmapMax() {
@@ -145,6 +147,142 @@ class TestApp extends Base3DApp {
 
     quad.draw();
 
+
+  }
+
+  async testLodBlur(){
+    const gl = this._renderer.gl as WebGL2RenderingContext;
+
+
+    // init shaders
+    const blurShaderState = this.renderer.getShader<TestBlurShaderState>(TestBlurShaderID).createState();
+    const copyShader = this.renderer.getShader<CopyShaderState>(CopyShaderID).createState();
+    const lodShader = this.renderer.getShader<TestLodShaderState>(TestLodShaderID).createState();     // split mipmap screen just for debugging
+  
+      // setup kernel to have full 1/kernel size split
+      blurShaderState.kernel = new Float32Array(new Array(49).fill(1 / 49));
+  
+  
+      // load image
+      const image = await fetch('./images/panda-wallpaper.jpg')
+        .then((response) => response.blob())
+        .then((blob) => createImageBitmap(blob));
+  
+      
+      // create 2 mipmap texture and store loaded image to a source texture
+      const {texture: texture1, width, height, levels} = createMipmapTextureForStorage(gl,image.width,image.height,4);
+      const {texture: texture2} = createMipmapTextureForStorage(gl,image.width,image.height,4);
+      const {texture: sourceT} = createImageTextureWithLinearFilter(gl, image);
+  
+      // create a quad vao for all passes
+      const quad = createQuadMesh(gl);
+  
+      // init fb
+      const framebuffer = gl.createFramebuffer();
+      
+  
+      // prepare first mipmap level by copying source texture in two texture on lod level 0
+      const prepareTopLevel = () => {
+        gl.viewport(0,0,width, height);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, sourceT);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 , gl.TEXTURE_2D,texture1,0);
+        this.renderer.clear();
+        copyShader.use();
+        copyShader.textureLod = 0;
+        copyShader.syncUniforms();
+        quad.draw();
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 , gl.TEXTURE_2D,texture2,0);
+        this.renderer.clear();
+        quad.draw();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  
+        // equivalent of 
+        // gl.bindTexture(gl.TEXTURE_2D, texture1);
+        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
+        // gl.bindTexture(gl.TEXTURE_2D, texture2);
+        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
+        // ... with non storage texture
+  
+      }
+  
+  
+  
+  
+      const draw = () => {
+        
+        // setup static settings and bind framebuffer
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        blurShaderState.radius = 3;
+  
+        // go through every level
+        for(let level = 1;level < 4; level++){
+          // break;
+  
+          // swap source and dest texture 
+          const textureS = level % 2 === 1 ? texture1 : texture2;
+          const textureD = level % 2 === 1 ? texture2 : texture1;
+  
+          // setup viewport and shader based on current level source and destination texture
+          const vpWidth = width / Math.pow(2,level);  // size / 2 every iteration = size / pow(2,level)
+          const vpHeight = height / Math.pow(2,level); 
+          gl.viewport(0,0,vpWidth,vpHeight);
+          
+          const tWidth = width / Math.pow(2,level - 1); 
+          const tHeight = height / Math.pow(2,level - 1); 
+          blurShaderState.textureWidth = tWidth;
+          blurShaderState.textureHeight = tHeight;
+          blurShaderState.textureLod = level - 1;
+  
+          // bind source texture
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, textureS);
+  
+          // target mipmap texture
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 , gl.TEXTURE_2D,textureD,level);
+  
+          // do blur pass
+          this._renderer.clear();
+          blurShaderState.use();
+          blurShaderState.syncUniforms();
+          quad.draw();
+          
+          // every two iteration (when t2 render to t1) we copy the result to t2 in order to set t2 with every levels
+          if(level % 2 === 0){
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, texture1);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 , gl.TEXTURE_2D,texture2,level);
+            this.renderer.clear();
+            copyShader.use();
+            copyShader.textureLod = level;
+            copyShader.syncUniforms();
+            quad.draw();
+          }
+  
+  
+        }
+  
+  
+        // doing a debugging pass in screen framebuffer
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  
+        this.renderer.clear();
+        gl.viewport(0,0,this._renderer.width, this._renderer.height);
+        lodShader.use();
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture2);
+    
+        lodShader.syncUniforms();
+        quad.draw();
+  
+        
+         
+        
+      }
+  
+      prepareTopLevel();
+      draw();
 
   }
 
