@@ -11,10 +11,12 @@ export enum GLRendererType {
   WebGL2,
 }
 
-export class GLRenderer extends GLCore {
+export type WebGL2Renderer = GLRenderer<WebGL2RenderingContext>; 
+export type WebGL1Renderer = GLRenderer<WebGLRenderingContext>; 
+export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> extends GLCore<GLContext> {
   protected _shaders: { [key: string]: IShaderCreateState<IGLShaderState> } = {};
   protected _shadersFactories: {
-    [key: string]: (gl: AnyWebRenderingGLContext, name: string) => IShaderCreateState<IGLShaderState>;
+    [key: string]: (gl: GLContext, name: string) => IShaderCreateState<IGLShaderState>;
   } = {};
   protected _viewportStack: GLViewportStack;
 
@@ -28,7 +30,7 @@ export class GLRenderer extends GLCore {
 
   public registerShaderFactoryFunction(
     name: string,
-    shaderFactory: (gl: AnyWebRenderingGLContext, name: string) => IShaderCreateState<IGLShaderState>,
+    shaderFactory: (gl: GLContext, name: string) => IShaderCreateState<IGLShaderState>,
   ): void {
     if (this._shadersFactories[name] === undefined) this._shadersFactories[name] = shaderFactory;
   }
@@ -42,7 +44,7 @@ export class GLRenderer extends GLCore {
     if (this._shaders[name] === undefined) {
       if (this._shadersFactories[name] === undefined) throw new Error(`Shader ${name} not found`);
 
-      this._shaders[name] = shader = this._shadersFactories[name](this.gl, name) as IShaderCreateState<ShaderStateT>;
+      this._shaders[name] = shader = this._shadersFactories[name](this.gl as GLContext, name) as IShaderCreateState<ShaderStateT>;
     } else {
       shader = this._shaders[name] as IShaderCreateState<ShaderStateT>;
     }
@@ -89,7 +91,7 @@ export class GLRenderer extends GLCore {
   private _clearColor: vec4;
 
   constructor(
-    gl: AnyWebRenderingGLContext,
+    gl: GLContext,
     public type: GLRendererType,
     public canvas: HTMLCanvasElement,
     mainViewportState?: GLViewportState,

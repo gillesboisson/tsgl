@@ -6,6 +6,14 @@ export interface ImageSource {
   type?: GLenum;
 }
 
+export interface IGLTexture {
+  readonly texture: WebGLTexture;
+  width: number;
+  height: number;
+  levels?: number;
+}
+
+
 const EXT_DEFAULT_ALPHA = ['png', 'gif'];
 
 type TextureCompatibleImage =
@@ -15,7 +23,7 @@ type TextureCompatibleImage =
   | ImageData
   | ImageBitmap
   | HTMLVideoElement;
-export class GLTexture extends GLCore {
+export class GLTexture extends GLCore implements IGLTexture {
   static async loadTexture2D(gl: AnyWebRenderingGLContext, url: string, type?: GLenum): Promise<GLTexture> {
     const finalType =
       type !== undefined
@@ -40,7 +48,7 @@ export class GLTexture extends GLCore {
     const texture = new GLTexture(gl, gl.TEXTURE_CUBE_MAP);
     const textureGL = texture.texture;
 
-    const finalFormat =
+    const finalFormat: number =
       format !== undefined
         ? format
         : EXT_DEFAULT_ALPHA.indexOf(urls[0].split('.').pop().toLowerCase()) !== -1

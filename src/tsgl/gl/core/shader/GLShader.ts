@@ -17,7 +17,6 @@ export interface IShaderRegisterer {
 }
 
 
-
 export class GLShader<ShaderStateT extends IGLShaderState>
   extends GLCore
   implements ICreateState, IShaderProgram, ISyncUniform, IShaderCreateState<ShaderStateT> {

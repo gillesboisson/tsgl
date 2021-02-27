@@ -12,8 +12,11 @@ const fragSrc = require('./glsl/irradiance.frag').default;
 const vertSrc = require('./glsl/flat_2d.vert').default;
 
 export class IrradianceShaderState extends GLShaderState implements IGLShaderState {
-  syncUniforms(): void {}
+  syncUniforms(): void {
+    
+  }
 }
+
 
 export const TestIrradianceID = 'irradiance';
 

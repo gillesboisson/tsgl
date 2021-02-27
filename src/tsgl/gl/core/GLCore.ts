@@ -7,11 +7,11 @@ export enum GLType {
   Vao = 2,
   Shader = 3,
 }
-export abstract class GLCore implements IGLCore {
+export abstract class GLCore<GLContext extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> implements IGLCore<GLContext> {
   readonly glType: GLType;
   
 
-  constructor(readonly gl: AnyWebRenderingGLContext) {}
+  constructor(readonly gl: GLContext) {}
   
 
   abstract destroy(): void;

@@ -4,16 +4,17 @@ import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttribu
 import { GLMesh } from '../../gl/core/data/GLMesh';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 
-export function createSkyBoxMesh(gl: AnyWebRenderingGLContext): GLMesh {
+export function createSkyBoxMesh(gl: AnyWebRenderingGLContext, size = 1): GLMesh {
+  const radius = size / 2.0;
   const position = new Float32Array([
-    -1, 1, 1,
-    1, 1, 1,
-    -1, -1, 1,
-    1, -1, 1,
-    1, 1, -1,
-    -1, 1, -1,
-    1, -1, -1,
-    -1, -1, -1,
+    -size, size, size,
+    size, size, size,
+    -size, -size, size,
+    size, -size, size,
+    size, size, -size,
+    -size, size, -size,
+    size, -size, -size,
+    -size, -size, -size,
   ]);
 
   const indices = new Uint16Array([
