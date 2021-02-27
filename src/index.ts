@@ -340,10 +340,7 @@ class TestApp extends Base3DApp {
       .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
 
     this._skybox = new MeshNode(
-      new SkyboxMaterial(
-        this._renderer,
-        hdrIbl.baseCubemap.cubemap
-      ),
+      new SkyboxMaterial(this._renderer, hdrIbl.baseCubemap.cubemap),
       createSkyBoxMesh(this._renderer.gl),
     );
 
@@ -408,8 +405,8 @@ class TestApp extends Base3DApp {
     // [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
     [plane, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
 
-    const step = 5;
-
+    const step = 10;
+    const mesh = createSphereMesh(this._renderer.gl, 0.5, 32, 32);
     for (let i = 0; i <= step; i++) {
       for (let f = 0; f <= step; f++) {
         // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
@@ -420,12 +417,12 @@ class TestApp extends Base3DApp {
         pbrMat.reflectionMap = hdrIbl.reflectance.cubemap;
         pbrMat.brdfLUT = testLut;
 
-        vec3.set(pbrMat.color, 1, 0, 0);
+        vec3.set(pbrMat.color, 1, 1, 1);
 
         pbrMat.metalic = f / step;
         pbrMat.roughness = i / step;
 
-        const pbrSphere = new MeshNode(pbrMat, createSphereMesh(this._renderer.gl, 0.4, 32, 32));
+        const pbrSphere = new MeshNode(pbrMat, mesh);
         // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
 
         pbrSphere.transform.translate(i, f, 0);
