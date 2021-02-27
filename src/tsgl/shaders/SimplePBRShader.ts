@@ -10,8 +10,7 @@ const fragSrc = require('./glsl/pbrSimple.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/pbrSimple.vert').default;
 
-
-export class SimplePBRShaderState extends GLShaderState{
+export class SimplePBRShaderState extends GLShaderState {
   syncUniforms(): void {
     const gl = this.gl;
     const uniformsLocations = this._uniformsLocations;
@@ -21,16 +20,20 @@ export class SimplePBRShaderState extends GLShaderState{
     gl.uniformMatrix4fv(uniformsLocations.u_normalMat, false, this.normalMat);
 
     gl.uniform3fv(uniformsLocations.u_albedo, this.albedo);
-    
+
     gl.uniform1f(uniformsLocations.u_metallic, this.metallic);
     gl.uniform1f(uniformsLocations.u_roughness, this.roughness);
     gl.uniform1f(uniformsLocations.u_ao, this.ao);
 
-    gl.uniform3f(uniformsLocations.u_lightDirection, -this.lightDirection[0], -this.lightDirection[1], -this.lightDirection[2]);
+    gl.uniform3f(
+      uniformsLocations.u_lightDirection,
+      -this.lightDirection[0],
+      -this.lightDirection[1],
+      -this.lightDirection[2],
+    );
     gl.uniform3fv(uniformsLocations.u_lightColor, this.lightColor);
 
     gl.uniform3fv(uniformsLocations.u_cameraPosition, this.cameraPosition);
-
   }
 
   mvpMat: mat4 = mat4.create();
@@ -47,7 +50,6 @@ export class SimplePBRShaderState extends GLShaderState{
   lightColor: vec3 = vec3.create();
 
   cameraPosition: vec3 = vec3.create();
-
 }
 
 export const SimplePBRShaderID = 'simple_pbr';
@@ -62,10 +64,8 @@ export class SimplePBRShader extends GLShader<SimplePBRShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, SimplePBRShaderState,getDefaultAttributeLocation(['a_position','a_uv','a_normal']));
+    super(gl, vertSrc, fragSrc, SimplePBRShaderState, getDefaultAttributeLocation(['a_position', 'a_uv', 'a_normal']));
 
-    setDefaultTextureLocation(this,['u_irradianceMap','u_reflexionMap'])
-    
-
+    setDefaultTextureLocation(this, ['u_irradianceMap', 'u_reflexionMap','u_brdfLut']);
   }
 }

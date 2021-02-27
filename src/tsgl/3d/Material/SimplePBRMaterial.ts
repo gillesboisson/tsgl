@@ -27,7 +27,8 @@ export class SimplePBRMaterial extends AMaterial<SimplePBRShaderState> {
   ao = 1;
 
   irradianceMap: GLTexture;
-  refelexionMap: GLTexture;
+  reflectionMap: GLTexture;
+  brdfLUT: GLTexture;
   
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,7 +50,7 @@ export class SimplePBRMaterial extends AMaterial<SimplePBRShaderState> {
     ss.metallic = this.metalic;
 
     // apply base mapping 
-    ss.roughness = this.roughness;
+    ss.roughness = this.roughness * 0.95;
     // ss.roughness = (this.roughness + 1) * (this.roughness + 1) / 8;
     // ss.roughness = this.roughness * this.roughness  / 2;
     ss.ao = this.ao;
@@ -61,8 +62,11 @@ export class SimplePBRMaterial extends AMaterial<SimplePBRShaderState> {
       this.irradianceMap.active(GLDefaultTextureLocation.IRRADIANCE_BOX);
     }
 
-    if(this.refelexionMap){
-      this.refelexionMap.active(GLDefaultTextureLocation.RELEXION_BOX);
+    if(this.reflectionMap){
+      this.reflectionMap.active(GLDefaultTextureLocation.RELEXION_BOX);
+    }
+    if(this.brdfLUT){
+      this.brdfLUT.active(GLDefaultTextureLocation.RELEXION_LUT);
     }
 
     

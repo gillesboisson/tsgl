@@ -2,16 +2,11 @@ import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
 import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
-import {
-  createCubemapEmptyTexture,
-  createCubemapMipmapStorageTexture,
-  createEmptyMipmapTexture,
-  createEmptyTextureWithLinearFilter,
-  createFBAndFlippableTexture,
-  createImageTextureWithLinearFilter,
-  createMipmapTextureForStorage,
-  createMipmapTextureProxy,
-} from './tsgl/helpers/texture/texture';
+import { createImageTextureWithLinearFilter } from './tsgl/helpers/texture/createImageTextureWithLinearFilter';
+import { createFBAndFlippableTexture } from './tsgl/helpers/texture/createFBAndFlippableTexture';
+import { createEmptyMipmapTexture } from './tsgl/helpers/texture/createEmptyMipmapTexture';
+import { createMipmapTextureForStorage } from './tsgl/helpers/texture/createMipmapTextureForStorage';
+import { createCubemapEmptyTexture } from './tsgl/helpers/texture/createCubemapEmptyTexture';
 import { TestFlatMaterial } from './app/materials/TestFlatMaterial';
 import { CopyShader, CopyShaderID, CopyShaderState } from './app/shaders/CopyShader';
 import { TestBlurShader, TestBlurShaderID, TestBlurShaderState } from './app/shaders/TestBlurShader';
@@ -39,7 +34,6 @@ import { MeshNode, SceneInstance3D } from './tsgl/3d/SceneInstance3D';
 import { ShadowMap } from './tsgl/3d/ShadowMap';
 import { CameraLookAtTransform3D } from './tsgl/geom/CameraTargetTransform3D';
 import { CubeMapPatronHelper } from './tsgl/geom/CubeMapPatronHelper';
-import { IrradianceHelper } from './tsgl/geom/IrradianceHelper';
 import { createBoxMesh, cubeSquarePatronUv } from './tsgl/geom/mesh/createBoxMesh';
 import { createCylinderMesh } from './tsgl/geom/mesh/createCylinderMesh';
 import { createPlaneMesh } from './tsgl/geom/mesh/createPlaneMesh';
@@ -69,17 +63,27 @@ import { SimpleLamberianShader } from './tsgl/shaders/SimpleLamberianShader';
 import { SimplePBRShader } from './tsgl/shaders/SimplePBRShader';
 import { SimpleTextureShader } from './tsgl/shaders/SimpleTextureShader';
 import { SkyboxShader } from './tsgl/shaders/SkyboxShader';
-import { IrradianceShader, IrradianceShaderState } from './app/shaders/IrradianceShader';
-import {
-  EquiToCubemapShader,
-  EquiToCubemapShaderID,
-  EquiToCubemapShaderState,
-} from './app/shaders/EquiToCubemapShader';
+
 import { floatToRgb9_e5, loadHDR, loadHDRToFloatTexture, rgbeToFloat } from './tsgl/helpers/texture/hdr';
-import { IrradianceShaderID } from './app/shaders/IrradianceShader';
-import { HDRToCubemap } from './tsgl/helpers/texture/HDRRectToCubemap';
-import { IrradianceCubemapRenderer } from './tsgl/helpers/texture/IrradianceCubemapRenderer';
+import { HDRToCubemap } from './tsgl/baking/HDRRectToCubemap';
 import { createFramebufferWithDepthStorage } from './tsgl/helpers/framebuffer';
+import { renderFaces } from './tsgl/helpers/texture/CubemapRenderer';
+import { createCubemapMipmapEmptyTexture } from './tsgl/helpers/texture/createCubemapMipmapEmptyTexture';
+import {
+  DebugSkyboxLodShader,
+  DebugSkyboxLodShaderID,
+  DebugSkyboxLodShaderState,
+} from './app/shaders/DebugSkyboxLodShader';
+import { BrdfLutShader, BrdfLutShaderID, BrdfLutShaderState } from './tsgl/shaders/BrdfLutShader';
+import { createEmptyTextureWithLinearFilter } from './tsgl/helpers/texture/createEmptyTextureWithLinearFilter';
+import { Quad } from './tsgl/2d/sprite/Quad';
+import { EquiToCubemapShader } from './tsgl/shaders/EquiToCubemapShader';
+import { IrradianceShader } from './tsgl/shaders/IrradianceShader';
+import { ReflectanceShader, ReflectanceShaderState, ReflectanceShaderID } from './tsgl/shaders/ReflectanceShader';
+import { ReflectanceCubemapRenderer } from './tsgl/baking/ReflectanceCubemapRenderer';
+import { IrradianceCubemapRenderer } from './tsgl/baking/IrradianceCubemapRenderer';
+import { renderBRDFLut } from './tsgl/helpers/renderBRDFLut';
+import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -96,9 +100,7 @@ class TestApp extends Base3DApp {
   fb: GLFramebuffer;
   vps: GLViewportStack;
   private _flatMat: TestFlatMaterial;
-  cubePHelper: CubeMapPatronHelper;
-  private _cubeMapPatron: GLTexture;
-  private _irradianceHelper: IrradianceHelper;
+  // private _irradianceHelper: IrradianceHelper;
   private _skybox: MeshNode;
   private _ppTomsNormal: PlaneSpaceToModelSpaceNormalShaderState;
   private _sphere: MeshNode;
@@ -114,22 +116,22 @@ class TestApp extends Base3DApp {
 
     this._cam.transform.setPosition(0, 0, 3);
 
-    // this.loadScene();
-    // this.loadScene().then(() => {
-    //   this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
-    //     70,
-    //     this._renderer.width / this._renderer.height,
-    //     0.1,
-    //     100,
-    //   );
-    //   this._lcam.transform.setPosition(0, 0, 2);
-    //   // this._lcam.transform.setTargetPosition(0,0,0);
-    //   this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
+    this.loadScene();
+    this.loadScene().then(() => {
+      this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
+        70,
+        this._renderer.width / this._renderer.height,
+        0.1,
+        100,
+      );
+      this._lcam.transform.setPosition(0, 0, 2);
+      // this._lcam.transform.setTargetPosition(0,0,0);
+      this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
 
-    //   // this.start();
-    // });
+      this.start();
+    });
 
-    requestAnimationFrame(() => this.testHdrPng());
+    // requestAnimationFrame(() => this.testHdrReflectance());
   }
 
   registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
@@ -153,77 +155,33 @@ class TestApp extends Base3DApp {
     CopyShader.register(renderer);
     EquiToCubemapShader.register(renderer);
     IrradianceShader.register(renderer);
+    ReflectanceShader.register(renderer);
+    DebugSkyboxLodShader.register(renderer);
+    BrdfLutShader.register(renderer);
   }
 
-  // async testmipmapMax() {
-  //   const gl = this.renderer.gl as WebGL2RenderingContext;
-
-  //   const quad = createQuadMesh(gl);
-
-  //   // const shaderState = this.renderer.getShader<BasicColorShaderState>(BasicColorShaderID).createState();
-  //   const lodShader = this.renderer.getShader<TestLodShaderState>(TestLodShaderID).createState();
-
-  //   const { width, height, texture } = await createMipmapMax(gl, './images/panda-wallpaper.jpg');
-  //   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-  //   lodShader.use();
-  //   gl.activeTexture(gl.TEXTURE0);
-  //   gl.bindTexture(gl.TEXTURE_2D, texture);
-
-  //   lodShader.syncUniforms();
-
-  //   quad.draw();
-
-  // }
-
-  async testHdrPng() {
+  async testHdrReflectance() {
     const gl = this._renderer.gl as WebGL2RenderingContext;
 
-
-    const { img: hdrImage, width: hdrWidth, height: hdrHeight } = await loadHDR('./images/ballroom_2k.hdr');
-    
-    
-    const {texture: hdrTexture} = loadHDRToFloatTexture(gl as WebGL2RenderingContext, hdrWidth, hdrHeight,rgbeToFloat(hdrImage));
-    
-    
-    const { cubemap, size: cubemapSize, internalFormat, format, type } = createCubemapEmptyTexture(
-      gl,
-      256,
-      gl.RGBA16F,
-      gl.RGBA,
-      gl.FLOAT,
-    );
-    const { cubemap:irradianceCubemap } = createCubemapEmptyTexture(
-      gl,
-      cubemapSize,
-      internalFormat,
-      format,
-      type,
-    );
-
-
-    const {framebuffer} = createFramebufferWithDepthStorage(gl,cubemapSize,cubemapSize,gl.DEPTH_COMPONENT24);
-
-    const hdrRenderer = new HDRToCubemap(this._renderer as WebGL2Renderer,cubemapSize,framebuffer);
-    hdrRenderer.source = hdrTexture;
-    hdrRenderer.dest = cubemap;
-    hdrRenderer.render();
-
-    const irradianceRenderer = new IrradianceCubemapRenderer(this._renderer as WebGL2Renderer,cubemapSize,framebuffer);
-    irradianceRenderer.source = cubemap;
-    irradianceRenderer.dest = irradianceCubemap;
-    irradianceRenderer.render();
-
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    const hdrIbl = await bakeHdrIbl(this.renderer as WebGL2Renderer, {
+      source: './images/ballroom_2k.hdr',
+      baseCubemap: {
+        size: 256,
+      },
+      reflectance: {
+        size: 256,
+        // levels: 8
+      },
+      lut: {
+        size: 64,
+      },
+      irradiance: {
+        size: 128,
+      },
+    });
 
     gl.viewport(0, 0, this._renderer.width, this._renderer.height);
-    
-    const skybox = createSkyBoxMesh(gl);
-    // const debugT = new GLTexture({ gl, texture: cubemap }, gl.TEXTURE_CUBE_MAP);
-    const debugT = new GLTexture({ gl, texture: irradianceCubemap }, gl.TEXTURE_CUBE_MAP);
-    const debugSB = new MeshNode(new SkyboxMaterial(this.renderer, debugT), skybox);
+
     this._camController = this._camController = new FirstPersonCameraController(
       this._cam,
       this._renderer.canvas,
@@ -231,290 +189,34 @@ class TestApp extends Base3DApp {
       0.002,
     );
 
-    const renderLoop = () => {
-      debugSB.transform.setScale(30);
+    const debugSkyboxST = this._renderer.getShader<DebugSkyboxLodShaderState>(DebugSkyboxLodShaderID).createState();
 
-      debugSB.updateTransform();
+    const debugSB = new Transform3D();
+    debugSB.setScale(30);
+
+    debugSkyboxST.use();
+
+    debugSkyboxST.lod = 0;
+    const skybox = createSkyBoxMesh(gl);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, hdrIbl.reflectance.cubemap);
+
+    const renderLoop = () => {
       this._cam.updateTransform();
 
       this._renderer.clear();
       this._camController.update(1000 / 60);
 
-      debugSB.render(gl, this._cam);
+      this._cam.mvp(debugSkyboxST.mvp, debugSB.getLocalMat());
+
+      debugSkyboxST.syncUniforms();
+      skybox.draw();
 
       window.requestAnimationFrame(renderLoop);
     };
 
     renderLoop();
-  }
-
-  async testLodBlur2() {
-    const gl = this._renderer.gl as WebGL2RenderingContext;
-
-    // init shaders
-    const blurShaderState = this.renderer.getShader<TestBlurShaderState>(TestBlurShaderID).createState();
-    const lodShader = this.renderer.getShader<TestLodShaderState>(TestLodShaderID).createState(); // split
-
-    blurShaderState.radius = 2;
-
-    blurShaderState.kernel = new Float32Array(new Array(49).fill(1 / 49));
-
-    const image = await fetch('./images/panda-wallpaper.jpg')
-      .then((response) => response.blob())
-      .then((blob) => createImageBitmap(blob));
-
-    const { texture: textureDest, width, height, levels } = createMipmapTextureForStorage(
-      gl,
-      image.width,
-      image.height,
-      4,
-    );
-    const { texture: textureProxy } = createEmptyMipmapTexture(gl, image.width, image.height, 4);
-
-    const framebuffer = gl.createFramebuffer();
-
-    const quad = createQuadMesh(gl);
-
-    // upload image data to both texture
-    gl.bindTexture(gl.TEXTURE_2D, textureProxy);
-    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
-
-    gl.bindTexture(gl.TEXTURE_2D, textureDest);
-    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-    gl.activeTexture(gl.TEXTURE0);
-
-    for (let level = 1; level < 4; level++) {
-      // setup viewport and shader based on current level source and destination texture
-      const vpWidth = width / Math.pow(2, level); // size / 2 every iteration = size / pow(2,level)
-      const vpHeight = height / Math.pow(2, level);
-      gl.viewport(0, 0, vpWidth, vpHeight);
-
-      const tWidth = width / Math.pow(2, level - 1);
-      const tHeight = height / Math.pow(2, level - 1);
-      blurShaderState.textureWidth = tWidth;
-      blurShaderState.textureHeight = tHeight;
-      blurShaderState.textureLod = level - 1;
-
-      // bind source texture
-      gl.bindTexture(gl.TEXTURE_2D, textureProxy);
-
-      // target mipmap texture
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textureDest, level);
-
-      console.log('sizes', vpWidth, vpHeight, tWidth, tHeight);
-
-      // do blur pass
-      this._renderer.clear();
-      blurShaderState.use();
-      blurShaderState.syncUniforms();
-      quad.draw();
-
-      gl.bindTexture(gl.TEXTURE_2D, textureProxy);
-      gl.copyTexSubImage2D(gl.TEXTURE_2D, level, 0, 0, 0, 0, vpWidth, vpHeight);
-    }
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-    this.renderer.clear();
-    gl.viewport(0, 0, this._renderer.width, this._renderer.height);
-    lodShader.use();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, textureDest);
-
-    lodShader.syncUniforms();
-    quad.draw();
-  }
-  async testLodBlur() {
-    const gl = this._renderer.gl as WebGL2RenderingContext;
-
-    // init shaders
-    const blurShaderState = this.renderer.getShader<TestBlurShaderState>(TestBlurShaderID).createState();
-    const copyShader = this.renderer.getShader<CopyShaderState>(CopyShaderID).createState();
-    const lodShader = this.renderer.getShader<TestLodShaderState>(TestLodShaderID).createState(); // split mipmap screen just for debugging
-
-    // setup kernel to have full 1/kernel size split
-    blurShaderState.kernel = new Float32Array(new Array(49).fill(1 / 49));
-
-    // load image
-    const image = await fetch('./images/panda-wallpaper.jpg')
-      .then((response) => response.blob())
-      .then((blob) => createImageBitmap(blob));
-
-    // create 2 mipmap texture and store loaded image to a source texture
-    const { texture: texture1, width, height, levels } = createMipmapTextureForStorage(
-      gl,
-      image.width,
-      image.height,
-      4,
-    );
-    const { texture: texture2 } = createMipmapTextureForStorage(gl, image.width, image.height, 4);
-    const { texture: sourceT } = createImageTextureWithLinearFilter(gl, image);
-
-    // create a quad vao for all passes
-    const quad = createQuadMesh(gl);
-
-    // init fb
-    const framebuffer = gl.createFramebuffer();
-
-    // prepare first mipmap level by copying source texture in two texture on lod level 0
-    const prepareTopLevel = () => {
-      gl.viewport(0, 0, width, height);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, sourceT);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture1, 0);
-      this.renderer.clear();
-      copyShader.use();
-      copyShader.textureLod = 0;
-      copyShader.syncUniforms();
-      quad.draw();
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture2, 0);
-      this.renderer.clear();
-      quad.draw();
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-      // equivalent of
-      // gl.bindTexture(gl.TEXTURE_2D, texture1);
-      // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
-      // gl.bindTexture(gl.TEXTURE_2D, texture2);
-      // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
-      // ... with non storage texture
-    };
-
-    const draw = () => {
-      // setup static settings and bind framebuffer
-      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-      blurShaderState.radius = 3;
-
-      // go through every level
-      for (let level = 1; level < 4; level++) {
-        // break;
-
-        // swap source and dest texture
-        const textureS = level % 2 === 1 ? texture1 : texture2;
-        const textureD = level % 2 === 1 ? texture2 : texture1;
-
-        // setup viewport and shader based on current level source and destination texture
-        const vpWidth = width / Math.pow(2, level); // size / 2 every iteration = size / pow(2,level)
-        const vpHeight = height / Math.pow(2, level);
-        gl.viewport(0, 0, vpWidth, vpHeight);
-
-        const tWidth = width / Math.pow(2, level - 1);
-        const tHeight = height / Math.pow(2, level - 1);
-        blurShaderState.textureWidth = tWidth;
-        blurShaderState.textureHeight = tHeight;
-        blurShaderState.textureLod = level - 1;
-
-        // bind source texture
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, textureS);
-
-        // target mipmap texture
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textureD, level);
-
-        // do blur pass
-        this._renderer.clear();
-        blurShaderState.use();
-        blurShaderState.syncUniforms();
-        quad.draw();
-
-        // every two iteration (when t2 render to t1) we copy the result to t2 in order to set t2 with every levels
-        if (level % 2 === 0) {
-          gl.activeTexture(gl.TEXTURE0);
-          gl.bindTexture(gl.TEXTURE_2D, texture1);
-          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture2, level);
-          this.renderer.clear();
-          copyShader.use();
-          copyShader.textureLod = level;
-          copyShader.syncUniforms();
-          quad.draw();
-        }
-      }
-
-      // doing a debugging pass in screen framebuffer
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-      this.renderer.clear();
-      gl.viewport(0, 0, this._renderer.width, this._renderer.height);
-      lodShader.use();
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, texture2);
-
-      lodShader.syncUniforms();
-      quad.draw();
-    };
-
-    prepareTopLevel();
-    draw();
-  }
-
-  async testBlur() {
-    const gl = this._renderer.gl as WebGL2RenderingContext;
-
-    const shaderState = this.renderer.getShader<TestBlurShaderState>(TestBlurShaderID).createState();
-
-    const image = await fetch('./images/panda-wallpaper.jpg')
-      .then((response) => response.blob())
-      .then((blob) => createImageBitmap(blob));
-
-    const { texture: textureSource, width, height } = createImageTextureWithLinearFilter(gl, image);
-
-    const { texture1, texture2, framebuffer } = createFBAndFlippableTexture(gl, width, height);
-
-    const ratio = shaderState;
-
-    shaderState.textureWidth = width;
-    shaderState.textureHeight = height;
-    shaderState.kernel = new Float32Array(new Array(25).fill(1 / 25));
-    shaderState.radius = 2;
-
-    const quad = createQuadMesh(gl);
-
-    const draw = () => {
-      gl.viewport(0, 0, width, height);
-      this._renderer.clear();
-
-      shaderState.radius = 8;
-
-      // gl.bindTexture(gl.TEXTURE_2D, texture1);
-      // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image as any);
-
-      const nbPass = 8;
-      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-      let sourceT: WebGLTexture;
-      let destT: WebGLTexture;
-      for (let i = 0; i < nbPass; i++) {
-        sourceT = i === 0 ? textureSource : i % 2 === 0 ? texture1 : texture2;
-
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, sourceT);
-
-        destT = i % 2 === 0 ? texture2 : texture1;
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, destT, 0);
-
-        this._renderer.clear();
-        shaderState.use();
-        shaderState.syncUniforms();
-        quad.draw();
-      }
-
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      gl.viewport(0, 0, this._renderer.width, this._renderer.height);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, destT);
-
-      shaderState.radius = 0;
-
-      shaderState.use();
-      shaderState.syncUniforms();
-      quad.draw();
-
-      window.requestAnimationFrame(draw);
-    };
-
-    draw();
   }
 
   async loadTexture(): Promise<void> {}
@@ -570,7 +272,7 @@ class TestApp extends Base3DApp {
     // });
 
     const light = {
-      direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, -1)),
+      direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, 0)),
       color: vec3.fromValues(1.0, 1.0, 1.0),
       specularColor: vec3.fromValues(0.3, 0.3, 0.3),
       shininess: 32.0,
@@ -605,23 +307,49 @@ class TestApp extends Base3DApp {
     this._corsetNode.transform.setPosition(0, -0.5, 0);
 
     // cubemap size
-    const bufferSize = 512;
-    const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
-    this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
-    this.cubePHelper.unwrap(cubeMapPatron);
+    // const bufferSize = 512;
+    // const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
+    // this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
+    // this.cubePHelper.unwrap(cubeMapPatron);
 
-    this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
-    this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
+    // this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
+    // this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
 
     // create skybox
+
+    const hdrIbl = await bakeHdrIbl(this.renderer as WebGL2Renderer, {
+      source: './images/ballroom_2k.hdr',
+      baseCubemap: {
+        size: 512,
+      },
+      reflectance: {
+        size: 128,
+        // levels: 8
+      },
+      lut: {
+        size: 64,
+      },
+      irradiance: {
+        size: 128,
+      },
+    });
+    const testLut = await fetch('./images/lut_test_2.png')
+      .then((response) => response.blob())
+      .then((blob) => createImageBitmap(blob))
+      .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
+      .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
+
     this._skybox = new MeshNode(
-      new SkyboxMaterial(this._renderer, this.cubePHelper.framebufferTexture),
+      new SkyboxMaterial(
+        this._renderer,
+        hdrIbl.baseCubemap.cubemap
+      ),
       createSkyBoxMesh(this._renderer.gl),
     );
 
     this._skybox.transform.setScale(50);
 
-    phongBlinnMaterial.irradianceMap = this._irradianceHelper.framebufferTexture;
+    // phongBlinnMaterial.irradianceMap = this._irradianceHelper.framebufferTexture;
 
     this._quad = createQuadMesh(gl);
     this._quadSS = this.renderer.getShader(BasicTextureShaderID).createState() as BasicTextureShaderState;
@@ -656,8 +384,8 @@ class TestApp extends Base3DApp {
     const cylinderMesh = createCylinderMesh(gl, 1, 1, 1, 32, 1);
     const cubeMesh = createBoxMesh(gl, 1, 1, 1, 3, 3, 3, cubeSquarePatronUv);
     const sphereMat = new PhongBlinnMaterial(this._renderer, light);
-    sphereMat.diffuseMap = cubePatronTexture;
-    sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
+    sphereMat.diffuseMap = hdrIbl.lut.lookupTexture;
+    // sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
     this._sphere = new MeshNode(sphereMat, cubeMesh);
     this._sphere.transform.translate(0.5, 1, 1);
 
@@ -688,10 +416,11 @@ class TestApp extends Base3DApp {
 
         const pbrMat = new SimplePBRMaterial(this.renderer, light);
 
-        pbrMat.irradianceMap = this._irradianceHelper.framebufferTexture;
-        pbrMat.refelexionMap = this.cubePHelper.framebufferTexture;
+        pbrMat.irradianceMap = hdrIbl.irradiance.cubemap;
+        pbrMat.reflectionMap = hdrIbl.reflectance.cubemap;
+        pbrMat.brdfLUT = testLut;
 
-        vec3.set(pbrMat.color, 1, 1, 1);
+        vec3.set(pbrMat.color, 1, 0, 0);
 
         pbrMat.metalic = f / step;
         pbrMat.roughness = i / step;
@@ -701,7 +430,7 @@ class TestApp extends Base3DApp {
 
         pbrSphere.transform.translate(i, f, 0);
 
-        // this._sceneRenderables.addChild(pbrSphere);
+        this._sceneRenderables.addChild(pbrSphere);
       }
     }
   }

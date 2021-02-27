@@ -1,17 +1,18 @@
+#version 300 es
 precision mediump float;
 
 uniform mat4 u_mvpMat;
 uniform mat4 u_modelMat;
 uniform mat4 u_normalMat;
 
-attribute vec3 a_position;
-attribute vec2 a_uv;
-attribute vec3 a_normal;
+in vec3 a_position;
+in vec2 a_uv;
+in vec3 a_normal;
 
 
-varying vec2 v_uv;
-varying vec3 v_normal;
-varying vec3 v_position;
+out vec2 v_uv;
+out vec3 v_normal;
+out vec3 v_position;
 
 void main(void){
   v_uv = a_uv;
