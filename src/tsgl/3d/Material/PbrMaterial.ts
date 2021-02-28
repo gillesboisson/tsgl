@@ -3,7 +3,7 @@ import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributes
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { GLTexture } from '../../gl/core/GLTexture';
-import { PbrVShaderID } from '../../shaders/PbrVShader';
+import { PbrShaderDebug, PbrVShaderID } from '../../shaders/PbrVShader';
 import { PbrVShadersState } from '../../shaders/PbrVShadersState';
 import { Camera } from '../Camera';
 import { ShadowMap } from '../ShadowMap';
@@ -33,7 +33,17 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
   protected _normalMap: GLTexture;
   protected _shadowMap: ShadowMap;
   protected _tbnEnabled: boolean;
+  protected _debug = PbrShaderDebug.none;
 
+  get debug():PbrShaderDebug{
+    return this._shaderState.getVariantValue('debug') as PbrShaderDebug;
+  }
+  
+  set debug(val:PbrShaderDebug){
+    if(val !== this._debug){
+      this._shaderState.setVariantValue('debug',val);
+    }
+  }
 
   enableHDRCorrection(): void{
     this._shaderState?.setVariantValue('gammaCorrection',true);

@@ -85,7 +85,6 @@ import { IrradianceCubemapRenderer } from './tsgl/baking/IrradianceCubemapRender
 import { renderBRDFLut } from './tsgl/helpers/renderBRDFLut';
 import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
 import { PbrShaderDebug, PbrVShader } from './tsgl/shaders/PbrVShader';
-import { SimplePBRMaterial } from './tsgl/3d/Material/SimplePBRMaterial';
 import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 // import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 
@@ -223,22 +222,6 @@ class TestApp extends Base3DApp {
 
     this._shadowMat = new ShadowOnlyMaterial(this.renderer, this._shadowMap);
 
-    // this._shadowFB = new GLFramebuffer(gl, 512, 512, true, false, true, false);
-    // this._shadowCam = new Camera(CameraLookAtTransform3D).setOrtho(-3, 3, -3, 3, 0.001, 5);
-    // this._shadowCam.transform.setPosition(2, 2, 2);
-    // this._shadowCam.transform.setLookAt(-1, -1, -1);
-
-    // const corsetMaterial =  new SimpleLamberianMaterial(this._renderer, textures[0], textures[2], textures[1]);
-    // const corsetMaterial =  new TestVariantShaderMaterial(this._renderer);
-
-    // const phongBlinnMaterial = new PhongBlinnVMaterial(this._renderer, corsetModelSpaceNormalMap, {
-    //   position: vec3.fromValues(10,10,10),
-    //   color: vec3.create(),
-    //   specularColor: vec3.create(),
-    //   shininess: 0.0,
-    //   ambiantColor: vec3.fromValues(1,1,1),
-    // });
-
     const light = {
       direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, 0)),
       color: vec3.fromValues(1.0, 1.0, 1.0),
@@ -256,9 +239,7 @@ class TestApp extends Base3DApp {
         size: 128,
         // levels: 8
       },
-      // lut: {
-      //   size: 64,
-      // },
+      
       irradiance: {
         size: 128,
       },
@@ -270,14 +251,7 @@ class TestApp extends Base3DApp {
       .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
       .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
 
-    // const phongBlinnMaterial = new PhongBlinnMaterial(this.renderer, light);
 
-    // phongBlinnMaterial.normalMap = corsetNormalMap;
-    // phongBlinnMaterial.tbnEnabled = true;
-    // phongBlinnMaterial.diffuseMap = corsetdiffuseMap;
-    // phongBlinnMaterial.extraMap = corsetPbrMap;
-    // phongBlinnMaterial.occlusionMapEnabled = true;
-    // phongBlinnMaterial.shadowMap = this._shadowMap;
 
     const pbrMat = new PbrMaterial(
       this.renderer,
@@ -292,26 +266,12 @@ class TestApp extends Base3DApp {
     pbrMat.pbrMap = corsetPbrMap;
     pbrMat.shadowMap = this._shadowMap;
 
-    pbrMat.setGammaExposure(1,1);
+    pbrMat.debug = PbrShaderDebug.shadow;
+
+    // pbrMat.setGammaExposure(1.3,1);
 
 
 
-    // const pbrSimpleMat = new SimplePBRMaterial(
-    //   this.renderer,
-    //   light,
-    //   hdrIbl.irradiance.cubemap,
-    //   hdrIbl.reflectance.cubemap,
-    // );
-
-
-    // pbrSimpleMat.brdfLUT = testLut;
-
-    // pbrMat.diffuseMap = corsetdiffuseMap;
-    // pbrMat.normalMap = corsetNormalMap;
-    // pbrMat.pbrMap = corsetPbrMap;
-    // pbrMat.shadowMap = this._shadowMap;
-
-    // pbrMat.debug =  PbrShaderDebug.occlusion;
 
     this._corsetNode = new GLTFNode(corsetMesh, pbrMat, gltfData.nodes[0]);
     this._corsetNode.transform.setScale(20);
@@ -389,10 +349,10 @@ class TestApp extends Base3DApp {
         const pbrMat = new PbrMaterial(this.renderer, light.direction,  hdrIbl.irradiance.cubemap, hdrIbl.reflectance.cubemap);
 
 
-        pbrMat.setGammaExposure(2.2,1.0);
+        // pbrMat.setGammaExposure(2.2,1.0);
         // pbrMat.enableHDRCorrection();
 
-        pbrMat.setDiffuseColor( i / step,0,f/step);
+        pbrMat.setDiffuseColor( 1,1,1);
 
         pbrMat.metallic = f / step;
         pbrMat.roughness = i / step * 0.99;

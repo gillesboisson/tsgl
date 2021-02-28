@@ -58,23 +58,21 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
           value: PbrShaderDebug.diffuse,
           flags: {
             DEBUG: true,
-            DEBUG_LIGHT_DIFFUSE_SPEC: true,
-            DEBUG_LIGHT_DIFFUSE: true,
+            DEBUG_DIFFUSE: true,
           },
         },
         {
           value: PbrShaderDebug.specular,
           flags: {
             DEBUG: true,
-            DEBUG_LIGHT_DIFFUSE_SPEC: true,
-            DEBUG_LIGHT_SPECULAR: true,
+            DEBUG_SPECULAR: true,
           },
         },
         {
           value: PbrShaderDebug.ambiant,
           flags: {
             DEBUG: true,
-            DEBUG_LIGHT_AMBIANT: true,
+            DEBUG_AMBIANT: true,
           },
         },
         {

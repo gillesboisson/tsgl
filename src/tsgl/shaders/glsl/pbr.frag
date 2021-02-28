@@ -315,48 +315,51 @@ void main(){
   
   #endif
 
-  #ifndef DEBUG
-
-    
+  #ifndef DEBUG 
   FragColor = vec4(color, 1.0);
-    // FragColor = vec4(color , 1.0);
-
-  // FragColor = vec4(vec3(roughness) , 1.0);
-  // FragColor = vec4(F0  , 1.0);
-
-
-
   #endif
+
+
 
 
   #ifdef DEBUG_NORMAL
   FragColor = vec4( N * 0.5 + 0.5 ,1.0);
   #endif
+  
+  #ifdef DEBUG_DIFFUSE
+  FragColor = vec4(diffuse ,1.0);
+  #endif
 
-  #ifdef DEBUG_SHADOW
-  #ifdef SHADOW_MAP
-  FragColor = vec4(texture(u_shadowMap,v_shadowCoord.xy).xxx,1.0);
+    #ifdef DEBUG_SPECULAR
+  FragColor = vec4(specular ,1.0);
   #endif
+
+  #ifdef DEBUG_AMBIANT
+  FragColor = vec4(ambient ,1.0);
   #endif
+
+
+
 
 
   #ifdef DEBUG_OCCLUSION
   FragColor = vec4(vec3(ao) ,1.0);
   #endif
 
-  #ifdef DEBUG_ROUGHNESS
-  FragColor =  vec4(vec3(roughness) ,1.0);
-  #endif
 
   #ifdef DEBUG_METALLIC
   FragColor =  vec4(vec3(metallic) ,1.0);
   #endif
 
-  #ifdef DEBUG_LIGHT_DIFFUSE_SPEC
-  FragColor = vec4(Lo,1.0);
+  #ifdef DEBUG_ROUGHNESS
+  FragColor =  vec4(vec3(roughness) ,1.0);
   #endif
 
-  #ifdef DEBUG_LIGHT_AMBIANT
-  FragColor = vec4(ambient,1.0);
+  #ifdef DEBUG_SHADOW
+  #ifdef SHADOW_MAP
+  FragColor = vec4(vec3(visibility),1.0);
   #endif
+  #endif
+
+
 }
