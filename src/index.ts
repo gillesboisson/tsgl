@@ -292,7 +292,7 @@ class TestApp extends Base3DApp {
     pbrMat.pbrMap = corsetPbrMap;
     pbrMat.shadowMap = this._shadowMap;
 
-    pbrMat.setGammaExposure(2.2,0.8);
+    pbrMat.setGammaExposure(1,1);
 
 
 
