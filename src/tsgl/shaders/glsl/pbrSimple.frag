@@ -78,7 +78,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 void main(){
 
 
-  float roughness =  u_roughness + 0.001; // division / 0 fix 
+  float roughness =  u_roughness; // division / 0 fix 
  
   // normal
   vec3 N = normalize(v_normal);

@@ -1,10 +1,12 @@
 import { Camera } from '../tsgl/3d/Camera';
 import { Juggler } from '../tsgl/animation/Juggler';
+import { AnyWebRenderingGLContext } from '../tsgl/gl/core/GLHelpers';
 import { GLRenderer, GLRendererType } from '../tsgl/gl/core/GLRenderer';
 import { GLSupport } from '../tsgl/gl/core/GLSupport';
 
-export abstract class Base3DApp {
-  protected _renderer: GLRenderer;
+export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebGL2RenderingContext> {
+  readonly renderer: GLRenderer<ContextT>;
+  readonly canvas : HTMLCanvasElement;
   protected _t0: number;
   protected _t: number;
   protected _juggler: Juggler;
@@ -12,27 +14,48 @@ export abstract class Base3DApp {
   protected _active: boolean;
   protected _cam: Camera;
 
-  constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement) {
-    const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL2));
-    GLSupport.VAOSupported(this._renderer.gl, true, true);
+  constructor(readonly rendererType = GLRendererType.WebGL) {
 
-    const gl = renderer.gl as WebGL2RenderingContext;
-
-    this.registeShader(gl, renderer);
+    this.canvas = this.getCanvas();
+    const renderer = this.renderer = this.createRenderer(this.canvas);
+    
+    const gl = renderer.gl;
 
     this._cam = Camera.createPerspective(70, renderer.width / renderer.height, 0.001, 100);
 
     this._juggler = new Juggler();
 
     this.__refresh = () => this._refresh();
+
+    this.prepare(renderer, gl).then(() => this.ready(renderer, gl));
   }
+
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer): void {}
+  protected async prepare( renderer: GLRenderer<ContextT>, gl: ContextT): Promise<void>{}
 
-  get renderer(): GLRenderer {
-    return this._renderer;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected ready( renderer: GLRenderer<ContextT>, gl: ContextT): void {
+
   }
+
+  protected getCanvas(): HTMLCanvasElement{
+    return document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+  }
+
+  protected createRenderer(canvas: HTMLCanvasElement): GLRenderer<ContextT>{
+    return GLRenderer.createFromCanvas(canvas, this.rendererType) as GLRenderer<ContextT>;
+  }
+
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected registerShader(gl: WebGL2RenderingContext, renderer: GLRenderer): void {}
+
+ 
+
+  // get renderer(): GLRenderer {
+  //   return this._renderer;
+  // }
 
   get juggler(): Juggler {
     return this._juggler;
@@ -57,8 +80,6 @@ export abstract class Base3DApp {
     this._juggler.stop();
   }
 
-  
-
   abstract update(time: number, elapsedTime: number): void;
   // abstract beforeRender(time: number, elapsedTime: number): void;
   abstract render(time: number, elapsedTime: number): void;
@@ -75,8 +96,8 @@ export abstract class Base3DApp {
 
     this.update(time, elapsedTime);
     this._juggler.update(elapsedTime);
-    this._renderer.prepareFrame();
-    this._renderer.clear();
+    this.renderer.prepareFrame();
+    this.renderer.clear();
 
     const elapsedTimeR = t1 - this._t;
     const timeR = t1 - this._t0;

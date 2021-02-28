@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
@@ -28,7 +29,6 @@ import { IRenderableInstance3D } from './tsgl/3d/IRenderableInstance3D';
 import { DepthOnlyMaterial } from './tsgl/3d/Material/DepthOnlyMaterial';
 import { PhongBlinnMaterial } from './tsgl/3d/Material/PhongBlinnMaterial';
 import { ShadowOnlyMaterial } from './tsgl/3d/Material/ShadownOnlyMaterial';
-import { SimplePBRMaterial } from './tsgl/3d/Material/SimplePBRMaterial';
 import { SkyboxMaterial } from './tsgl/3d/Material/SkyboxMaterial';
 import { MeshNode, SceneInstance3D } from './tsgl/3d/SceneInstance3D';
 import { ShadowMap } from './tsgl/3d/ShadowMap';
@@ -46,7 +46,7 @@ import { GLMesh } from './tsgl/gl/core/data/GLMesh';
 import { GLVao } from './tsgl/gl/core/data/GLVao';
 import { GLFramebuffer } from './tsgl/gl/core/framebuffer/GLFramebuffer';
 import { GLViewportStack } from './tsgl/gl/core/framebuffer/GLViewportState';
-import { GLRenderer, WebGL2Renderer } from './tsgl/gl/core/GLRenderer';
+import { GLRenderer, GLRendererType, WebGL2Renderer } from './tsgl/gl/core/GLRenderer';
 import { GLTexture } from './tsgl/gl/core/GLTexture';
 import { FirstPersonCameraController } from './tsgl/input/CameraController';
 import { BasicColorShader } from './tsgl/shaders/BasicColorShader';
@@ -84,6 +84,10 @@ import { ReflectanceCubemapRenderer } from './tsgl/baking/ReflectanceCubemapRend
 import { IrradianceCubemapRenderer } from './tsgl/baking/IrradianceCubemapRenderer';
 import { renderBRDFLut } from './tsgl/helpers/renderBRDFLut';
 import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
+import { PbrShaderDebug, PbrVShader } from './tsgl/shaders/PbrVShader';
+import { SimplePBRMaterial } from './tsgl/3d/Material/SimplePBRMaterial';
+import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
+// import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -111,30 +115,32 @@ class TestApp extends Base3DApp {
   private _shadowMap: ShadowMap;
   private _shadowMat: ShadowOnlyMaterial;
   constructor() {
-    super(document.getElementById('test') as HTMLCanvasElement);
+    super(GLRendererType.WebGL2);
     this.cubeTransform = new Transform3D();
 
-    this._cam.transform.setPosition(0, 0, 3);
+    // this.loadScene().then(() => {
+    //   this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
+    //     70,
+    //     this.renderer.width / this.renderer.height,
+    //     0.1,
+    //     100,
+    //   );
+    //   this._lcam.transform.setPosition(0, 0, 2);
+    //   // this._lcam.transform.setTargetPosition(0,0,0);
+    //   this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
 
-    this.loadScene();
-    this.loadScene().then(() => {
-      this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
-        70,
-        this._renderer.width / this._renderer.height,
-        0.1,
-        100,
-      );
-      this._lcam.transform.setPosition(0, 0, 2);
-      // this._lcam.transform.setTargetPosition(0,0,0);
-      this._camController = new FirstPersonCameraController(this._cam, this._renderer.canvas, 0.06, 0.002);
-
-      this.start();
-    });
+    //   this.start();
+    // });
 
     // requestAnimationFrame(() => this.testHdrReflectance());
   }
 
-  registeShader(gl: WebGL2RenderingContext, renderer: GLRenderer) {
+  getCanvas(): HTMLCanvasElement {
+    return document.getElementById('test') as HTMLCanvasElement;
+  }
+
+  protected async prepare(renderer: WebGL2Renderer, gl: WebGL2RenderingContext): Promise<void> {
+    // register shaders
     SimpleTextureShader.register(renderer);
     SimpleLamberianShader.register(renderer);
     TestFlatShader.register(renderer);
@@ -158,71 +164,38 @@ class TestApp extends Base3DApp {
     ReflectanceShader.register(renderer);
     DebugSkyboxLodShader.register(renderer);
     BrdfLutShader.register(renderer);
-  }
 
-  async testHdrReflectance() {
-    const gl = this._renderer.gl as WebGL2RenderingContext;
+    const brdfLut = await fetch('./images/lut_test_2.png')
+      .then((response) => response.blob())
+      .then((blob) => createImageBitmap(blob))
+      .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
+      .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
 
-    const hdrIbl = await bakeHdrIbl(this.renderer as WebGL2Renderer, {
-      source: './images/ballroom_2k.hdr',
-      baseCubemap: {
-        size: 256,
-      },
-      reflectance: {
-        size: 256,
-        // levels: 8
-      },
-      lut: {
-        size: 64,
-      },
-      irradiance: {
-        size: 128,
-      },
-    });
+    PbrVShader.register(renderer, brdfLut);
 
-    gl.viewport(0, 0, this._renderer.width, this._renderer.height);
+    // load scene;
 
-    this._camController = this._camController = new FirstPersonCameraController(
-      this._cam,
-      this._renderer.canvas,
-      0.06,
-      0.002,
+    await this.loadScene();
+
+    this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
+      70,
+      this.renderer.width / this.renderer.height,
+      0.1,
+      100,
     );
-
-    const debugSkyboxST = this._renderer.getShader<DebugSkyboxLodShaderState>(DebugSkyboxLodShaderID).createState();
-
-    const debugSB = new Transform3D();
-    debugSB.setScale(30);
-
-    debugSkyboxST.use();
-
-    debugSkyboxST.lod = 0;
-    const skybox = createSkyBoxMesh(gl);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, hdrIbl.reflectance.cubemap);
-
-    const renderLoop = () => {
-      this._cam.updateTransform();
-
-      this._renderer.clear();
-      this._camController.update(1000 / 60);
-
-      this._cam.mvp(debugSkyboxST.mvp, debugSB.getLocalMat());
-
-      debugSkyboxST.syncUniforms();
-      skybox.draw();
-
-      window.requestAnimationFrame(renderLoop);
-    };
-
-    renderLoop();
+    this._lcam.transform.setPosition(0, 0, 2);
+    // this._lcam.transform.setTargetPosition(0,0,0);
+    this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
   }
 
-  async loadTexture(): Promise<void> {}
+  ready() {
+    this.start();
+  }
 
   protected async loadScene(): Promise<void> {
-    const gl = this._renderer.gl;
+    this._cam.transform.setPosition(0, 0, 3);
+
+    const gl = this.renderer.gl;
 
     const dir = './models/Corset/glTF';
 
@@ -242,18 +215,13 @@ class TestApp extends Base3DApp {
     const corsetMesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
     const corsetNormalMap = textures[2];
     const corsetPbrMap = textures[1];
-    const corsetModelSpaceNormalMap = convertPlaceSpaceToModelSpaceNormalMap(
-      this._renderer,
-      corsetMesh.vaos[0],
-      corsetMesh.primitives[0].nbElements,
-      corsetNormalMap,
-    );
+    const corsetdiffuseMap = textures[0];
 
     this._shadowMap = new ShadowMap(this.renderer, 1024, 1024, 3, 0.001, 10);
     this._shadowMap.setPosition(2, 2, 2);
     this._shadowMap.setLookAt(-1, -1, -1);
 
-    this._shadowMat = new ShadowOnlyMaterial(this._renderer, this._shadowMap);
+    this._shadowMat = new ShadowOnlyMaterial(this.renderer, this._shadowMap);
 
     // this._shadowFB = new GLFramebuffer(gl, 512, 512, true, false, true, false);
     // this._shadowCam = new Camera(CameraLookAtTransform3D).setOrtho(-3, 3, -3, 3, 0.001, 5);
@@ -279,44 +247,6 @@ class TestApp extends Base3DApp {
       ambiantColor: vec3.fromValues(0.7, 0.7, 0.7),
     };
 
-    // this._shadowCam.transform.copyLookAt(light.direction);
-
-    const phongBlinnMaterial = new PhongBlinnMaterial(this._renderer, light);
-
-    phongBlinnMaterial.normalMap = corsetNormalMap;
-    phongBlinnMaterial.tbnEnabled = true;
-    phongBlinnMaterial.diffuseMap = textures[0];
-
-    // phongBlinnMaterial.debug = PhongBlinnShaderDebug.shadow;
-
-    // phongBlinnMaterial.normalMap = corsetModelSpaceNormalMap;
-    // phongBlinnMaterial.tbnEnabled = false;
-
-    // enable ambiant occlusionMap
-    phongBlinnMaterial.extraMap = corsetPbrMap;
-    phongBlinnMaterial.occlusionMapEnabled = true;
-
-    // phongBlinnMaterial.debug = PhongBlinnShaderDebug.ambiant
-
-    // corsetMaterial.shadeMode = 'fragment';
-    // corsetMaterial.extraColor = 'green';
-    // vec3.set(corsetMaterial.lightPos,5,10,5);
-
-    this._corsetNode = new GLTFNode(corsetMesh, phongBlinnMaterial, gltfData.nodes[0]);
-    this._corsetNode.transform.setScale(20);
-    this._corsetNode.transform.setPosition(0, -0.5, 0);
-
-    // cubemap size
-    // const bufferSize = 512;
-    // const cubeMapPatron = await GLTexture.loadTexture2D(this._renderer.gl, './images/circus/hdri/test_cmap.jpeg');
-    // this.cubePHelper = new CubeMapPatronHelper(this.renderer, bufferSize);
-    // this.cubePHelper.unwrap(cubeMapPatron);
-
-    // this._irradianceHelper = new IrradianceHelper(this.renderer, bufferSize);
-    // this._irradianceHelper.unwrap(this.cubePHelper.framebufferTexture);
-
-    // create skybox
-
     const hdrIbl = await bakeHdrIbl(this.renderer as WebGL2Renderer, {
       source: './images/ballroom_2k.hdr',
       baseCubemap: {
@@ -326,22 +256,70 @@ class TestApp extends Base3DApp {
         size: 128,
         // levels: 8
       },
-      lut: {
-        size: 64,
-      },
+      // lut: {
+      //   size: 64,
+      // },
       irradiance: {
         size: 128,
       },
     });
+
     const testLut = await fetch('./images/lut_test_2.png')
       .then((response) => response.blob())
       .then((blob) => createImageBitmap(blob))
       .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
       .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
 
+    // const phongBlinnMaterial = new PhongBlinnMaterial(this.renderer, light);
+
+    // phongBlinnMaterial.normalMap = corsetNormalMap;
+    // phongBlinnMaterial.tbnEnabled = true;
+    // phongBlinnMaterial.diffuseMap = corsetdiffuseMap;
+    // phongBlinnMaterial.extraMap = corsetPbrMap;
+    // phongBlinnMaterial.occlusionMapEnabled = true;
+    // phongBlinnMaterial.shadowMap = this._shadowMap;
+
+    const pbrMat = new PbrMaterial(
+      this.renderer,
+      light.direction,
+      hdrIbl.irradiance.cubemap,
+      hdrIbl.reflectance.cubemap,
+    );
+
+    pbrMat.diffuseMap = corsetdiffuseMap;
+    pbrMat.normalMap = corsetNormalMap;
+    pbrMat.tbnEnabled = true;
+    pbrMat.pbrMap = corsetPbrMap;
+    pbrMat.shadowMap = this._shadowMap;
+
+    pbrMat.setGammaExposure(2.2,0.8);
+
+
+
+    // const pbrSimpleMat = new SimplePBRMaterial(
+    //   this.renderer,
+    //   light,
+    //   hdrIbl.irradiance.cubemap,
+    //   hdrIbl.reflectance.cubemap,
+    // );
+
+
+    // pbrSimpleMat.brdfLUT = testLut;
+
+    // pbrMat.diffuseMap = corsetdiffuseMap;
+    // pbrMat.normalMap = corsetNormalMap;
+    // pbrMat.pbrMap = corsetPbrMap;
+    // pbrMat.shadowMap = this._shadowMap;
+
+    // pbrMat.debug =  PbrShaderDebug.occlusion;
+
+    this._corsetNode = new GLTFNode(corsetMesh, pbrMat, gltfData.nodes[0]);
+    this._corsetNode.transform.setScale(20);
+    this._corsetNode.transform.setPosition(0, -0.5, 0);
+
     this._skybox = new MeshNode(
-      new SkyboxMaterial(this._renderer, hdrIbl.baseCubemap.cubemap),
-      createSkyBoxMesh(this._renderer.gl),
+      new SkyboxMaterial(this.renderer, hdrIbl.baseCubemap.cubemap),
+      createSkyBoxMesh(this.renderer.gl),
     );
 
     this._skybox.transform.setScale(50);
@@ -351,40 +329,19 @@ class TestApp extends Base3DApp {
     this._quad = createQuadMesh(gl);
     this._quadSS = this.renderer.getShader(BasicTextureShaderID).createState() as BasicTextureShaderState;
 
-    // this._ppTomsNormal = this._renderer.getShader(PlaneSpaceToModelSpaceNormalShaderID).createState() as PlaneSpaceToModelSpaceNormalShaderState;
-    // this._modelSpaceFramebuffer = new GLFramebuffer(gl,corsetNormalMap.width,corsetNormalMap.height,false,true,false,false);
-    // const normalImageData = new Uint8Array(corsetNormalMap.width * corsetNormalMap.height * 4);
-
-    // this._modelSpaceFramebuffer.bind();
-    // // const format = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
-    // // const type = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
-
-    // gl.disable(gl.CULL_FACE);
-    // this._ppTomsNormal.use();
-    // corsetMesh.vaos[0].bind();
-    // textures[2].active(GLDefaultTextureLocation.NORMAL);
-    // gl.drawElements(gl.TRIANGLES,corsetMesh.primitives[0].nbElements,gl.UNSIGNED_SHORT,0);
-
-    // gl.enable(gl.CULL_FACE);
-    // this._modelSpaceFramebuffer.unbind();
-
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, this._modelSpaceFramebuffer.glFrameBuffer);
-    // // gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,normalImageData);
-    // gl.bindFramebuffer(gl.FRAMEBUFFER,null);
-
-    // setTimeout(() => console.log(normalImageData),2000);
-    const depthMaterial = new DepthOnlyMaterial(this._renderer);
-
-    const cubePatronTexture = await GLTexture.loadTexture2D(gl, 'images/base-cube-patron.jpg');
-
-    const sphereMesh = createSphereMesh(gl, 1, 64, 32);
-    const cylinderMesh = createCylinderMesh(gl, 1, 1, 1, 32, 1);
     const cubeMesh = createBoxMesh(gl, 1, 1, 1, 3, 3, 3, cubeSquarePatronUv);
-    const sphereMat = new PhongBlinnMaterial(this._renderer, light);
-    sphereMat.diffuseMap = hdrIbl.lut.lookupTexture;
+    const sphereMat = new PbrMaterial(
+      this.renderer,
+      light.direction,
+      hdrIbl.irradiance.cubemap,
+      hdrIbl.reflectance.cubemap,
+    );
+
+    sphereMat.shadowMap = this._shadowMap;
+    // sphereMat.diffuseMap = hdrIbl.lut.lookupTexture;
     // sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
-    this._sphere = new MeshNode(sphereMat, cubeMesh);
-    this._sphere.transform.translate(0.5, 1, 1);
+    // this._sphere = new MeshNode(sphereMat, cubeMesh);
+    // this._sphere.transform.translate(0.5, 1, 1);
 
     const planeMesh = createPlaneMesh(gl);
     const plane = new MeshNode(sphereMat, planeMesh);
@@ -395,42 +352,63 @@ class TestApp extends Base3DApp {
 
     this._sceneRenderables = new SceneInstance3D();
 
-    sphereMat.shadowMap = this._shadowMap;
-    // sphereMat.debug = PhongBlinnShaderDebug.shadow;
-    phongBlinnMaterial.shadowMap = this._shadowMap;
-
     // this._shadowCam.transform.setPosition(-10,-10,-10);
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
 
+    [this._corsetNode, this._skybox, plane].forEach((node) => this._sceneRenderables.addChild(node));
     // [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
-    [plane, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
+    // [plane, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
 
     const step = 10;
-    const mesh = createSphereMesh(this._renderer.gl, 0.5, 32, 32);
+    const mesh = createSphereMesh(this.renderer.gl, 0.5, 32, 32);
+    // for (let i = 0; i <= step; i++) {
+    //   for (let f = 0; f <= step; f++) {
+    //     // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
+
+    //     const pbrMat = new SimplePBRMaterial(this.renderer, light,  hdrIbl.irradiance.cubemap, hdrIbl.reflectance.cubemap);
+
+    //     pbrMat.brdfLUT = testLut;
+
+    //     vec3.set(pbrMat.color,0,0,0);
+
+    //     pbrMat.metallic = f / step;
+    //     pbrMat.roughness = i / step * 0.99;
+
+    //     const pbrSphere = new MeshNode(pbrMat, mesh);
+    //     // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
+
+    //     pbrSphere.transform.translate(i + 1.0, f * 3.0, 0);
+
+    //     this._sceneRenderables.addChild(pbrSphere);
+    //   }
+    // }
     for (let i = 0; i <= step; i++) {
       for (let f = 0; f <= step; f++) {
         // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
 
-        const pbrMat = new SimplePBRMaterial(this.renderer, light);
+        const pbrMat = new PbrMaterial(this.renderer, light.direction,  hdrIbl.irradiance.cubemap, hdrIbl.reflectance.cubemap);
 
-        pbrMat.irradianceMap = hdrIbl.irradiance.cubemap;
-        pbrMat.reflectionMap = hdrIbl.reflectance.cubemap;
-        pbrMat.brdfLUT = testLut;
 
-        vec3.set(pbrMat.color, 1, 1, 1);
+        pbrMat.setGammaExposure(2.2,1.0);
+        // pbrMat.enableHDRCorrection();
 
-        pbrMat.metalic = f / step;
-        pbrMat.roughness = i / step;
+        pbrMat.setDiffuseColor( i / step,0,f/step);
+
+        pbrMat.metallic = f / step;
+        pbrMat.roughness = i / step * 0.99;
 
         const pbrSphere = new MeshNode(pbrMat, mesh);
         // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
 
-        pbrSphere.transform.translate(i, f, 0);
+        pbrSphere.transform.translate(i + 1.0, f, 0);
 
         this._sceneRenderables.addChild(pbrSphere);
       }
     }
+  
   }
+
+  
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(time: number, elapsedTime: number): void {
@@ -467,8 +445,8 @@ class TestApp extends Base3DApp {
     // this._skybox.render(this._renderer.gl,this._cam);
     // this._corsetNode.render(this._renderer.gl, this._cam);
     // this._sphere.render(this._renderer.gl,this._cam);
-    const renderer = this._renderer;
-    const gl = this._renderer.gl;
+    const renderer = this.renderer;
+    const gl = this.renderer.gl;
 
     // this._shadowFB.bind();
     // // renderable.
@@ -476,7 +454,7 @@ class TestApp extends Base3DApp {
     // this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._shadowCam));
     // this._shadowFB.unbind();
 
-    // this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
+    this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 
     this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
 
