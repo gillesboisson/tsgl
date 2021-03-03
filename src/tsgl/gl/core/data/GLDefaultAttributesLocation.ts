@@ -76,6 +76,8 @@ export enum GLDefaultTextureLocation {
   PBR_1 = 5,
   PBR_2 = 6,
   AMBIANT_OCCLUSION = 7,
+  EMISSIVE = 8,
+
 
   PLANAR_REFLECTION = 10,
   SKYBOX = 11,
@@ -106,6 +108,7 @@ const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
   u_shadowMap0: GLDefaultTextureLocation.SHADOW_MAP_0,
   u_shadowMap1: GLDefaultTextureLocation.SHADOW_MAP_1,
   u_shadowMap2: GLDefaultTextureLocation.SHADOW_MAP_2,
+  u_emissiveMap: GLDefaultTextureLocation.EMISSIVE,
 };
 
 export function setDefaultTextureLocation(
@@ -150,7 +153,6 @@ export function setDefaultTextureLocationForVariantShader(shaderD: GLShaderVaria
     if (location === undefined) return;
 
     const uniformLocation = uniformsLocations[name];
-
     gl.uniform1i(uniformLocation, location);
   });
 }

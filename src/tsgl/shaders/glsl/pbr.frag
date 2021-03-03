@@ -183,6 +183,12 @@ in vec3 v_shadowCoord;
 #endif
 
 
+#ifdef EMISSIVE_MAP
+uniform sampler2D u_emissiveMap;
+uniform vec3 u_emissive;
+#endif
+
+
 #ifdef GAMMA_CORRECTION
 
 uniform vec2 u_gammaExposure;
@@ -310,6 +316,11 @@ void main(){
   // color = color / (color + vec3(1.0));
   // color = pow(color, vec3(1.0/2.2));  
 
+
+  #ifdef EMISSIVE_MAP
+  vec3 emissiveColor = texture(u_emissiveMap,v_uv).rgb * u_emissive;
+  color += emissiveColor;
+  #endif
 
   // gamme correction
 

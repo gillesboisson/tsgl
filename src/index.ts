@@ -318,7 +318,7 @@ class TestApp extends Base3DApp {
     // this._shadowCam.transform.setPosition(-10,-10,-10);
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
 
-    [this._corsetNode, this._skybox, plane].forEach((node) => this._sceneRenderables.addChild(node));
+    [this._corsetNode, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
     // [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
     // [plane, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
 

@@ -154,6 +154,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
           },
         },
       ],
+
       occlusionMapEnabled: [
         {
           value: true,
@@ -181,6 +182,21 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
           default: true,
           flags: {
             PBR_VAL: true,
+          },
+        },
+      ],
+      emissiveMap: [
+        {
+          value: true,
+          flags: {
+            EMISSIVE_MAP: true,
+          },
+        },
+        {
+          value: false,
+          default: true,
+          flags: {
+            EMISSIVE_MAP_DISABLED: true,
           },
         },
       ],
@@ -237,6 +253,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
       'u_reflexionMap',
       'u_brdfLut',
       'u_pbrMap',
+      'u_emissiveMap',
       'u_shadowMap',
     ]);
   }

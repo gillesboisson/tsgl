@@ -13,6 +13,7 @@ export class PbrVShadersState extends ShaderVariantsState<PbrVariant> {
 
   ambiantColor: vec3 = vec3.create();
   diffuseColor: vec4 = vec4.create();
+  emissive: vec3 = vec3.create();
 
   shadowMapPixelSize: vec2 = vec2.create();
 
@@ -76,6 +77,7 @@ export class PbrVShadersState extends ShaderVariantsState<PbrVariant> {
 
     gl.uniform3fv(uniformsLocations.u_ambiantColor, this.ambiantColor);
     gl.uniform4fv(uniformsLocations.u_diffuseColor, this.diffuseColor);
+    gl.uniform3fv(uniformsLocations.u_emissive, this.emissive);
     gl.uniform2fv(uniformsLocations.u_shadowMapPixelSize, this.shadowMapPixelSize);
     gl.uniform4fv(uniformsLocations.u_pbr, this._pbr);
   }

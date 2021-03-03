@@ -37,7 +37,7 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
       settings.irradianceMap,
       settings.reflectanceMap,
     );
-    const { pbrMetallicRoughness, normalTexture , occlusionTexture} = materialData;
+    const { pbrMetallicRoughness, normalTexture , occlusionTexture,emissiveFactor, emissiveTexture } = materialData;
 
     if (normalTexture !== undefined) {
       material.normalMap = textures[normalTexture.index];
@@ -66,6 +66,11 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
       material.metallic = pbrMetallicRoughness.metallicFactor;
     }
 
+    if(emissiveTexture){
+      material.emissiveMap = textures[emissiveTexture.index];
+      material.copyEmissive(emissiveFactor as any);
+    }
+
 
     return material;
   }
@@ -85,11 +90,13 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
   }
 
   protected _diffuseColor = vec4.fromValues(1, 1, 1, 1);
+  protected _emissive = vec3.fromValues(1, 1, 1);
   protected _pbr = vec4.fromValues(1, 0, 0, 0);
 
   protected _diffuseMap: GLTexture;
   protected _pbrMap: GLTexture;
   protected _normalMap: GLTexture;
+  protected _emissiveMap: GLTexture;
   protected _shadowMap: ShadowMap;
   protected _tbnEnabled: boolean;
   protected _debug = PbrShaderDebug.none;
@@ -186,6 +193,17 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     }
   }
 
+  get emissiveMap(): GLTexture {
+    return this._emissiveMap;
+  }
+
+  set emissiveMap(val: GLTexture) {
+    if (val !== this._emissiveMap) {
+      this._emissiveMap = val;
+      this._shaderState?.setVariantValue('emissiveMap', !!val);
+    }
+  }
+
   get shadowMap(): ShadowMap {
     return this._shadowMap;
   }
@@ -244,6 +262,7 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
 
     vec3.copy(ss.lightDirection, this.lightDirection);
     vec4.copy(ss.diffuseColor, this._diffuseColor);
+    vec3.copy(ss.emissive, this._emissive);
 
     vec2.copy(ss.gammaExposure, this._gammaExposure);
 
@@ -260,6 +279,9 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
 
     if (this._diffuseMap) {
       this._diffuseMap.active(GLDefaultTextureLocation.COLOR);
+    }
+    if (this._emissiveMap) {
+      this._emissiveMap.active(GLDefaultTextureLocation.EMISSIVE);
     }
 
     if (this._normalMap) {
@@ -288,6 +310,24 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
 
   get diffuseColor(): vec4 {
     return vec4.clone(this._diffuseColor);
+  }
+
+
+
+  public setEmissive(r: number, g: number, b: number): void {
+    vec3.set(this._emissive, r, g, b);
+  }
+
+  public copyEmissive(emissive: vec3): void {
+    vec3.copy(this._emissive, emissive);
+  }
+
+  get rawEmissive(): vec3 {
+    return this._emissive;
+  }
+
+  get emissive(): vec3 {
+    return vec3.clone(this._emissive);
   }
 
   public roughness = 0;
