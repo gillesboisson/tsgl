@@ -11,7 +11,6 @@ import { IrradianceShaderState, IrradianceShaderID } from '../shaders/Irradiance
 
 export class IrradianceCubemapRenderer extends ACubemapRenderer<WebGL2RenderingContext> implements IDestroy {
   private _framebuffer: WebGLFramebuffer;
-  private _depthRenderBuffer: WebGLRenderbuffer;
   private _skybox: GLMesh;
 
   public source: WebGLTexture;
@@ -23,28 +22,16 @@ export class IrradianceCubemapRenderer extends ACubemapRenderer<WebGL2RenderingC
     const gl = this.gl;
     this._skybox = createSkyBoxMesh(gl);
     this._framebuffer = gl.createFramebuffer();
-    this._depthRenderBuffer = gl.createRenderbuffer();
     if (framebuffer) {
       this._framebuffer = framebuffer;
     } else {
-      const { framebuffer, depthRenderBuffer } = createFramebufferWithDepthStorage(
-        gl,
-        size,
-        size,
-        gl.DEPTH_COMPONENT24,
-      );
-
-      this._framebuffer = framebuffer;
-      this._depthRenderBuffer = depthRenderBuffer;
+      this._framebuffer = gl.createFramebuffer();
     }
     this._shaderState = renderer.getShader<IrradianceShaderState>(IrradianceShaderID).createState();
   }
 
-  destroy(destroyFramebuffer = true, destroyDepthRenderBuffer = true): void {
-    if (destroyDepthRenderBuffer && this._depthRenderBuffer) {
-      this.gl.deleteRenderbuffer(this._depthRenderBuffer);
-    }
-
+  destroy(destroyFramebuffer = true): void {
+    
     if (destroyFramebuffer) {
       this.gl.deleteFramebuffer(this._framebuffer);
     }

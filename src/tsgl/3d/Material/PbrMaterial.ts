@@ -1,20 +1,79 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLRenderer } from '../../gl/core/GLRenderer';
+import { GLRenderer, GLRendererType, WebGL2Renderer } from '../../gl/core/GLRenderer';
 import { GLTexture } from '../../gl/core/GLTexture';
 import { PbrShaderDebug, PbrVShaderID } from '../../shaders/PbrVShader';
 import { PbrVShadersState } from '../../shaders/PbrVShadersState';
 import { Camera } from '../Camera';
+import { GLTFDataMaterial, GLTFDataMeshPrimitive } from '../gltf/GLFTSchema';
+import { GLTFPrimitive } from '../gltf/GLTFPrimitive';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
 
 export class PbrMaterial extends AMaterial<PbrVShadersState> {
+  static filterGTF(material: GLTFDataMaterial): boolean {
+    return !!material.pbrMetallicRoughness;
+  }
+
+  static fromGLTF(
+    renderer: WebGL2Renderer,
+    materials: GLTFDataMaterial[],
+    primitive: GLTFDataMeshPrimitive,
+    textures: GLTexture[],
+    settings: {
+      readonly lightDirection: vec3;
+
+      readonly irradianceMap: GLTexture;
+      readonly reflectanceMap: GLTexture;
+    },
+  ): PbrMaterial {
+
+    const materialData = materials[primitive.material];
+
+    const material = new PbrMaterial(
+      renderer,
+      settings.lightDirection,
+      settings.irradianceMap,
+      settings.reflectanceMap,
+    );
+    const { pbrMetallicRoughness, normalTexture , occlusionTexture} = materialData;
+
+    if (normalTexture !== undefined) {
+      material.normalMap = textures[normalTexture.index];
+
+      if(primitive.attributes.NORMAL && primitive.attributes.TANGENT){
+        material.tbnEnabled = true;
+      }
+    }
+
+    if (pbrMetallicRoughness.baseColorTexture) {
+      material.diffuseMap = textures[pbrMetallicRoughness.baseColorTexture.index];
+    } else {
+      material.copyDiffuseColor(pbrMetallicRoughness.baseColorFactor as any);
+    }
+
+    if(occlusionTexture && pbrMetallicRoughness.metallicRoughnessTexture.index === occlusionTexture.index){
+      material.enableOcclusionMap();
+    }else if(occlusionTexture){
+      console.warn('occlusion map not compatible : has to be the same metal roughness');
+    }
+
+    if (pbrMetallicRoughness.metallicRoughnessTexture) {
+      material.pbrMap = textures[pbrMetallicRoughness.metallicRoughnessTexture.index];
+    } else {
+      material.roughness = pbrMetallicRoughness.roughnessFactor;
+      material.metallic = pbrMetallicRoughness.metallicFactor;
+    }
+
+
+    return material;
+  }
 
   protected _gammaExposure = vec2.fromValues(2.0, 1.0);
 
   constructor(
-    renderer: GLRenderer,
+    renderer: WebGL2Renderer,
     readonly lightDirection: vec3,
 
     readonly irradianceMap: GLTexture,
@@ -26,7 +85,7 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
   }
 
   protected _diffuseColor = vec4.fromValues(1, 1, 1, 1);
-  protected _pbr = vec4.create();
+  protected _pbr = vec4.fromValues(1, 0, 0, 0);
 
   protected _diffuseMap: GLTexture;
   protected _pbrMap: GLTexture;
@@ -35,66 +94,75 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
   protected _tbnEnabled: boolean;
   protected _debug = PbrShaderDebug.none;
 
-  get debug():PbrShaderDebug{
+  get debug(): PbrShaderDebug {
     return this._shaderState.getVariantValue('debug') as PbrShaderDebug;
   }
-  
-  set debug(val:PbrShaderDebug){
-    if(val !== this._debug){
-      this._shaderState.setVariantValue('debug',val);
+
+  set debug(val: PbrShaderDebug) {
+    if (val !== this._debug) {
+      this._shaderState.setVariantValue('debug', val);
     }
   }
 
-  enableHDRCorrection(): void{
-    this._shaderState?.setVariantValue('gammaCorrection',true);
+  enableHDRCorrection(): void {
+    this._shaderState?.setVariantValue('gammaCorrection', true);
   }
 
-  disableHDRCorrection(): void{
-    this._shaderState?.setVariantValue('gammaCorrection',false);
+  disableHDRCorrection(): void {
+    this._shaderState?.setVariantValue('gammaCorrection', false);
   }
 
-  setGamma(gamma: number, enableCorrection = true): void{
-    if(enableCorrection){
+
+
+
+  enableOcclusionMap(): void {
+    this._shaderState?.setVariantValue('occlusionMapEnabled', true);
+  }
+
+  disableOcclusionMap(): void {
+    this._shaderState?.setVariantValue('occlusionMapEnabled', false);
+  }
+
+  get occlusionMapEnabled():boolean{
+    return this._shaderState.getVariantValue('occlusionMapEnabled') as boolean;
+  }
+
+  setGamma(gamma: number, enableCorrection = true): void {
+    if (enableCorrection) {
       this.enableHDRCorrection();
     }
 
     this._gammaExposure[0] = gamma;
   }
 
-  setExposure(exposure: number, enableCorrection = true): void{
-    if(enableCorrection){
+  setExposure(exposure: number, enableCorrection = true): void {
+    if (enableCorrection) {
       this.enableHDRCorrection();
     }
 
     this._gammaExposure[1] = exposure;
-
   }
 
-  setGammaExposure(gamma: number,exposure: number, enableCorrection = true): void{
-    if(enableCorrection){
+  setGammaExposure(gamma: number, exposure: number, enableCorrection = true): void {
+    if (enableCorrection) {
       this.enableHDRCorrection();
     }
 
     this._gammaExposure[0] = gamma;
     this._gammaExposure[1] = exposure;
-
   }
 
-
-  get gamma(): number{
+  get gamma(): number {
     return this._gammaExposure[0];
   }
 
-  get exposure(): number{
+  get exposure(): number {
     return this._gammaExposure[1];
   }
 
-  get hdrCorrectionEnabled(): boolean{
+  get hdrCorrectionEnabled(): boolean {
     return this._shaderState.getVariantValue('gammaCorrection') as boolean;
   }
-  
-
-
 
   get diffuseMap(): GLTexture {
     return this._diffuseMap;
@@ -200,9 +268,8 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
 
     if (this._pbrMap) {
       this._pbrMap.active(GLDefaultTextureLocation.PBR_0);
-    } else {
-      ss.setPbr(this.ambiantOcclusion, this.roughness, this.metallic);
     }
+    ss.setPbr(this.ambiantOcclusion, this.roughness, this.metallic);
 
     ss.syncUniforms();
   }

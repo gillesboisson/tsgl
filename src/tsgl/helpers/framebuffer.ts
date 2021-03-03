@@ -16,10 +16,10 @@ export function createFramebufferWithDepthStorage(
   const depthRenderBuffer = gl.createRenderbuffer();
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-  // gl.bindRenderbuffer(gl.RENDERBUFFER, depthRenderBuffer);
-  // gl.renderbufferStorage(gl.RENDERBUFFER, depthInternalFormat, width, height);
-  // gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthRenderBuffer);
-  // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.bindRenderbuffer(gl.RENDERBUFFER, depthRenderBuffer);
+  gl.renderbufferStorage(gl.RENDERBUFFER, depthInternalFormat, width, height);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthRenderBuffer);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 
   return {

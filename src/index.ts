@@ -196,9 +196,11 @@ class TestApp extends Base3DApp {
 
     const gl = this.renderer.gl;
 
-    const dir = './models/Corset/glTF';
+    
 
-    const gltfData: GLTFData = await fetch(`${dir}/Corset.gltf`).then((response) => response.json());
+    const dir = './models/BoomBox/glTF';
+
+    const gltfData: GLTFData = await fetch(`${dir}/BoomBox.gltf`).then((response) => response.json());
     setBufferViewTargetFromMesh(gl, gltfData);
 
     const glBuffers: GLBuffer[] = new Array(gltfData.bufferViews.length);
@@ -239,7 +241,7 @@ class TestApp extends Base3DApp {
         size: 128,
         // levels: 8
       },
-      
+
       irradiance: {
         size: 128,
       },
@@ -251,9 +253,13 @@ class TestApp extends Base3DApp {
       .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
       .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
 
+    const pbrMat = PbrMaterial.fromGLTF(this.renderer, gltfData.materials, gltfData.meshes[0].primitives[0], textures, {
+      lightDirection: light.direction,
+      irradianceMap: hdrIbl.irradiance.cubemap,
+      reflectanceMap: hdrIbl.reflectance.cubemap,
+    });
 
-
-    const pbrMat = new PbrMaterial(
+    /*new PbrMaterial(
       this.renderer,
       light.direction,
       hdrIbl.irradiance.cubemap,
@@ -265,13 +271,10 @@ class TestApp extends Base3DApp {
     pbrMat.tbnEnabled = true;
     pbrMat.pbrMap = corsetPbrMap;
     pbrMat.shadowMap = this._shadowMap;
+    pbrMat.enableOcclusionMap();
+    */
 
-    pbrMat.debug = PbrShaderDebug.shadow;
-
-    // pbrMat.setGammaExposure(1.3,1);
-
-
-
+    pbrMat.setGammaExposure(1.3, 1.0);
 
     this._corsetNode = new GLTFNode(corsetMesh, pbrMat, gltfData.nodes[0]);
     this._corsetNode.transform.setScale(20);
@@ -342,20 +345,26 @@ class TestApp extends Base3DApp {
     //     this._sceneRenderables.addChild(pbrSphere);
     //   }
     // }
+    return;
     for (let i = 0; i <= step; i++) {
       for (let f = 0; f <= step; f++) {
         // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
 
-        const pbrMat = new PbrMaterial(this.renderer, light.direction,  hdrIbl.irradiance.cubemap, hdrIbl.reflectance.cubemap);
-
+        const pbrMat = new PbrMaterial(
+          this.renderer,
+          light.direction,
+          hdrIbl.irradiance.cubemap,
+          hdrIbl.reflectance.cubemap,
+        );
 
         // pbrMat.setGammaExposure(2.2,1.0);
         // pbrMat.enableHDRCorrection();
+        pbrMat.setGammaExposure(1.3, 1.0);
 
-        pbrMat.setDiffuseColor( 1,1,1);
+        pbrMat.setDiffuseColor(1, 1, 1);
 
         pbrMat.metallic = f / step;
-        pbrMat.roughness = i / step * 0.99;
+        pbrMat.roughness = (i / step) * 0.99;
 
         const pbrSphere = new MeshNode(pbrMat, mesh);
         // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
@@ -365,10 +374,7 @@ class TestApp extends Base3DApp {
         this._sceneRenderables.addChild(pbrSphere);
       }
     }
-  
   }
-
-  
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(time: number, elapsedTime: number): void {

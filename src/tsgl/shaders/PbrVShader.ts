@@ -154,6 +154,21 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
           },
         },
       ],
+      occlusionMapEnabled: [
+        {
+          value: true,
+          flags: {
+            ENABLE_OCCLUSION_MAP: true,
+          },
+        },
+        {
+          value: false,
+          default: true,
+          flags: {
+            DISABLE_OCCLUSION_MAP: false,
+          },
+        },
+      ],
       pbrMap: [
         {
           value: true,

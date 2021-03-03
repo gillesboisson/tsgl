@@ -172,9 +172,7 @@ in mat3 v_TBN;
 uniform sampler2D u_pbrMap;
 #endif
 
-#ifdef PBR_VAL
 uniform vec4 u_pbr;
-#endif
 
 #ifdef SHADOW_MAP
 
@@ -249,8 +247,16 @@ void main(){
   #ifdef PBR_VAL
   vec4 pbr =  u_pbr;
   #endif
-  
+
+  #ifdef ENABLE_OCCLUSION_MAP
   float ao = pbr.x;
+  #else
+  float ao = u_pbr.x;
+  #endif
+
+
+ 
+  
   float roughness = pbr.y;
   float metallic = pbr.z;
 

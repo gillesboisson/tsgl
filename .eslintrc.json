@@ -12,7 +12,7 @@
   "plugins": ["@typescript-eslint"],
   "extends": ["plugin:@typescript-eslint/recommended", "prettier", "prettier/babel", "prettier/standard"],
   "rules": {
-    "indent": ["error", 2, { "SwitchCase": 2 }],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
