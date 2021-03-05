@@ -120,18 +120,19 @@ export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSetti
     };
   }
 
-  if (lut) {
-    const brdfLut: IGLTexture = lut.sourceTexture
-      ? { width: lut.size, height: lut.size, texture: lut.sourceTexture }
-      : createEmptyTextureWithLinearFilter(gl, lut.size, lut.size, gl.RGBA16F, gl.RGBA, gl.FLOAT);
+  // TODO: fix shader
+  // if (lut) {
+  //   const brdfLut: IGLTexture = lut.sourceTexture
+  //     ? { width: lut.size, height: lut.size, texture: lut.sourceTexture }
+  //     : createEmptyTextureWithLinearFilter(gl, lut.size, lut.size, gl.RGBA16F, gl.RGBA, gl.FLOAT);
 
-    renderBRDFLut(renderer, brdfLut);
+  //   renderBRDFLut(renderer, brdfLut);
 
-    res.lut = {
-      lookupTexture: new GLTexture({ gl, texture: brdfLut.texture }, gl.TEXTURE_2D),
-      size: lut.size,
-    };
-  }
+  //   res.lut = {
+  //     lookupTexture: new GLTexture({ gl, texture: brdfLut.texture }, gl.TEXTURE_2D),
+  //     size: lut.size,
+  //   };
+  // }
 
   gl.deleteFramebuffer(framebuffer);
 

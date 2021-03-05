@@ -1,3 +1,5 @@
+import { GL1Enum } from './GL1Enum';
+import { GL2Enum } from './GL2Enum';
 import { GLCore, GLType } from './GLCore';
 import { AnyWebRenderingGLContext } from './GLHelpers';
 
@@ -6,12 +8,24 @@ export interface ImageSource {
   type?: GLenum;
 }
 
-export interface IGLTexture {
+
+export interface IGLTextureBase {
+  gl: AnyWebRenderingGLContext,
+  target: GLenum,
   readonly texture: WebGLTexture;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   levels?: number;
 }
+
+export interface IGLTexture extends IGLTextureBase {
+  
+  bind: () => void;
+  unbind: () => void;
+  active: (index?: number) => void;
+}
+
+
 
 
 const EXT_DEFAULT_ALPHA = ['png', 'gif'];
@@ -83,6 +97,11 @@ export class GLTexture extends GLCore implements IGLTexture {
   }
 
   glType = GLType.Texture;
+
+  get target(): number{
+    return this._textureTarget;
+  }
+
 
   get texture(): WebGLTexture {
     return this._texture;
@@ -157,6 +176,7 @@ export class GLTexture extends GLCore implements IGLTexture {
 
     this.unbind();
   }
+
 
   setEmpty(format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE): void {
     this.gl.texImage2D(this._textureTarget, 0, format, format, type, null);

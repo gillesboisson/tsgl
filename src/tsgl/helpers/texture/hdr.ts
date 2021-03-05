@@ -1,4 +1,5 @@
 import { IGLTexture } from '../../gl/core/GLTexture';
+import { bindableTexture } from './bindableTexture';
 
 function m(a: any, b: any): any {
   for (var i in b) a[i] = b[i];
@@ -206,21 +207,26 @@ export function loadHDRToFloatTexture(
   const ext = gl.getExtension('EXT_color_buffer_float');
   // console.log('ext',ext);
   const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  const target = gl.TEXTURE_2D;
+
+
+  gl.bindTexture(target, texture);
+  gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
   // only NEAREST supported on FLOAT 32 Texture filtering
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
   // image stored in RGB FLOAT
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB32F, width, height, 0, gl.RGB, gl.FLOAT, data);
+  gl.texImage2D(target, 0, gl.RGB32F, width, height, 0, gl.RGB, gl.FLOAT, data);
 
-  return {
+  return bindableTexture({
+    gl, 
+    target,
     texture,
     width,
     height,
     data,
-  };
+  });
 }

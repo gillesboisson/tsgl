@@ -1,4 +1,5 @@
 import { IGLTexture } from '../../gl/core/GLTexture';
+import { bindableTexture } from './bindableTexture';
 
 
 export function createEmptyMipmapTexture(
@@ -8,25 +9,29 @@ export function createEmptyMipmapTexture(
   levels: number
 ): IGLTexture {
   const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  const target = gl.TEXTURE_2D;
+ 
+  gl.bindTexture(target, texture);
+  gl.texImage2D(target, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
   // gl.texParameteri(
-  //   gl.TEXTURE_2D,
+  //   target,
   //   gl.TEXTURE_BASE_LEVEL,
   //   levels,
   // );
-  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.generateMipmap(target);
 
-  return {
+  return bindableTexture({
     texture,
     width,
     height,
     levels,
-  };
+    gl,
+    target,
+  });
 }

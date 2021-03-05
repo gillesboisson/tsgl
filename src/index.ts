@@ -2,7 +2,6 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
-import { convertPlaceSpaceToModelSpaceNormalMap } from './app/helpers/convertPlaceSpaceToModelSpaceNormalMap';
 import { createImageTextureWithLinearFilter } from './tsgl/helpers/texture/createImageTextureWithLinearFilter';
 import { createFBAndFlippableTexture } from './tsgl/helpers/texture/createFBAndFlippableTexture';
 import { createEmptyMipmapTexture } from './tsgl/helpers/texture/createEmptyMipmapTexture';
