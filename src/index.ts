@@ -46,7 +46,7 @@ import { GLVao } from './tsgl/gl/core/data/GLVao';
 import { GLFramebuffer } from './tsgl/gl/core/framebuffer/GLFramebuffer';
 import { GLViewportStack } from './tsgl/gl/core/framebuffer/GLViewportState';
 import { GLRenderer, GLRendererType, WebGL2Renderer } from './tsgl/gl/core/GLRenderer';
-import { GLTexture } from './tsgl/gl/core/GLTexture';
+import { IGLTexture } from './tsgl/gl/core/GLTexture';
 import { FirstPersonCameraController } from './tsgl/input/CameraController';
 import { BasicColorShader } from './tsgl/shaders/BasicColorShader';
 import { BasicTextureShaderState, BasicTextureShader, BasicTextureShaderID } from './tsgl/shaders/BasicTextureShader';
@@ -85,6 +85,7 @@ import { renderBRDFLut } from './tsgl/helpers/renderBRDFLut';
 import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
 import { PbrShaderDebug, PbrVShader } from './tsgl/shaders/PbrVShader';
 import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
+import { loadTexture2D } from './tsgl/helpers/texture/loadTexture2D';
 // import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 
 window.addEventListener('load', async () => {
@@ -98,7 +99,7 @@ class TestApp extends Base3DApp {
   private _modelSpaceFramebuffer: GLFramebuffer;
 
   private _camController: FirstPersonCameraController;
-  private _cubeMap: GLTexture;
+  private _cubeMap: IGLTexture;
   fb: GLFramebuffer;
   vps: GLViewportStack;
   private _flatMat: TestFlatMaterial;
@@ -163,11 +164,11 @@ class TestApp extends Base3DApp {
     DebugSkyboxLodShader.register(renderer);
     BrdfLutShader.register(renderer);
 
-    const brdfLut = await fetch('./images/lut_test_2.png')
-      .then((response) => response.blob())
-      .then((blob) => createImageBitmap(blob))
-      .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
-      .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
+    const brdfLut = await loadTexture2D(gl, './images/lut_test_2.png');
+    // .then((response) => response.blob())
+    // .then((blob) => createImageBitmap(blob))
+    // .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
+    // .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
 
     PbrVShader.register(renderer, brdfLut);
 
@@ -194,8 +195,6 @@ class TestApp extends Base3DApp {
     this._cam.transform.setPosition(0, 0, 3);
 
     const gl = this.renderer.gl;
-
-    
 
     const dir = './models/BoomBox/glTF';
 
@@ -246,11 +245,7 @@ class TestApp extends Base3DApp {
       },
     });
 
-    const testLut = await fetch('./images/lut_test_2.png')
-      .then((response) => response.blob())
-      .then((blob) => createImageBitmap(blob))
-      .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
-      .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
+   
 
     const pbrMat = PbrMaterial.fromGLTF(this.renderer, gltfData.materials, gltfData.meshes[0].primitives[0], textures, {
       lightDirection: light.direction,
