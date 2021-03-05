@@ -83,7 +83,7 @@ export async function loadTextures(
     const loadBuffer = (ind: number) => {
       loadTexture2D(
         gl,
-        `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`,
+        `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`,gl.RGBA, true
       ).then((texture) => loaded(ind, texture));
     };
 
