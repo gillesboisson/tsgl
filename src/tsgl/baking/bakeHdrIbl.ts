@@ -1,6 +1,7 @@
 import { WebGL2Renderer } from '../gl/core/GLRenderer';
-import { GLTexture, IGLTexture } from '../gl/core/GLTexture';
+import { IGLTexture } from '../gl/core/GLTexture';
 import { renderBRDFLut } from '../helpers/renderBRDFLut';
+import { wrapTexture } from '../helpers/texture/bindableTexture';
 import { createCubemapEmptyTexture } from '../helpers/texture/createCubemapEmptyTexture';
 import { createCubemapMipmapEmptyTexture } from '../helpers/texture/createCubemapMipmapEmptyTexture';
 import { createEmptyTextureWithLinearFilter } from '../helpers/texture/createEmptyTextureWithLinearFilter';
@@ -32,10 +33,10 @@ export interface HdrIblSettings {
 
 export interface HdrIbl {
   source: { data: Float32Array; width: number; height: number };
-  baseCubemap: { size: number; cubemap: GLTexture };
-  irradiance?: { size: number; cubemap: GLTexture };
-  reflectance?: { size: number; cubemap: GLTexture; levels: number };
-  lut?: { size: number; lookupTexture: GLTexture };
+  baseCubemap: { size: number; cubemap: IGLTexture };
+  irradiance?: { size: number; cubemap: IGLTexture };
+  reflectance?: { size: number; cubemap: IGLTexture; levels: number };
+  lut?: { size: number; lookupTexture: IGLTexture };
 }
 
 export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSettings): Promise<HdrIbl> {
@@ -65,7 +66,7 @@ export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSetti
 
   const cubemap = baseCubemap.sourceTexture
     ? baseCubemap.sourceTexture
-    : createCubemapEmptyTexture(gl, baseCubemap.size, gl.RGBA16F, gl.RGBA, gl.FLOAT).cubemap;
+    : createCubemapEmptyTexture(gl, baseCubemap.size, gl.RGBA16F, gl.RGBA, gl.FLOAT).texture;
 
   const res: HdrIbl = {
     source: {
@@ -74,7 +75,7 @@ export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSetti
       height: hdrH,
     },
     baseCubemap: {
-      cubemap: new GLTexture({ gl, texture: cubemap }, gl.TEXTURE_CUBE_MAP),
+      cubemap: wrapTexture(gl, cubemap, gl.TEXTURE_CUBE_MAP),
       size: baseCubemap.size,
     },
   };
@@ -88,7 +89,7 @@ export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSetti
 
   if (irradiance) {
     const irradianceCubemap =
-      irradiance.sourceTexture || createCubemapEmptyTexture(gl, irradiance.size, gl.RGBA16F, gl.RGBA, gl.FLOAT).cubemap;
+      irradiance.sourceTexture || createCubemapEmptyTexture(gl, irradiance.size, gl.RGBA16F, gl.RGBA, gl.FLOAT).texture;
 
     const irradianceRenderer = new IrradianceCubemapRenderer(renderer as WebGL2Renderer, irradiance.size);
 
@@ -97,7 +98,7 @@ export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSetti
     irradianceRenderer.render();
 
     res.irradiance = {
-      cubemap: new GLTexture({ gl, texture: irradianceCubemap }, gl.TEXTURE_CUBE_MAP),
+      cubemap: wrapTexture(gl, irradianceCubemap, gl.TEXTURE_CUBE_MAP),
       size: irradiance.size,
     };
   }
@@ -113,7 +114,7 @@ export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSetti
     const reflectanceTexture = reflectanceCubemapRenderer.render(cubemap, reflectance.sourceTexture);
 
     res.reflectance = {
-      cubemap: new GLTexture({ gl, texture: reflectanceTexture }, gl.TEXTURE_CUBE_MAP),
+      cubemap: wrapTexture(gl, reflectanceTexture, gl.TEXTURE_CUBE_MAP),
 
       size: reflectance.size,
       levels: reflectance.levels,

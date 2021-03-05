@@ -4,7 +4,6 @@ import { createSkyBoxMesh } from '../geom/mesh/createSkyBoxMesh';
 import { GLMesh } from '../gl/core/data/GLMesh';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer, WebGL2Renderer } from '../gl/core/GLRenderer';
-import { IGLTexture } from '../gl/core/GLTexture';
 import { EquiToCubemapShaderState, EquiToCubemapShaderID } from '../shaders/EquiToCubemapShader';
 import { IrradianceShaderState } from '../shaders/IrradianceShader';
 import { createFramebufferWithDepthStorage } from '../helpers/framebuffer';

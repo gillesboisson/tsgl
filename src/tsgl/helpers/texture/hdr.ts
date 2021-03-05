@@ -209,7 +209,6 @@ export function loadHDRToFloatTexture(
   const texture = gl.createTexture();
   const target = gl.TEXTURE_2D;
 
-
   gl.bindTexture(target, texture);
   gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -222,7 +221,7 @@ export function loadHDRToFloatTexture(
   gl.texImage2D(target, 0, gl.RGB32F, width, height, 0, gl.RGB, gl.FLOAT, data);
 
   return bindableTexture({
-    gl, 
+    gl,
     target,
     texture,
     width,

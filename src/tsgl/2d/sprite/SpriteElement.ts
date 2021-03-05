@@ -1,5 +1,5 @@
 import { vec2, vec4, mat4, mat2d, mat2 } from 'gl-matrix';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { WorldCoords } from './ElementData';
 import { SpriteGroup } from './SpriteGroup';
 import { SpriteBatch } from '../SpriteBatch';
@@ -37,7 +37,7 @@ export abstract class SpriteElement implements ElementI<SpriteGroup, WorldCoords
     if (this.parent !== undefined) this.parent.removeChild(this);
   }
 
-  constructor(texture: GLTexture) {
+  constructor(texture: IGLTexture) {
     if (texture) this._texture = texture.texture;
   }
 

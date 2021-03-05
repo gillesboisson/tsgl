@@ -1,12 +1,13 @@
+import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { IGLTexture } from '../../gl/core/GLTexture';
 import { bindableTexture } from './bindableTexture';
 
 export function createEmptyTextureWithLinearFilter(
-  gl: WebGL2RenderingContext,
+  gl: AnyWebRenderingGLContext,
   width: number,
   height: number,
   internalFormat = gl.RGBA,
-  format = gl.RGBA,
+  format = internalFormat,
   type = gl.UNSIGNED_BYTE,
 ): IGLTexture & { internalFormat: GLenum; format: GLenum; type: GLenum } {
   const texture = gl.createTexture();

@@ -1,6 +1,17 @@
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { IGLTexture, IGLTextureBase } from '../../gl/core/GLTexture';
 
+
+export function wrapTexture(gl: AnyWebRenderingGLContext, texture: WebGLTexture, target: GLenum): IGLTexture{
+
+  return bindableTexture({
+    gl,
+    texture,
+    target,
+  })
+
+}
+
 export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
   // gl: AnyWebRenderingGLContext,
   sourceTexture: T,
@@ -10,7 +21,7 @@ export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
   bind: () => void;
   unbind: () => void;
   active: (index?: number) => void;
-  safeBind: (bindExec: (texture: T) => void) => void;
+  safeBind: (bindExec: (texture: IGLTexture) => void) => void;
 } {
 
 

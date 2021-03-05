@@ -1,7 +1,8 @@
+import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { IGLTexture } from '../../gl/core/GLTexture';
 import { bindableTexture } from './bindableTexture';
 
-export function createImageTextureWithLinearFilter(gl: WebGL2RenderingContext, image: ImageBitmap): IGLTexture {
+export function createImageTextureWithLinearFilter(gl: AnyWebRenderingGLContext, image: ImageBitmap): IGLTexture {
   const texture = gl.createTexture();
   const target = gl.TEXTURE_2D;
   gl.bindTexture(target, texture);

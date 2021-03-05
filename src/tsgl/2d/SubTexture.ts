@@ -1,8 +1,9 @@
-import { GLTexture } from '../gl/core/GLTexture';
+import { IGLTexture } from '../gl/core/GLTexture';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
+import { loadTexture2D } from '../helpers/texture/loadTexture2D';
 
 export function createSubTextureGrid(
-  texture: GLTexture,
+  texture: IGLTexture,
   spriteWidth: number,
   spriteHeight = spriteWidth,
 ): SubTexture[] {
@@ -24,7 +25,7 @@ export function createSubTextureGrid(
 }
 
 export function createGridAlignedSubTextures(
-  texture: GLTexture,
+  texture: IGLTexture,
   spriteWidth: number,
   spriteHeight: number,
   gridPosX: number,
@@ -48,9 +49,9 @@ export function createGridAlignedSubTextures(
 
 export class SubTexture {
   static async load(gl: AnyWebRenderingGLContext, url: string, type?: GLenum): Promise<SubTexture> {
-    return GLTexture.loadTexture2D(gl, url, type).then((glTexture) => this.fromGLTexture(glTexture));
+    return loadTexture2D(gl, url, type).then((glTexture) => this.fromGLTexture(glTexture));
   }
-  static fromGLTexture(glTexture: GLTexture): SubTexture {
+  static fromGLTexture(glTexture: IGLTexture): SubTexture {
     return new SubTexture(glTexture, 0, 0, glTexture.width, glTexture.height);
   }
 
@@ -70,14 +71,14 @@ export class SubTexture {
     return Math.round((this.uv[3] - this.uv[1]) * this._texture.height);
   }
 
-  get glTexture(): GLTexture {
+  get glTexture(): IGLTexture {
     return this._texture;
   }
 
   uv: Float32Array;
 
   constructor(
-    protected _texture: GLTexture,
+    protected _texture: IGLTexture,
     x = 0,
     y = 0,
     width: number = _texture.width,

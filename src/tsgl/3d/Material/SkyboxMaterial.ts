@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { SkyboxShaderID, SkyboxShaderState } from '../../shaders/SkyboxShader';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';
@@ -14,7 +14,7 @@ export class SkyboxMaterial extends AMaterial<SkyboxShaderState> {
    * @param renderer renderer 
    * @param texture Cubemap texture
    */
-  constructor(renderer: GLRenderer, public texture: GLTexture) {
+  constructor(renderer: GLRenderer, public texture: IGLTexture) {
     super();
     
     this._shaderState = renderer.getShader(SkyboxShaderID).createState() as SkyboxShaderState;

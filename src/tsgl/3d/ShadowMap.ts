@@ -5,7 +5,7 @@ import { GLDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLoc
 import { GLFramebuffer } from '../gl/core/framebuffer/GLFramebuffer';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
-import { GLTexture } from '../gl/core/GLTexture';
+import { IGLTexture } from '../gl/core/GLTexture';
 import { Camera } from './Camera';
 import { IRenderableInstance3D } from './IRenderableInstance3D';
 import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';
@@ -23,7 +23,7 @@ export class ShadowMap{
   private _material: DepthOnlyMaterial;
   
   constructor(readonly renderer: GLRenderer, bufferWidth = 512, bufferHeight = 512, radius = 15,near = 0.001, far = 30, textureLocation = GLDefaultTextureLocation.SHADOW_MAP_0){
-    this._framebuffer = new GLFramebuffer(renderer.gl, bufferWidth,bufferHeight,true,false,true,false);
+    this._framebuffer = new GLFramebuffer(renderer.gl, bufferWidth,bufferHeight,true,false,true);
     this._camera = new Camera<CameraLookAtTransform3D>(CameraLookAtTransform3D).setOrtho(-radius,radius,-radius,radius,near,far);
     this._material = new DepthOnlyMaterial(renderer);
 
@@ -76,7 +76,7 @@ export class ShadowMap{
     this.stopRenderDepthMap();
   }
 
-  get depthTexture(): GLTexture{
+  get depthTexture(): IGLTexture{
     return this._framebuffer.depthTexture;
   }
 

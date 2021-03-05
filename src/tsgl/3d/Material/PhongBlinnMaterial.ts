@@ -4,7 +4,7 @@ import { AMaterial } from './Material';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { PhongBlinnVShadersState } from '../../shaders/PhongBlinnVShadersState';
 import { PhongBlinnLightInterface, PhongBlinnShaderDebug, PhongBlinnVShaderID } from '../../shaders/PhongBlinnVShader';
 import { ShadowMap } from '../ShadowMap';
@@ -19,12 +19,12 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     this._shaderState = renderer.getShader(PhongBlinnVShaderID).createState() as PhongBlinnVShadersState;
   }
 
-  protected _normalMap: GLTexture;
-  protected _irradianceMap: GLTexture;
-  protected _extraMap: GLTexture;
+  protected _normalMap: IGLTexture;
+  protected _irradianceMap: IGLTexture;
+  protected _extraMap: IGLTexture;
 
 
-  protected _diffuseMap: GLTexture;
+  protected _diffuseMap: IGLTexture;
 
   protected _diffuseColor: vec4 = vec4.fromValues(1, 1, 1, 1);
 
@@ -54,11 +54,11 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
   // Tangent, Bilinear tangent, normal enabled (normal map need to be provided)
   protected _tbnEnabled = false;
 
-  get diffuseMap(): GLTexture {
+  get diffuseMap(): IGLTexture {
     return this._diffuseMap;
   }
 
-  set diffuseMap(val: GLTexture) {
+  set diffuseMap(val: IGLTexture) {
     if (val !== this._diffuseMap) {
       this._diffuseMap = val;
       this._shaderState?.setVariantValue('diffuse', val ? 'texture' : 'color');
@@ -76,11 +76,11 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     }
   }
 
-  get normalMap(): GLTexture {
+  get normalMap(): IGLTexture {
     return this._normalMap;
   }
 
-  set normalMap(val: GLTexture) {
+  set normalMap(val: IGLTexture) {
     if (val !== this._normalMap) {
       this._normalMap = val;
       this.updateNormalMode();
@@ -98,22 +98,22 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     }
   }
 
-  get extraMap(): GLTexture {
+  get extraMap(): IGLTexture {
     return this._extraMap;
   }
 
-  set extraMap(val: GLTexture) {
+  set extraMap(val: IGLTexture) {
     if (val !== this._extraMap) {
       this._extraMap = val;
       this.updateOcclusionMap();
     }
   }
 
-  get irradianceMap(): GLTexture {
+  get irradianceMap(): IGLTexture {
     return this._irradianceMap;
   }
 
-  set irradianceMap(val: GLTexture) {
+  set irradianceMap(val: IGLTexture) {
     if (val !== this._irradianceMap) {
       this._irradianceMap = val;
       this._shaderState?.setVariantValue('ambiant', val ? 'irradiance' : 'color');

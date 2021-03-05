@@ -6,7 +6,7 @@ import {
 } from '../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
-import { GLTexture } from '../gl/core/GLTexture';
+import { IGLTexture } from '../gl/core/GLTexture';
 import { GLShaderVariantDeclinaison } from '../gl/core/shader/variants/GLShaderVariantDeclinaison';
 import { GLShaderVariants } from '../gl/core/shader/variants/GLShaderVariants';
 import { GLVariantValueDefinition } from '../gl/core/shader/variants/GLVariantShaderTypes';
@@ -239,7 +239,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
     return this._ludLoaded;
   }
 
-  activeBrdfLutTexture(brdfLut: GLTexture): void {
+  activeBrdfLutTexture(brdfLut: IGLTexture): void {
     brdfLut.active(GLDefaultTextureLocation.RELEXION_LUT);
     this._ludLoaded = true;
   }
@@ -258,7 +258,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
     ]);
   }
 
-  static register(renderer: GLRenderer, brdfLut?: GLTexture): void {
+  static register(renderer: GLRenderer, brdfLut?: IGLTexture): void {
     renderer.registerShaderFactoryFunction(
       PbrVShaderID,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

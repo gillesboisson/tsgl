@@ -2,13 +2,13 @@ import { mat4 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { SimpleLamberianShaderState } from '../../shaders/SimpleLamberianShader';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 
 export class SimpleLamberianMaterial extends AMaterial<SimpleLamberianShaderState> {
-  constructor(renderer: GLRenderer, public diffuseMap: GLTexture, public normalMap: GLTexture, public pbrMap: GLTexture) {
+  constructor(renderer: GLRenderer, public diffuseMap: IGLTexture, public normalMap: IGLTexture, public pbrMap: IGLTexture) {
     super();
 
     this._shaderState = renderer.getShader('simple_lamberian').createState() as SimpleLamberianShaderState;

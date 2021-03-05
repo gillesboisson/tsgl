@@ -2,7 +2,7 @@ import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer, GLRendererType, WebGL2Renderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { PbrShaderDebug, PbrVShaderID } from '../../shaders/PbrVShader';
 import { PbrVShadersState } from '../../shaders/PbrVShadersState';
 import { Camera } from '../Camera';
@@ -20,12 +20,12 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     renderer: WebGL2Renderer,
     materials: GLTFDataMaterial[],
     primitive: GLTFDataMeshPrimitive,
-    textures: GLTexture[],
+    textures: IGLTexture[],
     settings: {
       readonly lightDirection: vec3;
 
-      readonly irradianceMap: GLTexture;
-      readonly reflectanceMap: GLTexture;
+      readonly irradianceMap: IGLTexture;
+      readonly reflectanceMap: IGLTexture;
     },
   ): PbrMaterial {
 
@@ -81,8 +81,8 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     renderer: WebGL2Renderer,
     readonly lightDirection: vec3,
 
-    readonly irradianceMap: GLTexture,
-    readonly reflectanceMap: GLTexture,
+    readonly irradianceMap: IGLTexture,
+    readonly reflectanceMap: IGLTexture,
   ) {
     super();
 
@@ -93,10 +93,10 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
   protected _emissive = vec3.fromValues(1, 1, 1);
   protected _pbr = vec4.fromValues(1, 0, 0, 0);
 
-  protected _diffuseMap: GLTexture;
-  protected _pbrMap: GLTexture;
-  protected _normalMap: GLTexture;
-  protected _emissiveMap: GLTexture;
+  protected _diffuseMap: IGLTexture;
+  protected _pbrMap: IGLTexture;
+  protected _normalMap: IGLTexture;
+  protected _emissiveMap: IGLTexture;
   protected _shadowMap: ShadowMap;
   protected _tbnEnabled: boolean;
   protected _debug = PbrShaderDebug.none;
@@ -171,33 +171,33 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     return this._shaderState.getVariantValue('gammaCorrection') as boolean;
   }
 
-  get diffuseMap(): GLTexture {
+  get diffuseMap(): IGLTexture {
     return this._diffuseMap;
   }
 
-  set diffuseMap(val: GLTexture) {
+  set diffuseMap(val: IGLTexture) {
     if (val !== this._diffuseMap) {
       this._diffuseMap = val;
       this._shaderState?.setVariantValue('diffuse', val ? 'texture' : 'color');
     }
   }
 
-  get pbrMap(): GLTexture {
+  get pbrMap(): IGLTexture {
     return this._pbrMap;
   }
 
-  set pbrMap(val: GLTexture) {
+  set pbrMap(val: IGLTexture) {
     if (val !== this._pbrMap) {
       this._pbrMap = val;
       this._shaderState?.setVariantValue('pbrMap', !!val);
     }
   }
 
-  get emissiveMap(): GLTexture {
+  get emissiveMap(): IGLTexture {
     return this._emissiveMap;
   }
 
-  set emissiveMap(val: GLTexture) {
+  set emissiveMap(val: IGLTexture) {
     if (val !== this._emissiveMap) {
       this._emissiveMap = val;
       this._shaderState?.setVariantValue('emissiveMap', !!val);
@@ -215,11 +215,11 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     }
   }
 
-  get normalMap(): GLTexture {
+  get normalMap(): IGLTexture {
     return this._normalMap;
   }
 
-  set normalMap(val: GLTexture) {
+  set normalMap(val: IGLTexture) {
     if (val !== this._normalMap) {
       this._normalMap = val;
       this.updateNormalMode();

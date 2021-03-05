@@ -1,8 +1,9 @@
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { GLTexture } from '../gl/core/GLTexture';
+import { IGLTexture } from '../gl/core/GLTexture';
+import { wrapTexture } from '../helpers/texture/bindableTexture';
 
 export class CubeMapFramebuffer {
-  private _framebufferTexture: GLTexture;
+  private _framebufferTexture: IGLTexture;
   private _framebuffer: WebGLFramebuffer;
   private _depthRenderBuffer: WebGLRenderbuffer;
   private __renderSize: (gl: AnyWebRenderingGLContext, sideIndex: number) => void;
@@ -11,7 +12,7 @@ export class CubeMapFramebuffer {
     gl: AnyWebRenderingGLContext,
     size: number,
     textureFormat = gl.RGBA,
-  ): GLTexture {
+  ): IGLTexture {
     const texture = gl.createTexture();
 
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
@@ -35,7 +36,7 @@ export class CubeMapFramebuffer {
     }
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
 
-    return new GLTexture({ gl, texture }, gl.TEXTURE_CUBE_MAP);
+    return wrapTexture( gl, texture, gl.TEXTURE_CUBE_MAP);
   }
 
   constructor(
@@ -57,7 +58,7 @@ export class CubeMapFramebuffer {
     this.__renderSize = (gl: AnyWebRenderingGLContext, sideIndex: number) => this.renderSide(gl, sideIndex);
   }
 
-  get framebufferTexture(): GLTexture {
+  get framebufferTexture(): IGLTexture {
     return this._framebufferTexture;
   }
 

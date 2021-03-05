@@ -2,7 +2,7 @@ import { mat4, vec3 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { SimplePBRShaderID, SimplePBRShaderState } from '../../shaders/SimplePBRShader';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';
@@ -16,8 +16,8 @@ export class SimplePBRMaterial extends AMaterial<SimplePBRShaderState> {
   constructor(
     renderer: GLRenderer,
     readonly light: SimplePBRLightInterface,
-    readonly irradianceMap: GLTexture,
-    readonly reflectionMap: GLTexture,
+    readonly irradianceMap: IGLTexture,
+    readonly reflectionMap: IGLTexture,
   ) {
     super();
 
@@ -30,7 +30,7 @@ export class SimplePBRMaterial extends AMaterial<SimplePBRShaderState> {
   roughness = 0;
   ao = 1;
 
-  brdfLUT: GLTexture;
+  brdfLUT: IGLTexture;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   prepare(gl: AnyWebRenderingGLContext, cam: Camera, transformMat: mat4): void {

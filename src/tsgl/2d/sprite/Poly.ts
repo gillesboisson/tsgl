@@ -1,10 +1,10 @@
 import { SpriteElement } from './SpriteElement';
 import { SpriteBatch } from '../SpriteBatch';
 import { WorldCoords } from './ElementData';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 
 export abstract class Poly extends SpriteElement {
-  constructor(texture: GLTexture, readonly nbTriangles: number, readonly nbPoints: number) {
+  constructor(texture: IGLTexture, readonly nbTriangles: number, readonly nbPoints: number) {
     super(texture);
   }
 

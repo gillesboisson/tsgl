@@ -1,5 +1,5 @@
 import { vec2, vec4 } from 'gl-matrix';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { SimpleWorldCoords } from './SimpleElementData';
 import { SimpleGroup } from './SimpleGroup';
 import { SpriteBatch } from '../SpriteBatch';
@@ -23,7 +23,7 @@ export abstract class SimpleElement implements ElementI<SimpleGroup, SimpleWorld
     if (this.parent !== undefined) this.parent.removeChild(this);
   }
 
-  constructor(texture: GLTexture) {
+  constructor(texture: IGLTexture) {
     if (texture) this._texture = texture.texture;
   }
 

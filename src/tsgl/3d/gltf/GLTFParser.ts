@@ -3,7 +3,8 @@ import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLVao } from '../../gl/core/data/GLVao';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
+import { loadTexture2D } from '../../helpers/texture/loadTexture2D';
 import { GLTFData, GLTFDataAccessor, GLTFDataBufferView, GLTFDataMesh, GLTFDataMeshPrimitive } from './GLFTSchema';
 import { GLTFMesh } from './GLTFMesh';
 import { GLTFPrimitive } from './GLTFPrimitive';
@@ -58,8 +59,8 @@ export async function loadTextures(
   gl: AnyWebRenderingGLContext,
   data: GLTFData,
   assetDirectory: string,
-  textureLoaded?: (ind: number, buffer: GLTexture) => void,
-): Promise<GLTexture[]> {
+  textureLoaded?: (ind: number, buffer: IGLTexture) => void,
+): Promise<IGLTexture[]> {
   const textures = data.textures;
 
   if (!textures) return Promise.resolve([]);
@@ -80,13 +81,13 @@ export async function loadTextures(
     let currentTextureInd = 0;
 
     const loadBuffer = (ind: number) => {
-      GLTexture.loadTexture2D(
+      loadTexture2D(
         gl,
         `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`,
       ).then((texture) => loaded(ind, texture));
     };
 
-    const loaded = (ind: number, data: GLTexture) => {
+    const loaded = (ind: number, data: IGLTexture) => {
       if (textureLoaded !== undefined) textureLoaded(ind, data);
       result[ind] = data;
       texturesToload--;

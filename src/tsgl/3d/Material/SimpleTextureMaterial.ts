@@ -1,13 +1,13 @@
 import { mat4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { GLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/GLTexture';
 import { SimpleTextureShaderID, SimpleTextureShaderState } from '../../shaders/SimpleTextureShader';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 
 export class SimpleTextureMaterial extends AMaterial<SimpleTextureShaderState> {
-  constructor(renderer: GLRenderer, public texture: GLTexture) {
+  constructor(renderer: GLRenderer, public texture: IGLTexture) {
     super();
 
     this._shaderState = renderer.getShader(SimpleTextureShaderID).createState() as SimpleTextureShaderState;
