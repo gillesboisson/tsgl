@@ -36,7 +36,6 @@ export enum PbrShaderDebug {
 }
 
 export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
-
   protected _ludLoaded: boolean;
 
   constructor(gl: AnyWebRenderingGLContext) {
@@ -112,7 +111,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
         },
         {
           value: 'pcf',
-          
+
           flags: {
             SHADOW_MAP: true,
           },
@@ -155,15 +154,23 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
         },
       ],
 
-      occlusionMapEnabled: [
+      occlusion: [
         {
-          value: true,
+          value: 'on',
           flags: {
-            ENABLE_OCCLUSION_MAP: true,
+            OCCLUSION_MAP: true,
+            OCCLUSION_ONLY: true,
           },
         },
         {
-          value: false,
+          value: 'pbr',
+          flags: {
+            OCCLUSION_MAP: true,
+            OCCLUSION_PBR: true,
+          },
+        },
+        {
+          value: 'off',
           default: true,
           flags: {
             DISABLE_OCCLUSION_MAP: false,
@@ -224,7 +231,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
       fragSrc,
       PbrVShadersState,
       valueDefTest,
-      getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv', 'a_tangent'])
+      getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv', 'a_tangent']),
     );
 
     this._ludLoaded = false;
@@ -234,8 +241,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
     // }
   }
 
-
-  get lutLoaded(): boolean{
+  get lutLoaded(): boolean {
     return this._ludLoaded;
   }
 
@@ -264,7 +270,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (gl: AnyWebRenderingGLContext, name: string) => {
         const shader = new PbrVShader(gl);
-        if(brdfLut) shader.activeBrdfLutTexture(brdfLut);
+        if (brdfLut) shader.activeBrdfLutTexture(brdfLut);
         return shader;
       },
     );

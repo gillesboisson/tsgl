@@ -183,6 +183,12 @@ in vec3 v_shadowCoord;
 #endif
 
 
+#ifdef OCCLUSION_MAP
+#ifdef OCCLUSION_ONLY
+uniform sampler2D u_occlusionMap;
+#endif
+#endif
+
 #ifdef EMISSIVE_MAP
 uniform sampler2D u_emissiveMap;
 uniform vec3 u_emissive;
@@ -254,8 +260,12 @@ void main(){
   vec4 pbr =  u_pbr;
   #endif
 
-  #ifdef ENABLE_OCCLUSION_MAP
+  #ifdef OCCLUSION_MAP
+  #ifdef OCCLUSION_PBR
   float ao = pbr.x;
+  #else
+  float ao = texture(u_occlusionMap,v_uv).x;
+  #endif
   #else
   float ao = u_pbr.x;
   #endif

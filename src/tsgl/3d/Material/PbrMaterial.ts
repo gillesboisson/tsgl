@@ -28,7 +28,6 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
       readonly reflectanceMap: IGLTexture;
     },
   ): PbrMaterial {
-
     const materialData = materials[primitive.material];
 
     const material = new PbrMaterial(
@@ -37,12 +36,12 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
       settings.irradianceMap,
       settings.reflectanceMap,
     );
-    const { pbrMetallicRoughness, normalTexture , occlusionTexture,emissiveFactor, emissiveTexture } = materialData;
+    const { pbrMetallicRoughness, normalTexture, occlusionTexture, emissiveFactor, emissiveTexture } = materialData;
 
     if (normalTexture !== undefined) {
       material.normalMap = textures[normalTexture.index];
 
-      if(primitive.attributes.NORMAL && primitive.attributes.TANGENT){
+      if (primitive.attributes.NORMAL && primitive.attributes.TANGENT) {
         material.tbnEnabled = true;
       }
     }
@@ -53,10 +52,8 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
       material.copyDiffuseColor(pbrMetallicRoughness.baseColorFactor as any);
     }
 
-    if(occlusionTexture && pbrMetallicRoughness.metallicRoughnessTexture.index === occlusionTexture.index){
-      material.enableOcclusionMap();
-    }else if(occlusionTexture){
-      console.warn('occlusion map not compatible : has to be the same metal roughness');
+    if (occlusionTexture) {
+      material.occlusionMap = textures[occlusionTexture.index];
     }
 
     if (pbrMetallicRoughness.metallicRoughnessTexture) {
@@ -66,11 +63,10 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
       material.metallic = pbrMetallicRoughness.metallicFactor;
     }
 
-    if(emissiveTexture){
+    if (emissiveTexture) {
       material.emissiveMap = textures[emissiveTexture.index];
       material.copyEmissive(emissiveFactor as any);
     }
-
 
     return material;
   }
@@ -95,6 +91,7 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
 
   protected _diffuseMap: IGLTexture;
   protected _pbrMap: IGLTexture;
+  protected _occlusionMap: IGLTexture;
   protected _normalMap: IGLTexture;
   protected _emissiveMap: IGLTexture;
   protected _shadowMap: ShadowMap;
@@ -111,53 +108,17 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     }
   }
 
-  enableHDRCorrection(): void {
-    this._shaderState?.setVariantValue('gammaCorrection', true);
-  }
+  // enableOcclusionMap(): void {
+  //   this._shaderState?.setVariantValue('occlusionMapEnabled', true);
+  // }
 
-  disableHDRCorrection(): void {
-    this._shaderState?.setVariantValue('gammaCorrection', false);
-  }
+  // disableOcclusionMap(): void {
+  //   this._shaderState?.setVariantValue('occlusionMapEnabled', false);
+  // }
 
-
-
-
-  enableOcclusionMap(): void {
-    this._shaderState?.setVariantValue('occlusionMapEnabled', true);
-  }
-
-  disableOcclusionMap(): void {
-    this._shaderState?.setVariantValue('occlusionMapEnabled', false);
-  }
-
-  get occlusionMapEnabled():boolean{
-    return this._shaderState.getVariantValue('occlusionMapEnabled') as boolean;
-  }
-
-  setGamma(gamma: number, enableCorrection = true): void {
-    if (enableCorrection) {
-      this.enableHDRCorrection();
-    }
-
-    this._gammaExposure[0] = gamma;
-  }
-
-  setExposure(exposure: number, enableCorrection = true): void {
-    if (enableCorrection) {
-      this.enableHDRCorrection();
-    }
-
-    this._gammaExposure[1] = exposure;
-  }
-
-  setGammaExposure(gamma: number, exposure: number, enableCorrection = true): void {
-    if (enableCorrection) {
-      this.enableHDRCorrection();
-    }
-
-    this._gammaExposure[0] = gamma;
-    this._gammaExposure[1] = exposure;
-  }
+  // get occlusionMapEnabled():boolean{
+  //   return this._shaderState.getVariantValue('occlusionMapEnabled') as boolean;
+  // }
 
   get gamma(): number {
     return this._gammaExposure[0];
@@ -190,6 +151,18 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     if (val !== this._pbrMap) {
       this._pbrMap = val;
       this._shaderState?.setVariantValue('pbrMap', !!val);
+      this.updateOcclusionMode();
+    }
+  }
+
+  get occlusionMap(): IGLTexture {
+    return this._occlusionMap;
+  }
+
+  set occlusionMap(val: IGLTexture) {
+    if (val !== this._occlusionMap) {
+      this._occlusionMap = val;
+      this.updateOcclusionMode();
     }
   }
 
@@ -237,6 +210,52 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     }
   }
 
+  enableHDRCorrection(): void {
+    this._shaderState?.setVariantValue('gammaCorrection', true);
+  }
+
+  disableHDRCorrection(): void {
+    this._shaderState?.setVariantValue('gammaCorrection', false);
+  }
+
+  setGamma(gamma: number, enableCorrection = true): void {
+    if (enableCorrection) {
+      this.enableHDRCorrection();
+    }
+
+    this._gammaExposure[0] = gamma;
+  }
+
+  setExposure(exposure: number, enableCorrection = true): void {
+    if (enableCorrection) {
+      this.enableHDRCorrection();
+    }
+
+    this._gammaExposure[1] = exposure;
+  }
+
+  setGammaExposure(gamma: number, exposure: number, enableCorrection = true): void {
+    if (enableCorrection) {
+      this.enableHDRCorrection();
+    }
+
+    this._gammaExposure[0] = gamma;
+    this._gammaExposure[1] = exposure;
+  }
+
+  protected updateOcclusionMode(): void {
+    switch (true) {
+      case this._occlusionMap === this._pbrMap && !!this._pbrMap:
+        this._shaderState?.setVariantValue('occlusion', 'pbr');
+        break;
+      case !!this._occlusionMap:
+        this._shaderState?.setVariantValue('occlusion', 'on');
+        break;
+      default:
+        this._shaderState?.setVariantValue('occlusion', 'off');
+        break;
+    }
+  }
   protected updateNormalMode(): void {
     switch (true) {
       case this._normalMap && this._tbnEnabled:
@@ -287,6 +306,9 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
     if (this._normalMap) {
       this._normalMap.active(GLDefaultTextureLocation.NORMAL);
     }
+    if (this._occlusionMap) {
+      this._occlusionMap.active(GLDefaultTextureLocation.AMBIANT_OCCLUSION);
+    }
 
     if (this._pbrMap) {
       this._pbrMap.active(GLDefaultTextureLocation.PBR_0);
@@ -311,8 +333,6 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
   get diffuseColor(): vec4 {
     return vec4.clone(this._diffuseColor);
   }
-
-
 
   public setEmissive(r: number, g: number, b: number): void {
     vec3.set(this._emissive, r, g, b);

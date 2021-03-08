@@ -194,9 +194,9 @@ class TestApp extends Base3DApp {
 
     const gl = this.renderer.gl;
 
-    const dir = './models/BoomBox/glTF';
+    const dir = './models/bottle';
 
-    const gltfData: GLTFData = await fetch(`${dir}/BoomBox.gltf`).then((response) => response.json());
+    const gltfData: GLTFData = await fetch(`${dir}/SpecGlossVsMetalRough.gltf`).then((response) => response.json());
     setBufferViewTargetFromMesh(gl, gltfData);
 
     const glBuffers: GLBuffer[] = new Array(gltfData.bufferViews.length);
@@ -337,7 +337,7 @@ class TestApp extends Base3DApp {
     //     this._sceneRenderables.addChild(pbrSphere);
     //   }
     // }
-    return;
+    // return;
     for (let i = 0; i <= step; i++) {
       for (let f = 0; f <= step; f++) {
         // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
@@ -361,7 +361,7 @@ class TestApp extends Base3DApp {
         const pbrSphere = new MeshNode(pbrMat, mesh);
         // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
 
-        pbrSphere.transform.translate(i + 1.0, f, 0);
+        pbrSphere.transform.translate(i + 3.0, f, 0);
 
         this._sceneRenderables.addChild(pbrSphere);
       }
@@ -372,7 +372,7 @@ class TestApp extends Base3DApp {
   update(time: number, elapsedTime: number): void {
     this._camController.update(elapsedTime);
     //
-    this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
+    // this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
 
     // const camQuat = this._cam.transform.getRawRotation();
 
