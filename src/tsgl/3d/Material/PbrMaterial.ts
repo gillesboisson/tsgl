@@ -11,14 +11,15 @@ import { GLTFPrimitive } from '../gltf/GLTFPrimitive';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
 
+
 export class PbrMaterial extends AMaterial<PbrVShadersState> {
-  static filterGTF(material: GLTFDataMaterial): boolean {
+  static matchGTFMaterialData(material: GLTFDataMaterial): boolean {
     return !!material.pbrMetallicRoughness;
   }
 
-  static fromGLTF(
+  static buildFromGLTF(
     renderer: WebGL2Renderer,
-    materials: GLTFDataMaterial[],
+    materialData: GLTFDataMaterial,
     primitive: GLTFDataMeshPrimitive,
     textures: IGLTexture[],
     settings: {
@@ -28,7 +29,7 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
       readonly reflectanceMap: IGLTexture;
     },
   ): PbrMaterial {
-    const materialData = materials[primitive.material];
+    // const materialData = materials[primitive.material];
 
     const material = new PbrMaterial(
       renderer,

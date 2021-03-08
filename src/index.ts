@@ -214,7 +214,7 @@ class TestApp extends Base3DApp {
     const corsetPbrMap = textures[1];
     const corsetdiffuseMap = textures[0];
 
-    this._shadowMap = new ShadowMap(this.renderer, 1024, 1024, 3, 0.001, 10);
+    this._shadowMap = new ShadowMap(this.renderer, 1024, 1024, 10, 0.001, 30);
     this._shadowMap.setPosition(2, 2, 2);
     this._shadowMap.setLookAt(-1, -1, -1);
 
@@ -243,13 +243,21 @@ class TestApp extends Base3DApp {
       },
     });
 
-   
+    const pbrMat = PbrMaterial.buildFromGLTF(
+      this.renderer,
+      gltfData.materials[gltfData.meshes[0].primitives[0].material],
+      gltfData.meshes[0].primitives[0],
+      textures,
+      {
+        lightDirection: light.direction,
+        irradianceMap: hdrIbl.irradiance.cubemap,
+        reflectanceMap: hdrIbl.reflectance.cubemap,
+      },
+    );
 
-    const pbrMat = PbrMaterial.fromGLTF(this.renderer, gltfData.materials, gltfData.meshes[0].primitives[0], textures, {
-      lightDirection: light.direction,
-      irradianceMap: hdrIbl.irradiance.cubemap,
-      reflectanceMap: hdrIbl.reflectance.cubemap,
-    });
+    pbrMat.shadowMap = this._shadowMap;
+
+    // pbrMat.debug = PbrShaderDebug.occlusion;
 
     /*new PbrMaterial(
       this.renderer,
@@ -292,6 +300,11 @@ class TestApp extends Base3DApp {
       hdrIbl.reflectance.cubemap,
     );
 
+
+    sphereMat.roughness = 1;
+    sphereMat.metallic = 0.3;
+    
+
     sphereMat.shadowMap = this._shadowMap;
     // sphereMat.diffuseMap = hdrIbl.lut.lookupTexture;
     // sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
@@ -302,15 +315,15 @@ class TestApp extends Base3DApp {
     const plane = new MeshNode(sphereMat, planeMesh);
 
     plane.transform.rotateEuler(-Math.PI / 2, 0, 0);
-    plane.transform.setScale(5);
-    plane.transform.setPosition(0, -1, 0);
+    plane.transform.setScale(10);
+    plane.transform.setPosition(0, -3, 0);
 
     this._sceneRenderables = new SceneInstance3D();
 
     // this._shadowCam.transform.setPosition(-10,-10,-10);
     // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
 
-    [this._corsetNode, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
+    [plane, this._corsetNode, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
     // [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
     // [plane, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
 

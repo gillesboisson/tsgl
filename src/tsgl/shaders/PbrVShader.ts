@@ -261,6 +261,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
       'u_pbrMap',
       'u_emissiveMap',
       'u_shadowMap',
+      'u_occlusionMap',
     ]);
   }
 
