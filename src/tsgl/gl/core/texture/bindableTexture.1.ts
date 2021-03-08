@@ -1,18 +1,9 @@
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLTexture, IGLTextureBase } from '../../gl/core/GLTexture';
+import { IGLTexture, IGLTextureBase } from './GLTexture';
 
-export function wrapTexture(gl: AnyWebRenderingGLContext, texture: WebGLTexture, target: GLenum): IGLTexture {
-  return bindableTexture({
-    gl,
-    texture,
-    target,
-  });
-}
 
 export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
   // gl: AnyWebRenderingGLContext,
-  sourceTexture: T,
-  // type: GLenum,
+  sourceTexture: T
 ): T & {
   bind: () => void;
   unbind: () => void;

@@ -1,6 +1,6 @@
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLTexture } from '../../gl/core/GLTexture';
-import { bindableTexture } from './bindableTexture';
+import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
+import { GLTexture2D } from '../../gl/core/texture/GLTexture';
 
 export function createEmptyTextureWithLinearFilter(
   gl: AnyWebRenderingGLContext,
@@ -9,7 +9,7 @@ export function createEmptyTextureWithLinearFilter(
   internalFormat = gl.RGBA,
   format = internalFormat,
   type = gl.UNSIGNED_BYTE,
-): IGLTexture & { internalFormat: GLenum; format: GLenum; type: GLenum } {
+): GLTexture2D {
   const texture = gl.createTexture();
   const target = gl.TEXTURE_2D;
 
@@ -28,6 +28,7 @@ export function createEmptyTextureWithLinearFilter(
     texture,
     width,
     height,
+    mipmap: false,
     internalFormat,
     format,
     type,

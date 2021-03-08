@@ -4,7 +4,7 @@ import { AMaterial } from './Material';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { IGLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { PhongBlinnVShadersState } from '../../shaders/PhongBlinnVShadersState';
 import { PhongBlinnLightInterface, PhongBlinnShaderDebug, PhongBlinnVShaderID } from '../../shaders/PhongBlinnVShader';
 import { ShadowMap } from '../ShadowMap';

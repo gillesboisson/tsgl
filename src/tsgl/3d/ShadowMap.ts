@@ -5,7 +5,7 @@ import { GLDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLoc
 import { GLFramebuffer } from '../gl/core/framebuffer/GLFramebuffer';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
-import { IGLTexture } from '../gl/core/GLTexture';
+import { GLTexture2D, IGLStoredTextureBase, IGLTexture } from '../gl/core/texture/GLTexture';
 import { Camera } from './Camera';
 import { IRenderableInstance3D } from './IRenderableInstance3D';
 import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';
@@ -76,7 +76,7 @@ export class ShadowMap{
     this.stopRenderDepthMap();
   }
 
-  get depthTexture(): IGLTexture{
+  get depthTexture(): GLTexture2D{
     return this._framebuffer.depthTexture;
   }
 

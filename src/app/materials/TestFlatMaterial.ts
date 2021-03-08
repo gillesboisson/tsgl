@@ -3,7 +3,7 @@ import { Camera } from '../../tsgl/3d/Camera';
 import { AMaterial } from '../../tsgl/3d/Material/Material';
 import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
 import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
-import { IGLTexture } from '../../tsgl/gl/core/GLTexture';
+import { IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
 import { TestFlatShaderState, TestFlatID } from '../shaders/TestFlatShader';
 
 export class TestFlatMaterial extends AMaterial<TestFlatShaderState> {

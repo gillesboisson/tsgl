@@ -4,7 +4,7 @@ import { GLDefaultAttributesLocation } from '../gl/core/data/GLDefaultAttributes
 import { GLMesh } from '../gl/core/data/GLMesh';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
-import { IGLTexture } from '../gl/core/GLTexture';
+import { GLTexture2D, IGLStoredTextureBase, IGLTexture } from '../gl/core/texture/GLTexture';
 import { SimpleSpriteShaderState } from '../shaders/SimpleSpriteShader';
 import { CubeMapFramebuffer } from './CubeMapFramebuffer';
 
@@ -94,7 +94,7 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
   }
 
   
-  unwrap(patron: IGLTexture, resizeFramebufferFromTextureSize = true): void {
+  unwrap(patron: GLTexture2D, resizeFramebufferFromTextureSize = true): void {
     if (resizeFramebufferFromTextureSize) {
       const size = patron.width / 4;
       if (size !== this._size) {

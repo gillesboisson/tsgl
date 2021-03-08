@@ -13,6 +13,15 @@
 //   const cubemap = gl.createTexture();
 //   gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemap);
 
+import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
+import {
+  GLTextureCubemap,
+  IGLStoredTextureBase,
+  IGLTextureBase,
+  IGLTextureCubemapSize,
+  IGLTextureLodBase,
+} from '../../gl/core/texture/GLTexture';
+
 //   // create empty space in all faces (RGB / FLOAT)
 //   for (let i = 0; i < 6; i++) {
 //     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, size, size, 0, format, type, null);
@@ -41,19 +50,14 @@ export function createCubemapMipmapEmptyTexture(
   internalFormat: GLenum = gl.RGBA,
   format: GLenum = internalFormat,
   type: GLenum = gl.UNSIGNED_BYTE,
-): {
-  cubemap: WebGLTexture;
-  size: number;
-  format: GLenum;
-  internalFormat: GLenum;
-  type: GLenum;
-  levels: number;
-} {
-  const cubemap = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemap);
+): GLTextureCubemap & IGLTextureLodBase {
+  const texture = gl.createTexture();
+  const target = gl.TEXTURE_CUBE_MAP;
 
+  
+  gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+  
   gl.texStorage2D(gl.TEXTURE_CUBE_MAP, levels, internalFormat, size, size);
-
   // create empty space in all faces (RGB / FLOAT)
   // for (let i = 0; i < 6; i++) {
   //   gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, size, size, 0, format, type, null);
@@ -65,13 +69,17 @@ export function createCubemapMipmapEmptyTexture(
   //gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  
 
-  return {
-    cubemap,
+
+  return bindableTexture({
+    gl,
+    target,
+    internalFormat,
+    texture,
     size,
     format,
-    internalFormat,
     type,
     levels,
-  };
+  });
 }

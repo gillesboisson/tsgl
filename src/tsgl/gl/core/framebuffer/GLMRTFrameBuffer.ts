@@ -2,7 +2,7 @@ import { createEmptyTextureWithLinearFilter } from '../../../helpers/texture/cre
 import { GLCore } from '../GLCore';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLSupport } from '../GLSupport';
-import { IGLTexture } from '../GLTexture';
+import { IGLTexture } from '../texture/GLTexture';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 
 export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {

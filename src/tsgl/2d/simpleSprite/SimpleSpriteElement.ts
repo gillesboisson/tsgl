@@ -1,5 +1,5 @@
 import { vec2, vec4 } from 'gl-matrix';
-import { IGLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { SimpleWorldCoords } from './SimpleElementData';
 import { SimpleGroup } from './SimpleGroup';
 import { SpriteBatch } from '../SpriteBatch';

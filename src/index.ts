@@ -2,7 +2,6 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
-import { createImageTextureWithLinearFilter } from './tsgl/helpers/texture/createImageTextureWithLinearFilter';
 import { createFBAndFlippableTexture } from './tsgl/helpers/texture/createFBAndFlippableTexture';
 import { createEmptyMipmapTexture } from './tsgl/helpers/texture/createEmptyMipmapTexture';
 import { createMipmapTextureForStorage } from './tsgl/helpers/texture/createMipmapTextureForStorage';
@@ -46,7 +45,7 @@ import { GLVao } from './tsgl/gl/core/data/GLVao';
 import { GLFramebuffer } from './tsgl/gl/core/framebuffer/GLFramebuffer';
 import { GLViewportStack } from './tsgl/gl/core/framebuffer/GLViewportState';
 import { GLRenderer, GLRendererType, WebGL2Renderer } from './tsgl/gl/core/GLRenderer';
-import { IGLTexture } from './tsgl/gl/core/GLTexture';
+import { IGLTexture } from './tsgl/gl/core/texture/GLTexture';
 import { FirstPersonCameraController } from './tsgl/input/CameraController';
 import { BasicColorShader } from './tsgl/shaders/BasicColorShader';
 import { BasicTextureShaderState, BasicTextureShader, BasicTextureShaderID } from './tsgl/shaders/BasicTextureShader';
@@ -81,7 +80,6 @@ import { IrradianceShader } from './tsgl/shaders/IrradianceShader';
 import { ReflectanceShader, ReflectanceShaderState, ReflectanceShaderID } from './tsgl/shaders/ReflectanceShader';
 import { ReflectanceCubemapRenderer } from './tsgl/baking/ReflectanceCubemapRenderer';
 import { IrradianceCubemapRenderer } from './tsgl/baking/IrradianceCubemapRenderer';
-import { renderBRDFLut } from './tsgl/helpers/renderBRDFLut';
 import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
 import { PbrShaderDebug, PbrVShader } from './tsgl/shaders/PbrVShader';
 import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';

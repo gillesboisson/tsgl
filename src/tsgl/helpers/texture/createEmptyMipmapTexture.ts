@@ -1,18 +1,22 @@
-import { IGLTexture } from '../../gl/core/GLTexture';
-import { bindableTexture } from './bindableTexture';
+import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
+import { GLTexture2D, IGLTexture } from '../../gl/core/texture/GLTexture';
 
 
 export function createEmptyMipmapTexture(
   gl: WebGL2RenderingContext,
   width: number,
   height: number,
-  levels: number
-): IGLTexture {
+  internalFormat: GLenum = gl.RGBA,
+  format: GLenum = internalFormat,
+  type: GLenum = gl.UNSIGNED_BYTE,
+): GLTexture2D {
   const texture = gl.createTexture();
   const target = gl.TEXTURE_2D;
- 
+  
+  
+
   gl.bindTexture(target, texture);
-  gl.texImage2D(target, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texImage2D(target, 0, internalFormat, width, height, 0, format, type, null);
 
   gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.REPEAT);
@@ -27,10 +31,13 @@ export function createEmptyMipmapTexture(
   gl.generateMipmap(target);
 
   return bindableTexture({
+    internalFormat,
+    format,
+    type,
     texture,
     width,
     height,
-    levels,
+    mipmap: true,
     gl,
     target,
   });

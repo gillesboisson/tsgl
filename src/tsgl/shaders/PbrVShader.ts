@@ -6,7 +6,7 @@ import {
 } from '../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
-import { IGLTexture } from '../gl/core/GLTexture';
+import { IGLTexture } from '../gl/core/texture/GLTexture';
 import { GLShaderVariantDeclinaison } from '../gl/core/shader/variants/GLShaderVariantDeclinaison';
 import { GLShaderVariants } from '../gl/core/shader/variants/GLShaderVariants';
 import { GLVariantValueDefinition } from '../gl/core/shader/variants/GLVariantShaderTypes';

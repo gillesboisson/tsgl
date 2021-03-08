@@ -1,7 +1,6 @@
 import { WebGL2Renderer } from '../gl/core/GLRenderer';
-import { IGLTexture } from '../gl/core/GLTexture';
-import { renderBRDFLut } from '../helpers/renderBRDFLut';
-import { wrapTexture } from '../helpers/texture/bindableTexture';
+import { IGLTexture } from '../gl/core/texture/GLTexture';
+import { wrapTexture } from "../gl/core/texture/wrapTexture";
 import { createCubemapEmptyTexture } from '../helpers/texture/createCubemapEmptyTexture';
 import { createCubemapMipmapEmptyTexture } from '../helpers/texture/createCubemapMipmapEmptyTexture';
 import { createEmptyTextureWithLinearFilter } from '../helpers/texture/createEmptyTextureWithLinearFilter';

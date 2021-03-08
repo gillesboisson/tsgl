@@ -1,6 +1,6 @@
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLStoredTexture, IGLTexture } from '../../gl/core/GLTexture';
-import { bindableTexture } from './bindableTexture';
+import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
+import { GLTexture2D, GLTextureCubemap } from '../../gl/core/texture/GLTexture';
 
 export function createCubemapEmptyTexture(
   gl: AnyWebRenderingGLContext,
@@ -8,7 +8,7 @@ export function createCubemapEmptyTexture(
   internalFormat: GLenum = gl.RGBA,
   format: GLenum = internalFormat,
   type: GLenum = gl.UNSIGNED_BYTE,
-): IGLTexture & IGLStoredTexture {
+): GLTextureCubemap {
   const texture = gl.createTexture();
   const target = gl.TEXTURE_CUBE_MAP;
 
@@ -28,8 +28,7 @@ export function createCubemapEmptyTexture(
     gl,
     target,
     texture,
-    width: size,
-    height: size,
+    size,
     format,
     internalFormat,
     type,

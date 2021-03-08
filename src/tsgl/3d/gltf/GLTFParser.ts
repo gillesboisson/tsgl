@@ -3,7 +3,7 @@ import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLVao } from '../../gl/core/data/GLVao';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { loadTexture2D } from '../../helpers/texture/loadTexture2D';
 import { GLTFData, GLTFDataAccessor, GLTFDataBufferView, GLTFDataMesh, GLTFDataMeshPrimitive } from './GLFTSchema';
 import { GLTFMesh } from './GLTFMesh';

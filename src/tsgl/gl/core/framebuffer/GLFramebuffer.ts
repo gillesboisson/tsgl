@@ -1,16 +1,16 @@
 import { GLCore } from '../GLCore';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
-import { IGLTexture } from '../GLTexture';
+import { GLTexture2D, IGLStoredTextureBase, IGLTexture } from '../texture/GLTexture';
 import { GLSupport } from '../GLSupport';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 import { GLViewportState } from './GLViewportState';
 import { createEmptyTextureWithLinearFilter } from '../../../helpers/texture/createEmptyTextureWithLinearFilter';
 
 export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportState {
-  get depthTexture(): IGLTexture {
+  get depthTexture(): GLTexture2D {
     return this._depthTexture;
   }
-  get colorTexture(): IGLTexture {
+  get colorTexture(): GLTexture2D {
     return this._colorTexture;
   }
 
@@ -22,11 +22,11 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
   }
 
   private _frameBuffer: WebGLFramebuffer;
-  private _colorTexture: IGLTexture;
+  private _colorTexture: GLTexture2D;
   private _depthRenderBuffer: WebGLRenderbuffer;
   private _colorRenderBuffer: WebGLRenderbuffer;
 
-  private _depthTexture: IGLTexture;
+  private _depthTexture: GLTexture2D;
   private _previousViewport: Int32Array = null;
 
   // viewport state binding
@@ -151,10 +151,10 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
     const gl = this.gl;
 
     if (this._colorTexture !== undefined) {
-      this._colorTexture.safeBind((texture) =>  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null));
+      this._colorTexture.safeBind(() =>  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null));
     }
     if (this._depthTexture !== undefined) {
-      this._depthTexture.safeBind((texture) =>  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null));
+      this._depthTexture.safeBind(() =>  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null));
     }
 
     this.updateSettings();

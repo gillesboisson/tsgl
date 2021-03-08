@@ -1,5 +1,5 @@
-import { IGLTexture } from '../../gl/core/GLTexture';
-import { bindableTexture } from './bindableTexture';
+import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
+import { GLTexture2D } from '../../gl/core/texture/GLTexture';
 
 
 export function createMipmapTextureForStorage(
@@ -7,13 +7,13 @@ export function createMipmapTextureForStorage(
   width: number,
   height: number,
   levels: number
-): IGLTexture {
+): GLTexture2D {
   const texture = gl.createTexture();
   const target = gl.TEXTURE_2D;
-
+  const internalFormat = gl.RGBA8;
 
   gl.bindTexture(target, texture);
-  gl.texStorage2D(target, levels, gl.RGBA8, width, height);
+  gl.texStorage2D(target, levels,internalFormat, width, height);
 
   gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.REPEAT);
@@ -21,6 +21,8 @@ export function createMipmapTextureForStorage(
   gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
   return bindableTexture({
+    internalFormat,
+    mipmap: false,
     texture,
     width,
     height,

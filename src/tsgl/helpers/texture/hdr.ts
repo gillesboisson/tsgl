@@ -1,5 +1,5 @@
-import { IGLTexture } from '../../gl/core/GLTexture';
-import { bindableTexture } from './bindableTexture';
+import { IGLTexture } from '../../gl/core/texture/GLTexture';
+import { bindableTexture } from "../../gl/core/texture/bindableTexture.1";
 
 function m(a: any, b: any): any {
   for (var i in b) a[i] = b[i];

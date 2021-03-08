@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
-import { IGLTexture } from '../../gl/core/GLTexture';
+import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { SkyboxShaderID, SkyboxShaderState } from '../../shaders/SkyboxShader';
 import { Camera } from '../Camera';
 import { AMaterial } from './Material';

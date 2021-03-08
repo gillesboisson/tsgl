@@ -1,19 +1,22 @@
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLTexture } from '../../gl/core/GLTexture';
-import { bindableTexture } from './bindableTexture';
-import { createImageTextureWithLinearFilter } from './createImageTextureWithLinearFilter';
+import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
+import { GLTexture2D } from '../../gl/core/texture/GLTexture';
 
 const EXT_DEFAULT_ALPHA = ['png', 'gif'];
 
 export async function loadTexture2D(
   gl: AnyWebRenderingGLContext,
   url: string,
-  type?: GLenum,
+  format?: GLenum,
   mipmap = false,
-): Promise<IGLTexture & {mipmap: boolean}> {
-  const finalType =
-    type !== undefined ? type : EXT_DEFAULT_ALPHA.indexOf(url.split('.').pop().toLowerCase()) !== -1 ? gl.RGBA : gl.RGB;
-
+): Promise<GLTexture2D> {
+  const finalFormat =
+    format !== undefined
+      ? format
+      : EXT_DEFAULT_ALPHA.indexOf(url.split('.').pop().toLowerCase()) !== -1
+      ? gl.RGBA
+      : gl.RGB;
+  const type = gl.UNSIGNED_BYTE;
   return fetch(url)
     .then((response) => response.blob())
     .then((blob) => createImageBitmap(blob))
@@ -21,7 +24,7 @@ export async function loadTexture2D(
       const texture = gl.createTexture();
       const target = gl.TEXTURE_2D;
       gl.bindTexture(target, texture);
-      gl.texImage2D(target, 0, finalType, finalType, gl.UNSIGNED_BYTE, image as any);
+      gl.texImage2D(target, 0, finalFormat, finalFormat, type, image as any);
 
       gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -31,6 +34,16 @@ export async function loadTexture2D(
 
       if (mipmap) gl.generateMipmap(target);
 
-      return bindableTexture({ gl, texture, width: image.width, height: image.height, target, mipmap });
+      return bindableTexture({
+        gl,
+        texture,
+        width: image.width,
+        height: image.height,
+        target,
+        mipmap,
+        format: finalFormat,
+        internalFormat: finalFormat,
+        type,
+      });
     });
 }

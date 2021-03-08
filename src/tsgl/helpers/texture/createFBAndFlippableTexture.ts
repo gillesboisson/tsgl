@@ -1,4 +1,4 @@
-import { createEmptyTextureWithLinearFilter } from "./createEmptyTextureWithLinearFilter";
+import { createEmptyTextureWithLinearFilter } from './createEmptyTextureWithLinearFilter';
 
 
 export function createFBAndFlippableTexture(

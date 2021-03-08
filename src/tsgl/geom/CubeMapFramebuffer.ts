@@ -1,6 +1,6 @@
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { IGLTexture } from '../gl/core/GLTexture';
-import { wrapTexture } from '../helpers/texture/bindableTexture';
+import { IGLTexture } from '../gl/core/texture/GLTexture';
+import { wrapTexture } from "../gl/core/texture/wrapTexture";
 
 export class CubeMapFramebuffer {
   private _framebufferTexture: IGLTexture;

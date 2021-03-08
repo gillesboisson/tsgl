@@ -1,40 +1,73 @@
 // import { GL1Enum } from './GL1Enum';
 // import { GL2Enum } from './GL2Enum';
 // import { GLCore, GLType } from './GLCore';
-import { AnyWebRenderingGLContext } from './GLHelpers';
+import { AnyWebRenderingGLContext } from '../GLHelpers';
 
 export interface ImageSource {
   src: string;
   type?: GLenum;
 }
 
-
-
-export interface IGLTextureBase {
-  gl: AnyWebRenderingGLContext,
-  target: GLenum,
+export interface IGLLodTexture {
+  levels: number;
+}
+export interface IGLTextureBase<
+  ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
+> {
+  gl: ContextT;
+  target: GLenum;
   readonly texture: WebGLTexture;
-  width?: number;
-  height?: number;
-  levels?: number;
 }
 
-export interface IGLStoredTexture {
-  type: GLenum,
-  format: GLenum,
-  internalFormat: GLenum,
+
+
+export interface IGLStoredTextureBase {
+  type?: GLenum;
+  format?: GLenum;
+  internalFormat: GLenum;
+  mipmap?: boolean;
 }
 
-export interface IGLTexture extends IGLTextureBase {
-  
+
+export interface IGLTexture2DBase {
+  width: number;
+  height: number;
+}
+
+export interface IGLTextureLodBase {
+  levels: number,
+}
+
+export interface IGLTextureLevelBase{
+  level: number;
+}
+
+export type GLTexture2DBase<
+ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
+> = IGLTextureBase<ContextT> & IGLTexture2DBase & IGLStoredTextureBase & IGLTexture2DBase
+
+export type GLTexture2D<
+ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
+>  = IGLTexture<ContextT> & IGLStoredTextureBase & IGLTexture2DBase;
+
+
+export type GLTextureCubemap<
+ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
+>  = IGLTexture<ContextT> & IGLStoredTextureBase & {size: number};
+
+
+export interface IGLTextureCubemapSize {
+  size: number;
+}
+
+export interface IGLTexture<
+ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
+> extends IGLTextureBase<ContextT> {
   bind: () => void;
   unbind: () => void;
   active: (index?: number) => void;
   safeBind: (bindExec: (texture: IGLTexture) => void) => void;
 }
-
-
-
 
 // const EXT_DEFAULT_ALPHA = ['png', 'gif'];
 
@@ -112,7 +145,6 @@ export interface IGLTexture extends IGLTextureBase {
 //     return this._textureTarget;
 //   }
 
-
 //   get texture(): WebGLTexture {
 //     return this._texture;
 //   }
@@ -186,7 +218,6 @@ export interface IGLTexture extends IGLTextureBase {
 
 //     this.unbind();
 //   }
-
 
 //   setEmpty(format: GLenum, type: GLenum = this.gl.UNSIGNED_BYTE): void {
 //     this.gl.texImage2D(this._textureTarget, 0, format, format, type, null);

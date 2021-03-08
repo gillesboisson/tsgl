@@ -33,7 +33,7 @@ export class ReflectanceCubemapRenderer {
     if (dest) {
       reflectanceCubemap = dest;
     } else {
-      reflectanceCubemap = createCubemapMipmapEmptyTexture(gl, size, levels, gl.RGBA16F, gl.RGBA, gl.FLOAT).cubemap;
+      reflectanceCubemap = createCubemapMipmapEmptyTexture(gl, size, levels, gl.RGBA16F, gl.RGBA, gl.FLOAT).texture;
     }
 
     gl.activeTexture(gl.TEXTURE0);

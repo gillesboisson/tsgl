@@ -4,7 +4,7 @@
  */
 
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { IGLTexture } from '../gl/core/GLTexture';
+import { GLTexture2D } from '../gl/core/texture/GLTexture';
 import { loadTexture2D } from '../helpers/texture/loadTexture2D';
 import { SubTexture } from './SubTexture';
 
@@ -141,7 +141,7 @@ export default class SubTextureAtlas {
     [key: string]: SubTexture;
   } = {};
 
-  constructor(readonly data: JsonAtlasData | TexturePackerAtlasData | AseSpriteData, readonly texture: IGLTexture) {
+  constructor(readonly data: JsonAtlasData | TexturePackerAtlasData | AseSpriteData, readonly texture: GLTexture2D) {
     const isAseSprite =
       this.data.hasOwnProperty('frames') && (this.data as AseSpriteData).frames.hasOwnProperty('spritessheet.aseprite');
 
@@ -152,7 +152,7 @@ export default class SubTextureAtlas {
     }
   }
 
-  protected initFromAtlasData(data: JsonAtlasData | TexturePackerAtlasData, texture: IGLTexture): void {
+  protected initFromAtlasData(data: JsonAtlasData | TexturePackerAtlasData, texture: GLTexture2D): void {
     let textureName;
 
     const isFromTexturePacker = this.data.hasOwnProperty('frames');
@@ -190,7 +190,7 @@ export default class SubTextureAtlas {
       }
   }
 
-  protected initFromAsepriteAtlasData(data: AseSpriteData, texture: IGLTexture): void {
+  protected initFromAsepriteAtlasData(data: AseSpriteData, texture: GLTexture2D): void {
     const slices = data.meta.slices;
 
     for (const slice of slices) {
