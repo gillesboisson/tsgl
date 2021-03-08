@@ -38,4 +38,6 @@ export class GLTFMesh extends GLTFCore<GLTFDataMesh> {
     delete this._data;
     delete this._vaos;
   }
+
+
 }

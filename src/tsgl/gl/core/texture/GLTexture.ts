@@ -67,6 +67,8 @@ ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
   unbind: () => void;
   active: (index?: number) => void;
   safeBind: (bindExec: (texture: IGLTexture) => void) => void;
+  activeSafe: (index?: number) => void;
+  
 }
 
 // const EXT_DEFAULT_ALPHA = ['png', 'gif'];

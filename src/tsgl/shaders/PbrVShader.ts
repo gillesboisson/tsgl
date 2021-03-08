@@ -246,7 +246,7 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
   }
 
   activeBrdfLutTexture(brdfLut: IGLTexture): void {
-    brdfLut.active(GLDefaultTextureLocation.RELEXION_LUT);
+    brdfLut.activeSafe(GLDefaultTextureLocation.RELEXION_LUT);
     this._ludLoaded = true;
   }
 

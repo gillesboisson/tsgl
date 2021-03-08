@@ -1,5 +1,8 @@
+import { mat4 } from 'gl-matrix';
 import { GLVao } from '../../gl/core/data/GLVao';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
+import { Camera } from '../Camera';
+import { IMaterial } from '../Material/IMaterial';
 import { GLTFDataAccessor, GLTFDataMeshPrimitive } from './GLFTSchema';
 import { GLTFCore } from './GLTFCore';
 
@@ -22,6 +25,7 @@ export class GLTFPrimitive extends GLTFCore<GLTFDataMeshPrimitive> {
     vao: GLVao,
     accessorsData: GLTFDataAccessor[],
     indicesAccessorData?: GLTFDataAccessor,
+    public material?: IMaterial,
   ) {
     super(data);
     this._vao = vao;
@@ -42,5 +46,11 @@ export class GLTFPrimitive extends GLTFCore<GLTFDataMeshPrimitive> {
     delete this._vao;
     delete this._data;
     delete this._extras;
+  }
+
+  render(gl: AnyWebRenderingGLContext, cam: Camera, worldMat: mat4, material = this.material): void {
+    material.prepare(gl, cam, worldMat);
+    material.drawVao(gl, this._vao, this.nbElements, this.indicesType);
+    material.unbind(gl);
   }
 }

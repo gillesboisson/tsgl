@@ -1,13 +1,13 @@
 import { IGLTexture, IGLTextureBase } from './GLTexture';
 
-
 export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
   // gl: AnyWebRenderingGLContext,
-  sourceTexture: T
+  sourceTexture: T,
 ): T & {
   bind: () => void;
   unbind: () => void;
   active: (index?: number) => void;
+  activeSafe: (index?: number) => void;
   safeBind: (bindExec: (texture: IGLTexture) => void) => void;
 } {
   const { gl, texture, target } = sourceTexture;
@@ -17,6 +17,7 @@ export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
     unbind,
     active,
     safeBind,
+    activeSafe,
   };
 
   function bind(): void {
@@ -30,6 +31,11 @@ export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
   function active(index = 0): void {
     gl.activeTexture(gl.TEXTURE0 + index);
     gl.bindTexture(target, texture);
+  }
+  function activeSafe(index = 0): void {
+    gl.activeTexture(gl.TEXTURE0 + index);
+    gl.bindTexture(target, texture);
+    gl.activeTexture(gl.TEXTURE0);
   }
 
   function safeBind(bindExec: (texture: IGLTexture) => void) {

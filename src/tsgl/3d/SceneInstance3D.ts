@@ -28,7 +28,7 @@ export class SceneInstance3D<TransformT extends ITransform<mat4> = Transform3D> 
   }
 }
 
-export class MeshNode<MaterialT extends IMaterial = IMaterial> extends SceneInstance3D<Transform3D> implements IRenderableInstance3D<Transform3D, MaterialT> {
+export class MeshNode<MaterialT extends IMaterial = IMaterial> extends SceneInstance3D<Transform3D> {
   constructor(public material: MaterialT, public mesh: GLMesh) {
     super(Transform3D);
   }

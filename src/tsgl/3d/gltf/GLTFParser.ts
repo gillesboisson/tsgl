@@ -3,9 +3,11 @@ import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLVao } from '../../gl/core/data/GLVao';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
+import { GLRenderer } from '../../gl/core/GLRenderer';
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { loadTexture2D } from '../../helpers/texture/loadTexture2D';
 import { GLTFData, GLTFDataAccessor, GLTFDataBufferView, GLTFDataMesh, GLTFDataMeshPrimitive } from './GLFTSchema';
+import { GLTFMaterialFactory } from './GLTFMaterialFactory';
 import { GLTFMesh } from './GLTFMesh';
 import { GLTFPrimitive } from './GLTFPrimitive';
 
@@ -83,7 +85,9 @@ export async function loadTextures(
     const loadBuffer = (ind: number) => {
       loadTexture2D(
         gl,
-        `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`,gl.RGBA, true
+        `${assetDirectory}/${images[textures[currentTextureInd].source].uri}`,
+        gl.RGBA,
+        true,
       ).then((texture) => loaded(ind, texture));
     };
 
@@ -237,16 +241,18 @@ export function accessorToGLAttribute(
 }
 
 export function createPrimitive(
-  gl: AnyWebRenderingGLContext,
+  renderer: GLRenderer,
   primitiveData: GLTFDataMeshPrimitive,
   accessors: GLTFDataAccessor[],
   bufferViews: GLTFDataBufferView[],
   glBuffers: GLBuffer[],
+  materialFactory: GLTFMaterialFactory,
 ): GLTFPrimitive {
   const verticesAccessors = Object.keys(primitiveData.attributes).map(
     (key) => accessors[primitiveData.attributes[key]],
   );
   const indicesAccessor = accessors[primitiveData.indices];
+  const gl = renderer.gl;
 
   return new GLTFPrimitive(
     gl,
@@ -254,18 +260,20 @@ export function createPrimitive(
     primitiveToVao(gl, primitiveData, accessors, bufferViews, glBuffers),
     verticesAccessors,
     indicesAccessor,
+    materialFactory.factory(primitiveData),
   );
 }
 
 export function createMesh(
-  gl: AnyWebRenderingGLContext,
+  renderer: GLRenderer,
   meshData: GLTFDataMesh,
   accessors: GLTFDataAccessor[],
   bufferViews: GLTFDataBufferView[],
   glBuffers: GLBuffer[],
+  materialFactory: GLTFMaterialFactory,
 ): GLTFMesh {
   const primitives = meshData.primitives.map((primitive) =>
-    createPrimitive(gl, primitive, accessors, bufferViews, glBuffers),
+    createPrimitive(renderer, primitive, accessors, bufferViews, glBuffers, materialFactory),
   );
 
   return new GLTFMesh(primitives, meshData);

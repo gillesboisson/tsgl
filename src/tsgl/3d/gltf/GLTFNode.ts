@@ -12,17 +12,12 @@ import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
 import { mat4 } from 'gl-matrix';
 import { ITransform } from '../../gl/abstract/ITransform';
 
-export class GLTFNode<MaterialT extends IMaterial = IMaterial>
+export class GLTFNode
   extends SceneInstance3D
-  implements IRenderableInstance3D<ITransform<mat4>, MaterialT>, IGLTFCore<GLTFDataNode> {
-  _material: MaterialT;
-
+  implements IRenderableInstance3D<ITransform<mat4>>, IGLTFCore<GLTFDataNode> {
   protected _mesh: GLTFMesh;
   protected _data: GLTFDataNode;
 
-  get material(): MaterialT {
-    return this._material;
-  }
   get mesh(): GLTFMesh {
     return this._mesh;
   }
@@ -37,9 +32,8 @@ export class GLTFNode<MaterialT extends IMaterial = IMaterial>
     return (this._extras && this._extras[propName] ? this._extras[propName] : defaultVal) as any;
   }
 
-  constructor(mesh: GLTFMesh, material: MaterialT, data?: GLTFDataNode) {
+  constructor(mesh: GLTFMesh, data?: GLTFDataNode) {
     super();
-    this._material = material;
     this._data = data;
     this._mesh = mesh;
 
@@ -57,18 +51,19 @@ export class GLTFNode<MaterialT extends IMaterial = IMaterial>
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render(gl: AnyWebRenderingGLContext, cam: Camera, material: MaterialT = this._material): void {
+  render<MaterialT extends IMaterial = IMaterial>(gl: AnyWebRenderingGLContext, cam: Camera, material?: MaterialT): void {
     // cam.mvp(this._material.shaderState.mvp, this._worldMat);
 
     const primitives = this._mesh.primitives;
 
-    material.prepare(gl, cam, this._worldMat);
+    // material.prepare(gl, cam, this._worldMat);
 
     for (const primitive of primitives) {
-      material.drawVao(gl, primitive.vao, primitive.nbElements, primitive.indicesType);
+      // material.drawVao(gl, primitive.vao, primitive.nbElements, primitive.indicesType);
+      primitive.render(gl, cam, this._worldMat,material);
     }
 
-    material.unbind(gl);
+    // material.unbind(gl);
 
     // this._material.render(cam, this._worldMat, this._mesh.vaos,);
   }

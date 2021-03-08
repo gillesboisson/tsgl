@@ -84,6 +84,7 @@ import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
 import { PbrShaderDebug, PbrVShader } from './tsgl/shaders/PbrVShader';
 import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 import { loadTexture2D } from './tsgl/helpers/texture/loadTexture2D';
+import { GLTFMaterialFactory } from './tsgl/3d/gltf/GLTFMaterialFactory';
 // import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 
 window.addEventListener('load', async () => {
@@ -163,6 +164,8 @@ class TestApp extends Base3DApp {
     BrdfLutShader.register(renderer);
 
     const brdfLut = await loadTexture2D(gl, './images/lut_test_2.png');
+
+   
     // .then((response) => response.blob())
     // .then((blob) => createImageBitmap(blob))
     // .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
@@ -190,36 +193,6 @@ class TestApp extends Base3DApp {
   }
 
   protected async loadScene(): Promise<void> {
-    this._cam.transform.setPosition(0, 0, 3);
-
-    const gl = this.renderer.gl;
-
-    const dir = './models/bottle';
-
-    const gltfData: GLTFData = await fetch(`${dir}/SpecGlossVsMetalRough.gltf`).then((response) => response.json());
-    setBufferViewTargetFromMesh(gl, gltfData);
-
-    const glBuffers: GLBuffer[] = new Array(gltfData.bufferViews.length);
-
-    await loadBuffers(gltfData, dir, (ind, buffer) => {
-      getBufferViewsDataLinkedToBuffer(gltfData, ind).forEach((bufferViewData) => {
-        glBuffers[bufferViewData.ind] = loadBufferView(gl, bufferViewData.bufferView, buffer);
-      });
-    });
-
-    const textures = await loadTextures(gl, gltfData, dir);
-
-    const corsetMesh = createMesh(gl, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers);
-    const corsetNormalMap = textures[2];
-    const corsetPbrMap = textures[1];
-    const corsetdiffuseMap = textures[0];
-
-    this._shadowMap = new ShadowMap(this.renderer, 1024, 1024, 10, 0.001, 30);
-    this._shadowMap.setPosition(2, 2, 2);
-    this._shadowMap.setLookAt(-1, -1, -1);
-
-    this._shadowMat = new ShadowOnlyMaterial(this.renderer, this._shadowMap);
-
     const light = {
       direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, 0)),
       color: vec3.fromValues(1.0, 1.0, 1.0),
@@ -242,6 +215,48 @@ class TestApp extends Base3DApp {
         size: 128,
       },
     });
+    
+
+    this._cam.transform.setPosition(0, 0, 3);
+
+    const gl = this.renderer.gl;
+
+    const dir = './models/bottle';
+
+    const gltfData: GLTFData = await fetch(`${dir}/SpecGlossVsMetalRough.gltf`).then((response) => response.json());
+    setBufferViewTargetFromMesh(gl, gltfData);
+
+    const glBuffers: GLBuffer[] = new Array(gltfData.bufferViews.length);
+
+    await loadBuffers(gltfData, dir, (ind, buffer) => {
+      getBufferViewsDataLinkedToBuffer(gltfData, ind).forEach((bufferViewData) => {
+        glBuffers[bufferViewData.ind] = loadBufferView(gl, bufferViewData.bufferView, buffer);
+      });
+    });
+    
+
+    const textures = await loadTextures(gl, gltfData, dir);
+
+    const matFactory = new GLTFMaterialFactory(this.renderer, [PbrMaterial], gltfData.materials, textures, {
+      lightDirection: light.direction,
+      irradianceMap: hdrIbl.irradiance.cubemap,
+      reflectanceMap: hdrIbl.reflectance.cubemap,
+    });
+
+    const corsetMesh = createMesh(this.renderer, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers, matFactory);
+    const corsetNormalMap = textures[2];
+    const corsetPbrMap = textures[1];
+    const corsetdiffuseMap = textures[0];
+
+    this._shadowMap = new ShadowMap(this.renderer, 1024, 1024, 10, 0.001, 30);
+    this._shadowMap.setPosition(2, 2, 2);
+    this._shadowMap.setLookAt(-1, -1, -1);
+
+    this._shadowMat = new ShadowOnlyMaterial(this.renderer, this._shadowMap);
+
+    
+
+    
 
     const pbrMat = PbrMaterial.buildFromGLTF(
       this.renderer,
@@ -276,7 +291,7 @@ class TestApp extends Base3DApp {
 
     pbrMat.setGammaExposure(1.3, 1.0);
 
-    this._corsetNode = new GLTFNode(corsetMesh, pbrMat, gltfData.nodes[0]);
+    this._corsetNode = new GLTFNode(corsetMesh, gltfData.nodes[0]);
     this._corsetNode.transform.setScale(20);
     this._corsetNode.transform.setPosition(0, -0.5, 0);
 
@@ -300,10 +315,8 @@ class TestApp extends Base3DApp {
       hdrIbl.reflectance.cubemap,
     );
 
-
     sphereMat.roughness = 1;
     sphereMat.metallic = 0.3;
-    
 
     sphereMat.shadowMap = this._shadowMap;
     // sphereMat.diffuseMap = hdrIbl.lut.lookupTexture;
@@ -385,7 +398,7 @@ class TestApp extends Base3DApp {
   update(time: number, elapsedTime: number): void {
     this._camController.update(elapsedTime);
     //
-    // this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.001, 0);
+    this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.0002, 0);
 
     // const camQuat = this._cam.transform.getRawRotation();
 

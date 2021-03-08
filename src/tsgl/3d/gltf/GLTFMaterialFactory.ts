@@ -8,7 +8,7 @@ import { GLTFDataMaterial, GLTFDataMeshPrimitive } from './GLFTSchema';
 export interface UseForGLTF<SettingsT = any> {
   matchGTFMaterialData(material: GLTFDataMaterial): boolean;
 
-  useForGLTF(
+  buildFromGLTF(
     renderer: GLRenderer,
     material: GLTFDataMaterial,
     primitive: GLTFDataMeshPrimitive,
@@ -18,17 +18,19 @@ export interface UseForGLTF<SettingsT = any> {
 }
 
 export class GLTFMaterialFactory<SettingsT = any> {
-  constructor(readonly renderer: GLRenderer, readonly materialTypes: UseForGLTF<SettingsT>[]) {}
+  constructor(
+    readonly renderer: GLRenderer,
+    readonly materialTypes: UseForGLTF<SettingsT>[],
+    readonly materialsData: GLTFDataMaterial[],
+    readonly textures: IGLTexture[],
+    readonly settings: SettingsT,
+  ) {}
 
-  factory(
-    material: GLTFDataMaterial,
-    primitive: GLTFDataMeshPrimitive,
-    textures: IGLTexture[],
-    settings: SettingsT,
-  ): IMaterial {
+  factory(primitive: GLTFDataMeshPrimitive): IMaterial {
+    const materialData = this.materialsData[primitive.material];
     const finalMat = this.materialTypes
-      .find((type) => type.matchGTFMaterialData(material))
-      ?.useForGLTF(this.renderer, material, primitive, textures, settings);
+      .find((type) => type.matchGTFMaterialData(materialData))
+      ?.buildFromGLTF(this.renderer, materialData, primitive, this.textures, this.settings);
     if (!finalMat) throw new Error('No material matching this primitive');
 
     return finalMat;
