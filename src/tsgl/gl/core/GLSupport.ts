@@ -1,26 +1,29 @@
-import { AnyWebRenderingGLContext } from './GLHelpers';
+import { AnyWebRenderingGLContext, WebGLRenderingContextWithVao } from './GLHelpers';
 
 export class GLSupport {
-  static VAOSupported(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false): void {
+  static VAOSupport(gl: AnyWebRenderingGLContext, useExtension = true, orFail = false): WebGLRenderingContextWithVao {
     if ((gl as WebGL2RenderingContext).createVertexArray) {
-      return;
+      return gl as WebGLRenderingContextWithVao;
     } else if (useExtension) {
+
       const _vaoExt =
         gl.getExtension('OES_vertex_array_object') ||
         gl.getExtension('MOZ_OES_vertex_array_object') ||
         gl.getExtension('WEBKIT_OES_vertex_array_object');
 
       if (_vaoExt) {
-        (gl as any).createVertexArray = () => _vaoExt.createVertexArrayOES();
-        (gl as any).deleteVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.deleteVertexArrayOES(vao);
-        (gl as any).bindVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.bindVertexArrayOES(vao);
-        return;
+        (gl as WebGLRenderingContextWithVao).createVertexArray = () => _vaoExt.createVertexArrayOES();
+        (gl as WebGLRenderingContextWithVao).deleteVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.deleteVertexArrayOES(vao);
+        (gl as WebGLRenderingContextWithVao).bindVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.bindVertexArrayOES(vao);
+        return gl as WebGLRenderingContextWithVao;
       }
     }
 
     if (orFail) {
       throw new Error('Vao not supported');
     }
+
+    return null;
   }
 
   static webGL2Supported(gl: WebGL2RenderingContext): boolean {

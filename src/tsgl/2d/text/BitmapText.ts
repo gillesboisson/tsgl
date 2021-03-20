@@ -2,7 +2,7 @@ import { vec2, vec4 } from 'gl-matrix';
 import { rect } from '../../geom/rect';
 import BitmapFont from './BitmapFont';
 import { Poly } from '../sprite/Poly';
-import { SpriteBatch, ISpriteBatchPullable, SpriteBatchData } from '../SpriteBatch';
+import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 import { WorldCoords } from '../sprite/ElementData';
 import { SpriteElement } from '../sprite/SpriteElement';
 import { BitmapFontRaw, fontDataStride, kerningDataStride } from './BitmapFontRaw';

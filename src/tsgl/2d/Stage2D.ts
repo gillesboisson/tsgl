@@ -2,15 +2,16 @@ import { Group } from './Group';
 import { Camera2D } from './Camera2D';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
-import { IBatch, SpriteBatch } from './SpriteBatch';
+import { ISpriteBatchPullable, SpriteBatch } from './SpriteBatch';
 import { IGLSpriteShaderState } from '../shaders/SpriteShader';
+import { IBatch } from '../helpers/IBatch';
 
 export interface IStage {
   readonly cam: Camera2D;
   render(cam?: Camera2D): void;
 }
 
-interface IRenderLayer<ShaderStateT extends IGLShaderState, BatchT extends IBatch<ShaderStateT>> {
+interface IRenderLayer<ShaderStateT extends IGLShaderState, BatchT extends IBatch<ISpriteBatchPullable, ShaderStateT>> {
   readonly cam: Camera2D;
   readonly renderState: ShaderStateT;
   readonly batch: BatchT;

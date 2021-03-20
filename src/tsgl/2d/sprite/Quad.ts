@@ -1,5 +1,5 @@
 import { SpriteElement } from './SpriteElement';
-import { SpriteBatch, ISpriteBatchPullable, SpriteBatchData } from '../SpriteBatch';
+import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
 import { WorldCoords } from './ElementData';
 import { vec2 } from 'gl-matrix';
 
