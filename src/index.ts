@@ -85,11 +85,55 @@ import { PbrShaderDebug, PbrVShader } from './tsgl/shaders/PbrVShader';
 import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 import { loadTexture2D } from './tsgl/helpers/texture/loadTexture2D';
 import { GLTFMaterialFactory } from './tsgl/3d/gltf/GLTFMaterialFactory';
+import { VertexColorShader, VertexColorShaderState } from './tsgl/shaders/VertexColorShader';
+import {
+  IWireframeBatchPullable,
+  VertexColorData,
+  WireframeBatch,
+  WireframeBatchRenderable,
+} from './tsgl/3d/helpers/WireframeBatch';
 // import { PbrMaterial } from './tsgl/3d/Material/PbrMaterial';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
 });
+
+class QuadBox implements WireframeBatchRenderable, IWireframeBatchPullable {
+  position = vec3.create();
+  color = vec4.create();
+
+  pull(
+    batch: WireframeBatch,
+    vertices: VertexColorData[],
+    indices: Uint16Array,
+    vertexIndex: number,
+    indicesIndex: number,
+  ): void {
+    const position = this.position;
+
+    vec3.set(vertices[vertexIndex].pos, position[0], position[1], position[2]);
+    vec3.set(vertices[vertexIndex + 1].pos, position[0] + 1, position[1], position[2]);
+    vec3.set(vertices[vertexIndex + 2].pos, position[0], position[1] + 1, position[2]);
+    vec3.set(vertices[vertexIndex + 3].pos, position[0] + 1, position[1] + 1, position[2]);
+
+    vec4.copy(vertices[vertexIndex].color, this.color);
+    vec4.copy(vertices[vertexIndex + 1].color, this.color);
+    vec4.copy(vertices[vertexIndex + 2].color, this.color);
+    vec4.copy(vertices[vertexIndex + 3].color, this.color);
+
+    indices[indicesIndex] = vertexIndex;
+    indices[indicesIndex + 1] = vertexIndex + 1;
+    indices[indicesIndex + 2] = vertexIndex + 1;
+    indices[indicesIndex + 3] = vertexIndex + 3;
+    indices[indicesIndex + 4] = vertexIndex + 3;
+    indices[indicesIndex + 5] = vertexIndex + 2;
+    indices[indicesIndex + 6] = vertexIndex + 2;
+    indices[indicesIndex + 7] = vertexIndex;
+  }
+  draw(batch: WireframeBatch): void {
+    batch.push(8, 4, this);
+  }
+}
 
 class TestApp extends Base3DApp {
   meshVao: GLVao;
@@ -112,25 +156,12 @@ class TestApp extends Base3DApp {
   private _quadSS: BasicTextureShaderState;
   private _shadowMap: ShadowMap;
   private _shadowMat: ShadowOnlyMaterial;
+  wireframes: WireframeBatch;
+  wireframesSS: VertexColorShaderState;
+  wfs: QuadBox[];
   constructor() {
     super(GLRendererType.WebGL2);
     this.cubeTransform = new Transform3D();
-
-    // this.loadScene().then(() => {
-    //   this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
-    //     70,
-    //     this.renderer.width / this.renderer.height,
-    //     0.1,
-    //     100,
-    //   );
-    //   this._lcam.transform.setPosition(0, 0, 2);
-    //   // this._lcam.transform.setTargetPosition(0,0,0);
-    //   this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
-
-    //   this.start();
-    // });
-
-    // requestAnimationFrame(() => this.testHdrReflectance());
   }
 
   getCanvas(): HTMLCanvasElement {
@@ -162,14 +193,26 @@ class TestApp extends Base3DApp {
     ReflectanceShader.register(renderer);
     DebugSkyboxLodShader.register(renderer);
     BrdfLutShader.register(renderer);
+    VertexColorShader.register(renderer);
 
     const brdfLut = await loadTexture2D(gl, './images/lut_test_2.png');
 
-   
+    this.wireframes = new WireframeBatch(this.renderer.gl);
+    this.wireframesSS = this.renderer.getShader<VertexColorShaderState>('vertex_color').createState();
+
     // .then((response) => response.blob())
     // .then((blob) => createImageBitmap(blob))
     // .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
     // .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
+
+    this.wfs = [new QuadBox(), new QuadBox(), new QuadBox()];
+
+    vec3.set(this.wfs[1].position, 2, 2, 0);
+    vec3.set(this.wfs[2].position, 0, 2, 2);
+
+    vec4.set(this.wfs[0].color, 1, 0, 0, 1);
+    vec4.set(this.wfs[1].color, 0, 1, 0, 1);
+    vec4.set(this.wfs[2].color, 0, 0, 1, 1);
 
     PbrVShader.register(renderer, brdfLut);
 
@@ -215,7 +258,6 @@ class TestApp extends Base3DApp {
         size: 128,
       },
     });
-    
 
     this._cam.transform.setPosition(0, 0, 3);
 
@@ -233,7 +275,6 @@ class TestApp extends Base3DApp {
         glBuffers[bufferViewData.ind] = loadBufferView(gl, bufferViewData.bufferView, buffer);
       });
     });
-    
 
     const textures = await loadTextures(gl, gltfData, dir);
 
@@ -243,7 +284,14 @@ class TestApp extends Base3DApp {
       reflectanceMap: hdrIbl.reflectance.cubemap,
     });
 
-    const corsetMesh = createMesh(this.renderer, gltfData.meshes[0], gltfData.accessors, gltfData.bufferViews, glBuffers, matFactory);
+    const corsetMesh = createMesh(
+      this.renderer,
+      gltfData.meshes[0],
+      gltfData.accessors,
+      gltfData.bufferViews,
+      glBuffers,
+      matFactory,
+    );
     const corsetNormalMap = textures[2];
     const corsetPbrMap = textures[1];
     const corsetdiffuseMap = textures[0];
@@ -253,10 +301,6 @@ class TestApp extends Base3DApp {
     this._shadowMap.setLookAt(-1, -1, -1);
 
     this._shadowMat = new ShadowOnlyMaterial(this.renderer, this._shadowMap);
-
-    
-
-    
 
     const pbrMat = PbrMaterial.buildFromGLTF(
       this.renderer,
@@ -271,23 +315,6 @@ class TestApp extends Base3DApp {
     );
 
     pbrMat.shadowMap = this._shadowMap;
-
-    // pbrMat.debug = PbrShaderDebug.occlusion;
-
-    /*new PbrMaterial(
-      this.renderer,
-      light.direction,
-      hdrIbl.irradiance.cubemap,
-      hdrIbl.reflectance.cubemap,
-    );
-
-    pbrMat.diffuseMap = corsetdiffuseMap;
-    pbrMat.normalMap = corsetNormalMap;
-    pbrMat.tbnEnabled = true;
-    pbrMat.pbrMap = corsetPbrMap;
-    pbrMat.shadowMap = this._shadowMap;
-    pbrMat.enableOcclusionMap();
-    */
 
     pbrMat.setGammaExposure(1.3, 1.0);
 
@@ -423,24 +450,17 @@ class TestApp extends Base3DApp {
   render(time: number, elapsedTime: number): void {
     // this.stop();
 
-    // this._irradianceHelper.framebufferTexture.active(9);
-    // this._renderer.gl.viewport(0, 0, 1280, 720);
 
-    // this._skybox.render(this._renderer.gl,this._cam);
-    // this._corsetNode.render(this._renderer.gl, this._cam);
-    // this._sphere.render(this._renderer.gl,this._cam);
-    const renderer = this.renderer;
-    const gl = this.renderer.gl;
+    // const renderer = this.renderer;
+    // const gl = this.renderer.gl;
 
-    // this._shadowFB.bind();
-    // // renderable.
-    // this._renderer.clear();
-    // this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._shadowCam));
-    // this._shadowFB.unbind();
+    // this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 
-    this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
+    // this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
 
-    this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
+    this.wireframes.begin(this.wireframesSS, this._cam);
+    this.wfs.forEach((quad) => quad.draw(this.wireframes));
+    this.wireframes.end();
 
     // this._quadSS.use();
     // this._shadowMap.depthTexture.active(0);

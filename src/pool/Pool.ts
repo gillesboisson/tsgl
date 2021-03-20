@@ -14,7 +14,7 @@ export class Pool<T extends IPoolable> implements IDestroy {
   }
 
   create(): T {
-    const element = new this.Type();
+    const element = new this.Type(this);
     if (element.release === undefined) element.release = () => this.release(element);
     this._pool.push(element);
     return element;
@@ -23,7 +23,7 @@ export class Pool<T extends IPoolable> implements IDestroy {
   pull(): T {
     let element: T = null;
     if (this._available.length === 0) {
-      element = new this.Type();
+      element = new this.Type(this);
 
       this._pool.push(element);
     } else {

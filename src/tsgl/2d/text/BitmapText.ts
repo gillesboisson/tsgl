@@ -1,5 +1,5 @@
 import { vec2, vec4 } from 'gl-matrix';
-import { rect } from '../../geom/rect';
+import { rect } from '../../math/rect';
 import BitmapFont from './BitmapFont';
 import { Poly } from '../sprite/Poly';
 import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
