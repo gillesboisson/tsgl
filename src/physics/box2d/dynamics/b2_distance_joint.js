@@ -1,0 +1,430 @@
+"use strict";
+/*
+* Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+exports.__esModule = true;
+exports.b2DistanceJoint = exports.b2DistanceJointDef = void 0;
+var b2_settings_js_1 = require("../common/b2_settings.js");
+var b2_math_js_1 = require("../common/b2_math.js");
+var b2_joint_js_1 = require("./b2_joint.js");
+var b2_draw_js_1 = require("../common/b2_draw.js");
+/// Distance joint definition. This requires defining an
+/// anchor point on both bodies and the non-zero length of the
+/// distance joint. The definition uses local anchor points
+/// so that the initial configuration can violate the constraint
+/// slightly. This helps when saving and loading a game.
+/// @warning Do not use a zero or short length.
+var b2DistanceJointDef = /** @class */ (function (_super) {
+    __extends(b2DistanceJointDef, _super);
+    function b2DistanceJointDef() {
+        var _this = _super.call(this, b2_joint_js_1.b2JointType.e_distanceJoint) || this;
+        _this.localAnchorA = new b2_math_js_1.b2Vec2();
+        _this.localAnchorB = new b2_math_js_1.b2Vec2();
+        _this.length = 1;
+        _this.minLength = 0;
+        _this.maxLength = b2_settings_js_1.b2_maxFloat; // FLT_MAX;
+        _this.stiffness = 0;
+        _this.damping = 0;
+        return _this;
+    }
+    b2DistanceJointDef.prototype.Initialize = function (b1, b2, anchor1, anchor2) {
+        this.bodyA = b1;
+        this.bodyB = b2;
+        this.bodyA.GetLocalPoint(anchor1, this.localAnchorA);
+        this.bodyB.GetLocalPoint(anchor2, this.localAnchorB);
+        this.length = b2_math_js_1.b2Max(b2_math_js_1.b2Vec2.DistanceVV(anchor1, anchor2), b2_settings_js_1.b2_linearSlop);
+        this.minLength = this.length;
+        this.maxLength = this.length;
+    };
+    return b2DistanceJointDef;
+}(b2_joint_js_1.b2JointDef));
+exports.b2DistanceJointDef = b2DistanceJointDef;
+var b2DistanceJoint = /** @class */ (function (_super) {
+    __extends(b2DistanceJoint, _super);
+    function b2DistanceJoint(def) {
+        var _this = _super.call(this, def) || this;
+        _this.m_stiffness = 0;
+        _this.m_damping = 0;
+        _this.m_bias = 0;
+        _this.m_length = 0;
+        _this.m_minLength = 0;
+        _this.m_maxLength = 0;
+        // Solver shared
+        _this.m_localAnchorA = new b2_math_js_1.b2Vec2();
+        _this.m_localAnchorB = new b2_math_js_1.b2Vec2();
+        _this.m_gamma = 0;
+        _this.m_impulse = 0;
+        _this.m_lowerImpulse = 0;
+        _this.m_upperImpulse = 0;
+        // Solver temp
+        _this.m_indexA = 0;
+        _this.m_indexB = 0;
+        _this.m_u = new b2_math_js_1.b2Vec2();
+        _this.m_rA = new b2_math_js_1.b2Vec2();
+        _this.m_rB = new b2_math_js_1.b2Vec2();
+        _this.m_localCenterA = new b2_math_js_1.b2Vec2();
+        _this.m_localCenterB = new b2_math_js_1.b2Vec2();
+        _this.m_currentLength = 0;
+        _this.m_invMassA = 0;
+        _this.m_invMassB = 0;
+        _this.m_invIA = 0;
+        _this.m_invIB = 0;
+        _this.m_softMass = 0;
+        _this.m_mass = 0;
+        _this.m_qA = new b2_math_js_1.b2Rot();
+        _this.m_qB = new b2_math_js_1.b2Rot();
+        _this.m_lalcA = new b2_math_js_1.b2Vec2();
+        _this.m_lalcB = new b2_math_js_1.b2Vec2();
+        _this.m_localAnchorA.Copy(b2_settings_js_1.b2Maybe(def.localAnchorA, b2_math_js_1.b2Vec2.ZERO));
+        _this.m_localAnchorB.Copy(b2_settings_js_1.b2Maybe(def.localAnchorB, b2_math_js_1.b2Vec2.ZERO));
+        _this.m_length = b2_math_js_1.b2Max(b2_settings_js_1.b2Maybe(def.length, _this.GetCurrentLength()), b2_settings_js_1.b2_linearSlop);
+        _this.m_minLength = b2_math_js_1.b2Max(b2_settings_js_1.b2Maybe(def.minLength, _this.m_length), b2_settings_js_1.b2_linearSlop);
+        _this.m_maxLength = b2_math_js_1.b2Max(b2_settings_js_1.b2Maybe(def.maxLength, _this.m_length), _this.m_minLength);
+        _this.m_stiffness = b2_settings_js_1.b2Maybe(def.stiffness, 0);
+        _this.m_damping = b2_settings_js_1.b2Maybe(def.damping, 0);
+        return _this;
+    }
+    b2DistanceJoint.prototype.GetAnchorA = function (out) {
+        return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
+    };
+    b2DistanceJoint.prototype.GetAnchorB = function (out) {
+        return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
+    };
+    b2DistanceJoint.prototype.GetReactionForce = function (inv_dt, out) {
+        // b2Vec2 F = inv_dt * (m_impulse + m_lowerImpulse - m_upperImpulse) * m_u;
+        out.x = inv_dt * (this.m_impulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_u.x;
+        out.y = inv_dt * (this.m_impulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_u.y;
+        return out;
+    };
+    b2DistanceJoint.prototype.GetReactionTorque = function (inv_dt) {
+        return 0;
+    };
+    b2DistanceJoint.prototype.GetLocalAnchorA = function () { return this.m_localAnchorA; };
+    b2DistanceJoint.prototype.GetLocalAnchorB = function () { return this.m_localAnchorB; };
+    b2DistanceJoint.prototype.SetLength = function (length) {
+        this.m_impulse = 0;
+        this.m_length = b2_math_js_1.b2Max(b2_settings_js_1.b2_linearSlop, length);
+        return this.m_length;
+    };
+    b2DistanceJoint.prototype.GetLength = function () {
+        return this.m_length;
+    };
+    b2DistanceJoint.prototype.SetMinLength = function (minLength) {
+        this.m_lowerImpulse = 0;
+        this.m_minLength = b2_math_js_1.b2Clamp(minLength, b2_settings_js_1.b2_linearSlop, this.m_maxLength);
+        return this.m_minLength;
+    };
+    b2DistanceJoint.prototype.SetMaxLength = function (maxLength) {
+        this.m_upperImpulse = 0;
+        this.m_maxLength = b2_math_js_1.b2Max(maxLength, this.m_minLength);
+        return this.m_maxLength;
+    };
+    b2DistanceJoint.prototype.GetCurrentLength = function () {
+        var pA = this.m_bodyA.GetWorldPoint(this.m_localAnchorA, new b2_math_js_1.b2Vec2());
+        var pB = this.m_bodyB.GetWorldPoint(this.m_localAnchorB, new b2_math_js_1.b2Vec2());
+        return b2_math_js_1.b2Vec2.DistanceVV(pA, pB);
+    };
+    b2DistanceJoint.prototype.SetStiffness = function (stiffness) {
+        this.m_stiffness = stiffness;
+    };
+    b2DistanceJoint.prototype.GetStiffness = function () {
+        return this.m_stiffness;
+    };
+    b2DistanceJoint.prototype.SetDamping = function (damping) {
+        this.m_damping = damping;
+    };
+    b2DistanceJoint.prototype.GetDamping = function () {
+        return this.m_damping;
+    };
+    b2DistanceJoint.prototype.Dump = function (log) {
+        var indexA = this.m_bodyA.m_islandIndex;
+        var indexB = this.m_bodyB.m_islandIndex;
+        log("  const jd: b2DistanceJointDef = new b2DistanceJointDef();\n");
+        log("  jd.bodyA = bodies[%d];\n", indexA);
+        log("  jd.bodyB = bodies[%d];\n", indexB);
+        log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+        log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+        log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+        log("  jd.length = %.15f;\n", this.m_length);
+        log("  jd.minLength = %.15f;\n", this.m_minLength);
+        log("  jd.maxLength = %.15f;\n", this.m_maxLength);
+        log("  jd.stiffness = %.15f;\n", this.m_stiffness);
+        log("  jd.damping = %.15f;\n", this.m_damping);
+        log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    };
+    b2DistanceJoint.prototype.InitVelocityConstraints = function (data) {
+        this.m_indexA = this.m_bodyA.m_islandIndex;
+        this.m_indexB = this.m_bodyB.m_islandIndex;
+        this.m_localCenterA.Copy(this.m_bodyA.m_sweep.localCenter);
+        this.m_localCenterB.Copy(this.m_bodyB.m_sweep.localCenter);
+        this.m_invMassA = this.m_bodyA.m_invMass;
+        this.m_invMassB = this.m_bodyB.m_invMass;
+        this.m_invIA = this.m_bodyA.m_invI;
+        this.m_invIB = this.m_bodyB.m_invI;
+        var cA = data.positions[this.m_indexA].c;
+        var aA = data.positions[this.m_indexA].a;
+        var vA = data.velocities[this.m_indexA].v;
+        var wA = data.velocities[this.m_indexA].w;
+        var cB = data.positions[this.m_indexB].c;
+        var aB = data.positions[this.m_indexB].a;
+        var vB = data.velocities[this.m_indexB].v;
+        var wB = data.velocities[this.m_indexB].w;
+        // const qA: b2Rot = new b2Rot(aA), qB: b2Rot = new b2Rot(aB);
+        var qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
+        // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
+        b2_math_js_1.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+        b2_math_js_1.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+        // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+        b2_math_js_1.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+        b2_math_js_1.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+        // m_u = cB + m_rB - cA - m_rA;
+        this.m_u.x = cB.x + this.m_rB.x - cA.x - this.m_rA.x;
+        this.m_u.y = cB.y + this.m_rB.y - cA.y - this.m_rA.y;
+        // Handle singularity.
+        this.m_currentLength = this.m_u.Length();
+        if (this.m_currentLength > b2_settings_js_1.b2_linearSlop) {
+            this.m_u.SelfMul(1 / this.m_currentLength);
+        }
+        else {
+            this.m_u.SetZero();
+            this.m_mass = 0;
+            this.m_impulse = 0;
+            this.m_lowerImpulse = 0;
+            this.m_upperImpulse = 0;
+        }
+        // float32 crAu = b2Cross(m_rA, m_u);
+        var crAu = b2_math_js_1.b2Vec2.CrossVV(this.m_rA, this.m_u);
+        // float32 crBu = b2Cross(m_rB, m_u);
+        var crBu = b2_math_js_1.b2Vec2.CrossVV(this.m_rB, this.m_u);
+        // float32 invMass = m_invMassA + m_invIA * crAu * crAu + m_invMassB + m_invIB * crBu * crBu;
+        var invMass = this.m_invMassA + this.m_invIA * crAu * crAu + this.m_invMassB + this.m_invIB * crBu * crBu;
+        this.m_mass = invMass !== 0 ? 1 / invMass : 0;
+        if (this.m_stiffness > 0 && this.m_minLength < this.m_maxLength) {
+            // soft
+            var C = this.m_currentLength - this.m_length;
+            var d = this.m_damping;
+            var k = this.m_stiffness;
+            // magic formulas
+            var h = data.step.dt;
+            // gamma = 1 / (h * (d + h * k))
+            // the extra factor of h in the denominator is since the lambda is an impulse, not a force
+            this.m_gamma = h * (d + h * k);
+            this.m_gamma = this.m_gamma !== 0 ? 1 / this.m_gamma : 0;
+            this.m_bias = C * h * k * this.m_gamma;
+            invMass += this.m_gamma;
+            this.m_softMass = invMass !== 0 ? 1 / invMass : 0;
+        }
+        else {
+            // rigid
+            this.m_gamma = 0;
+            this.m_bias = 0;
+            this.m_softMass = this.m_mass;
+        }
+        if (data.step.warmStarting) {
+            // Scale the impulse to support a variable time step.
+            this.m_impulse *= data.step.dtRatio;
+            this.m_lowerImpulse *= data.step.dtRatio;
+            this.m_upperImpulse *= data.step.dtRatio;
+            var P = b2_math_js_1.b2Vec2.MulSV(this.m_impulse + this.m_lowerImpulse - this.m_upperImpulse, this.m_u, b2DistanceJoint.InitVelocityConstraints_s_P);
+            vA.SelfMulSub(this.m_invMassA, P);
+            wA -= this.m_invIA * b2_math_js_1.b2Vec2.CrossVV(this.m_rA, P);
+            vB.SelfMulAdd(this.m_invMassB, P);
+            wB += this.m_invIB * b2_math_js_1.b2Vec2.CrossVV(this.m_rB, P);
+        }
+        else {
+            this.m_impulse = 0;
+        }
+        // data.velocities[this.m_indexA].v = vA;
+        data.velocities[this.m_indexA].w = wA;
+        // data.velocities[this.m_indexB].v = vB;
+        data.velocities[this.m_indexB].w = wB;
+    };
+    b2DistanceJoint.prototype.SolveVelocityConstraints = function (data) {
+        var vA = data.velocities[this.m_indexA].v;
+        var wA = data.velocities[this.m_indexA].w;
+        var vB = data.velocities[this.m_indexB].v;
+        var wB = data.velocities[this.m_indexB].w;
+        if (this.m_minLength < this.m_maxLength) {
+            if (this.m_stiffness > 0) {
+                // Cdot = dot(u, v + cross(w, r))
+                var vpA = b2_math_js_1.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
+                var vpB = b2_math_js_1.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
+                var Cdot = b2_math_js_1.b2Vec2.DotVV(this.m_u, b2_math_js_1.b2Vec2.SubVV(vpB, vpA, b2_math_js_1.b2Vec2.s_t0));
+                var impulse = -this.m_softMass * (Cdot + this.m_bias + this.m_gamma * this.m_impulse);
+                this.m_impulse += impulse;
+                var P = b2_math_js_1.b2Vec2.MulSV(impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
+                vA.SelfMulSub(this.m_invMassA, P);
+                wA -= this.m_invIA * b2_math_js_1.b2Vec2.CrossVV(this.m_rA, P);
+                vB.SelfMulAdd(this.m_invMassB, P);
+                wB += this.m_invIB * b2_math_js_1.b2Vec2.CrossVV(this.m_rB, P);
+            }
+            // lower
+            {
+                var C = this.m_currentLength - this.m_minLength;
+                var bias = b2_math_js_1.b2Max(0, C) * data.step.inv_dt;
+                var vpA = b2_math_js_1.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
+                var vpB = b2_math_js_1.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
+                var Cdot = b2_math_js_1.b2Vec2.DotVV(this.m_u, b2_math_js_1.b2Vec2.SubVV(vpB, vpA, b2_math_js_1.b2Vec2.s_t0));
+                var impulse = -this.m_mass * (Cdot + bias);
+                var oldImpulse = this.m_lowerImpulse;
+                this.m_lowerImpulse = b2_math_js_1.b2Max(0, this.m_lowerImpulse + impulse);
+                impulse = this.m_lowerImpulse - oldImpulse;
+                var P = b2_math_js_1.b2Vec2.MulSV(impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
+                vA.SelfMulSub(this.m_invMassA, P);
+                wA -= this.m_invIA * b2_math_js_1.b2Vec2.CrossVV(this.m_rA, P);
+                vB.SelfMulAdd(this.m_invMassB, P);
+                wB += this.m_invIB * b2_math_js_1.b2Vec2.CrossVV(this.m_rB, P);
+            }
+            // upper
+            {
+                var C = this.m_maxLength - this.m_currentLength;
+                var bias = b2_math_js_1.b2Max(0, C) * data.step.inv_dt;
+                var vpA = b2_math_js_1.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
+                var vpB = b2_math_js_1.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
+                var Cdot = b2_math_js_1.b2Vec2.DotVV(this.m_u, b2_math_js_1.b2Vec2.SubVV(vpA, vpB, b2_math_js_1.b2Vec2.s_t0));
+                var impulse = -this.m_mass * (Cdot + bias);
+                var oldImpulse = this.m_upperImpulse;
+                this.m_upperImpulse = b2_math_js_1.b2Max(0, this.m_upperImpulse + impulse);
+                impulse = this.m_upperImpulse - oldImpulse;
+                var P = b2_math_js_1.b2Vec2.MulSV(-impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
+                vA.SelfMulSub(this.m_invMassA, P);
+                wA -= this.m_invIA * b2_math_js_1.b2Vec2.CrossVV(this.m_rA, P);
+                vB.SelfMulAdd(this.m_invMassB, P);
+                wB += this.m_invIB * b2_math_js_1.b2Vec2.CrossVV(this.m_rB, P);
+            }
+        }
+        else {
+            // Equal limits
+            // Cdot = dot(u, v + cross(w, r))
+            var vpA = b2_math_js_1.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
+            var vpB = b2_math_js_1.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
+            var Cdot = b2_math_js_1.b2Vec2.DotVV(this.m_u, b2_math_js_1.b2Vec2.SubVV(vpB, vpA, b2_math_js_1.b2Vec2.s_t0));
+            var impulse = -this.m_mass * Cdot;
+            this.m_impulse += impulse;
+            var P = b2_math_js_1.b2Vec2.MulSV(impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
+            vA.SelfMulSub(this.m_invMassA, P);
+            wA -= this.m_invIA * b2_math_js_1.b2Vec2.CrossVV(this.m_rA, P);
+            vB.SelfMulAdd(this.m_invMassB, P);
+            wB += this.m_invIB * b2_math_js_1.b2Vec2.CrossVV(this.m_rB, P);
+        }
+        // data.velocities[this.m_indexA].v = vA;
+        data.velocities[this.m_indexA].w = wA;
+        // data.velocities[this.m_indexB].v = vB;
+        data.velocities[this.m_indexB].w = wB;
+    };
+    b2DistanceJoint.prototype.SolvePositionConstraints = function (data) {
+        var cA = data.positions[this.m_indexA].c;
+        var aA = data.positions[this.m_indexA].a;
+        var cB = data.positions[this.m_indexB].c;
+        var aB = data.positions[this.m_indexB].a;
+        // const qA: b2Rot = new b2Rot(aA), qB: b2Rot = new b2Rot(aB);
+        var qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
+        // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
+        var rA = b2_math_js_1.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA); // use m_rA
+        // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+        var rB = b2_math_js_1.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB); // use m_rB
+        // b2Vec2 u = cB + rB - cA - rA;
+        var u = this.m_u; // use m_u
+        u.x = cB.x + rB.x - cA.x - rA.x;
+        u.y = cB.y + rB.y - cA.y - rA.y;
+        var length = this.m_u.Normalize();
+        var C;
+        if (this.m_minLength == this.m_maxLength) {
+            C = length - this.m_minLength;
+        }
+        else if (length < this.m_minLength) {
+            C = length - this.m_minLength;
+        }
+        else if (this.m_maxLength < length) {
+            C = length - this.m_maxLength;
+        }
+        else {
+            return true;
+        }
+        var impulse = -this.m_mass * C;
+        var P = b2_math_js_1.b2Vec2.MulSV(impulse, u, b2DistanceJoint.SolvePositionConstraints_s_P);
+        cA.SelfMulSub(this.m_invMassA, P);
+        aA -= this.m_invIA * b2_math_js_1.b2Vec2.CrossVV(rA, P);
+        cB.SelfMulAdd(this.m_invMassB, P);
+        aB += this.m_invIB * b2_math_js_1.b2Vec2.CrossVV(rB, P);
+        // data.positions[this.m_indexA].c = cA;
+        data.positions[this.m_indexA].a = aA;
+        // data.positions[this.m_indexB].c = cB;
+        data.positions[this.m_indexB].a = aB;
+        return b2_math_js_1.b2Abs(C) < b2_settings_js_1.b2_linearSlop;
+    };
+    b2DistanceJoint.prototype.Draw = function (draw) {
+        var xfA = this.m_bodyA.GetTransform();
+        var xfB = this.m_bodyB.GetTransform();
+        var pA = b2_math_js_1.b2Transform.MulXV(xfA, this.m_localAnchorA, b2DistanceJoint.Draw_s_pA);
+        var pB = b2_math_js_1.b2Transform.MulXV(xfB, this.m_localAnchorB, b2DistanceJoint.Draw_s_pB);
+        var axis = b2_math_js_1.b2Vec2.SubVV(pB, pA, b2DistanceJoint.Draw_s_axis);
+        axis.Normalize();
+        var c1 = b2DistanceJoint.Draw_s_c1; // b2Color c1(0.7f, 0.7f, 0.7f);
+        var c2 = b2DistanceJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
+        var c3 = b2DistanceJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
+        var c4 = b2DistanceJoint.Draw_s_c4; // b2Color c4(0.4f, 0.4f, 0.4f);
+        draw.DrawSegment(pA, pB, c4);
+        // b2Vec2 pRest = pA + this.m_length * axis;
+        var pRest = b2_math_js_1.b2Vec2.AddVMulSV(pA, this.m_length, axis, b2DistanceJoint.Draw_s_pRest);
+        draw.DrawPoint(pRest, 8.0, c1);
+        if (this.m_minLength != this.m_maxLength) {
+            if (this.m_minLength > b2_settings_js_1.b2_linearSlop) {
+                // b2Vec2 pMin = pA + this.m_minLength * axis;
+                var pMin = b2_math_js_1.b2Vec2.AddVMulSV(pA, this.m_minLength, axis, b2DistanceJoint.Draw_s_pMin);
+                draw.DrawPoint(pMin, 4.0, c2);
+            }
+            if (this.m_maxLength < b2_settings_js_1.b2_maxFloat) {
+                // b2Vec2 pMax = pA + this.m_maxLength * axis;
+                var pMax = b2_math_js_1.b2Vec2.AddVMulSV(pA, this.m_maxLength, axis, b2DistanceJoint.Draw_s_pMax);
+                draw.DrawPoint(pMax, 4.0, c3);
+            }
+        }
+    };
+    b2DistanceJoint.InitVelocityConstraints_s_P = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.SolveVelocityConstraints_s_vpA = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.SolveVelocityConstraints_s_vpB = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.SolveVelocityConstraints_s_P = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.SolvePositionConstraints_s_P = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.Draw_s_pA = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.Draw_s_pB = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.Draw_s_axis = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.Draw_s_c1 = new b2_draw_js_1.b2Color(0.7, 0.7, 0.7);
+    b2DistanceJoint.Draw_s_c2 = new b2_draw_js_1.b2Color(0.3, 0.9, 0.3);
+    b2DistanceJoint.Draw_s_c3 = new b2_draw_js_1.b2Color(0.9, 0.3, 0.3);
+    b2DistanceJoint.Draw_s_c4 = new b2_draw_js_1.b2Color(0.4, 0.4, 0.4);
+    b2DistanceJoint.Draw_s_pRest = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.Draw_s_pMin = new b2_math_js_1.b2Vec2();
+    b2DistanceJoint.Draw_s_pMax = new b2_math_js_1.b2Vec2();
+    return b2DistanceJoint;
+}(b2_joint_js_1.b2Joint));
+exports.b2DistanceJoint = b2DistanceJoint;
