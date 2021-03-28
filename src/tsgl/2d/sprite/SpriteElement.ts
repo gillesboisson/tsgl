@@ -85,6 +85,27 @@ export abstract class SpriteElement implements ElementI<SpriteGroup, WorldCoords
     }
   }
 
+  get scaleX(): number {
+    return this._scale[0];
+  }
+
+  set scaleX(val: number) {
+    if (val !== this._scale[0]) {
+      this._scale[0] = val;
+      this._dirtyMat = true;
+    }
+  }
+  get scaleY(): number {
+    return this._scale[1];
+  }
+
+  set scaleY(val: number) {
+    if (val !== this._scale[1]) {
+      this._scale[1] = val;
+      this._dirtyMat = true;
+    }
+  }
+
   get rotation(): number {
     return this._rotation;
   }

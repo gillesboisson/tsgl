@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack --watch",
-    "build": "webpack --production",
+    "build": "webpack",
     "serve": "webpack serve"
   },
   "author": "",

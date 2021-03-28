@@ -43,11 +43,15 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
 
   private gl: WebGLRenderingContextWithVao;
 
-  private indices = new Uint16Array(INDICES_BATCH_SIZE);
+  public indices = new Uint16Array(INDICES_BATCH_SIZE);
   private verticesSlice: Uint8Array;
-  private vertices: VertexColorData[];
+  public vertices: VertexColorData[];
   private currentShaderState: VertexColorShaderState;
   private currentPassCam: Camera;
+
+  private pullData: {
+    vertexIndex: number, indicesIndex: number
+  }
 
   constructor(gl: WebGLRenderingContextWithVao) {
     this.verticesSlice = new Uint8Array(VERTEX_BUFFER_SIZE);
@@ -57,6 +61,9 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
     for (let i = 0; i < VERTEX_BATCH_SIZE; i++) {
       this.vertices[i] = new VertexColorData(i * VERTEX_STRIDE, vertexBuffer);
     }
+
+    this.pullData = {vertexIndex: 0, indicesIndex: 0};
+    
 
     // create gl objects
     this.vao = gl.createVertexArray();
@@ -92,6 +99,7 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer);
     gl.bindVertexArray(null);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
   }
 
   begin<SS extends VertexColorShaderState>(shaderState: SS, cam?: Camera): void {
@@ -132,6 +140,31 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
     this.indicesInd += nbIndices;
   }
 
+  pull(nbIndices: number, nbVertex: number): {vertexIndex: number, indicesIndex: number}{
+    if (this.indicesInd + nbIndices > INDICES_BATCH_SIZE || this.verticesInd + nbVertex > VERTEX_BATCH_SIZE) {
+      this.end();
+    }
+
+    this.pullData.vertexIndex = this.verticesInd; 
+    this.pullData.indicesIndex = this.indicesInd; 
+    
+    this.verticesInd += nbVertex;
+    this.indicesInd += nbIndices;
+
+    return this.pullData;
+  }
+
+  draw(nbIndices: number, nbVertex: number, pull: (batch: WireframeBatch, vertices: VertexColorData[], indices: Uint16Array, vertexIndex: number, indicesIndex: number) =>  void): void{
+    if (this.indicesInd + nbIndices > INDICES_BATCH_SIZE || this.verticesInd + nbVertex > VERTEX_BATCH_SIZE) {
+      this.end();
+    }
+
+    pull(this, this.vertices, this.indices, this.verticesInd, this.indicesInd);
+
+    this.verticesInd += nbVertex;
+    this.indicesInd += nbIndices;
+  }
+
   destroy(): void {
     this.gl.deleteBuffer(this.indicesBuffer);
     this.gl.deleteBuffer(this.verticesBuffer);
@@ -151,8 +184,14 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
       this.currentPassCam.vp(this.currentShaderState.mvp);
       this.currentShaderState.syncUniforms();
       gl.drawElements(gl.LINES, this.indicesInd, gl.UNSIGNED_SHORT, 0);
+
       this.indicesInd = 0;
       this.verticesInd = 0;
+
+      gl.bindVertexArray(null);
+      gl.bindBuffer(gl.ARRAY_BUFFER,null);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,null);
+
     }
   }
 }

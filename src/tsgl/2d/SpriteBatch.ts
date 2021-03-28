@@ -171,6 +171,11 @@ export class SpriteBatch implements IBatch<ISpriteBatchPullable, IGLSpriteShader
       gl.drawElements(gl.TRIANGLES, this.indicesInd, gl.UNSIGNED_SHORT, 0);
       this.indicesInd = 0;
       this.verticesInd = 0;
+
+      gl.bindVertexArray(null);
+      gl.bindBuffer(gl.ARRAY_BUFFER,null);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,null);
+
     }
   }
 }

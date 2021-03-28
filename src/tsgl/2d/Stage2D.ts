@@ -1,4 +1,4 @@
-import { Group } from './Group';
+import { ElementI, Group } from './Group';
 import { Camera2D } from './Camera2D';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { IGLShaderState } from '../gl/core/shader/IGLShaderState';
@@ -34,6 +34,13 @@ export class SpriteLayer implements IRenderLayer<IGLSpriteShaderState, SpriteBat
     readonly renderState: IGLSpriteShaderState = renderer.createShaderState('sprite'),
   ) {
     this.cam = new Camera2D(width, height);
+  }
+
+  addChild(child: ElementI<any, any>, renderOrder?: number): void {
+    this.mainGroup.addChild(child, renderOrder);
+  } 
+  removeChild(child: ElementI<any, any>): void {
+    this.mainGroup.removeChild(child);
   }
 
   render(cam?: Camera2D): void {

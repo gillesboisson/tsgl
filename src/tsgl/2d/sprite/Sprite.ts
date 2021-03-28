@@ -26,4 +26,35 @@ export class Sprite extends Quad {
       this._texture = val.glTexture.texture;
     }
   }
+
+  setSize(width: number, height: number): void {
+    if (this.subTexture) {
+      this.setScale(width / this.subTexture.width, height / this.subTexture.height);
+    }
+  }
+
+  set width(width: number) {
+    if (this.subTexture) {
+      this.scaleX = width / this.subTexture.width;
+    }
+  }
+  get width(): number {
+    if (this.subTexture) {
+      return this.subTexture.width * this._scale[0];
+    }
+
+    return -1;
+  }
+  get height(): number {
+    if (this.subTexture) {
+      return this.subTexture.height * this._scale[1];
+    }
+
+    return -1;
+  }
+  set height(height: number) {
+    if (this.subTexture) {
+      this.scaleY = height / this.subTexture.height;
+    }
+  }
 }

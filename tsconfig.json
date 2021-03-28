@@ -1,6 +1,6 @@
 {
   "exclude": ["node_modules", "archive"],
-  "include": ["src"],
+  "include": ["src", "archive/_GameInput.ts"],
   "compilerOptions": {
     "outDir": "./dist/",
     "sourceMap": true,
