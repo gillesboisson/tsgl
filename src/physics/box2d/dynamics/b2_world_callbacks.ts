@@ -16,16 +16,16 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_maxManifoldPoints, b2MakeNumberArray } from "../common/b2_settings";
-import { b2Vec2 } from "../common/b2_math";
-import { b2Manifold } from "../collision/b2_collision";
-import { b2Contact } from "./b2_contact";
-import { b2Body, b2BodyType } from "./b2_body";
-import { b2Joint } from "./b2_joint";
-import { b2Fixture, b2Filter } from "./b2_fixture";
+import { b2_maxManifoldPoints, b2MakeNumberArray } from '../common/b2_settings';
+import { b2Vec2 } from '../common/b2_math';
+import { b2Manifold } from '../collision/b2_collision';
+import { b2Contact } from './b2_contact';
+import { b2Body, b2BodyType } from './b2_body';
+import { b2Joint } from './b2_joint';
+import { b2Fixture, b2Filter } from './b2_fixture';
 // #if B2_ENABLE_PARTICLE
-import { b2ParticleGroup } from "../particle/b2_particle_group";
-import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "../particle/b2_particle_system";
+import { b2ParticleGroup } from '../particle/b2_particle_group';
+import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from '../particle/b2_particle_system';
 // #endif
 
 /// Joints and fixtures are destroyed when their associated
@@ -102,7 +102,7 @@ export class b2ContactFilter {
 export class b2ContactImpulse {
   public normalImpulses: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
   public tangentImpulses: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
-  public count: number = 0;
+  public count = 0;
 }
 
 /// Implement this class to get contact information. You can use these results for

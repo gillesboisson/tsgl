@@ -18,10 +18,10 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import { b2_invalidParticleIndex } from "../common/b2_settings";
-import { b2Clamp, b2Vec2, XY } from "../common/b2_math";
-import { b2Color, RGBA } from "../common/b2_draw";
-import { b2ParticleGroup } from "./b2_particle_group";
+import { b2_invalidParticleIndex } from '../common/b2_settings';
+import { b2Clamp, b2Vec2, XY } from '../common/b2_math';
+import { b2Color, RGBA } from '../common/b2_draw';
+import { b2ParticleGroup } from './b2_particle_group';
 
 /**
  * The particle type. Can be combined with the | operator.
@@ -89,7 +89,7 @@ export class b2ParticleDef implements b2IParticleDef {
   public readonly position: b2Vec2 = new b2Vec2();
   public readonly velocity: b2Vec2 = new b2Vec2();
   public readonly color: b2Color = new b2Color(0, 0, 0, 0);
-  public lifetime: number = 0.0;
+  public lifetime = 0.0;
   public userData: any = null;
   public group: b2ParticleGroup | null = null;
 }

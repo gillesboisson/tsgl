@@ -324,67 +324,68 @@ class RUBELoader {
       case b2JointType.e_revoluteJoint:
         jd.localAnchorA = this.parseVector(obj.anchorA);
         jd.localAnchorB = this.parseVector(obj.anchorB);
-        jd.enableLimit = (b2Joint as any).enableLimit || false;
-        jd.enableMotor = (b2Joint as any).enableMotor || false;
-        jd.lowerAngle = (b2Joint as any).lowerLimit || 0;
-        jd.maxMotorTorque = (b2Joint as any).maxMotorTorque || 0;
-        jd.motorSpeed = (b2Joint as any).motorSpeed || 0;
-        jd.referenceAngle = (b2Joint as any).refAngle || 0;
-        jd.upperAngle = (b2Joint as any).upperLimit || 0;
+        jd.enableLimit = (obj as any).enableLimit || false;
+        jd.enableMotor = (obj as any).enableMotor || false;
+        jd.lowerAngle = (obj as any).lowerLimit || 0;
+        jd.maxMotorTorque = (obj as any).maxMotorTorque || 0;
+        jd.motorSpeed = (obj as any).motorSpeed || 0;
+        jd.referenceAngle = (obj as any).refAngle || 0;
+        jd.upperAngle = (obj as any).upperLimit || 0;
         break;
       case b2JointType.e_distanceJoint:
         jd.localAnchorA = this.parseVector(obj.anchorA);
         jd.localAnchorB = this.parseVector(obj.anchorB);
-        jd.dampingRatio = (b2Joint as any).dampingRatio || 0;
-        jd.frequencyHz = (b2Joint as any).frequency || 0;
-        jd.length = (b2Joint as any).length || 0;
+        jd.dampingRatio = (obj as any).dampingRatio || 0;
+        jd.frequencyHz = (obj as any).frequency || 0;
+        jd.length = (obj as any).length || 0;
+        jd.maxLength = (obj as any).length || 0;
         break;
       case b2JointType.e_prismaticJoint:
         jd.localAnchorA = this.parseVector(obj.anchorA);
         jd.localAnchorB = this.parseVector(obj.anchorB);
-        jd.enableLimit = (b2Joint as any).enableLimit || false;
-        jd.enableMotor = (b2Joint as any).enableMotor || false;
-        jd.localAxisA = this.parseVector((b2Joint as any).localAxisA);
-        jd.lowerTranslation = (b2Joint as any).lowerLimit || 0;
-        jd.maxMotorForce = (b2Joint as any).maxMotorForce || 0;
-        jd.motorSpeed = (b2Joint as any).motorSpeed || 0;
-        jd.referenceAngle = (b2Joint as any).refAngle || 0;
-        jd.upperTranslation = (b2Joint as any).upperLimit || 0;
+        jd.enableLimit = (obj as any).enableLimit || false;
+        jd.enableMotor = (obj as any).enableMotor || false;
+        jd.localAxisA = this.parseVector((obj as any).localAxisA);
+        jd.lowerTranslation = (obj as any).lowerLimit || 0;
+        jd.maxMotorForce = (obj as any).maxMotorForce || 0;
+        jd.motorSpeed = (obj as any).motorSpeed || 0;
+        jd.referenceAngle = (obj as any).refAngle || 0;
+        jd.upperTranslation = (obj as any).upperLimit || 0;
         break;
       case b2JointType.e_wheelJoint:
         jd.localAnchorA = this.parseVector(obj.anchorA);
         jd.localAnchorB = this.parseVector(obj.anchorB);
-        jd.enableMotor = (b2Joint as any).enableMotor || false;
-        jd.localAxisA = this.parseVector((b2Joint as any).localAxisA);
-        jd.maxMotorTorque = (b2Joint as any).maxMotorTorque || 0;
-        jd.motorSpeed = (b2Joint as any).motorSpeed || 0;
-        jd.dampingRatio = (b2Joint as any).springDampingRatio || 0;
-        jd.frequencyHz = (b2Joint as any).springFrequency || 0;
+        jd.enableMotor = (obj as any).enableMotor || false;
+        jd.localAxisA = this.parseVector((obj as any).localAxisA);
+        jd.maxMotorTorque = (obj as any).maxMotorTorque || 0;
+        jd.motorSpeed = (obj as any).motorSpeed || 0;
+        jd.dampingRatio = (obj as any).springDampingRatio || 0;
+        jd.frequencyHz = (obj as any).springFrequency || 0;
         break;
       case b2JointType.e_ropeJoint:
         jd.localAnchorA = this.parseVector(obj.anchorA);
         jd.localAnchorB = this.parseVector(obj.anchorB);
-        jd.maxLength = (b2Joint as any).maxLength || 0;
+        jd.maxLength = (obj as any).maxLength || 0;
         break;
       case b2JointType.e_motorJoint:
         jd.linearOffset = this.parseVector(obj.anchorA);
-        jd.angularOffset = (b2Joint as any).refAngle || 0;
-        jd.maxForce = (b2Joint as any).maxForce || 0;
-        jd.maxTorque = (b2Joint as any).maxTorque || 0;
-        jd.correctionFactor = (b2Joint as any).correctionFactor || 0;
+        jd.angularOffset = (obj as any).refAngle || 0;
+        jd.maxForce = (obj as any).maxForce || 0;
+        jd.maxTorque = (obj as any).maxTorque || 0;
+        jd.correctionFactor = (obj as any).correctionFactor || 0;
         break;
       case b2JointType.e_weldJoint:
         jd.localAnchorA = this.parseVector(obj.anchorA);
         jd.localAnchorB = this.parseVector(obj.anchorB);
-        jd.referenceAngle = (b2Joint as any).refAngle || 0;
-        jd.dampingRatio = (b2Joint as any).dampingRatio || 0;
-        jd.frequencyHz = (b2Joint as any).frequencyHz || 0;
+        jd.referenceAngle = (obj as any).refAngle || 0;
+        jd.dampingRatio = (obj as any).dampingRatio || 0;
+        jd.frequencyHz = (obj as any).frequencyHz || 0;
         break;
       case b2JointType.e_frictionJoint:
         jd.localAnchorA = this.parseVector(obj.anchorA);
         jd.localAnchorB = this.parseVector(obj.anchorB);
-        jd.maxForce = (b2Joint as any).maxForce || 0;
-        jd.maxTorque = (b2Joint as any).maxTorque || 0;
+        jd.maxForce = (obj as any).maxForce || 0;
+        jd.maxTorque = (obj as any).maxTorque || 0;
         break;
       default:
         throw new Error('wat?');

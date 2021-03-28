@@ -18,9 +18,9 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Body } from "../dynamics/b2_body";
-import { b2TimeStep } from "../dynamics/b2_time_step";
-import { b2Draw } from "../common/b2_draw";
+import { b2Body } from '../dynamics/b2_body';
+import { b2TimeStep } from '../dynamics/b2_time_step';
+import { b2Draw } from '../common/b2_draw';
 
 /**
  * A controller edge is used to connect bodies and controllers
@@ -46,7 +46,7 @@ export class b2ControllerEdge {
 export abstract class b2Controller {
   // m_world: b2World;
   public m_bodyList: b2ControllerEdge | null = null;
-  public m_bodyCount: number = 0;
+  public m_bodyCount = 0;
   public m_prev: b2Controller | null = null;
   public m_next: b2Controller | null = null;
 

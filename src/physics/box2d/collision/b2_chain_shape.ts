@@ -17,13 +17,13 @@
 */
 
 // DEBUG: import { b2Assert, b2_linearSlop } from "../common/b2_settings";
-import { b2_polygonRadius } from "../common/b2_settings";
-import { b2Vec2, b2Transform, XY } from "../common/b2_math";
-import { b2AABB, b2RayCastInput, b2RayCastOutput } from "./b2_collision";
-import { b2DistanceProxy } from "./b2_distance";
-import { b2MassData } from "./b2_shape";
-import { b2Shape, b2ShapeType } from "./b2_shape";
-import { b2EdgeShape } from "./b2_edge_shape";
+import { b2_polygonRadius } from '../common/b2_settings';
+import { b2Vec2, b2Transform, XY } from '../common/b2_math';
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from './b2_collision';
+import { b2DistanceProxy } from './b2_distance';
+import { b2MassData } from './b2_shape';
+import { b2Shape, b2ShapeType } from './b2_shape';
+import { b2EdgeShape } from './b2_edge_shape';
 
 /// A chain shape is a free form sequence of line segments.
 /// The chain has one-sided collision, with the surface normal pointing to the right of the edge.
@@ -32,7 +32,7 @@ import { b2EdgeShape } from "./b2_edge_shape";
 /// @warning the chain will not collide properly if there are self-intersections.
 export class b2ChainShape extends b2Shape {
   public m_vertices: b2Vec2[] = [];
-  public m_count: number = 0;
+  public m_count = 0;
   public readonly m_prevVertex: b2Vec2 = new b2Vec2();
   public readonly m_nextVertex: b2Vec2 = new b2Vec2();
 
@@ -47,7 +47,7 @@ export class b2ChainShape extends b2Shape {
   public CreateLoop(vertices: XY[], count: number): b2ChainShape;
   public CreateLoop(vertices: number[]): b2ChainShape;
   public CreateLoop(...args: any[]): b2ChainShape {
-    if (typeof args[0][0] === "number") {
+    if (typeof args[0][0] === 'number') {
       const vertices: number[] = args[0];
       if (vertices.length % 2 !== 0) { throw new Error(); }
       return this._CreateLoop((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
@@ -71,7 +71,7 @@ export class b2ChainShape extends b2Shape {
 
     this.m_count = count + 1;
     this.m_vertices = b2Vec2.MakeArray(this.m_count);
-    for (let i: number = 0; i < count; ++i) {
+    for (let i = 0; i < count; ++i) {
       this.m_vertices[i].Copy(vertices(i));
     }
     this.m_vertices[count].Copy(this.m_vertices[0]);
@@ -80,16 +80,16 @@ export class b2ChainShape extends b2Shape {
     return this;
   }
 
-	/// Create a chain with ghost vertices to connect multiple chains together.
-	/// @param vertices an array of vertices, these are copied
-	/// @param count the vertex count
-	/// @param prevVertex previous vertex from chain that connects to the start
-	/// @param nextVertex next vertex from chain that connects to the end
+  /// Create a chain with ghost vertices to connect multiple chains together.
+  /// @param vertices an array of vertices, these are copied
+  /// @param count the vertex count
+  /// @param prevVertex previous vertex from chain that connects to the start
+  /// @param nextVertex next vertex from chain that connects to the end
   public CreateChain(vertices: XY[], prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): b2ChainShape;
   public CreateChain(vertices: XY[], count: number, prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): b2ChainShape;
   public CreateChain(vertices: number[], prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): b2ChainShape;
   public CreateChain(...args: any[]): b2ChainShape {
-    if (typeof args[0][0] === "number") {
+    if (typeof args[0][0] === 'number') {
       const vertices: number[] = args[0];
       const prevVertex: Readonly<XY> = args[1];
       const nextVertex: Readonly<XY> = args[2];
@@ -114,7 +114,7 @@ export class b2ChainShape extends b2Shape {
 
     this.m_count = count;
     this.m_vertices = b2Vec2.MakeArray(count);
-    for (let i: number = 0; i < count; ++i) {
+    for (let i = 0; i < count; ++i) {
       this.m_vertices[i].Copy(vertices(i));
     }
 
@@ -249,13 +249,13 @@ export class b2ChainShape extends b2Shape {
   }
 
   public Dump(log: (format: string, ...args: any[]) => void): void {
-    log("    const shape: b2ChainShape = new b2ChainShape();\n");
-    log("    const vs: b2Vec2[] = [];\n");
-    for (let i: number = 0; i < this.m_count; ++i) {
-      log("    vs[%d] = new bVec2(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+    log('    const shape: b2ChainShape = new b2ChainShape();\n');
+    log('    const vs: b2Vec2[] = [];\n');
+    for (let i = 0; i < this.m_count; ++i) {
+      log('    vs[%d] = new bVec2(%.15f, %.15f);\n', i, this.m_vertices[i].x, this.m_vertices[i].y);
     }
-    log("    shape.CreateChain(vs, %d);\n", this.m_count);
-    log("    shape.m_prevVertex.Set(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
-    log("    shape.m_nextVertex.Set(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
+    log('    shape.CreateChain(vs, %d);\n', this.m_count);
+    log('    shape.m_prevVertex.Set(%.15f, %.15f);\n', this.m_prevVertex.x, this.m_prevVertex.y);
+    log('    shape.m_nextVertex.Set(%.15f, %.15f);\n', this.m_nextVertex.x, this.m_nextVertex.y);
   }
 }

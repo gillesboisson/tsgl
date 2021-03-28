@@ -17,10 +17,10 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_aabbExtension, b2_aabbMultiplier } from "../common/b2_settings";
-import { b2Abs, b2Min, b2Max, b2Vec2, XY } from "../common/b2_math";
-import { b2GrowableStack } from "../common/b2_growable_stack";
-import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2_collision";
+import { b2_aabbExtension, b2_aabbMultiplier } from '../common/b2_settings';
+import { b2Abs, b2Min, b2Max, b2Vec2, XY } from '../common/b2_math';
+import { b2GrowableStack } from '../common/b2_growable_stack';
+import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from './b2_collision';
 
 function verify<T>(value: T | null): T {
   if (value === null) { throw new Error(); }
@@ -43,11 +43,11 @@ export class b2TreeNode<T> {
   public parent: b2TreeNode<T> | null = null; // or next
   public child1: b2TreeNode<T> | null = null;
   public child2: b2TreeNode<T> | null = null;
-  public height: number = 0; // leaf = 0, free node = -1
+  public height = 0; // leaf = 0, free node = -1
 
-  public moved: boolean = false;
+  public moved = false;
 
-  constructor(id: number = 0) {
+  constructor(id = 0) {
     this.m_id = id;
   }
 
@@ -69,7 +69,7 @@ export class b2DynamicTree<T> {
 
   public m_freeList: b2TreeNode<T> | null = null;
 
-  public m_insertionCount: number = 0;
+  public m_insertionCount = 0;
 
   public readonly m_stack = new b2GrowableStack<b2TreeNode<T> | null>(256);
   public static readonly s_r = new b2Vec2();
@@ -223,7 +223,7 @@ export class b2DynamicTree<T> {
     }
   }
 
-  public static s_node_id: number = 0;
+  public static s_node_id = 0;
 
   public AllocateNode(): b2TreeNode<T> {
     // Expand the node pool as needed.

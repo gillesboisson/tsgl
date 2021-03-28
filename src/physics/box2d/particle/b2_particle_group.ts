@@ -19,11 +19,11 @@
 // #if B2_ENABLE_PARTICLE
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2Vec2, b2Transform, XY } from "../common/b2_math";
-import { b2Color, RGBA } from "../common/b2_draw";
-import { b2Shape } from "../collision/b2_shape";
-import { b2ParticleFlag } from "./b2_particle";
-import { b2ParticleSystem } from "./b2_particle_system";
+import { b2Vec2, b2Transform, XY } from '../common/b2_math';
+import { b2Color, RGBA } from '../common/b2_draw';
+import { b2Shape } from '../collision/b2_shape';
+import { b2ParticleFlag } from './b2_particle';
+import { b2ParticleSystem } from './b2_particle_system';
 
 export enum b2ParticleGroupFlag {
   /// Prevents overlapping or leaking.
@@ -64,18 +64,18 @@ export class b2ParticleGroupDef implements b2IParticleGroupDef {
   public flags: b2ParticleFlag = 0;
   public groupFlags: b2ParticleGroupFlag = 0;
   public readonly position: b2Vec2 = new b2Vec2();
-  public angle: number = 0.0;
+  public angle = 0.0;
   public readonly linearVelocity: b2Vec2 = new b2Vec2();
-  public angularVelocity: number = 0.0;
+  public angularVelocity = 0.0;
   public readonly color: b2Color = new b2Color();
-  public strength: number = 1.0;
+  public strength = 1.0;
   public shape?: b2Shape;
   public shapes?: b2Shape[];
-  public shapeCount: number = 0;
-  public stride: number = 0;
-  public particleCount: number = 0;
+  public shapeCount = 0;
+  public stride = 0;
+  public particleCount = 0;
   public positionData?: b2Vec2[];
-  public lifetime: number = 0;
+  public lifetime = 0;
   public userData: any = null;
   public group: b2ParticleGroup | null = null;
 }
@@ -83,18 +83,18 @@ export class b2ParticleGroupDef implements b2IParticleGroupDef {
 export class b2ParticleGroup {
 
   public readonly m_system: b2ParticleSystem;
-  public m_firstIndex: number = 0;
-  public m_lastIndex: number = 0;
+  public m_firstIndex = 0;
+  public m_lastIndex = 0;
   public m_groupFlags: b2ParticleGroupFlag = 0;
-  public m_strength: number = 1.0;
+  public m_strength = 1.0;
   public m_prev: b2ParticleGroup | null = null;
   public m_next: b2ParticleGroup | null = null;
-  public m_timestamp: number = -1;
-  public m_mass: number = 0.0;
-  public m_inertia: number = 0.0;
+  public m_timestamp = -1;
+  public m_mass = 0.0;
+  public m_inertia = 0.0;
   public readonly m_center: b2Vec2 = new b2Vec2();
   public readonly m_linearVelocity: b2Vec2 = new b2Vec2();
-  public m_angularVelocity: number = 0.0;
+  public m_angularVelocity = 0.0;
   public readonly m_transform: b2Transform = new b2Transform();
   ///m_transform.SetIdentity();
   public m_userData: any = null;

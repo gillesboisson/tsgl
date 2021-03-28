@@ -17,12 +17,12 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2Maybe, b2_pi } from "../common/b2_settings";
-import { b2Vec2, XY, b2Transform } from "../common/b2_math";
-import { b2Body } from "./b2_body";
-import { b2SolverData } from "./b2_time_step";
-import { b2Draw, b2Color } from "../common/b2_draw";
-import { b2PulleyJoint } from "./b2_pulley_joint";
+import { b2Maybe, b2_pi } from '../common/b2_settings';
+import { b2Vec2, XY, b2Transform } from '../common/b2_math';
+import { b2Body } from './b2_body';
+import { b2SolverData } from './b2_time_step';
+import { b2Draw, b2Color } from '../common/b2_draw';
+import { b2PulleyJoint } from './b2_pulley_joint';
 
 export enum b2JointType {
   e_unknownJoint = 0,
@@ -42,8 +42,8 @@ export enum b2JointType {
 
 export class b2Jacobian {
   public readonly linear: b2Vec2 = new b2Vec2();
-  public angularA: number = 0;
-  public angularB: number = 0;
+  public angularA = 0;
+  public angularB = 0;
 
   public SetZero(): b2Jacobian {
     this.linear.SetZero();
@@ -121,7 +121,7 @@ export abstract class b2JointDef implements b2IJointDef {
   public bodyB!: b2Body;
 
   /// Set this flag to true if the attached bodies should collide.
-  public collideConnected: boolean = false;
+  public collideConnected = false;
 
   constructor(type: b2JointType) {
     this.type = type;
@@ -181,10 +181,10 @@ export abstract class b2Joint {
   public m_bodyA: b2Body;
   public m_bodyB: b2Body;
   public name?: string;
-  public m_index: number = 0;
+  public m_index = 0;
 
-  public m_islandFlag: boolean = false;
-  public m_collideConnected: boolean = false;
+  public m_islandFlag = false;
+  public m_collideConnected = false;
 
   public m_userData: any = null;
 
@@ -258,7 +258,7 @@ export abstract class b2Joint {
 
   /// Dump this joint to the log file.
   public Dump(log: (format: string, ...args: any[]) => void): void {
-    log("// Dump is not supported for this joint type.\n");
+    log('// Dump is not supported for this joint type.\n');
   }
 
   /// Shift the origin for any points stored in world coordinates.
@@ -311,8 +311,8 @@ export abstract class b2Joint {
         draw.DrawSegment(x1, p1, color);
         draw.DrawSegment(p1, p2, color);
         draw.DrawSegment(x2, p2, color);
-      }
     }
+  }
 
   public abstract InitVelocityConstraints(data: b2SolverData): void;
 

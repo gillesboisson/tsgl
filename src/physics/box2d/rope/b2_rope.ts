@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { b2Vec2, b2Atan2 } from "../common/b2_math";
-import { b2Draw, b2Color } from "../common/b2_draw";
-import { b2_pi } from "../common/b2_settings";
+import { b2Vec2, b2Atan2 } from '../common/b2_math';
+import { b2Draw, b2Color } from '../common/b2_draw';
+import { b2_pi } from '../common/b2_settings';
 
 export enum b2StretchingModel {
   b2_pbdStretchingModel,
@@ -42,16 +42,16 @@ export enum b2BendingModel {
 export class b2RopeTuning {
   public stretchingModel: b2StretchingModel = b2StretchingModel.b2_pbdStretchingModel;
   public bendingModel: b2BendingModel = b2BendingModel.b2_pbdAngleBendingModel;
-  public damping: number = 0.0;
-  public stretchStiffness: number = 1.0;
-  public stretchHertz: number = 0.0;
-  public stretchDamping: number = 0.0;
-  public bendStiffness: number = 0.5;
-  public bendHertz: number = 1.0;
-  public bendDamping: number = 0.0;
-  public isometric: boolean = false;
-  public fixedEffectiveMass: boolean = false;
-  public warmStart: boolean = false;
+  public damping = 0.0;
+  public stretchStiffness = 1.0;
+  public stretchHertz = 0.0;
+  public stretchDamping = 0.0;
+  public bendStiffness = 0.5;
+  public bendHertz = 1.0;
+  public bendDamping = 0.0;
+  public isometric = false;
+  public fixedEffectiveMass = false;
+  public warmStart = false;
 
   public Copy(other: Readonly<b2RopeTuning>): this {
     this.stretchingModel = other.stretchingModel;
@@ -76,7 +76,7 @@ export class b2RopeDef {
   // b2Vec2* vertices;
   public readonly vertices: b2Vec2[] = [];
   // int32 count;
-  public count: number = 0;
+  public count = 0;
   // float* masses;
   public readonly masses: number[] = [];
   // b2Vec2 gravity;
@@ -86,40 +86,40 @@ export class b2RopeDef {
 }
 
 class b2RopeStretch {
-  public i1: number = 0;
-  public i2: number = 0;
-  public invMass1: number = 0.0;
-  public invMass2: number = 0.0;
-  public L: number = 0.0;
-  public lambda: number = 0.0;
-  public spring: number = 0.0;
-  public damper: number = 0.0;
+  public i1 = 0;
+  public i2 = 0;
+  public invMass1 = 0.0;
+  public invMass2 = 0.0;
+  public L = 0.0;
+  public lambda = 0.0;
+  public spring = 0.0;
+  public damper = 0.0;
 }
 
 class b2RopeBend {
-  public i1: number = 0;
-  public i2: number = 0;
-  public i3: number = 0;
-  public invMass1: number = 0.0;
-  public invMass2: number = 0.0;
-  public invMass3: number = 0.0;
-  public invEffectiveMass: number = 0.0;
-  public lambda: number = 0.0;
-  public L1: number = 0.0;
-  public L2: number = 0.0;
-  public alpha1: number = 0.0;
-  public alpha2: number = 0.0;
-  public spring: number = 0.0;
-  public damper: number = 0.0;
+  public i1 = 0;
+  public i2 = 0;
+  public i3 = 0;
+  public invMass1 = 0.0;
+  public invMass2 = 0.0;
+  public invMass3 = 0.0;
+  public invEffectiveMass = 0.0;
+  public lambda = 0.0;
+  public L1 = 0.0;
+  public L2 = 0.0;
+  public alpha1 = 0.0;
+  public alpha2 = 0.0;
+  public spring = 0.0;
+  public damper = 0.0;
 }
 
 ///
 export class b2Rope {
   private readonly m_position: b2Vec2 = new b2Vec2();
 
-  private m_count: number = 0;
-  private m_stretchCount: number = 0;
-  private m_bendCount: number = 0;
+  private m_count = 0;
+  private m_stretchCount = 0;
+  private m_bendCount = 0;
 
   // b2RopeStretch* m_stretchConstraints;
   private readonly m_stretchConstraints: b2RopeStretch[] = [];
@@ -536,7 +536,7 @@ export class b2Rope {
 
       const angle: number = b2Atan2(a, b);
 
-      let L1sqr: number = 0.0, L2sqr: number = 0.0;
+      let L1sqr = 0.0, L2sqr = 0.0;
 
       if (this.m_tuning.isometric) {
         L1sqr = c.L1 * c.L1;
@@ -563,7 +563,7 @@ export class b2Rope {
       // b2Vec2 J3 = Jd2;
       const J3 = Jd2;
 
-      let sum: number = 0.0;
+      let sum = 0.0;
       if (this.m_tuning.fixedEffectiveMass) {
         sum = c.invEffectiveMass;
       }
@@ -887,7 +887,7 @@ export class b2Rope {
       // b2Vec2 J3 = Jd2;
       const J3 = Jd2;
 
-      let sum: number = 0.0;
+      let sum = 0.0;
       if (this.m_tuning.fixedEffectiveMass) {
         sum = c.invEffectiveMass;
       }

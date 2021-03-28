@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_angularSlop, b2Maybe } from "../common/b2_settings";
-import { b2Abs, b2Vec2, b2Vec3, b2Mat33, b2Rot, XY } from "../common/b2_math";
-import { b2Body } from "./b2_body";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
+import { b2_linearSlop, b2_angularSlop, b2Maybe } from '../common/b2_settings';
+import { b2Abs, b2Vec2, b2Vec3, b2Mat33, b2Rot, XY } from '../common/b2_math';
+import { b2Body } from './b2_body';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
 
 export interface b2IWeldJointDef extends b2IJointDef {
   localAnchorA?: XY;
@@ -42,11 +42,11 @@ export class b2WeldJointDef extends b2JointDef implements b2IWeldJointDef {
 
   public readonly localAnchorB: b2Vec2 = new b2Vec2();
 
-  public referenceAngle: number = 0;
+  public referenceAngle = 0;
 
-  public stiffness: number = 0;
+  public stiffness = 0;
 
-  public damping: number = 0;
+  public damping = 0;
 
   constructor() {
     super(b2JointType.e_weldJoint);
@@ -62,28 +62,28 @@ export class b2WeldJointDef extends b2JointDef implements b2IWeldJointDef {
 }
 
 export class b2WeldJoint extends b2Joint {
-  public m_stiffness: number = 0;
-  public m_damping: number = 0;
-  public m_bias: number = 0;
+  public m_stiffness = 0;
+  public m_damping = 0;
+  public m_bias = 0;
 
   // Solver shared
   public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
   public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
-  public m_referenceAngle: number = 0;
-  public m_gamma: number = 0;
+  public m_referenceAngle = 0;
+  public m_gamma = 0;
   public readonly m_impulse: b2Vec3 = new b2Vec3(0, 0, 0);
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_rA: b2Vec2 = new b2Vec2();
   public readonly m_rB: b2Vec2 = new b2Vec2();
   public readonly m_localCenterA: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_invMassA: number = 0;
-  public m_invMassB: number = 0;
-  public m_invIA: number = 0;
-  public m_invIB: number = 0;
+  public m_invMassA = 0;
+  public m_invMassB = 0;
+  public m_invIA = 0;
+  public m_invIB = 0;
   public readonly m_mass: b2Mat33 = new b2Mat33();
 
   public readonly m_qA: b2Rot = new b2Rot();
@@ -409,15 +409,15 @@ export class b2WeldJoint extends b2Joint {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 
-    log("  const jd: b2WeldJointDef = new b2WeldJointDef();\n");
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-    log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
-    log("  jd.stiffness = %.15f;\n", this.m_stiffness);
-    log("  jd.damping = %.15f;\n", this.m_damping);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  const jd: b2WeldJointDef = new b2WeldJointDef();\n');
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
+    log('  jd.localAnchorA.Set(%.15f, %.15f);\n', this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log('  jd.localAnchorB.Set(%.15f, %.15f);\n', this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log('  jd.referenceAngle = %.15f;\n', this.m_referenceAngle);
+    log('  jd.stiffness = %.15f;\n', this.m_stiffness);
+    log('  jd.damping = %.15f;\n', this.m_damping);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 }

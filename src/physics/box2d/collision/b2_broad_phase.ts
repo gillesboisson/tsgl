@@ -16,9 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2, XY } from "../common/b2_math";
-import { b2AABB, b2RayCastInput } from "./b2_collision";
-import { b2TreeNode, b2DynamicTree } from "./b2_dynamic_tree";
+import { b2Vec2, XY } from '../common/b2_math';
+import { b2AABB, b2RayCastInput } from './b2_collision';
+import { b2TreeNode, b2DynamicTree } from './b2_dynamic_tree';
 
 export class b2Pair<T> {
   constructor(public proxyA: b2TreeNode<T>, public proxyB: b2TreeNode<T>) { }
@@ -29,12 +29,12 @@ export class b2Pair<T> {
 /// It is up to the client to consume the new pairs and to track subsequent overlap.
 export class b2BroadPhase<T> {
   public readonly m_tree: b2DynamicTree<T> = new b2DynamicTree<T>();
-  public m_proxyCount: number = 0;
+  public m_proxyCount = 0;
   // public m_moveCapacity: number = 16;
-  public m_moveCount: number = 0;
+  public m_moveCount = 0;
   public readonly m_moveBuffer: Array<b2TreeNode<T> | null> = [];
   // public m_pairCapacity: number = 16;
-  public m_pairCount: number = 0;
+  public m_pairCount = 0;
   public readonly m_pairBuffer: Array<b2Pair<T>> = [];
   // public m_queryProxyId: number = 0;
 
@@ -96,7 +96,7 @@ export class b2BroadPhase<T> {
     this.m_pairCount = 0;
 
     // Perform tree queries for all moving proxies.
-    for (let i: number = 0; i < this.m_moveCount; ++i) {
+    for (let i = 0; i < this.m_moveCount; ++i) {
       const queryProxy: b2TreeNode<T> | null = this.m_moveBuffer[i];
       if (queryProxy === null) {
         continue;
@@ -156,7 +156,7 @@ export class b2BroadPhase<T> {
       const userDataB: T = primaryPair.proxyB.userData; // this.m_tree.GetUserData(primaryPair.proxyB);
 
       callback(userDataA, userDataB);
-  }
+    }
 
     // Clear move flags
     for (let i = 0; i < this.m_moveCount; ++i) {

@@ -16,15 +16,15 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop } from "../common/b2_settings";
-import { b2Sqrt, b2Transform, b2Sweep } from "../common/b2_math";
-import { b2Manifold, b2WorldManifold, b2ManifoldPoint, b2ContactID } from "../collision/b2_collision";
-import { b2TestOverlapShape } from "../collision/b2_collision";
-import { b2TimeOfImpact, b2TOIInput, b2TOIOutput } from "../collision/b2_time_of_impact";
-import { b2Body } from "./b2_body";
-import { b2Fixture } from "./b2_fixture";
-import { b2Shape } from "../collision/b2_shape";
-import { b2ContactListener } from "./b2_world_callbacks";
+import { b2_linearSlop } from '../common/b2_settings';
+import { b2Sqrt, b2Transform, b2Sweep } from '../common/b2_math';
+import { b2Manifold, b2WorldManifold, b2ManifoldPoint, b2ContactID } from '../collision/b2_collision';
+import { b2TestOverlapShape } from '../collision/b2_collision';
+import { b2TimeOfImpact, b2TOIInput, b2TOIOutput } from '../collision/b2_time_of_impact';
+import { b2Body } from './b2_body';
+import { b2Fixture } from './b2_fixture';
+import { b2Shape } from '../collision/b2_shape';
+import { b2ContactListener } from './b2_world_callbacks';
 
 /// Friction mixing law. The idea is to allow either fixture to drive the friction to zero.
 /// For example, anything slides on ice.
@@ -67,12 +67,12 @@ export class b2ContactEdge {
 }
 
 export abstract class b2Contact<A extends b2Shape = b2Shape, B extends b2Shape = b2Shape> {
-  public m_islandFlag: boolean = false; /// Used when crawling contact graph when forming islands.
-  public m_touchingFlag: boolean = false; /// Set when the shapes are touching.
-  public m_enabledFlag: boolean = false; /// This contact can be disabled (by user)
-  public m_filterFlag: boolean = false; /// This contact needs filtering because a fixture filter was changed.
-  public m_bulletHitFlag: boolean = false; /// This bullet contact had a TOI event
-  public m_toiFlag: boolean = false; /// This contact has a valid TOI in m_toi
+  public m_islandFlag = false; /// Used when crawling contact graph when forming islands.
+  public m_touchingFlag = false; /// Set when the shapes are touching.
+  public m_enabledFlag = false; /// This contact can be disabled (by user)
+  public m_filterFlag = false; /// This contact needs filtering because a fixture filter was changed.
+  public m_bulletHitFlag = false; /// This bullet contact had a TOI event
+  public m_toiFlag = false; /// This contact has a valid TOI in m_toi
 
   public m_prev: b2Contact | null = null;
   public m_next: b2Contact | null = null;
@@ -83,19 +83,19 @@ export abstract class b2Contact<A extends b2Shape = b2Shape, B extends b2Shape =
   public m_fixtureA!: b2Fixture;
   public m_fixtureB!: b2Fixture;
 
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
 
   public m_manifold: b2Manifold = new b2Manifold(); // TODO: readonly
 
-  public m_toiCount: number = 0;
-  public m_toi: number = 0;
+  public m_toiCount = 0;
+  public m_toi = 0;
 
-  public m_friction: number = 0;
-  public m_restitution: number = 0;
-  public m_restitutionThreshold: number = 0;
+  public m_friction = 0;
+  public m_restitution = 0;
+  public m_restitutionThreshold = 0;
 
-  public m_tangentSpeed: number = 0;
+  public m_tangentSpeed = 0;
 
   public m_oldManifold: b2Manifold = new b2Manifold(); // TODO: readonly
 
@@ -242,7 +242,7 @@ export abstract class b2Contact<A extends b2Shape = b2Shape, B extends b2Shape =
     // Re-enable this contact.
     this.m_enabledFlag = true;
 
-    let touching: boolean = false;
+    let touching = false;
     const wasTouching: boolean = this.m_touchingFlag;
 
     const sensorA: boolean = this.m_fixtureA.IsSensor();
@@ -268,13 +268,13 @@ export abstract class b2Contact<A extends b2Shape = b2Shape, B extends b2Shape =
 
       // Match old contact ids to new contact ids and copy the
       // stored impulses to warm start the solver.
-      for (let i: number = 0; i < this.m_manifold.pointCount; ++i) {
+      for (let i = 0; i < this.m_manifold.pointCount; ++i) {
         const mp2: b2ManifoldPoint = this.m_manifold.points[i];
         mp2.normalImpulse = 0;
         mp2.tangentImpulse = 0;
         const id2: b2ContactID = mp2.id;
 
-        for (let j: number = 0; j < this.m_oldManifold.pointCount; ++j) {
+        for (let j = 0; j < this.m_oldManifold.pointCount; ++j) {
           const mp1: b2ManifoldPoint = this.m_oldManifold.points[j];
 
           if (mp1.id.key === id2.key) {

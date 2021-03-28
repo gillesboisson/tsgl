@@ -18,10 +18,10 @@
 
 // DEBUG: import { b2Assert, b2_epsilon } from "../common/b2_settings";
 // DEBUG: import { b2IsValid } from "../common/b2_math";
-import { b2_pi, b2Maybe } from "../common/b2_settings";
-import { b2Vec2, b2Mat22, b2Rot, b2Transform, XY } from "../common/b2_math";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
+import { b2_pi, b2Maybe } from '../common/b2_settings';
+import { b2Vec2, b2Mat22, b2Rot, b2Transform, XY } from '../common/b2_math';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
 
 export interface b2IMouseJointDef extends b2IJointDef {
   target?: XY;
@@ -38,11 +38,11 @@ export interface b2IMouseJointDef extends b2IJointDef {
 export class b2MouseJointDef extends b2JointDef implements b2IMouseJointDef {
   public readonly target: b2Vec2 = new b2Vec2();
 
-  public maxForce: number = 0;
+  public maxForce = 0;
 
-  public stiffness: number = 5;
+  public stiffness = 5;
 
-  public damping: number = 0.7;
+  public damping = 0.7;
 
   constructor() {
     super(b2JointType.e_mouseJoint);
@@ -52,22 +52,22 @@ export class b2MouseJointDef extends b2JointDef implements b2IMouseJointDef {
 export class b2MouseJoint extends b2Joint {
   public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public readonly m_targetA: b2Vec2 = new b2Vec2();
-  public m_stiffness: number = 0;
-  public m_damping: number = 0;
-  public m_beta: number = 0;
+  public m_stiffness = 0;
+  public m_damping = 0;
+  public m_beta = 0;
 
   // Solver shared
   public readonly m_impulse: b2Vec2 = new b2Vec2();
-  public m_maxForce: number = 0;
-  public m_gamma: number = 0;
+  public m_maxForce = 0;
+  public m_gamma = 0;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_rB: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_invMassB: number = 0;
-  public m_invIB: number = 0;
+  public m_invMassB = 0;
+  public m_invIB = 0;
   public readonly m_mass: b2Mat22 = new b2Mat22();
   public readonly m_C: b2Vec2 = new b2Vec2();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -264,7 +264,7 @@ export class b2MouseJoint extends b2Joint {
   }
 
   public Dump(log: (format: string, ...args: any[]) => void) {
-    log("Mouse joint dumping is not supported.\n");
+    log('Mouse joint dumping is not supported.\n');
   }
 
   public ShiftOrigin(newOrigin: b2Vec2) {

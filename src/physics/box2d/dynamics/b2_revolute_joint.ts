@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_angularSlop, b2_maxAngularCorrection, b2Maybe } from "../common/b2_settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Mat22, b2Rot, XY, b2Max, b2Transform } from "../common/b2_math";
-import { b2Body } from "./b2_body";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
-import { b2Draw, b2Color } from "../common/b2_draw";
+import { b2_linearSlop, b2_angularSlop, b2_maxAngularCorrection, b2Maybe } from '../common/b2_settings';
+import { b2Abs, b2Clamp, b2Vec2, b2Mat22, b2Rot, XY, b2Max, b2Transform } from '../common/b2_math';
+import { b2Body } from './b2_body';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
+import { b2Draw, b2Color } from '../common/b2_draw';
 
 export interface b2IRevoluteJointDef extends b2IJointDef {
   localAnchorA?: XY;
@@ -58,19 +58,19 @@ export class b2RevoluteJointDef extends b2JointDef implements b2IRevoluteJointDe
 
   public readonly localAnchorB: b2Vec2 = new b2Vec2(0, 0);
 
-  public referenceAngle: number = 0;
+  public referenceAngle = 0;
 
   public enableLimit = false;
 
-  public lowerAngle: number = 0;
+  public lowerAngle = 0;
 
-  public upperAngle: number = 0;
+  public upperAngle = 0;
 
   public enableMotor = false;
 
-  public motorSpeed: number = 0;
+  public motorSpeed = 0;
 
-  public maxMotorTorque: number = 0;
+  public maxMotorTorque = 0;
 
   constructor() {
     super(b2JointType.e_revoluteJoint);
@@ -90,31 +90,31 @@ export class b2RevoluteJoint extends b2Joint {
   public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
   public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public readonly m_impulse: b2Vec2 = new b2Vec2();
-  public m_motorImpulse: number = 0;
-  public m_lowerImpulse: number = 0;
-  public m_upperImpulse: number = 0;
-  public m_enableMotor: boolean = false;
-  public m_maxMotorTorque: number = 0;
-  public m_motorSpeed: number = 0;
-  public m_enableLimit: boolean = false;
-  public m_referenceAngle: number = 0;
-  public m_lowerAngle: number = 0;
-  public m_upperAngle: number = 0;
+  public m_motorImpulse = 0;
+  public m_lowerImpulse = 0;
+  public m_upperImpulse = 0;
+  public m_enableMotor = false;
+  public m_maxMotorTorque = 0;
+  public m_motorSpeed = 0;
+  public m_enableLimit = false;
+  public m_referenceAngle = 0;
+  public m_lowerAngle = 0;
+  public m_upperAngle = 0;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_rA: b2Vec2 = new b2Vec2();
   public readonly m_rB: b2Vec2 = new b2Vec2();
   public readonly m_localCenterA: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_invMassA: number = 0;
-  public m_invMassB: number = 0;
-  public m_invIA: number = 0;
-  public m_invIB: number = 0;
+  public m_invMassA = 0;
+  public m_invMassB = 0;
+  public m_invIA = 0;
+  public m_invIB = 0;
   public readonly m_K: b2Mat22 = new b2Mat22();
-  public m_angle: number = 0;
-  public m_axialMass: number = 0;
+  public m_angle = 0;
+  public m_axialMass = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -265,34 +265,34 @@ export class b2RevoluteJoint extends b2Joint {
 
     // Solve limit constraint.
     if (this.m_enableLimit && !fixedRotation) {
-		// Lower limit
-		{
-			const C: number = this.m_angle - this.m_lowerAngle;
-			const Cdot: number = wB - wA;
-			let impulse: number = -this.m_axialMass * (Cdot + b2Max(C, 0.0) * data.step.inv_dt);
-			const oldImpulse: number = this.m_lowerImpulse;
-			this.m_lowerImpulse = b2Max(this.m_lowerImpulse + impulse, 0.0);
-			impulse = this.m_lowerImpulse - oldImpulse;
+      // Lower limit
+      {
+        const C: number = this.m_angle - this.m_lowerAngle;
+        const Cdot: number = wB - wA;
+        let impulse: number = -this.m_axialMass * (Cdot + b2Max(C, 0.0) * data.step.inv_dt);
+        const oldImpulse: number = this.m_lowerImpulse;
+        this.m_lowerImpulse = b2Max(this.m_lowerImpulse + impulse, 0.0);
+        impulse = this.m_lowerImpulse - oldImpulse;
 
-			wA -= iA * impulse;
-			wB += iB * impulse;
-		}
+        wA -= iA * impulse;
+        wB += iB * impulse;
+      }
 
-		// Upper limit
-		// Note: signs are flipped to keep C positive when the constraint is satisfied.
-		// This also keeps the impulse positive when the limit is active.
-		{
-			const C: number = this.m_upperAngle - this.m_angle;
-			const Cdot: number = wA - wB;
-			let impulse: number = -this.m_axialMass * (Cdot + b2Max(C, 0.0) * data.step.inv_dt);
-			const oldImpulse: number = this.m_upperImpulse;
-			this.m_upperImpulse = b2Max(this.m_upperImpulse + impulse, 0.0);
-			impulse = this.m_upperImpulse - oldImpulse;
+      // Upper limit
+      // Note: signs are flipped to keep C positive when the constraint is satisfied.
+      // This also keeps the impulse positive when the limit is active.
+      {
+        const C: number = this.m_upperAngle - this.m_angle;
+        const Cdot: number = wA - wB;
+        let impulse: number = -this.m_axialMass * (Cdot + b2Max(C, 0.0) * data.step.inv_dt);
+        const oldImpulse: number = this.m_upperImpulse;
+        this.m_upperImpulse = b2Max(this.m_upperImpulse + impulse, 0.0);
+        impulse = this.m_upperImpulse - oldImpulse;
 
-			wA += iA * impulse;
-			wB -= iB * impulse;
-		}
-  }
+        wA += iA * impulse;
+        wB -= iB * impulse;
+      }
+    }
 
     // Solve point-to-point constraint
     {
@@ -333,15 +333,15 @@ export class b2RevoluteJoint extends b2Joint {
     // b2Rot qA(aA), qB(aB);
     const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
 
-    let angularError: number = 0;
-    let positionError: number = 0;
+    let angularError = 0;
+    let positionError = 0;
 
     const fixedRotation: boolean = (this.m_invIA + this.m_invIB === 0);
 
     // Solve angular limit constraint.
     if (this.m_enableLimit && !fixedRotation) {
       const angle: number = aB - aA - this.m_referenceAngle;
-      let C: number = 0.0;
+      let C = 0.0;
 
       if (b2Abs(this.m_upperAngle - this.m_lowerAngle) < 2.0 * b2_angularSlop) {
         // Prevent large angular corrections
@@ -525,20 +525,20 @@ export class b2RevoluteJoint extends b2Joint {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 
-    log("  const jd: b2RevoluteJointDef = new b2RevoluteJointDef();\n");
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-    log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
-    log("  jd.enableLimit = %s;\n", (this.m_enableLimit) ? ("true") : ("false"));
-    log("  jd.lowerAngle = %.15f;\n", this.m_lowerAngle);
-    log("  jd.upperAngle = %.15f;\n", this.m_upperAngle);
-    log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
-    log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
-    log("  jd.maxMotorTorque = %.15f;\n", this.m_maxMotorTorque);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  const jd: b2RevoluteJointDef = new b2RevoluteJointDef();\n');
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
+    log('  jd.localAnchorA.Set(%.15f, %.15f);\n', this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log('  jd.localAnchorB.Set(%.15f, %.15f);\n', this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log('  jd.referenceAngle = %.15f;\n', this.m_referenceAngle);
+    log('  jd.enableLimit = %s;\n', (this.m_enableLimit) ? ('true') : ('false'));
+    log('  jd.lowerAngle = %.15f;\n', this.m_lowerAngle);
+    log('  jd.upperAngle = %.15f;\n', this.m_upperAngle);
+    log('  jd.enableMotor = %s;\n', (this.m_enableMotor) ? ('true') : ('false'));
+    log('  jd.motorSpeed = %.15f;\n', this.m_motorSpeed);
+    log('  jd.maxMotorTorque = %.15f;\n', this.m_maxMotorTorque);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 
   private static Draw_s_pA = new b2Vec2();
@@ -571,7 +571,7 @@ export class b2RevoluteJoint extends b2Joint {
     const aB: number = this.m_bodyB.GetAngle();
     const angle: number = aB - aA - this.m_referenceAngle;
 
-    const L: number = 0.5;
+    const L = 0.5;
 
     // b2Vec2 r = L * b2Vec2(Math.cos(angle), Math.sin(angle));
     const r = b2RevoluteJoint.Draw_s_r.Set(L * Math.cos(angle), L * Math.sin(angle));

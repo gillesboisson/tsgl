@@ -18,13 +18,13 @@
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
 // DEBUG: import { b2IsValid } from "../common/b2_math";
-import { b2_linearSlop, b2Maybe } from "../common/b2_settings";
-import { b2Vec2, b2Rot, b2Transform, XY } from "../common/b2_math";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2PrismaticJoint } from "./b2_prismatic_joint";
-import { b2RevoluteJoint } from "./b2_revolute_joint";
-import { b2SolverData } from "./b2_time_step";
-import { b2Body } from "./b2_body";
+import { b2_linearSlop, b2Maybe } from '../common/b2_settings';
+import { b2Vec2, b2Rot, b2Transform, XY } from '../common/b2_math';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2PrismaticJoint } from './b2_prismatic_joint';
+import { b2RevoluteJoint } from './b2_revolute_joint';
+import { b2SolverData } from './b2_time_step';
+import { b2Body } from './b2_body';
 
 export interface b2IGearJointDef extends b2IJointDef {
   joint1: b2RevoluteJoint | b2PrismaticJoint;
@@ -41,7 +41,7 @@ export class b2GearJointDef extends b2JointDef implements b2IGearJointDef {
 
   public joint2!: b2RevoluteJoint | b2PrismaticJoint;
 
-  public ratio: number = 1;
+  public ratio = 1;
 
   constructor() {
     super(b2JointType.e_gearJoint);
@@ -69,38 +69,38 @@ export class b2GearJoint extends b2Joint {
   public readonly m_localAxisC: b2Vec2 = new b2Vec2();
   public readonly m_localAxisD: b2Vec2 = new b2Vec2();
 
-  public m_referenceAngleA: number = 0;
-  public m_referenceAngleB: number = 0;
+  public m_referenceAngleA = 0;
+  public m_referenceAngleB = 0;
 
-  public m_constant: number = 0;
-  public m_ratio: number = 0;
+  public m_constant = 0;
+  public m_ratio = 0;
 
-  public m_impulse: number = 0;
+  public m_impulse = 0;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
-  public m_indexC: number = 0;
-  public m_indexD: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
+  public m_indexC = 0;
+  public m_indexD = 0;
   public readonly m_lcA: b2Vec2 = new b2Vec2();
   public readonly m_lcB: b2Vec2 = new b2Vec2();
   public readonly m_lcC: b2Vec2 = new b2Vec2();
   public readonly m_lcD: b2Vec2 = new b2Vec2();
-  public m_mA: number = 0;
-  public m_mB: number = 0;
-  public m_mC: number = 0;
-  public m_mD: number = 0;
-  public m_iA: number = 0;
-  public m_iB: number = 0;
-  public m_iC: number = 0;
-  public m_iD: number = 0;
+  public m_mA = 0;
+  public m_mB = 0;
+  public m_mC = 0;
+  public m_mD = 0;
+  public m_iA = 0;
+  public m_iB = 0;
+  public m_iC = 0;
+  public m_iD = 0;
   public readonly m_JvAC: b2Vec2 = new b2Vec2();
   public readonly m_JvBD: b2Vec2 = new b2Vec2();
-  public m_JwA: number = 0;
-  public m_JwB: number = 0;
-  public m_JwC: number = 0;
-  public m_JwD: number = 0;
-  public m_mass: number = 0;
+  public m_JwA = 0;
+  public m_JwB = 0;
+  public m_JwC = 0;
+  public m_JwD = 0;
+  public m_mass = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -402,13 +402,13 @@ export class b2GearJoint extends b2Joint {
       qC: b2Rot = this.m_qC.SetAngle(aC),
       qD: b2Rot = this.m_qD.SetAngle(aD);
 
-    const linearError: number = 0;
+    const linearError = 0;
 
     let coordinateA: number, coordinateB: number;
 
     const JvAC: b2Vec2 = this.m_JvAC, JvBD: b2Vec2 = this.m_JvBD;
     let JwA: number, JwB: number, JwC: number, JwD: number;
-    let mass: number = 0;
+    let mass = 0;
 
     if (this.m_typeA === b2JointType.e_revoluteJoint) {
       JvAC.SetZero();
@@ -484,7 +484,7 @@ export class b2GearJoint extends b2Joint {
 
     const C: number = (coordinateA + this.m_ratio * coordinateB) - this.m_constant;
 
-    let impulse: number = 0;
+    let impulse = 0;
     if (mass > 0) {
       impulse = -C / mass;
     }
@@ -555,13 +555,13 @@ export class b2GearJoint extends b2Joint {
     const index1 = this.m_joint1.m_index;
     const index2 = this.m_joint2.m_index;
 
-    log("  const jd: b2GearJointDef = new b2GearJointDef();\n");
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.joint1 = joints[%d];\n", index1);
-    log("  jd.joint2 = joints[%d];\n", index2);
-    log("  jd.ratio = %.15f;\n", this.m_ratio);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  const jd: b2GearJointDef = new b2GearJointDef();\n');
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
+    log('  jd.joint1 = joints[%d];\n', index1);
+    log('  jd.joint2 = joints[%d];\n', index2);
+    log('  jd.ratio = %.15f;\n', this.m_ratio);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 }

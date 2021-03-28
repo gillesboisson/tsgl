@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2Maybe, b2_maxFloat } from "../common/b2_settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY, b2Max, b2Transform } from "../common/b2_math";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
-import { b2Body } from "./b2_body";
-import { b2Color, b2Draw } from "../common/b2_draw";
+import { b2_linearSlop, b2Maybe, b2_maxFloat } from '../common/b2_settings';
+import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY, b2Max, b2Transform } from '../common/b2_math';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
+import { b2Body } from './b2_body';
+import { b2Color, b2Draw } from '../common/b2_draw';
 
 export interface b2IDistanceJointDef extends b2IJointDef {
   localAnchorA?: XY;
@@ -42,11 +42,11 @@ export interface b2IDistanceJointDef extends b2IJointDef {
 export class b2DistanceJointDef extends b2JointDef implements b2IDistanceJointDef {
   public readonly localAnchorA: b2Vec2 = new b2Vec2();
   public readonly localAnchorB: b2Vec2 = new b2Vec2();
-  public length: number = 1;
-  public minLength: number = 0;
+  public length = 1;
+  public minLength = 0;
   public maxLength: number = b2_maxFloat; // FLT_MAX;
-  public stiffness: number = 0;
-  public damping: number = 0;
+  public stiffness = 0;
+  public damping = 0;
 
   constructor() {
     super(b2JointType.e_distanceJoint);
@@ -64,36 +64,36 @@ export class b2DistanceJointDef extends b2JointDef implements b2IDistanceJointDe
 }
 
 export class b2DistanceJoint extends b2Joint {
-  public m_stiffness: number = 0;
-  public m_damping: number = 0;
-  public m_bias: number = 0;
-  public m_length: number = 0;
-  public m_minLength: number = 0;
-  public m_maxLength: number = 0;
+  public m_stiffness = 0;
+  public m_damping = 0;
+  public m_bias = 0;
+  public m_length = 0;
+  public m_minLength = 0;
+  public m_maxLength = 0;
 
   // Solver shared
   public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
   public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
-  public m_gamma: number = 0;
-  public m_impulse: number = 0;
-  public m_lowerImpulse: number = 0;
-  public m_upperImpulse: number = 0;
+  public m_gamma = 0;
+  public m_impulse = 0;
+  public m_lowerImpulse = 0;
+  public m_upperImpulse = 0;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_u: b2Vec2 = new b2Vec2();
   public readonly m_rA: b2Vec2 = new b2Vec2();
   public readonly m_rB: b2Vec2 = new b2Vec2();
   public readonly m_localCenterA: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_currentLength: number = 0;
-  public m_invMassA: number = 0;
-  public m_invMassB: number = 0;
-  public m_invIA: number = 0;
-  public m_invIB: number = 0;
-  public m_softMass: number = 0;
-  public m_mass: number = 0;
+  public m_currentLength = 0;
+  public m_invMassA = 0;
+  public m_invMassB = 0;
+  public m_invIA = 0;
+  public m_invIB = 0;
+  public m_softMass = 0;
+  public m_mass = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -183,18 +183,18 @@ export class b2DistanceJoint extends b2Joint {
     const indexA: number = this.m_bodyA.m_islandIndex;
     const indexB: number = this.m_bodyB.m_islandIndex;
 
-    log("  const jd: b2DistanceJointDef = new b2DistanceJointDef();\n");
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-    log("  jd.length = %.15f;\n", this.m_length);
-    log("  jd.minLength = %.15f;\n", this.m_minLength);
-    log("  jd.maxLength = %.15f;\n", this.m_maxLength);
-    log("  jd.stiffness = %.15f;\n", this.m_stiffness);
-    log("  jd.damping = %.15f;\n", this.m_damping);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  const jd: b2DistanceJointDef = new b2DistanceJointDef();\n');
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
+    log('  jd.localAnchorA.Set(%.15f, %.15f);\n', this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log('  jd.localAnchorB.Set(%.15f, %.15f);\n', this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log('  jd.length = %.15f;\n', this.m_length);
+    log('  jd.minLength = %.15f;\n', this.m_minLength);
+    log('  jd.maxLength = %.15f;\n', this.m_maxLength);
+    log('  jd.stiffness = %.15f;\n', this.m_stiffness);
+    log('  jd.damping = %.15f;\n', this.m_damping);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 
   private static InitVelocityConstraints_s_P = new b2Vec2();

@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Maybe } from "../common/b2_settings";
-import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from "../common/b2_math";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
-import { b2Body } from "./b2_body";
+import { b2Maybe } from '../common/b2_settings';
+import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from '../common/b2_math';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
+import { b2Body } from './b2_body';
 
 export interface b2IFrictionJointDef extends b2IJointDef {
   localAnchorA?: XY;
@@ -38,9 +38,9 @@ export class b2FrictionJointDef extends b2JointDef implements b2IFrictionJointDe
 
   public readonly localAnchorB: b2Vec2 = new b2Vec2();
 
-  public maxForce: number = 0;
+  public maxForce = 0;
 
-  public maxTorque: number = 0;
+  public maxTorque = 0;
 
   constructor() {
     super(b2JointType.e_frictionJoint);
@@ -60,23 +60,23 @@ export class b2FrictionJoint extends b2Joint {
 
   // Solver shared
   public readonly m_linearImpulse: b2Vec2 = new b2Vec2();
-  public m_angularImpulse: number = 0;
-  public m_maxForce: number = 0;
-  public m_maxTorque: number = 0;
+  public m_angularImpulse = 0;
+  public m_maxForce = 0;
+  public m_maxTorque = 0;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_rA: b2Vec2 = new b2Vec2();
   public readonly m_rB: b2Vec2 = new b2Vec2();
   public readonly m_localCenterA: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_invMassA: number = 0;
-  public m_invMassB: number = 0;
-  public m_invIA: number = 0;
-  public m_invIB: number = 0;
+  public m_invMassA = 0;
+  public m_invMassB = 0;
+  public m_invIA = 0;
+  public m_invIB = 0;
   public readonly m_linearMass: b2Mat22 = new b2Mat22();
-  public m_angularMass: number = 0;
+  public m_angularMass = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -297,14 +297,14 @@ export class b2FrictionJoint extends b2Joint {
     const indexA: number = this.m_bodyA.m_islandIndex;
     const indexB: number = this.m_bodyB.m_islandIndex;
 
-    log("  const jd: b2FrictionJointDef = new b2FrictionJointDef();\n");
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-    log("  jd.maxForce = %.15f;\n", this.m_maxForce);
-    log("  jd.maxTorque = %.15f;\n", this.m_maxTorque);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  const jd: b2FrictionJointDef = new b2FrictionJointDef();\n');
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
+    log('  jd.localAnchorA.Set(%.15f, %.15f);\n', this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log('  jd.localAnchorB.Set(%.15f, %.15f);\n', this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log('  jd.maxForce = %.15f;\n', this.m_maxForce);
+    log('  jd.maxTorque = %.15f;\n', this.m_maxTorque);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 }

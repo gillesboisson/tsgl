@@ -17,12 +17,12 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2Maybe, b2_lengthUnitsPerMeter } from "../common/b2_settings";
-import { b2Vec2, b2Transform, XY } from "../common/b2_math";
-import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../collision/b2_collision";
-import { b2TreeNode } from "../collision/b2_dynamic_tree";
-import { b2Shape, b2ShapeType, b2MassData } from "../collision/b2_shape";
-import { b2Body } from "./b2_body";
+import { b2Maybe, b2_lengthUnitsPerMeter } from '../common/b2_settings';
+import { b2Vec2, b2Transform, XY } from '../common/b2_math';
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from '../collision/b2_collision';
+import { b2TreeNode } from '../collision/b2_dynamic_tree';
+import { b2Shape, b2ShapeType, b2MassData } from '../collision/b2_shape';
+import { b2Body } from './b2_body';
 
 /// This holds contact filtering data.
 export interface b2IFilter {
@@ -44,16 +44,16 @@ export class b2Filter implements b2IFilter {
   public static readonly DEFAULT: Readonly<b2Filter> = new b2Filter();
 
   /// The collision category bits. Normally you would just set one bit.
-  public categoryBits: number = 0x0001;
+  public categoryBits = 0x0001;
 
   /// The collision mask bits. This states the categories that this
   /// shape would accept for collision.
-  public maskBits: number = 0xFFFF;
+  public maskBits = 0xFFFF;
 
   /// Collision groups allow a certain group of objects to never collide (negative)
   /// or always collide (positive). Zero means no collision group. Non-zero group
   /// filtering always wins against the mask bits.
-  public groupIndex: number = 0;
+  public groupIndex = 0;
 
   public Clone(): b2Filter {
     return new b2Filter().Copy(this);
@@ -110,21 +110,21 @@ export class b2FixtureDef implements b2IFixtureDef {
   public userData: any = null;
 
   /// The friction coefficient, usually in the range [0,1].
-  public friction: number = 0.2;
+  public friction = 0.2;
 
   /// The restitution (elasticity) usually in the range [0,1].
-  public restitution: number = 0;
+  public restitution = 0;
 
   /// Restitution velocity threshold, usually in m/s. Collisions above this
   /// speed have restitution applied (will bounce).
   public restitutionThreshold: number = 1.0 * b2_lengthUnitsPerMeter;
 
   /// The density, usually in kg/m^2.
-  public density: number = 0;
+  public density = 0;
 
   /// A sensor shape collects contact information but never generates a collision
   /// response.
-  public isSensor: boolean = false;
+  public isSensor = false;
 
   /// Contact filtering data.
   public readonly filter: b2Filter = new b2Filter();
@@ -175,15 +175,15 @@ export class b2FixtureProxy {
 /// Fixtures are created via b2Body::CreateFixture.
 /// @warning you cannot reuse fixtures.
 export class b2Fixture {
-  public m_density: number = 0;
+  public m_density = 0;
   public name?:string;
   public m_next: b2Fixture | null = null;
   public readonly m_body: b2Body;
 
   public readonly m_shape: b2Shape;
 
-  public m_friction: number = 0;
-  public m_restitution: number = 0;
+  public m_friction = 0;
+  public m_restitution = 0;
   public m_restitutionThreshold: number = 1.0 * b2_lengthUnitsPerMeter;
 
   public readonly m_proxies: b2FixtureProxy[] = [];
@@ -191,7 +191,7 @@ export class b2Fixture {
 
   public readonly m_filter: b2Filter = new b2Filter();
 
-  public m_isSensor: boolean = false;
+  public m_isSensor = false;
 
   public m_userData: any = null;
 
@@ -357,14 +357,14 @@ export class b2Fixture {
     this.m_restitution = restitution;
   }
 
-	/// Get the restitution velocity threshold.
-	public GetRestitutionThreshold(): number {
+  /// Get the restitution velocity threshold.
+  public GetRestitutionThreshold(): number {
     return this.m_restitutionThreshold;
   }
 
-	/// Set the restitution threshold. This will _not_ change the restitution threshold of
-	/// existing contacts.
-	public SetRestitutionThreshold(threshold: number): void {
+  /// Set the restitution threshold. This will _not_ change the restitution threshold of
+  /// existing contacts.
+  public SetRestitutionThreshold(threshold: number): void {
     this.m_restitutionThreshold = threshold;
   }
 
@@ -378,29 +378,29 @@ export class b2Fixture {
 
   /// Dump this fixture to the log file.
   public Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void {
-    log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
-    log("    fd.friction = %.15f;\n", this.m_friction);
-    log("    fd.restitution = %.15f;\n", this.m_restitution);
-    log("    fd.restitutionThreshold = %.15f;\n", this.m_restitutionThreshold);
-    log("    fd.density = %.15f;\n", this.m_density);
-    log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
-    log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
-    log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
-    log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
+    log('    const fd: b2FixtureDef = new b2FixtureDef();\n');
+    log('    fd.friction = %.15f;\n', this.m_friction);
+    log('    fd.restitution = %.15f;\n', this.m_restitution);
+    log('    fd.restitutionThreshold = %.15f;\n', this.m_restitutionThreshold);
+    log('    fd.density = %.15f;\n', this.m_density);
+    log('    fd.isSensor = %s;\n', (this.m_isSensor) ? ('true') : ('false'));
+    log('    fd.filter.categoryBits = %d;\n', this.m_filter.categoryBits);
+    log('    fd.filter.maskBits = %d;\n', this.m_filter.maskBits);
+    log('    fd.filter.groupIndex = %d;\n', this.m_filter.groupIndex);
 
     this.m_shape.Dump(log);
 
-    log("\n");
-    log("    fd.shape = shape;\n");
-    log("\n");
-    log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
+    log('\n');
+    log('    fd.shape = shape;\n');
+    log('\n');
+    log('    bodies[%d].CreateFixture(fd);\n', bodyIndex);
   }
 
   // These support body activation/deactivation.
   public CreateProxies(): void {
     if (this.m_proxies.length !== 0) { throw new Error(); }
     // Create proxies in the broad-phase.
-    for (let i: number = 0; i < this.m_shape.GetChildCount(); ++i) {
+    for (let i = 0; i < this.m_shape.GetChildCount(); ++i) {
       this.m_proxies[i] = new b2FixtureProxy(this, i);
     }
   }

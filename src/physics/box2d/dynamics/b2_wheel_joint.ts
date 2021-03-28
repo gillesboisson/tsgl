@@ -17,12 +17,12 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_linearSlop, b2Maybe } from "../common/b2_settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY, b2Max, b2Min, b2Transform } from "../common/b2_math";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
-import { b2Body } from "./b2_body";
-import { b2Draw, b2Color } from "../common/b2_draw";
+import { b2_linearSlop, b2Maybe } from '../common/b2_settings';
+import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY, b2Max, b2Min, b2Transform } from '../common/b2_math';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
+import { b2Body } from './b2_body';
+import { b2Draw, b2Color } from '../common/b2_draw';
 
 export interface b2IWheelJointDef extends b2IJointDef {
   /// The local anchor point relative to bodyA's origin.
@@ -72,21 +72,21 @@ export class b2WheelJointDef extends b2JointDef implements b2IWheelJointDef {
 
   public readonly localAxisA: b2Vec2 = new b2Vec2(1, 0);
 
-  public enableLimit: boolean = false;
+  public enableLimit = false;
 
-  public lowerTranslation: number = 0;
+  public lowerTranslation = 0;
 
-  public upperTranslation: number = 0;
+  public upperTranslation = 0;
 
   public enableMotor = false;
 
-  public maxMotorTorque: number = 0;
+  public maxMotorTorque = 0;
 
-  public motorSpeed: number = 0;
+  public motorSpeed = 0;
 
-  public stiffness: number = 0;
+  public stiffness = 0;
 
-  public damping: number = 0;
+  public damping = 0;
 
   constructor() {
     super(b2JointType.e_wheelJoint);
@@ -107,49 +107,49 @@ export class b2WheelJoint extends b2Joint {
   public readonly m_localXAxisA: b2Vec2 = new b2Vec2();
   public readonly m_localYAxisA: b2Vec2 = new b2Vec2();
 
-  public m_impulse: number = 0;
-  public m_motorImpulse: number = 0;
-  public m_springImpulse: number = 0;
+  public m_impulse = 0;
+  public m_motorImpulse = 0;
+  public m_springImpulse = 0;
 
-  public m_lowerImpulse: number = 0;
-  public m_upperImpulse: number = 0;
-  public m_translation: number = 0;
-  public m_lowerTranslation: number = 0;
-  public m_upperTranslation: number = 0;
+  public m_lowerImpulse = 0;
+  public m_upperImpulse = 0;
+  public m_translation = 0;
+  public m_lowerTranslation = 0;
+  public m_upperTranslation = 0;
 
-  public m_maxMotorTorque: number = 0;
-  public m_motorSpeed: number = 0;
+  public m_maxMotorTorque = 0;
+  public m_motorSpeed = 0;
 
   public m_enableLimit = false;
   public m_enableMotor = false;
 
-  public m_stiffness: number = 0;
-  public m_damping: number = 0;
+  public m_stiffness = 0;
+  public m_damping = 0;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_localCenterA: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_invMassA: number = 0;
-  public m_invMassB: number = 0;
-  public m_invIA: number = 0;
-  public m_invIB: number = 0;
+  public m_invMassA = 0;
+  public m_invMassB = 0;
+  public m_invIA = 0;
+  public m_invIB = 0;
 
   public readonly m_ax: b2Vec2 = new b2Vec2();
   public readonly m_ay: b2Vec2 = new b2Vec2();
-  public m_sAx: number = 0;
-  public m_sBx: number = 0;
-  public m_sAy: number = 0;
-  public m_sBy: number = 0;
+  public m_sAx = 0;
+  public m_sBx = 0;
+  public m_sAy = 0;
+  public m_sBy = 0;
 
-  public m_mass: number = 0;
-  public m_motorMass: number = 0;
-  public m_axialMass: number = 0;
-  public m_springMass: number = 0;
+  public m_mass = 0;
+  public m_motorMass = 0;
+  public m_axialMass = 0;
+  public m_springMass = 0;
 
-  public m_bias: number = 0;
-  public m_gamma: number = 0;
+  public m_bias = 0;
+  public m_gamma = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -526,7 +526,7 @@ export class b2WheelJoint extends b2Joint {
     // cB.SelfMulAdd(this.m_invMassB, P);
     // aB += this.m_invIB * LB;
 
-    let linearError: number = 0.0;
+    let linearError = 0.0;
 
     if (this.m_enableLimit) {
       // b2Rot qA(aA), qB(aB);
@@ -555,7 +555,7 @@ export class b2WheelJoint extends b2Joint {
       // float sBx = b2Cross(rB, this.m_ax);
       const sBx = b2Vec2.CrossVV(rB, this.m_ax);
 
-      let C: number = 0.0;
+      let C = 0.0;
       const translation: number = b2Vec2.DotVV(ax, d);
       if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2.0 * b2_linearSlop) {
         C = translation;
@@ -568,7 +568,7 @@ export class b2WheelJoint extends b2Joint {
       if (C !== 0.0) {
 
         const invMass: number = this.m_invMassA + this.m_invMassB + this.m_invIA * sAx * sAx + this.m_invIB * sBx * sBx;
-        let impulse: number = 0.0;
+        let impulse = 0.0;
         if (invMass !== 0.0) {
           impulse = -C / invMass;
         }
@@ -623,7 +623,7 @@ export class b2WheelJoint extends b2Joint {
 
       const invMass: number = this.m_invMassA + this.m_invMassB + this.m_invIA * this.m_sAy * this.m_sAy + this.m_invIB * this.m_sBy * this.m_sBy;
 
-      let impulse: number = 0.0;
+      let impulse = 0.0;
       if (invMass !== 0.0) {
         impulse = - C / invMass;
       }
@@ -835,19 +835,19 @@ export class b2WheelJoint extends b2Joint {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 
-    log("  const jd: b2WheelJointDef = new b2WheelJointDef();\n");
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-    log("  jd.localAxisA.Set(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
-    log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
-    log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
-    log("  jd.maxMotorTorque = %.15f;\n", this.m_maxMotorTorque);
-    log("  jd.stiffness = %.15f;\n", this.m_stiffness);
-    log("  jd.damping = %.15f;\n", this.m_damping);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  const jd: b2WheelJointDef = new b2WheelJointDef();\n');
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
+    log('  jd.localAnchorA.Set(%.15f, %.15f);\n', this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log('  jd.localAnchorB.Set(%.15f, %.15f);\n', this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log('  jd.localAxisA.Set(%.15f, %.15f);\n', this.m_localXAxisA.x, this.m_localXAxisA.y);
+    log('  jd.enableMotor = %s;\n', (this.m_enableMotor) ? ('true') : ('false'));
+    log('  jd.motorSpeed = %.15f;\n', this.m_motorSpeed);
+    log('  jd.maxMotorTorque = %.15f;\n', this.m_maxMotorTorque);
+    log('  jd.stiffness = %.15f;\n', this.m_stiffness);
+    log('  jd.damping = %.15f;\n', this.m_damping);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 
   ///

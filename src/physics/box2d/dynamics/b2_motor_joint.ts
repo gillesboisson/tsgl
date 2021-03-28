@@ -18,11 +18,11 @@
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
 // DEBUG: import { b2IsValid } from "../common/b2_math";
-import { b2Maybe } from "../common/b2_settings";
-import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from "../common/b2_math";
-import { b2Body } from "./b2_body";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
+import { b2Maybe } from '../common/b2_settings';
+import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from '../common/b2_math';
+import { b2Body } from './b2_body';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
 
 // Point-to-point constraint
 // Cdot = v2 - v1
@@ -54,13 +54,13 @@ export interface b2IMotorJointDef extends b2IJointDef {
 export class b2MotorJointDef extends b2JointDef implements b2IMotorJointDef {
   public readonly linearOffset: b2Vec2 = new b2Vec2(0, 0);
 
-  public angularOffset: number = 0;
+  public angularOffset = 0;
 
-  public maxForce: number = 1;
+  public maxForce = 1;
 
-  public maxTorque: number = 1;
+  public maxTorque = 1;
 
-  public correctionFactor: number = 0.3;
+  public correctionFactor = 0.3;
 
   constructor() {
     super(b2JointType.e_motorJoint);
@@ -82,28 +82,28 @@ export class b2MotorJointDef extends b2JointDef implements b2IMotorJointDef {
 export class b2MotorJoint extends b2Joint {
   // Solver shared
   public readonly m_linearOffset: b2Vec2 = new b2Vec2();
-  public m_angularOffset: number = 0;
+  public m_angularOffset = 0;
   public readonly m_linearImpulse: b2Vec2 = new b2Vec2();
-  public m_angularImpulse: number = 0;
-  public m_maxForce: number = 0;
-  public m_maxTorque: number = 0;
-  public m_correctionFactor: number = 0.3;
+  public m_angularImpulse = 0;
+  public m_maxForce = 0;
+  public m_maxTorque = 0;
+  public m_correctionFactor = 0.3;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_rA: b2Vec2 = new b2Vec2();
   public readonly m_rB: b2Vec2 = new b2Vec2();
   public readonly m_localCenterA: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public readonly m_linearError: b2Vec2 = new b2Vec2();
-  public m_angularError: number = 0;
-  public m_invMassA: number = 0;
-  public m_invMassB: number = 0;
-  public m_invIA: number = 0;
-  public m_invIB: number = 0;
+  public m_angularError = 0;
+  public m_invMassA = 0;
+  public m_invMassB = 0;
+  public m_invIA = 0;
+  public m_invIB = 0;
   public readonly m_linearMass: b2Mat22 = new b2Mat22();
-  public m_angularMass: number = 0;
+  public m_angularMass = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -353,17 +353,17 @@ export class b2MotorJoint extends b2Joint {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 
-    log("  const jd: b2MotorJointDef = new b2MotorJointDef();\n");
+    log('  const jd: b2MotorJointDef = new b2MotorJointDef();\n');
 
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
 
-    log("  jd.linearOffset.Set(%.15f, %.15f);\n", this.m_linearOffset.x, this.m_linearOffset.y);
-    log("  jd.angularOffset = %.15f;\n", this.m_angularOffset);
-    log("  jd.maxForce = %.15f;\n", this.m_maxForce);
-    log("  jd.maxTorque = %.15f;\n", this.m_maxTorque);
-    log("  jd.correctionFactor = %.15f;\n", this.m_correctionFactor);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  jd.linearOffset.Set(%.15f, %.15f);\n', this.m_linearOffset.x, this.m_linearOffset.y);
+    log('  jd.angularOffset = %.15f;\n', this.m_angularOffset);
+    log('  jd.maxForce = %.15f;\n', this.m_maxForce);
+    log('  jd.maxTorque = %.15f;\n', this.m_maxTorque);
+    log('  jd.correctionFactor = %.15f;\n', this.m_correctionFactor);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 }

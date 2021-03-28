@@ -17,48 +17,48 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts } from "../common/b2_settings";
-import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../common/b2_math";
-import { b2Timer } from "../common/b2_timer";
-import { b2Color, b2Draw, b2DrawFlags } from "../common/b2_draw";
-import { b2AABB, b2RayCastInput, b2RayCastOutput, b2TestOverlapShape } from "../collision/b2_collision";
-import { b2TreeNode } from "../collision/b2_dynamic_tree";
-import { b2TimeOfImpact, b2TOIInput, b2TOIOutput, b2TOIOutputState } from "../collision/b2_time_of_impact";
-import { b2Shape, b2ShapeType } from "../collision/b2_shape";
-import { b2ChainShape } from "../collision/b2_chain_shape";
-import { b2CircleShape } from "../collision/b2_circle_shape";
-import { b2EdgeShape } from "../collision/b2_edge_shape";
-import { b2PolygonShape } from "../collision/b2_polygon_shape";
-import { b2Contact, b2ContactEdge } from "./b2_contact";
-import { b2Joint, b2IJointDef, b2JointType, b2JointEdge } from "./b2_joint";
-import { b2AreaJoint, b2IAreaJointDef } from "./b2_area_joint";
-import { b2DistanceJoint, b2IDistanceJointDef } from "./b2_distance_joint";
-import { b2FrictionJoint, b2IFrictionJointDef } from "./b2_friction_joint";
-import { b2GearJoint, b2IGearJointDef } from "./b2_gear_joint";
-import { b2MotorJoint, b2IMotorJointDef } from "./b2_motor_joint";
-import { b2MouseJoint, b2IMouseJointDef } from "./b2_mouse_joint";
-import { b2PrismaticJoint, b2IPrismaticJointDef } from "./b2_prismatic_joint";
-import { b2PulleyJoint, b2IPulleyJointDef } from "./b2_pulley_joint";
-import { b2RevoluteJoint, b2IRevoluteJointDef } from "./b2_revolute_joint";
-import { b2WeldJoint, b2IWeldJointDef } from "./b2_weld_joint";
-import { b2WheelJoint, b2IWheelJointDef } from "./b2_wheel_joint";
-import { b2Body, b2IBodyDef, b2BodyType } from "./b2_body";
-import { b2ContactManager } from "./b2_contact_manager";
-import { b2Fixture, b2FixtureProxy } from "./b2_fixture";
-import { b2Island } from "./b2_island";
-import { b2Profile, b2TimeStep } from "./b2_time_step";
-import { b2ContactFilter } from "./b2_world_callbacks";
-import { b2ContactListener } from "./b2_world_callbacks";
-import { b2DestructionListener } from "./b2_world_callbacks";
-import { b2QueryCallback, b2QueryCallbackFunction } from "./b2_world_callbacks";
-import { b2RayCastCallback, b2RayCastCallbackFunction } from "./b2_world_callbacks";
+import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts } from '../common/b2_settings';
+import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from '../common/b2_math';
+import { b2Timer } from '../common/b2_timer';
+import { b2Color, b2Draw, b2DrawFlags } from '../common/b2_draw';
+import { b2AABB, b2RayCastInput, b2RayCastOutput, b2TestOverlapShape } from '../collision/b2_collision';
+import { b2TreeNode } from '../collision/b2_dynamic_tree';
+import { b2TimeOfImpact, b2TOIInput, b2TOIOutput, b2TOIOutputState } from '../collision/b2_time_of_impact';
+import { b2Shape, b2ShapeType } from '../collision/b2_shape';
+import { b2ChainShape } from '../collision/b2_chain_shape';
+import { b2CircleShape } from '../collision/b2_circle_shape';
+import { b2EdgeShape } from '../collision/b2_edge_shape';
+import { b2PolygonShape } from '../collision/b2_polygon_shape';
+import { b2Contact, b2ContactEdge } from './b2_contact';
+import { b2Joint, b2IJointDef, b2JointType, b2JointEdge } from './b2_joint';
+import { b2AreaJoint, b2IAreaJointDef } from './b2_area_joint';
+import { b2DistanceJoint, b2IDistanceJointDef } from './b2_distance_joint';
+import { b2FrictionJoint, b2IFrictionJointDef } from './b2_friction_joint';
+import { b2GearJoint, b2IGearJointDef } from './b2_gear_joint';
+import { b2MotorJoint, b2IMotorJointDef } from './b2_motor_joint';
+import { b2MouseJoint, b2IMouseJointDef } from './b2_mouse_joint';
+import { b2PrismaticJoint, b2IPrismaticJointDef } from './b2_prismatic_joint';
+import { b2PulleyJoint, b2IPulleyJointDef } from './b2_pulley_joint';
+import { b2RevoluteJoint, b2IRevoluteJointDef } from './b2_revolute_joint';
+import { b2WeldJoint, b2IWeldJointDef } from './b2_weld_joint';
+import { b2WheelJoint, b2IWheelJointDef } from './b2_wheel_joint';
+import { b2Body, b2IBodyDef, b2BodyType } from './b2_body';
+import { b2ContactManager } from './b2_contact_manager';
+import { b2Fixture, b2FixtureProxy } from './b2_fixture';
+import { b2Island } from './b2_island';
+import { b2Profile, b2TimeStep } from './b2_time_step';
+import { b2ContactFilter } from './b2_world_callbacks';
+import { b2ContactListener } from './b2_world_callbacks';
+import { b2DestructionListener } from './b2_world_callbacks';
+import { b2QueryCallback, b2QueryCallbackFunction } from './b2_world_callbacks';
+import { b2RayCastCallback, b2RayCastCallbackFunction } from './b2_world_callbacks';
 // #if B2_ENABLE_PARTICLE
-import { b2_maxFloat } from "../common/b2_settings";
-import { b2CalculateParticleIterations } from "../particle/b2_particle";
-import { b2ParticleSystemDef, b2ParticleSystem } from "../particle/b2_particle_system";
+import { b2_maxFloat } from '../common/b2_settings';
+import { b2CalculateParticleIterations } from '../particle/b2_particle';
+import { b2ParticleSystemDef, b2ParticleSystem } from '../particle/b2_particle_system';
 // #endif
 // #if B2_ENABLE_CONTROLLER
-import { b2Controller, b2ControllerEdge } from "../controllers/b2_controller";
+import { b2Controller, b2ControllerEdge } from '../controllers/b2_controller';
 // #endif
 
 /// The world class manages all physics entities, dynamic simulation,
@@ -74,29 +74,29 @@ export class b2World {
   public m_particleSystemList: b2ParticleSystem | null = null;
   // #endif
 
-  public m_bodyCount: number = 0;
-  public m_jointCount: number = 0;
+  public m_bodyCount = 0;
+  public m_jointCount = 0;
 
   public readonly m_gravity: b2Vec2 = new b2Vec2();
-  public m_allowSleep: boolean = true;
+  public m_allowSleep = true;
 
   public m_destructionListener: b2DestructionListener | null = null;
   public m_debugDraw: b2Draw | null = null;
 
   // This is used to compute the time step ratio to
   // support a variable time step.
-  public m_inv_dt0: number = 0;
+  public m_inv_dt0 = 0;
 
-  public m_newContacts: boolean = false;
-  public m_locked: boolean = false;
-  public m_clearForces: boolean = true;
+  public m_newContacts = false;
+  public m_locked = false;
+  public m_clearForces = true;
 
   // These are for debugging the solver.
-  public m_warmStarting: boolean = true;
-  public m_continuousPhysics: boolean = true;
-  public m_subStepping: boolean = false;
+  public m_warmStarting = true;
+  public m_continuousPhysics = true;
+  public m_subStepping = false;
 
-  public m_stepComplete: boolean = true;
+  public m_stepComplete = true;
 
   public readonly m_profile: b2Profile = new b2Profile();
 
@@ -106,7 +106,7 @@ export class b2World {
 
   // #if B2_ENABLE_CONTROLLER
   public m_controllerList: b2Controller | null = null;
-  public m_controllerCount: number = 0;
+  public m_controllerCount = 0;
   // #endif
 
   /// Construct a world object.
@@ -648,7 +648,7 @@ export class b2World {
         }
 
         for (let f: b2Fixture | null = b.GetFixtureList(); f; f = f.m_next) {
-          for (let i: number = 0; i < f.m_proxyCount; ++i) {
+          for (let i = 0; i < f.m_proxyCount; ++i) {
             const proxy: b2FixtureProxy = f.m_proxies[i];
 
             const aabb: b2AABB = proxy.treeNode.aabb;
@@ -900,7 +900,7 @@ export class b2World {
 
   public RayCastOne(point1: XY, point2: XY): b2Fixture | null {
     let result: b2Fixture | null = null;
-    let min_fraction: number = 1;
+    let min_fraction = 1;
     this.RayCast(point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
       if (fraction < min_fraction) {
         min_fraction = fraction;
@@ -1030,7 +1030,7 @@ export class b2World {
   }
 
   /// Change the global gravity vector.
-  public SetGravity(gravity: XY, wake: boolean = true) {
+  public SetGravity(gravity: XY, wake = true) {
     if (!b2Vec2.IsEqualToV(this.m_gravity, gravity)) {
       this.m_gravity.Copy(gravity);
 
@@ -1100,12 +1100,12 @@ export class b2World {
 
     // b2OpenDump("box2d_dump.inl");
 
-    log("const g: b2Vec2 = new b2Vec2(%.15f, %.15f);\n", this.m_gravity.x, this.m_gravity.y);
-    log("this.m_world.SetGravity(g);\n");
+    log('const g: b2Vec2 = new b2Vec2(%.15f, %.15f);\n', this.m_gravity.x, this.m_gravity.y);
+    log('this.m_world.SetGravity(g);\n');
 
-    log("const bodies: b2Body[] = [];\n");
-    log("const joints: b2Joint[] = [];\n");
-    let i: number = 0;
+    log('const bodies: b2Body[] = [];\n');
+    log('const joints: b2Joint[] = [];\n');
+    let i = 0;
     for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
       b.m_islandIndex = i;
       b.Dump(log);
@@ -1124,9 +1124,9 @@ export class b2World {
         continue;
       }
 
-      log("{\n");
+      log('{\n');
       j.Dump(log);
-      log("}\n");
+      log('}\n');
     }
 
     // Second pass on joints, only gear joints.
@@ -1135,9 +1135,9 @@ export class b2World {
         continue;
       }
 
-      log("{\n");
+      log('{\n');
       j.Dump(log);
-      log("}\n");
+      log('}\n');
     }
 
     // b2CloseDump();
@@ -1177,7 +1177,7 @@ export class b2World {
         const count: number = chain.m_count;
         const vertices: b2Vec2[] = chain.m_vertices;
         let v1: b2Vec2 = vertices[0];
-        for (let i: number = 1; i < count; ++i) {
+        for (let i = 1; i < count; ++i) {
           const v2: b2Vec2 = vertices[i];
           this.m_debugDraw.DrawSegment(v1, v2, color);
           v1 = v2;
@@ -1252,7 +1252,7 @@ export class b2World {
 
       // Reset island and stack.
       island.Clear();
-      let stackCount: number = 0;
+      let stackCount = 0;
       stack[stackCount++] = seed;
       seed.m_islandFlag = true;
 
@@ -1342,7 +1342,7 @@ export class b2World {
       this.m_profile.solvePosition += profile.solvePosition;
 
       // Post solve cleanup.
-      for (let i: number = 0; i < island.m_bodyCount; ++i) {
+      for (let i = 0; i < island.m_bodyCount; ++i) {
         // Allow static bodies to participate in other islands.
         const b: b2Body = island.m_bodies[i];
         if (b.GetType() === b2BodyType.b2_staticBody) {
@@ -1351,7 +1351,7 @@ export class b2World {
       }
     }
 
-    for (let i: number = 0; i < stack.length; ++i) {
+    for (let i = 0; i < stack.length; ++i) {
       if (!stack[i]) { break; }
       stack[i] = null;
     }
@@ -1407,7 +1407,7 @@ export class b2World {
     for (; ;) {
       // Find the first TOI.
       let minContact: b2Contact | null = null;
-      let minAlpha: number = 1;
+      let minAlpha = 1;
 
       for (let c: b2Contact | null = this.m_contactManager.m_contactList; c; c = c.m_next) {
         // Is this contact disabled?
@@ -1420,7 +1420,7 @@ export class b2World {
           continue;
         }
 
-        let alpha: number = 1;
+        let alpha = 1;
         if (c.m_toiFlag) {
           // This contact has a valid cached TOI.
           alpha = c.m_toi;
@@ -1552,7 +1552,7 @@ export class b2World {
 
       // Get contacts on bodyA and bodyB.
       // const bodies: b2Body[] = [bA, bB];
-      for (let i: number = 0; i < 2; ++i) {
+      for (let i = 0; i < 2; ++i) {
         const body: b2Body = (i === 0) ? (bA) : (bB); // bodies[i];
         if (body.m_type === b2BodyType.b2_dynamicBody) {
           for (let ce: b2ContactEdge | null = body.m_contactList; ce; ce = ce.next) {
@@ -1642,7 +1642,7 @@ export class b2World {
       island.SolveTOI(subStep, bA.m_islandIndex, bB.m_islandIndex);
 
       // Reset island flags and synchronize broad-phase proxies.
-      for (let i: number = 0; i < island.m_bodyCount; ++i) {
+      for (let i = 0; i < island.m_bodyCount; ++i) {
         const body: b2Body = island.m_bodies[i];
         body.m_islandFlag = false;
 

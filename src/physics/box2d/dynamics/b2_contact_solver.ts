@@ -17,33 +17,33 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_linearSlop, b2_maxManifoldPoints, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../common/b2_settings";
-import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../common/b2_math";
-import { b2Manifold } from "../collision/b2_collision";
-import { b2ManifoldPoint } from "../collision/b2_collision";
-import { b2WorldManifold } from "../collision/b2_collision";
-import { b2ManifoldType } from "../collision/b2_collision";
-import { b2Shape } from "../collision/b2_shape";
-import { b2Contact } from "./b2_contact";
-import { b2Body } from "./b2_body";
-import { b2Fixture } from "./b2_fixture";
-import { b2TimeStep, b2Position, b2Velocity } from "./b2_time_step";
+import { b2_linearSlop, b2_maxManifoldPoints, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from '../common/b2_settings';
+import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from '../common/b2_math';
+import { b2Manifold } from '../collision/b2_collision';
+import { b2ManifoldPoint } from '../collision/b2_collision';
+import { b2WorldManifold } from '../collision/b2_collision';
+import { b2ManifoldType } from '../collision/b2_collision';
+import { b2Shape } from '../collision/b2_shape';
+import { b2Contact } from './b2_contact';
+import { b2Body } from './b2_body';
+import { b2Fixture } from './b2_fixture';
+import { b2TimeStep, b2Position, b2Velocity } from './b2_time_step';
 
 // Solver debugging is normally disabled because the block solver sometimes has to deal with a poorly conditioned effective mass matrix.
 // #define B2_DEBUG_SOLVER 0
 
-export let g_blockSolve: boolean = false;
+export let g_blockSolve = false;
 export function get_g_blockSolve(): boolean { return g_blockSolve; }
 export function set_g_blockSolve(value: boolean): void { g_blockSolve = value; }
 
 export class b2VelocityConstraintPoint {
   public readonly rA: b2Vec2 = new b2Vec2();
   public readonly rB: b2Vec2 = new b2Vec2();
-  public normalImpulse: number = 0;
-  public tangentImpulse: number = 0;
-  public normalMass: number = 0;
-  public tangentMass: number = 0;
-  public velocityBias: number = 0;
+  public normalImpulse = 0;
+  public tangentImpulse = 0;
+  public normalMass = 0;
+  public tangentMass = 0;
+  public velocityBias = 0;
 
   public static MakeArray(length: number): b2VelocityConstraintPoint[] {
     return b2MakeArray(length, (i: number) => new b2VelocityConstraintPoint());
@@ -56,18 +56,18 @@ export class b2ContactVelocityConstraint {
   public readonly tangent: b2Vec2 = new b2Vec2();
   public readonly normalMass: b2Mat22 = new b2Mat22();
   public readonly K: b2Mat22 = new b2Mat22();
-  public indexA: number = 0;
-  public indexB: number = 0;
-  public invMassA: number = 0;
-  public invMassB: number = 0;
-  public invIA: number = 0;
-  public invIB: number = 0;
-  public friction: number = 0;
-  public restitution: number = 0;
-  public threshold: number = 0;
-  public tangentSpeed: number = 0;
-  public pointCount: number = 0;
-  public contactIndex: number = 0;
+  public indexA = 0;
+  public indexB = 0;
+  public invMassA = 0;
+  public invMassB = 0;
+  public invIA = 0;
+  public invIB = 0;
+  public friction = 0;
+  public restitution = 0;
+  public threshold = 0;
+  public tangentSpeed = 0;
+  public pointCount = 0;
+  public contactIndex = 0;
 
   public static MakeArray(length: number): b2ContactVelocityConstraint[] {
     return b2MakeArray(length, (i: number) => new b2ContactVelocityConstraint());
@@ -78,18 +78,18 @@ export class b2ContactPositionConstraint {
   public readonly localPoints: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
   public readonly localNormal: b2Vec2 = new b2Vec2();
   public readonly localPoint: b2Vec2 = new b2Vec2();
-  public indexA: number = 0;
-  public indexB: number = 0;
-  public invMassA: number = 0;
-  public invMassB: number = 0;
+  public indexA = 0;
+  public indexB = 0;
+  public invMassA = 0;
+  public invMassB = 0;
   public readonly localCenterA: b2Vec2 = new b2Vec2();
   public readonly localCenterB: b2Vec2 = new b2Vec2();
-  public invIA: number = 0;
-  public invIB: number = 0;
+  public invIA = 0;
+  public invIB = 0;
   public type: b2ManifoldType = b2ManifoldType.e_unknown;
-  public radiusA: number = 0;
-  public radiusB: number = 0;
-  public pointCount: number = 0;
+  public radiusA = 0;
+  public radiusB = 0;
+  public pointCount = 0;
 
   public static MakeArray(length: number): b2ContactPositionConstraint[] {
     return b2MakeArray(length, (i: number) => new b2ContactPositionConstraint());
@@ -99,7 +99,7 @@ export class b2ContactPositionConstraint {
 export class b2ContactSolverDef {
   public readonly step: b2TimeStep = new b2TimeStep();
   public contacts!: b2Contact[];
-  public count: number = 0;
+  public count = 0;
   public positions!: b2Position[];
   public velocities!: b2Velocity[];
 }
@@ -107,7 +107,7 @@ export class b2ContactSolverDef {
 export class b2PositionSolverManifold {
   public readonly normal: b2Vec2 = new b2Vec2();
   public readonly point: b2Vec2 = new b2Vec2();
-  public separation: number = 0;
+  public separation = 0;
 
   private static Initialize_s_pointA = new b2Vec2();
   private static Initialize_s_pointB = new b2Vec2();
@@ -122,7 +122,7 @@ export class b2PositionSolverManifold {
     // DEBUG: b2Assert(pc.pointCount > 0);
 
     switch (pc.type) {
-    case b2ManifoldType.e_circles: {
+      case b2ManifoldType.e_circles: {
         // b2Vec2 pointA = b2Mul(xfA, pc->localPoint);
         b2Transform.MulXV(xfA, pc.localPoint, pointA);
         // b2Vec2 pointB = b2Mul(xfB, pc->localPoints[0]);
@@ -137,7 +137,7 @@ export class b2PositionSolverManifold {
         break;
       }
 
-    case b2ManifoldType.e_faceA: {
+      case b2ManifoldType.e_faceA: {
         // normal = b2Mul(xfA.q, pc->localNormal);
         b2Rot.MulRV(xfA.q, pc.localNormal, this.normal);
         // b2Vec2 planePoint = b2Mul(xfA, pc->localPoint);
@@ -152,7 +152,7 @@ export class b2PositionSolverManifold {
         break;
       }
 
-    case b2ManifoldType.e_faceB: {
+      case b2ManifoldType.e_faceB: {
         // normal = b2Mul(xfB.q, pc->localNormal);
         b2Rot.MulRV(xfB.q, pc.localNormal, this.normal);
         // b2Vec2 planePoint = b2Mul(xfB, pc->localPoint);
@@ -181,7 +181,7 @@ export class b2ContactSolver {
   public readonly m_positionConstraints: b2ContactPositionConstraint[] = b2ContactPositionConstraint.MakeArray(1024); // TODO: b2Settings
   public readonly m_velocityConstraints: b2ContactVelocityConstraint[] = b2ContactVelocityConstraint.MakeArray(1024); // TODO: b2Settings
   public m_contacts!: b2Contact[];
-  public m_count: number = 0;
+  public m_count = 0;
 
   public Initialize(def: b2ContactSolverDef): b2ContactSolver {
     this.m_step.Copy(def.step);
@@ -205,7 +205,7 @@ export class b2ContactSolver {
     this.m_contacts = def.contacts;
 
     // Initialize position independent portions of the constraints.
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const contact: b2Contact = this.m_contacts[i];
 
       const fixtureA: b2Fixture = contact.m_fixtureA;
@@ -253,7 +253,7 @@ export class b2ContactSolver {
       pc.radiusB = radiusB;
       pc.type = manifold.type;
 
-      for (let j: number = 0; j < pointCount; ++j) {
+      for (let j = 0; j < pointCount; ++j) {
         const cp: b2ManifoldPoint = manifold.points[j];
         const vcp: b2VelocityConstraintPoint = vc.points[j];
 
@@ -286,9 +286,9 @@ export class b2ContactSolver {
     const xfB: b2Transform = b2ContactSolver.InitializeVelocityConstraints_s_xfB;
     const worldManifold: b2WorldManifold = b2ContactSolver.InitializeVelocityConstraints_s_worldManifold;
 
-    const k_maxConditionNumber: number = 1000;
+    const k_maxConditionNumber = 1000;
 
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
       const pc: b2ContactPositionConstraint = this.m_positionConstraints[i];
 
@@ -329,7 +329,7 @@ export class b2ContactSolver {
       b2Vec2.CrossVOne(vc.normal, vc.tangent); // compute from normal
 
       const pointCount: number = vc.pointCount;
-      for (let j: number = 0; j < pointCount; ++j) {
+      for (let j = 0; j < pointCount; ++j) {
         const vcp: b2VelocityConstraintPoint = vc.points[j];
 
         // vcp->rA = worldManifold.points[j] - cA;
@@ -403,7 +403,7 @@ export class b2ContactSolver {
     const P: b2Vec2 = b2ContactSolver.WarmStart_s_P;
 
     // Warm start.
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
 
       const indexA: number = vc.indexA;
@@ -423,7 +423,7 @@ export class b2ContactSolver {
       // b2Vec2 tangent = b2Cross(normal, 1.0f);
       const tangent: b2Vec2 = vc.tangent; // precomputed from normal
 
-      for (let j: number = 0; j < pointCount; ++j) {
+      for (let j = 0; j < pointCount; ++j) {
         const vcp: b2VelocityConstraintPoint = vc.points[j];
         // b2Vec2 P = vcp->normalImpulse * normal + vcp->tangentImpulse * tangent;
         b2Vec2.AddVV(
@@ -471,7 +471,7 @@ export class b2ContactSolver {
     const P2: b2Vec2 = b2ContactSolver.SolveVelocityConstraints_s_P2;
     const P1P2: b2Vec2 = b2ContactSolver.SolveVelocityConstraints_s_P1P2;
 
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
 
       const indexA: number = vc.indexA;
@@ -497,7 +497,7 @@ export class b2ContactSolver {
 
       // Solve tangent constraints first because non-penetration is more important
       // than friction.
-      for (let j: number = 0; j < pointCount; ++j) {
+      for (let j = 0; j < pointCount; ++j) {
         const vcp: b2VelocityConstraintPoint = vc.points[j];
 
         // Relative velocity at contact
@@ -848,11 +848,11 @@ export class b2ContactSolver {
   }
 
   public StoreImpulses(): void {
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
       const manifold: b2Manifold = this.m_contacts[vc.contactIndex].GetManifold();
 
-      for (let j: number = 0; j < vc.pointCount; ++j) {
+      for (let j = 0; j < vc.pointCount; ++j) {
         manifold.points[j].normalImpulse = vc.points[j].normalImpulse;
         manifold.points[j].tangentImpulse = vc.points[j].tangentImpulse;
       }
@@ -873,9 +873,9 @@ export class b2ContactSolver {
     const rB: b2Vec2 = b2ContactSolver.SolvePositionConstraints_s_rB;
     const P: b2Vec2 = b2ContactSolver.SolvePositionConstraints_s_P;
 
-    let minSeparation: number = 0;
+    let minSeparation = 0;
 
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const pc: b2ContactPositionConstraint = this.m_positionConstraints[i];
 
       const indexA: number = pc.indexA;
@@ -895,7 +895,7 @@ export class b2ContactSolver {
       let aB: number = this.m_positions[indexB].a;
 
       // Solve normal constraints
-      for (let j: number = 0; j < pointCount; ++j) {
+      for (let j = 0; j < pointCount; ++j) {
         xfA.q.SetAngle(aA);
         xfB.q.SetAngle(aB);
         b2Vec2.SubVV(cA, b2Rot.MulRV(xfA.q, localCenterA, b2Vec2.s_t0), xfA.p);
@@ -969,9 +969,9 @@ export class b2ContactSolver {
     const rB: b2Vec2 = b2ContactSolver.SolveTOIPositionConstraints_s_rB;
     const P: b2Vec2 = b2ContactSolver.SolveTOIPositionConstraints_s_P;
 
-    let minSeparation: number = 0;
+    let minSeparation = 0;
 
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const pc: b2ContactPositionConstraint = this.m_positionConstraints[i];
 
       const indexA: number = pc.indexA;
@@ -980,15 +980,15 @@ export class b2ContactSolver {
       const localCenterB: b2Vec2 = pc.localCenterB;
       const pointCount: number = pc.pointCount;
 
-      let mA: number = 0;
-      let iA: number = 0;
+      let mA = 0;
+      let iA = 0;
       if (indexA === toiIndexA || indexA === toiIndexB) {
         mA = pc.invMassA;
         iA = pc.invIA;
       }
 
-      let mB: number = 0;
-      let iB: number = 0;
+      let mB = 0;
+      let iB = 0;
       if (indexB === toiIndexA || indexB === toiIndexB) {
         mB = pc.invMassB;
         iB = pc.invIB;
@@ -1001,7 +1001,7 @@ export class b2ContactSolver {
       let aB: number = this.m_positions[indexB].a;
 
       // Solve normal constraints
-      for (let j: number = 0; j < pointCount; ++j) {
+      for (let j = 0; j < pointCount; ++j) {
         xfA.q.SetAngle(aA);
         xfB.q.SetAngle(aB);
         b2Vec2.SubVV(cA, b2Rot.MulRV(xfA.q, localCenterA, b2Vec2.s_t0), xfA.p);

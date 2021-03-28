@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "./b2_settings";
-import { b2MakeArray } from "./b2_settings";
+import { b2MakeArray } from './b2_settings';
 
 /// This is a growable LIFO stack with an initial capacity of N.
 /// If the stack size exceeds the initial capacity, the heap is used
@@ -25,7 +25,7 @@ import { b2MakeArray } from "./b2_settings";
 
 export class b2GrowableStack<T> {
   public m_stack: Array<T | null> = [];
-  public m_count: number = 0;
+  public m_count = 0;
 
   constructor(N: number) {
     this.m_stack = b2MakeArray(N, (): any => null);

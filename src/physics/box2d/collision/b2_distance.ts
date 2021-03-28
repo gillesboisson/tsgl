@@ -17,17 +17,17 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_epsilon, b2_epsilon_sq, b2_polygonRadius, b2_linearSlop } from "../common/b2_settings";
-import { b2Max, b2Vec2, b2Rot, b2Transform } from "../common/b2_math";
-import { b2Shape } from "./b2_shape";
+import { b2_epsilon, b2_epsilon_sq, b2_polygonRadius, b2_linearSlop } from '../common/b2_settings';
+import { b2Max, b2Vec2, b2Rot, b2Transform } from '../common/b2_math';
+import { b2Shape } from './b2_shape';
 
 /// A distance proxy is used by the GJK algorithm.
 /// It encapsulates any shape.
 export class b2DistanceProxy {
   public readonly m_buffer: b2Vec2[] = b2Vec2.MakeArray(2);
   public m_vertices: b2Vec2[] = this.m_buffer;
-  public m_count: number = 0;
-  public m_radius: number = 0;
+  public m_count = 0;
+  public m_radius = 0;
 
   public Copy(other: Readonly<b2DistanceProxy>): this {
     if (other.m_vertices === other.m_buffer) {
@@ -60,9 +60,9 @@ export class b2DistanceProxy {
   }
 
   public GetSupport(d: b2Vec2): number {
-    let bestIndex: number = 0;
+    let bestIndex = 0;
     let bestValue: number = b2Vec2.DotVV(this.m_vertices[0], d);
-    for (let i: number = 1; i < this.m_count; ++i) {
+    for (let i = 1; i < this.m_count; ++i) {
       const value: number = b2Vec2.DotVV(this.m_vertices[i], d);
       if (value > bestValue) {
         bestIndex = i;
@@ -74,9 +74,9 @@ export class b2DistanceProxy {
   }
 
   public GetSupportVertex(d: b2Vec2): b2Vec2 {
-    let bestIndex: number = 0;
+    let bestIndex = 0;
     let bestValue: number = b2Vec2.DotVV(this.m_vertices[0], d);
-    for (let i: number = 1; i < this.m_count; ++i) {
+    for (let i = 1; i < this.m_count; ++i) {
       const value: number = b2Vec2.DotVV(this.m_vertices[i], d);
       if (value > bestValue) {
         bestIndex = i;
@@ -98,8 +98,8 @@ export class b2DistanceProxy {
 }
 
 export class b2SimplexCache {
-  public metric: number = 0;
-  public count: number = 0;
+  public metric = 0;
+  public count = 0;
   public readonly indexA: [number, number, number] = [0, 0, 0];
   public readonly indexB: [number, number, number] = [0, 0, 0];
 
@@ -115,7 +115,7 @@ export class b2DistanceInput {
   public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
   public readonly transformA: b2Transform = new b2Transform();
   public readonly transformB: b2Transform = new b2Transform();
-  public useRadii: boolean = false;
+  public useRadii = false;
 
   public Reset(): b2DistanceInput {
     this.proxyA.Reset();
@@ -130,8 +130,8 @@ export class b2DistanceInput {
 export class b2DistanceOutput {
   public readonly pointA: b2Vec2 = new b2Vec2();
   public readonly pointB: b2Vec2 = new b2Vec2();
-  public distance: number = 0;
-  public iterations: number = 0; ///< number of GJK iterations used
+  public distance = 0;
+  public iterations = 0; ///< number of GJK iterations used
 
   public Reset(): b2DistanceOutput {
     this.pointA.SetZero();
@@ -155,13 +155,13 @@ export class b2ShapeCastInput {
 export class b2ShapeCastOutput {
   public readonly point: b2Vec2 = new b2Vec2();
   public readonly normal: b2Vec2 = new b2Vec2();
-  public lambda: number = 0.0;
-  public iterations: number = 0;
+  public lambda = 0.0;
+  public iterations = 0;
 }
 
-export let b2_gjkCalls: number = 0;
-export let b2_gjkIters: number = 0;
-export let b2_gjkMaxIters: number = 0;
+export let b2_gjkCalls = 0;
+export let b2_gjkIters = 0;
+export let b2_gjkMaxIters = 0;
 export function b2_gjk_reset(): void {
   b2_gjkCalls = 0;
   b2_gjkIters = 0;
@@ -172,9 +172,9 @@ export class b2SimplexVertex {
   public readonly wA: b2Vec2 = new b2Vec2(); // support point in proxyA
   public readonly wB: b2Vec2 = new b2Vec2(); // support point in proxyB
   public readonly w: b2Vec2 = new b2Vec2(); // wB - wA
-  public a: number = 0; // barycentric coordinate for closest point
-  public indexA: number = 0; // wA index
-  public indexB: number = 0; // wB index
+  public a = 0; // barycentric coordinate for closest point
+  public indexA = 0; // wA index
+  public indexB = 0; // wB index
 
   public Copy(other: b2SimplexVertex): b2SimplexVertex {
     this.wA.Copy(other.wA);     // support point in proxyA
@@ -192,7 +192,7 @@ export class b2Simplex {
   public readonly m_v2: b2SimplexVertex = new b2SimplexVertex();
   public readonly m_v3: b2SimplexVertex = new b2SimplexVertex();
   public readonly m_vertices: b2SimplexVertex[] = [/*3*/];
-  public m_count: number = 0;
+  public m_count = 0;
 
   constructor() {
     this.m_vertices[0] = this.m_v1;
@@ -206,7 +206,7 @@ export class b2Simplex {
     // Copy data from cache.
     this.m_count = cache.count;
     const vertices: b2SimplexVertex[] = this.m_vertices;
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       const v: b2SimplexVertex = vertices[i];
       v.indexA = cache.indexA[i];
       v.indexB = cache.indexB[i];
@@ -248,7 +248,7 @@ export class b2Simplex {
     cache.metric = this.GetMetric();
     cache.count = this.m_count;
     const vertices: b2SimplexVertex[] = this.m_vertices;
-    for (let i: number = 0; i < this.m_count; ++i) {
+    for (let i = 0; i < this.m_count; ++i) {
       cache.indexA[i] = vertices[i].indexA;
       cache.indexB[i] = vertices[i].indexB;
     }
@@ -510,20 +510,20 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
 
   // Get simplex vertices as an array.
   const vertices: b2SimplexVertex[] = simplex.m_vertices;
-  const k_maxIters: number = 20;
+  const k_maxIters = 20;
 
   // These store the vertices of the last simplex so that we
   // can check for duplicates and prevent cycling.
   const saveA: [number, number, number] = b2Distance_s_saveA;
   const saveB: [number, number, number] = b2Distance_s_saveB;
-  let saveCount: number = 0;
+  let saveCount = 0;
 
   // Main iteration loop.
-  let iter: number = 0;
+  let iter = 0;
   while (iter < k_maxIters) {
     // Copy simplex so we can identify duplicates.
     saveCount = simplex.m_count;
-    for (let i: number = 0; i < saveCount; ++i) {
+    for (let i = 0; i < saveCount; ++i) {
       saveA[i] = vertices[i].indexA;
       saveB[i] = vertices[i].indexB;
     }
@@ -577,8 +577,8 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     ++b2_gjkIters;
 
     // Check for duplicate support points. This is the main termination criteria.
-    let duplicate: boolean = false;
-    for (let i: number = 0; i < saveCount; ++i) {
+    let duplicate = false;
+    for (let i = 0; i < saveCount; ++i) {
       if (vertex.indexA === saveA[i] && vertex.indexB === saveB[i]) {
         duplicate = true;
         break;

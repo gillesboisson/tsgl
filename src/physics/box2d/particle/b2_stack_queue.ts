@@ -22,8 +22,8 @@
 
 export class b2StackQueue<T> {
   public readonly m_buffer: Array<T | null> = [];
-  public m_front: number = 0;
-  public m_back: number = 0;
+  public m_front = 0;
+  public m_back = 0;
   public get m_capacity(): number { return this.m_buffer.length; }
   constructor(capacity: number) {
     this.m_buffer.fill(null, 0, capacity);

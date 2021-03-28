@@ -17,12 +17,12 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_polygonRadius } from "../common/b2_settings";
-import { b2Vec2, b2Rot, b2Transform, XY } from "../common/b2_math";
-import { b2AABB, b2RayCastInput, b2RayCastOutput } from "./b2_collision";
-import { b2DistanceProxy } from "./b2_distance";
-import { b2MassData } from "./b2_shape";
-import { b2Shape, b2ShapeType } from "./b2_shape";
+import { b2_polygonRadius } from '../common/b2_settings';
+import { b2Vec2, b2Rot, b2Transform, XY } from '../common/b2_math';
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from './b2_collision';
+import { b2DistanceProxy } from './b2_distance';
+import { b2MassData } from './b2_shape';
+import { b2Shape, b2ShapeType } from './b2_shape';
 
 /// A line segment (edge) shape. These can be connected in chains or loops
 /// to other edge shapes. Edges created independently are two-sided and do
@@ -34,17 +34,17 @@ export class b2EdgeShape extends b2Shape {
   public readonly m_vertex3: b2Vec2 = new b2Vec2();
 
   /// Uses m_vertex0 and m_vertex3 to create smooth collision.
-  public m_oneSided: boolean = false;
+  public m_oneSided = false;
 
   constructor() {
     super(b2ShapeType.e_edgeShape, b2_polygonRadius);
   }
 
   /// Set this as a part of a sequence. Vertex v0 precedes the edge and vertex v3
-	/// follows. These extra vertices are used to provide smooth movement
-	/// across junctions. This also makes the collision one-sided. The edge
-	/// normal points to the right looking from v1 to v2.
-	// void SetOneSided(const b2Vec2& v0, const b2Vec2& v1,const b2Vec2& v2, const b2Vec2& v3);
+  /// follows. These extra vertices are used to provide smooth movement
+  /// across junctions. This also makes the collision one-sided. The edge
+  /// normal points to the right looking from v1 to v2.
+  // void SetOneSided(const b2Vec2& v0, const b2Vec2& v1,const b2Vec2& v2, const b2Vec2& v3);
   public SetOneSided(v0: XY, v1: XY, v2: XY, v3: XY): b2EdgeShape {
     this.m_vertex0.Copy(v0);
     this.m_vertex1.Copy(v1);
@@ -54,7 +54,7 @@ export class b2EdgeShape extends b2Shape {
     return this;
   }
 
-	/// Set this as an isolated edge. Collision is two-sided.
+  /// Set this as an isolated edge. Collision is two-sided.
   public SetTwoSided(v1: XY, v2: XY): b2EdgeShape {
     this.m_vertex1.Copy(v1);
     this.m_vertex2.Copy(v2);
@@ -219,12 +219,12 @@ export class b2EdgeShape extends b2Shape {
   }
 
   public Dump(log: (format: string, ...args: any[]) => void): void {
-    log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
-    log("    shape.m_radius = %.15f;\n", this.m_radius);
-    log("    shape.m_vertex0.Set(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
-    log("    shape.m_vertex1.Set(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
-    log("    shape.m_vertex2.Set(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
-    log("    shape.m_vertex3.Set(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
-    log("    shape.m_oneSided = %s;\n", this.m_oneSided);
+    log('    const shape: b2EdgeShape = new b2EdgeShape();\n');
+    log('    shape.m_radius = %.15f;\n', this.m_radius);
+    log('    shape.m_vertex0.Set(%.15f, %.15f);\n', this.m_vertex0.x, this.m_vertex0.y);
+    log('    shape.m_vertex1.Set(%.15f, %.15f);\n', this.m_vertex1.x, this.m_vertex1.y);
+    log('    shape.m_vertex2.Set(%.15f, %.15f);\n', this.m_vertex2.x, this.m_vertex2.y);
+    log('    shape.m_vertex3.Set(%.15f, %.15f);\n', this.m_vertex3.x, this.m_vertex3.y);
+    log('    shape.m_oneSided = %s;\n', this.m_oneSided);
   }
 }

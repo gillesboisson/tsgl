@@ -18,11 +18,11 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Controller } from "./b2_controller";
-import { b2Mat22, b2Vec2, b2Max } from "../common/b2_math";
-import { b2TimeStep } from "../dynamics/b2_time_step";
-import { b2_epsilon } from "../common/b2_settings";
-import { b2Draw } from "../common/b2_draw";
+import { b2Controller } from './b2_controller';
+import { b2Mat22, b2Vec2, b2Max } from '../common/b2_math';
+import { b2TimeStep } from '../dynamics/b2_time_step';
+import { b2_epsilon } from '../common/b2_settings';
+import { b2Draw } from '../common/b2_draw';
 
 /**
  * Applies top down linear damping to the controlled bodies
@@ -47,29 +47,29 @@ export class b2TensorDampingController extends b2Controller {
      * @see b2Controller::Step
      */
     public Step(step: b2TimeStep) {
-        let timestep = step.dt;
-        if (timestep <= b2_epsilon) {
-            return;
+      let timestep = step.dt;
+      if (timestep <= b2_epsilon) {
+        return;
+      }
+      if (timestep > this.maxTimestep && this.maxTimestep > 0) {
+        timestep = this.maxTimestep;
+      }
+      for (let i = this.m_bodyList; i; i = i.nextBody) {
+        const body = i.body;
+        if (!body.IsAwake()) {
+          continue;
         }
-        if (timestep > this.maxTimestep && this.maxTimestep > 0) {
-            timestep = this.maxTimestep;
-        }
-        for (let i = this.m_bodyList; i; i = i.nextBody) {
-            const body = i.body;
-            if (!body.IsAwake()) {
-                continue;
-            }
-            const damping = body.GetWorldVector(
-            b2Mat22.MulMV(
-                this.T,
-                body.GetLocalVector(
-                body.GetLinearVelocity(),
-                b2Vec2.s_t0),
-                b2Vec2.s_t1),
-            b2TensorDampingController.Step_s_damping);
-            //    body->SetLinearVelocity(body->GetLinearVelocity() + timestep * damping);
-            body.SetLinearVelocity(b2Vec2.AddVV(body.GetLinearVelocity(), b2Vec2.MulSV(timestep, damping, b2Vec2.s_t0), b2Vec2.s_t1));
-        }
+        const damping = body.GetWorldVector(
+          b2Mat22.MulMV(
+            this.T,
+            body.GetLocalVector(
+              body.GetLinearVelocity(),
+              b2Vec2.s_t0),
+            b2Vec2.s_t1),
+          b2TensorDampingController.Step_s_damping);
+        //    body->SetLinearVelocity(body->GetLinearVelocity() + timestep * damping);
+        body.SetLinearVelocity(b2Vec2.AddVV(body.GetLinearVelocity(), b2Vec2.MulSV(timestep, damping, b2Vec2.s_t0), b2Vec2.s_t1));
+      }
     }
     private static Step_s_damping = new b2Vec2();
 

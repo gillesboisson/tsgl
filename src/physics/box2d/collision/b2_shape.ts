@@ -17,20 +17,20 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2Vec2, b2Transform, XY } from "../common/b2_math";
-import { b2AABB, b2RayCastInput, b2RayCastOutput } from "./b2_collision";
-import { b2DistanceProxy } from "./b2_distance";
+import { b2Vec2, b2Transform, XY } from '../common/b2_math';
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from './b2_collision';
+import { b2DistanceProxy } from './b2_distance';
 
 /// This holds the mass data computed for a shape.
 export class b2MassData {
   /// The mass of the shape, usually in kilograms.
-  public mass: number = 0;
+  public mass = 0;
 
   /// The position of the shape's centroid relative to the shape's origin.
   public readonly center: b2Vec2 = new b2Vec2(0, 0);
 
   /// The rotational inertia of the shape about the local origin.
-  public I: number = 0;
+  public I = 0;
 }
 
 export enum b2ShapeType {
@@ -48,9 +48,9 @@ export enum b2ShapeType {
 export abstract class b2Shape {
   public readonly m_type: b2ShapeType = b2ShapeType.e_unknown;
 
-	/// Radius of a shape. For polygonal shapes this must be b2_polygonRadius. There is no support for
-	/// making rounded polygons.
-  public m_radius: number = 0;
+  /// Radius of a shape. For polygonal shapes this must be b2_polygonRadius. There is no support for
+  /// making rounded polygons.
+  public m_radius = 0;
 
   constructor(type: b2ShapeType, radius: number) {
     this.m_type = type;

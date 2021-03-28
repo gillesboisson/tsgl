@@ -1,20 +1,20 @@
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2ShapeType } from "../collision/b2_shape";
-import { b2Contact } from "./b2_contact";
-import { b2CircleContact } from "./b2_circle_contact";
-import { b2PolygonContact } from "./b2_polygon_contact";
-import { b2PolygonAndCircleContact } from "./b2_polygon_circle_contact";
-import { b2EdgeAndCircleContact } from "./b2_edge_circle_contact";
-import { b2EdgeAndPolygonContact } from "./b2_edge_polygon_contact";
-import { b2ChainAndCircleContact } from "./b2_chain_circle_contact";
-import { b2ChainAndPolygonContact } from "./b2_chain_polygon_contact";
-import { b2Fixture } from "./b2_fixture";
+import { b2ShapeType } from '../collision/b2_shape';
+import { b2Contact } from './b2_contact';
+import { b2CircleContact } from './b2_circle_contact';
+import { b2PolygonContact } from './b2_polygon_contact';
+import { b2PolygonAndCircleContact } from './b2_polygon_circle_contact';
+import { b2EdgeAndCircleContact } from './b2_edge_circle_contact';
+import { b2EdgeAndPolygonContact } from './b2_edge_polygon_contact';
+import { b2ChainAndCircleContact } from './b2_chain_circle_contact';
+import { b2ChainAndPolygonContact } from './b2_chain_polygon_contact';
+import { b2Fixture } from './b2_fixture';
 
 export class b2ContactRegister {
   public pool: b2Contact[] = [];
   public createFcn: (() => b2Contact) | null = null;
   public destroyFcn: ((contact: b2Contact) => void) | null = null;
-  public primary: boolean = false;
+  public primary = false;
 }
 
 export class b2ContactFactory {
@@ -49,9 +49,9 @@ export class b2ContactFactory {
   }
 
   private InitializeRegisters(): void {
-    for (let i: number = 0; i < b2ShapeType.e_shapeTypeCount; i++) {
+    for (let i = 0; i < b2ShapeType.e_shapeTypeCount; i++) {
       this.m_registers[i] = [];
-      for (let j: number = 0; j < b2ShapeType.e_shapeTypeCount; j++) {
+      for (let j = 0; j < b2ShapeType.e_shapeTypeCount; j++) {
         this.m_registers[i][j] = new b2ContactRegister();
       }
     }

@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Transform, XY } from "./b2_math";
+import { b2Transform, XY } from './b2_math';
 
 export interface RGB {
   r: number;
@@ -163,7 +163,7 @@ export class b2Color implements RGBA {
     return b2Color.MakeStyleString(this.r, this.g, this.b, alpha);
   }
 
-  public static MakeStyleString(r: number, g: number, b: number, a: number = 1.0): string {
+  public static MakeStyleString(r: number, g: number, b: number, a = 1.0): string {
     // function clamp(x: number, lo: number, hi: number) { return x < lo ? lo : hi < x ? hi : x; }
     r *= 255; // r = clamp(r, 0, 255);
     g *= 255; // g = clamp(g, 0, 255);
@@ -193,10 +193,10 @@ export class b2TypedColor implements b2Color {
       if (args[0].length !== 4) { throw new Error(); }
       this.data = args[0];
     } else {
-      const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
-      const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
-      const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
-      const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
+      const rr: number = typeof args[0] === 'number' ? args[0] : 0.5;
+      const gg: number = typeof args[1] === 'number' ? args[1] : 0.5;
+      const bb: number = typeof args[2] === 'number' ? args[2] : 0.5;
+      const aa: number = typeof args[3] === 'number' ? args[3] : 1.0;
       this.data = new Float32Array([ rr, gg, bb, aa ]);
     }
   }

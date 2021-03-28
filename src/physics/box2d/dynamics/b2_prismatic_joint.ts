@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_angularSlop, b2Maybe } from "../common/b2_settings";
-import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY, b2Transform } from "../common/b2_math";
-import { b2Body } from "./b2_body";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint";
-import { b2SolverData } from "./b2_time_step";
-import { b2Draw, b2Color } from "../common/b2_draw";
+import { b2_linearSlop, b2_angularSlop, b2Maybe } from '../common/b2_settings';
+import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY, b2Transform } from '../common/b2_math';
+import { b2Body } from './b2_body';
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from './b2_joint';
+import { b2SolverData } from './b2_time_step';
+import { b2Draw, b2Color } from '../common/b2_draw';
 
 export interface b2IPrismaticJointDef extends b2IJointDef {
   localAnchorA?: XY;
@@ -58,19 +58,19 @@ export class b2PrismaticJointDef extends b2JointDef implements b2IPrismaticJoint
 
   public readonly localAxisA: b2Vec2 = new b2Vec2(1, 0);
 
-  public referenceAngle: number = 0;
+  public referenceAngle = 0;
 
   public enableLimit = false;
 
-  public lowerTranslation: number = 0;
+  public lowerTranslation = 0;
 
-  public upperTranslation: number = 0;
+  public upperTranslation = 0;
 
   public enableMotor = false;
 
-  public maxMotorForce: number = 0;
+  public maxMotorForce = 0;
 
-  public motorSpeed: number = 0;
+  public motorSpeed = 0;
 
   constructor() {
     super(b2JointType.e_prismaticJoint);
@@ -136,38 +136,38 @@ export class b2PrismaticJoint extends b2Joint {
   public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public readonly m_localXAxisA: b2Vec2 = new b2Vec2();
   public readonly m_localYAxisA: b2Vec2 = new b2Vec2();
-  public m_referenceAngle: number = 0;
+  public m_referenceAngle = 0;
   public readonly m_impulse: b2Vec2 = new b2Vec2(0, 0);
-  public m_motorImpulse: number = 0;
-  public m_lowerImpulse: number = 0;
-  public m_upperImpulse: number = 0;
-  public m_lowerTranslation: number = 0;
-  public m_upperTranslation: number = 0;
-  public m_maxMotorForce: number = 0;
-  public m_motorSpeed: number = 0;
-  public m_enableLimit: boolean = false;
-  public m_enableMotor: boolean = false;
+  public m_motorImpulse = 0;
+  public m_lowerImpulse = 0;
+  public m_upperImpulse = 0;
+  public m_lowerTranslation = 0;
+  public m_upperTranslation = 0;
+  public m_maxMotorForce = 0;
+  public m_motorSpeed = 0;
+  public m_enableLimit = false;
+  public m_enableMotor = false;
 
   // Solver temp
-  public m_indexA: number = 0;
-  public m_indexB: number = 0;
+  public m_indexA = 0;
+  public m_indexB = 0;
   public readonly m_localCenterA: b2Vec2 = new b2Vec2();
   public readonly m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_invMassA: number = 0;
-  public m_invMassB: number = 0;
-  public m_invIA: number = 0;
-  public m_invIB: number = 0;
+  public m_invMassA = 0;
+  public m_invMassB = 0;
+  public m_invIA = 0;
+  public m_invIB = 0;
   public readonly m_axis: b2Vec2 = new b2Vec2(0, 0);
   public readonly m_perp: b2Vec2 = new b2Vec2(0, 0);
-  public m_s1: number = 0;
-  public m_s2: number = 0;
-  public m_a1: number = 0;
-  public m_a2: number = 0;
+  public m_s1 = 0;
+  public m_s2 = 0;
+  public m_a1 = 0;
+  public m_a2 = 0;
   public readonly m_K: b2Mat22 = new b2Mat22();
   public readonly m_K3: b2Mat33 = new b2Mat33();
   public readonly m_K2: b2Mat22 = new b2Mat22();
-  public m_translation: number = 0;
-  public m_axialMass: number = 0;
+  public m_translation = 0;
+  public m_axialMass = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -503,7 +503,7 @@ export class b2PrismaticJoint extends b2Joint {
     const angularError = b2Abs(C1_y);
 
     let active = false;
-    let C2: number = 0;
+    let C2 = 0;
     if (this.m_enableLimit) {
       // float32 translation = b2Dot(axis, d);
       const translation: number = b2Vec2.DotVV(axis, d);
@@ -762,21 +762,21 @@ export class b2PrismaticJoint extends b2Joint {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 
-    log("  const jd: b2PrismaticJointDef = new b2PrismaticJointDef();\n");
-    log("  jd.bodyA = bodies[%d];\n", indexA);
-    log("  jd.bodyB = bodies[%d];\n", indexB);
-    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-    log("  jd.localAxisA.Set(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
-    log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
-    log("  jd.enableLimit = %s;\n", (this.m_enableLimit) ? ("true") : ("false"));
-    log("  jd.lowerTranslation = %.15f;\n", this.m_lowerTranslation);
-    log("  jd.upperTranslation = %.15f;\n", this.m_upperTranslation);
-    log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
-    log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
-    log("  jd.maxMotorForce = %.15f;\n", this.m_maxMotorForce);
-    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+    log('  const jd: b2PrismaticJointDef = new b2PrismaticJointDef();\n');
+    log('  jd.bodyA = bodies[%d];\n', indexA);
+    log('  jd.bodyB = bodies[%d];\n', indexB);
+    log('  jd.collideConnected = %s;\n', (this.m_collideConnected) ? ('true') : ('false'));
+    log('  jd.localAnchorA.Set(%.15f, %.15f);\n', this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log('  jd.localAnchorB.Set(%.15f, %.15f);\n', this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log('  jd.localAxisA.Set(%.15f, %.15f);\n', this.m_localXAxisA.x, this.m_localXAxisA.y);
+    log('  jd.referenceAngle = %.15f;\n', this.m_referenceAngle);
+    log('  jd.enableLimit = %s;\n', (this.m_enableLimit) ? ('true') : ('false'));
+    log('  jd.lowerTranslation = %.15f;\n', this.m_lowerTranslation);
+    log('  jd.upperTranslation = %.15f;\n', this.m_upperTranslation);
+    log('  jd.enableMotor = %s;\n', (this.m_enableMotor) ? ('true') : ('false'));
+    log('  jd.motorSpeed = %.15f;\n', this.m_motorSpeed);
+    log('  jd.maxMotorForce = %.15f;\n', this.m_maxMotorForce);
+    log('  joints[%d] = this.m_world.CreateJoint(jd);\n', this.m_index);
   }
 
   private static Draw_s_pA = new b2Vec2();

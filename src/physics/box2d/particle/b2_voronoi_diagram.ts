@@ -19,9 +19,9 @@
 // #if B2_ENABLE_PARTICLE
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_maxFloat, b2MakeArray } from "../common/b2_settings";
-import { b2Vec2 } from "../common/b2_math";
-import { b2StackQueue } from "./b2_stack_queue";
+import { b2_maxFloat, b2MakeArray } from '../common/b2_settings';
+import { b2Vec2 } from '../common/b2_math';
+import { b2StackQueue } from './b2_stack_queue';
 
 /**
  * A field representing the nearest generator from each point.
@@ -217,8 +217,8 @@ export type b2VoronoiDiagram_NodeCallback = (a: number, b: number, c: number) =>
 
 export class b2VoronoiDiagram_Generator {
   public center: b2Vec2 = new b2Vec2();
-  public tag: number = 0;
-  public necessary: boolean = false;
+  public tag = 0;
+  public necessary = false;
 }
 
 export class b2VoronoiDiagram_Task {

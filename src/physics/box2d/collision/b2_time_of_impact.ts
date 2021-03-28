@@ -17,18 +17,18 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings";
-import { b2_linearSlop, b2_maxPolygonVertices } from "../common/b2_settings";
-import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../common/b2_math";
-import { b2Timer } from "../common/b2_timer";
-import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2_distance";
+import { b2_linearSlop, b2_maxPolygonVertices } from '../common/b2_settings';
+import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from '../common/b2_math';
+import { b2Timer } from '../common/b2_timer';
+import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from './b2_distance';
 
-export let b2_toiTime: number = 0;
-export let b2_toiMaxTime: number = 0;
-export let b2_toiCalls: number = 0;
-export let b2_toiIters: number = 0;
-export let b2_toiMaxIters: number = 0;
-export let b2_toiRootIters: number = 0;
-export let b2_toiMaxRootIters: number = 0;
+export let b2_toiTime = 0;
+export let b2_toiMaxTime = 0;
+export let b2_toiCalls = 0;
+export let b2_toiIters = 0;
+export let b2_toiMaxIters = 0;
+export let b2_toiRootIters = 0;
+export let b2_toiMaxRootIters = 0;
 export function b2_toi_reset(): void {
   b2_toiTime = 0;
   b2_toiMaxTime = 0;
@@ -53,7 +53,7 @@ export class b2TOIInput {
   public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
   public readonly sweepA: b2Sweep = new b2Sweep();
   public readonly sweepB: b2Sweep = new b2Sweep();
-  public tMax: number = 0; // defines sweep interval [0, tMax]
+  public tMax = 0; // defines sweep interval [0, tMax]
 }
 
 /// Output parameters for b2TimeOfImpact.
@@ -67,7 +67,7 @@ export enum b2TOIOutputState {
 
 export class b2TOIOutput {
   public state = b2TOIOutputState.e_unknown;
-  public t: number = 0;
+  public t = 0;
 }
 
 export enum b2SeparationFunctionType {
@@ -164,7 +164,7 @@ export class b2SeparationFunction {
     this.m_sweepB.GetTransform(xfB, t);
 
     switch (this.m_type) {
-    case b2SeparationFunctionType.e_points: {
+      case b2SeparationFunctionType.e_points: {
         const axisA: b2Vec2 = b2Rot.MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
         const axisB: b2Vec2 = b2Rot.MulTRV(xfB.q, b2Vec2.NegV(this.m_axis, b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
 
@@ -181,7 +181,7 @@ export class b2SeparationFunction {
         return separation;
       }
 
-    case b2SeparationFunctionType.e_faceA: {
+      case b2SeparationFunctionType.e_faceA: {
         const normal: b2Vec2 = b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
         const pointA: b2Vec2 = b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
@@ -197,7 +197,7 @@ export class b2SeparationFunction {
         return separation;
       }
 
-    case b2SeparationFunctionType.e_faceB: {
+      case b2SeparationFunctionType.e_faceB: {
         const normal: b2Vec2 = b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
         const pointB: b2Vec2 = b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
@@ -213,11 +213,11 @@ export class b2SeparationFunction {
         return separation;
       }
 
-    default:
+      default:
       // DEBUG: b2Assert(false);
-      indexA[0] = -1;
-      indexB[0] = -1;
-      return 0;
+        indexA[0] = -1;
+        indexB[0] = -1;
+        return 0;
     }
   }
 
@@ -228,7 +228,7 @@ export class b2SeparationFunction {
     this.m_sweepB.GetTransform(xfB, t);
 
     switch (this.m_type) {
-    case b2SeparationFunctionType.e_points: {
+      case b2SeparationFunctionType.e_points: {
         const localPointA: b2Vec2 = this.m_proxyA.GetVertex(indexA);
         const localPointB: b2Vec2 = this.m_proxyB.GetVertex(indexB);
 
@@ -239,7 +239,7 @@ export class b2SeparationFunction {
         return separation;
       }
 
-    case b2SeparationFunctionType.e_faceA: {
+      case b2SeparationFunctionType.e_faceA: {
         const normal: b2Vec2 = b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
         const pointA: b2Vec2 = b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
@@ -250,7 +250,7 @@ export class b2SeparationFunction {
         return separation;
       }
 
-    case b2SeparationFunctionType.e_faceB: {
+      case b2SeparationFunctionType.e_faceB: {
         const normal: b2Vec2 = b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
         const pointB: b2Vec2 = b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
@@ -261,9 +261,9 @@ export class b2SeparationFunction {
         return separation;
       }
 
-    default:
+      default:
       // DEBUG: b2Assert(false);
-      return 0;
+        return 0;
     }
   }
 }
@@ -304,9 +304,9 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const tolerance: number = 0.25 * b2_linearSlop;
   // DEBUG: b2Assert(target > tolerance);
 
-  let t1: number = 0;
-  const k_maxIterations: number = 20; // TODO_ERIN b2Settings
-  let iter: number = 0;
+  let t1 = 0;
+  const k_maxIterations = 20; // TODO_ERIN b2Settings
+  let iter = 0;
 
   // Prepare input for distance query.
   const cache: b2SimplexCache = b2TimeOfImpact_s_cache;
@@ -349,7 +349,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
     // Initialize the separating axis.
     const fcn: b2SeparationFunction = b2TimeOfImpact_s_fcn;
     fcn.Initialize(cache, proxyA, sweepA, proxyB, sweepB, t1);
-/*
+    /*
 #if 0
     // Dump the curve seen by the root finder {
       const int32 N = 100;
@@ -377,9 +377,9 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
 
     // Compute the TOI on the separating axis. We do this by successively
     // resolving the deepest point. This loop is bounded by the number of vertices.
-    let done: boolean = false;
+    let done = false;
     let t2: number = tMax;
-    let pushBackIter: number = 0;
+    let pushBackIter = 0;
     for (; ; ) {
       // Find the deepest point at t2. Store the witness point indices.
       const indexA: [number] = b2TimeOfImpact_s_indexA;
@@ -424,12 +424,12 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
       }
 
       // Compute 1D root of: f(x) - target = 0
-      let rootIterCount: number = 0;
+      let rootIterCount = 0;
       let a1: number = t1;
       let a2: number = t2;
       for (; ; ) {
         // Use a mix of the secant rule and bisection.
-        let t: number = 0;
+        let t = 0;
         if (rootIterCount & 1) {
           // Secant rule to improve convergence.
           t = a1 + (target - s1) * (a2 - a1) / (s2 - s1);
