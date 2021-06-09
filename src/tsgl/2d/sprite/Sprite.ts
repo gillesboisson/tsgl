@@ -1,4 +1,3 @@
-// import { SpriteBatchPullable, SpriteBatch, SpriteBatchData } from './SpriteBatch';
 import { SubTexture } from '../SubTexture';
 import { Quad } from './Quad';
 

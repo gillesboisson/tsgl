@@ -20,6 +20,10 @@ import { TranslateRotateTransform3D } from './tsgl/geom/TranslateRotateTransform
 import { OrthoCameraController } from './tsgl/input/CameraController';
 import { GamepadController, KeyboardController } from './tsgl/input/GameInput';
 import { GameInputEventStage, GameInputKey, InputId } from './tsgl/input/types';
+import BoatControl from './app/helpers/BoatControl';
+import { Sprite } from './tsgl/2d/sprite/Sprite';
+import { Group } from './tsgl/2d/Group';
+import { SpriteGroup } from './tsgl/2d/sprite/SpriteGroup';
 // import boatControl from './app/helpers/BoatControl';
 // import { GameInput, GameInputController, GameInputEventType } from './tsgl/input/_GameInput';
 
@@ -40,11 +44,13 @@ class TestApp extends Base2DApp {
   ddraw: DrawDebugger;
   testTr: b2Transform;
   testTrPv: b2Transform;
-  physicsCam: Camera<TranslateRotateTransform3D>;
+  // physicsCam: Camera<TranslateRotateTransform3D>;
   camController: OrthoCameraController;
   boat: b2Body;
   gi: KeyboardController;
   gpi: GamepadController;
+  sprite1: Sprite;
+  mainContainer: SpriteGroup;
   // physicsWorld: World;
   constructor() {
     super(document.getElementById('test') as HTMLCanvasElement);
@@ -60,50 +66,19 @@ class TestApp extends Base2DApp {
   }
 
   protected async init() {
-    const atlas = await SubTextureAtlas.load(this.renderer.gl, './images/spritessheet');
+    const atlas = await SubTextureAtlas.load(this.renderer.gl, './spritesheet/test-json');
 
-    // this.sprite1 = new Sprite(atlas.subTextures.ninja);
-    // this.sprite2 = new Sprite(atlas.subTextures.ninja);
-    // this.groundSprite = new Sprite(atlas.subTextures.square);
 
-    // this.sprite1.setSize(32, 32);
-    // this.sprite2.setSize(32, 32);
-    // this.groundSprite.setSize(800, 32);
-    // this.groundSprite.setAnchor(0.5, 0.5);
-    // this.sprite1.setAnchor(0.5, 0.5);
-    // this.sprite2.setAnchor(0.5, 0.5);
+    this.sprite1 = new Sprite(atlas.subTextures.battery);
+    
+    this.mainContainer = new SpriteGroup();
 
-    // this.stage.addChild(this.sprite1);
-    // this.stage.addChild(this.sprite2);
-    // this.stage.addChild(this.groundSprite);
+    //this.mainContainer.setScale(1/16,-1/16);
 
+    this.mainContainer.addChild(this.sprite1);
+    this.stage.addChild(this.mainContainer);
+    
     this.physicsWorld = new b2World({ x: 0, y: -10 });
-
-    // const groundShape = new b2PolygonShape();
-    // groundShape.SetAsBox(100, 2);
-
-    // const groundBodyDef = new b2BodyDef();
-    // groundBodyDef.position.Set(0, -20);
-    // groundBodyDef.type = b2BodyType.b2_staticBody;
-
-    // this.ground = this.physicsWorld.CreateBody(groundBodyDef);
-    // this.ground.CreateFixture(groundShape, 1);
-
-    // const boxShape = new b2PolygonShape();
-    // boxShape.SetAsBox(1, 1);
-
-    // const boxBodyDef = new b2BodyDef();
-    // boxBodyDef.position.Set(0, 30);
-    // boxBodyDef.type = b2BodyType.b2_dynamicBody;
-    // boxBodyDef.angle = 45;
-
-    // const boxFDef = new b2FixtureDef();
-    // boxFDef.restitution = 0;
-    // boxFDef.shape = boxShape;
-    // boxFDef.density = 1;
-
-    // this.box = this.physicsWorld.CreateBody(boxBodyDef);
-    // this.box.CreateFixture(boxFDef);
 
     this.wireframeBatch = new WireframeBatch(GLSupport.VAOSupport(this.renderer.gl));
 
@@ -112,29 +87,22 @@ class TestApp extends Base2DApp {
 
     const rad = 30;
     const up = (rad * this.renderer.height) / this.renderer.width;
-    this.physicsCam = Camera.createOrtho(-rad, rad, -up, up);
-    this.physicsCam.transform.setPosition(0, 0, 10);
+    this.cam.setOrtho(-rad, rad, -up, up);
+    this.cam.transform.setPosition(0, 0, 10);
 
     this.ddraw = new DrawDebugger(this.wireframeBatch, 1 / (rad / 2));
     this.ddraw.SetFlags(b2DrawFlags.e_jointBit | b2DrawFlags.e_shapeBit);
 
-    this.camController = new OrthoCameraController(
-      this.physicsCam,
-      this.renderer.canvas,
-      1,
-      1 / 20,
-      this.renderer.height / this.renderer.width,
-      120,
-    );
+    
 
     this.physicsWorld.SetDebugDraw(this.ddraw);
     // this.physicsWorld.
 
     const loader = new RUBELoader();
 
-    // const data = await fetch('physics-data/test-simple.json').then((res) => res.json());
-    // loader.parseWorld(data, this.physicsWorld);
-
+    const data = await fetch('physics-data/test-rube-images.json').then((res) => res.json());
+    const worldData = loader.parseWorld(data, this.physicsWorld);
+    console.log('worldData',loader.images);
     this.gi = new KeyboardController();
 
     this.gpi = new GamepadController(InputId.Player2);
@@ -144,8 +112,22 @@ class TestApp extends Base2DApp {
 
     // console.log('inputState',inputState.stick_axis_left);
     // setInterval(() => console.log('inputState',inputState),100);
+    console.log('BoatControl',BoatControl);
 
-    // this.boat = loader.getBodyFromName('mainBoat');
+    BoatControl.alignRatio = 0.1;
+    BoatControl.forwardForce = 10; 
+    BoatControl.backwardForce = 10; 
+    BoatControl.directionTorque = 3; 
+
+    this.boat = loader.getBodyFromName('mainBoat');
+
+    const xy = this.boat.GetPosition();
+
+    this.sprite1.setPosition(xy.x,xy.y);
+
+
+    
+    
 
     this.start();
   }
@@ -155,7 +137,6 @@ class TestApp extends Base2DApp {
     // this.physicsWorld.Step(elapsedTime / 1000, 8,3,3);
 
     // boatControl.update(this.boat);
-    this.physicsWorld.Step(elapsedTime / 500, 8, 3);
     this.gpi.update();
     // Engine.update(this.physicsEngine, elapsedTime / 2.0);
     // console.log('this.boxA.position',this.boxA.position);
@@ -164,7 +145,17 @@ class TestApp extends Base2DApp {
     // this.syncSpriteToBody(this.ground, this.groundSprite);
     // this.testTrPv.SetRotationAngle(time / 1000 * Math.PI);
     // console.log(' this.gpi.', this.gpi.axes.stick_axis_left);
-    this.camController.update(elapsedTime);
+    // this.camController.update(elapsedTime);
+
+    BoatControl.update(this.boat);
+    this.physicsWorld.Step(elapsedTime / 500, 3, 1);
+
+
+    const boatPos = this.boat.GetPosition();
+    this.cam.transform.setPosition(boatPos.x,boatPos.y,1);
+
+    this.sprite1.setPosition(boatPos.x,boatPos.y);
+
   }
   beforeRender(time: number, elapsedTime: number): void {
     // throw new Error('Method not implemented.');
@@ -174,9 +165,9 @@ class TestApp extends Base2DApp {
     const gl = this.renderer.gl;
     // gl.disable(gl.CULL_FACE);
 
-    this.physicsCam.updateTransform();
+    this.cam.updateTransform();
 
-    this.wireframeBatch.begin(this.vcShader, this.physicsCam);
+    this.wireframeBatch.begin(this.vcShader, this.cam);
     // this.ddraw.PushTransform(this.testTr);
     // this.ddraw.PushTransform(this.testTrPv);
     // // this.ddraw.DrawSegment({ x: 50, y: 50 }, { x: 100, y: 70 }, { r: 1, g: 0, b: 1, a: 1 });

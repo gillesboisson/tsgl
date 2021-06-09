@@ -1,5 +1,5 @@
 Arguments: 
-  /home/gillesboisson/.nvm/versions/node/v12.19.1/bin/node /home/gillesboisson/.nvm/versions/node/v12.19.1/bin/yarn add matter.js
+  /home/gillesboisson/.nvm/versions/node/v12.19.1/bin/node /home/gillesboisson/.nvm/versions/node/v12.19.1/bin/yarn add spritesheet.js --save-dev
 
 PATH: 
   /home/gillesboisson/nvidia/NVIDIA-Nsight-Graphics-2021.1/host/linux-desktop-nomad-x64:/home/gillesboisson/nvidia/NVIDIA-Nsight-Graphics-2021.1/host/linux-desktop-nomad-x64:/home/gillesboisson/.nvm/versions/node/v12.19.1/bin:/home/gillesboisson/.cargo/bin:/home/gillesboisson/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/go/bin:/usr/local/go/bin
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/matter.js: Not found
+  Error: https://registry.yarnpkg.com/spritesheet.js: Not found
       at Request.params.callback [as _callback] (/home/gillesboisson/.nvm/versions/node/v12.19.1/lib/node_modules/yarn/lib/cli.js:66988:18)
       at Request.self.callback (/home/gillesboisson/.nvm/versions/node/v12.19.1/lib/node_modules/yarn/lib/cli.js:140662:22)
       at Request.emit (events.js:314:20)
@@ -34,7 +34,7 @@ npm manifest:
     "main": "index.js",
     "scripts": {
       "start": "webpack --watch",
-      "build": "webpack --production",
+      "build": "webpack",
       "serve": "webpack serve"
     },
     "author": "",

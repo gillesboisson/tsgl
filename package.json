@@ -37,6 +37,7 @@
     "gl-matrix": "^2.4.1",
     "prettier": "^2.1.2",
     "raw-loader": "^4.0.1",
-    "spectorjs": "^0.9.17"
+    "spectorjs": "^0.9.17",
+    "spritesheet-js": "^1.2.6"
   }
 }

@@ -1,6 +1,7 @@
 import { Camera2D } from '../tsgl/2d/Camera2D';
 import { SpriteBatch } from '../tsgl/2d/SpriteBatch';
 import { SpriteLayer } from '../tsgl/2d/Stage2D';
+import { Camera } from '../tsgl/3d/Camera';
 import { Juggler } from '../tsgl/animation/Juggler';
 import { GLRenderer, GLRendererType } from '../tsgl/gl/core/GLRenderer';
 import { GLSupport } from '../tsgl/gl/core/GLSupport';
@@ -16,7 +17,7 @@ export abstract class Base2DApp {
   protected _juggler: Juggler;
   private __refresh: () => void;
   protected _active: boolean;
-  protected _cam: Camera2D;
+  protected _cam: Camera;
 
   constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement) {
     const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL));
@@ -57,7 +58,7 @@ export abstract class Base2DApp {
   get active(): boolean {
     return this._active;
   }
-  get cam(): Camera2D {
+  get cam(): Camera {
     return this._cam;
   }
 

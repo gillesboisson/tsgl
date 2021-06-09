@@ -20,7 +20,7 @@ import { b2RopeDef } from './box2d/rope/b2_rope';
 import { rotToVec2Normal } from './math';
 import { RubeBody, RubeCustomProperty, RubeFixture, RubeJoint, RubeWorld } from './rube';
 
-type ImageData = {
+export type ImageData = {
   name?: string;
   filename: string;
   file: string;
@@ -405,7 +405,7 @@ class RUBELoader {
     return joint;
   };
 
-  parseWorld(obj: RubeWorld, world: b2World) {
+  parseWorld(obj: RubeWorld, world: b2World): RubeParameters {
     // var bl, body, f, i, img, imgs, jl, joint, params, bodyData;
     const params = new RubeParameters();
     params.world = world = world || new b2World(new b2Vec2(0, 0));
