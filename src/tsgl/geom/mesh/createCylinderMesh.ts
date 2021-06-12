@@ -16,21 +16,7 @@ export function createCylinderMesh(
   thetaStart = 0,
   thetaLength = Math.PI * 2,
 ): GLMesh {
-  // this.type = 'CylinderGeometry';
-
-  // this.parameters = {
-  // 	radiusTop: radiusTop,
-  // 	radiusBottom: radiusBottom,
-  // 	height: height,
-  // 	radialSegments: radialSegments,
-  // 	heightSegments: heightSegments,
-  // 	openEnded: openEnded,
-  // 	thetaStart: thetaStart,
-  // 	thetaLength: thetaLength
-  // };
-
-  // const scope = this;
-
+  
   radialSegments = Math.floor(radialSegments);
   heightSegments = Math.floor(heightSegments);
 
@@ -56,13 +42,6 @@ export function createCylinderMesh(
     if (radiusTop > 0) generateCap(true);
     if (radiusBottom > 0) generateCap(false);
   }
-
-  // build geometry
-
-  // this.setIndex( indices );
-  // this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-  // this.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-  // this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
   function generateTorso() {
     const normal = vec3.create();
@@ -140,13 +119,6 @@ export function createCylinderMesh(
       }
     }
 
-    // add a group to the geometry. this will ensure multi material support
-
-    //scope.addGroup(groupStart, groupCount, 0);
-
-    // calculate new start value for groups
-
-    // groupStart += groupCount;
   }
 
   function generateCap(top: boolean) {
@@ -237,12 +209,7 @@ export function createCylinderMesh(
     }
 
     // add a group to the geometry. this will ensure multi material support
-
-    //scope.addGroup(groupStart, groupCount, top === true ? 1 : 2);
-
-    // calculate new start value for groups
-
-    // groupStart += groupCount;
+    
   }
 
   const positionsB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(vertices));

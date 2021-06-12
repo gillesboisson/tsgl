@@ -23,6 +23,8 @@ import { VertexColorShaderState } from './tsgl/shaders/VertexColorShader';
 import {
   WireframeBatch,
 } from './tsgl/3d/helpers/WireframeBatch';
+import { createBoxMesh } from './tsgl/geom/mesh/createBoxMesh';
+import { createCylinderMesh } from './tsgl/geom/mesh/createCylinderMesh';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -99,7 +101,8 @@ class TestApp extends Base3DApp {
 
     this._sceneRenderables = new SceneInstance3D();
 
-    const mesh = createSphereMesh(this.renderer.gl, 0.5, 32, 32);
+    // const mesh = createSphereMesh(this.renderer.gl, 0.5, 32, 32);
+    const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 1,16);
 
     const sphere = new MeshNode(sphereMat, mesh);
 

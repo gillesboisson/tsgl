@@ -30,13 +30,7 @@ export const cubeSquarePatronUv: CubeMeshUvDefinition = [
   { left: 1 / 4, right: 2 / 4, top: 3 / 4, bottom: 2 / 4 },
   { left: 1 / 4, right: 2 / 4, top: 2 / 4, bottom: 1 / 4 },
   { left: 3 / 4, right: 4 / 4, top: 2 / 4, bottom: 1 / 4 },
-
-
-
-  
 ];
-
-
 
 export const defaultCubeUvDefinition: CubeMeshUvDefinition = [
   { left: 0, right: 1, top: 1, bottom: 0 },
@@ -45,7 +39,7 @@ export const defaultCubeUvDefinition: CubeMeshUvDefinition = [
   { left: 0, right: 1, top: 1, bottom: 0 },
   { left: 0, right: 1, top: 1, bottom: 0 },
   { left: 0, right: 1, top: 1, bottom: 0 },
-]
+];
 
 export function createBoxMesh(
   gl: AnyWebRenderingGLContext,
@@ -57,23 +51,6 @@ export function createBoxMesh(
   depthSegments = 1,
   uvDefinition: CubeMeshUvDefinition = defaultCubeUvDefinition,
 ): GLMesh {
-  // super();
-
-  // this.type = 'BoxGeometry';
-
-  // this.parameters = {
-  // 	width: width,
-  // 	height: height,
-  // 	depth: depth,
-  // 	widthSegments: widthSegments,
-  // 	heightSegments: heightSegments,
-  // 	depthSegments: depthSegments
-  // };
-
-  // const scope = this;
-
-  // segments
-
   widthSegments = Math.floor(widthSegments);
   heightSegments = Math.floor(heightSegments);
   depthSegments = Math.floor(depthSegments);
@@ -88,10 +65,8 @@ export function createBoxMesh(
   // helper variables
 
   let numberOfVertices = 0;
-  // let groupStart = 0;
 
   // build each side of the box geometry
-
   buildPlane(2, 1, 0, -1, -1, depth, height, width, depthSegments, heightSegments, 0); // px
   buildPlane(2, 1, 0, 1, -1, depth, height, -width, depthSegments, heightSegments, 1); // nx
   buildPlane(0, 2, 1, 1, 1, width, depth, height, widthSegments, depthSegments, 2); // py
@@ -100,11 +75,6 @@ export function createBoxMesh(
   buildPlane(0, 1, 2, -1, -1, width, height, -depth, widthSegments, heightSegments, 5); // nz
 
   // build geometry
-
-  // this.setIndex( indices );
-  // this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-  // this.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-  // this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
   function buildPlane(
     u: number,
@@ -200,17 +170,7 @@ export function createBoxMesh(
         // groupCount += 6;
       }
     }
-
-    // add a group to the geometry. this will ensure multi material support
-
-    // scope.addGroup( groupStart, groupCount, materialIndex );
-
-    // calculate new start value for groups
-
-    // groupStart += groupCount;
-
-    // update total number of vertices
-
+    
     numberOfVertices += vertexCounter;
   }
 
