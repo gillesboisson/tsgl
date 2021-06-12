@@ -138,22 +138,14 @@ class QuadBox implements WireframeBatchRenderable, IWireframeBatchPullable {
 class TestApp extends Base3DApp {
   meshVao: GLVao;
   cubeTransform: Transform3D;
-  private _corsetNode: GLTFNode;
+  private _modelNode: GLTFNode;
   private _modelSpaceFramebuffer: GLFramebuffer;
 
   private _camController: FirstPersonCameraController;
-  private _cubeMap: IGLTexture;
   fb: GLFramebuffer;
   vps: GLViewportStack;
-  private _flatMat: TestFlatMaterial;
-  // private _irradianceHelper: IrradianceHelper;
   private _skybox: MeshNode;
-  private _ppTomsNormal: PlaneSpaceToModelSpaceNormalShaderState;
-  private _sphere: MeshNode;
   private _sceneRenderables: SceneInstance3D;
-  private _lcam: Camera<CameraLookAtTransform3D>;
-  private _quad: GLMesh;
-  private _quadSS: BasicTextureShaderState;
   private _shadowMap: ShadowMap;
   private _shadowMat: ShadowOnlyMaterial;
   wireframes: WireframeBatch;
@@ -197,37 +189,13 @@ class TestApp extends Base3DApp {
 
     const brdfLut = await loadTexture2D(gl, './images/lut_test_2.png');
 
-    this.wireframes = new WireframeBatch(this.renderer.gl);
-    this.wireframesSS = this.renderer.getShader<VertexColorShaderState>('vertex_color').createState();
-
-    // .then((response) => response.blob())
-    // .then((blob) => createImageBitmap(blob))
-    // .then((image) => createImageTextureWithLinearFilter(gl as WebGL2RenderingContext, image))
-    // .then((itexture) => new GLTexture({ gl, texture: itexture.texture }, gl.TEXTURE_2D));
-
-    this.wfs = [new QuadBox(), new QuadBox(), new QuadBox()];
-
-    vec3.set(this.wfs[1].position, 2, 2, 0);
-    vec3.set(this.wfs[2].position, 0, 2, 2);
-
-    vec4.set(this.wfs[0].color, 1, 0, 0, 1);
-    vec4.set(this.wfs[1].color, 0, 1, 0, 1);
-    vec4.set(this.wfs[2].color, 0, 0, 1, 1);
-
     PbrVShader.register(renderer, brdfLut);
 
     // load scene;
 
     await this.loadScene();
 
-    this._lcam = new Camera(CameraLookAtTransform3D).setPerspective(
-      70,
-      this.renderer.width / this.renderer.height,
-      0.1,
-      100,
-    );
-    this._lcam.transform.setPosition(0, 0, 2);
-    // this._lcam.transform.setTargetPosition(0,0,0);
+   
     this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
   }
 
@@ -284,7 +252,7 @@ class TestApp extends Base3DApp {
       reflectanceMap: hdrIbl.reflectance.cubemap,
     });
 
-    const corsetMesh = createMesh(
+    const mainMesh = createMesh(
       this.renderer,
       gltfData.meshes[0],
       gltfData.accessors,
@@ -292,9 +260,6 @@ class TestApp extends Base3DApp {
       glBuffers,
       matFactory,
     );
-    const corsetNormalMap = textures[2];
-    const corsetPbrMap = textures[1];
-    const corsetdiffuseMap = textures[0];
 
     this._shadowMap = new ShadowMap(this.renderer, 1024, 1024, 10, 0.001, 30);
     this._shadowMap.setPosition(2, 2, 2);
@@ -315,12 +280,11 @@ class TestApp extends Base3DApp {
     );
 
     pbrMat.shadowMap = this._shadowMap;
-
     pbrMat.setGammaExposure(1.3, 1.0);
 
-    this._corsetNode = new GLTFNode(corsetMesh, gltfData.nodes[0]);
-    this._corsetNode.transform.setScale(20);
-    this._corsetNode.transform.setPosition(0, -0.5, 0);
+    this._modelNode = new GLTFNode(mainMesh, gltfData.nodes[0]);
+    this._modelNode.transform.setScale(20);
+    this._modelNode.transform.setPosition(0, -0.5, 0);
 
     this._skybox = new MeshNode(
       new SkyboxMaterial(this.renderer, hdrIbl.baseCubemap.cubemap),
@@ -328,11 +292,6 @@ class TestApp extends Base3DApp {
     );
 
     this._skybox.transform.setScale(50);
-
-    // phongBlinnMaterial.irradianceMap = this._irradianceHelper.framebufferTexture;
-
-    this._quad = createQuadMesh(gl);
-    this._quadSS = this.renderer.getShader(BasicTextureShaderID).createState() as BasicTextureShaderState;
 
     const cubeMesh = createBoxMesh(gl, 1, 1, 1, 3, 3, 3, cubeSquarePatronUv);
     const sphereMat = new PbrMaterial(
@@ -346,10 +305,6 @@ class TestApp extends Base3DApp {
     sphereMat.metallic = 0.3;
 
     sphereMat.shadowMap = this._shadowMap;
-    // sphereMat.diffuseMap = hdrIbl.lut.lookupTexture;
-    // sphereMat.irradianceMap = this._irradianceHelper.framebufferTexture;
-    // this._sphere = new MeshNode(sphereMat, cubeMesh);
-    // this._sphere.transform.translate(0.5, 1, 1);
 
     const planeMesh = createPlaneMesh(gl);
     const plane = new MeshNode(sphereMat, planeMesh);
@@ -360,37 +315,11 @@ class TestApp extends Base3DApp {
 
     this._sceneRenderables = new SceneInstance3D();
 
-    // this._shadowCam.transform.setPosition(-10,-10,-10);
-    // quat.rotationTo(this._shadowCam.transform.getRawRotation(), this._sphere.transform.getRawPosition(), this._shadowCam.transform.getRawPosition());
-
-    [plane, this._corsetNode, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
-    // [this._skybox, this._sphere, this._corsetNode, plane].forEach((node) => this._sceneRenderables.addChild(node));
-    // [plane, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
+    [plane, this._modelNode, this._skybox].forEach((node) => this._sceneRenderables.addChild(node));
 
     const step = 10;
     const mesh = createSphereMesh(this.renderer.gl, 0.5, 32, 32);
-    // for (let i = 0; i <= step; i++) {
-    //   for (let f = 0; f <= step; f++) {
-    //     // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
 
-    //     const pbrMat = new SimplePBRMaterial(this.renderer, light,  hdrIbl.irradiance.cubemap, hdrIbl.reflectance.cubemap);
-
-    //     pbrMat.brdfLUT = testLut;
-
-    //     vec3.set(pbrMat.color,0,0,0);
-
-    //     pbrMat.metallic = f / step;
-    //     pbrMat.roughness = i / step * 0.99;
-
-    //     const pbrSphere = new MeshNode(pbrMat, mesh);
-    //     // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
-
-    //     pbrSphere.transform.translate(i + 1.0, f * 3.0, 0);
-
-    //     this._sceneRenderables.addChild(pbrSphere);
-    //   }
-    // }
-    // return;
     for (let i = 0; i <= step; i++) {
       for (let f = 0; f <= step; f++) {
         // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
@@ -424,22 +353,10 @@ class TestApp extends Base3DApp {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(time: number, elapsedTime: number): void {
     this._camController.update(elapsedTime);
-    //
-    this._corsetNode.transform.rotateEuler(0, elapsedTime * 0.0002, 0);
+    
+    this._modelNode.transform.rotateEuler(0, elapsedTime * 0.0002, 0);
 
-    // const camQuat = this._cam.transform.getRawRotation();
-
-    // // console.log('camQuat',camQuat);
-    // const diff = vec3.create();
-
-    // vec3.normalize(diff, this._cam.transform.getRawPosition());
-
-    // quat.rotationTo(camQuat,vec3.fromValues(0,0,-1), diff);
-
-    // this._cam.transform.rotationTo(vec3.create());
-    // this._lcam.transform.translate(0.01,0,0);
     this._cam.updateTransform();
-    this._lcam.updateTransform();
 
     this._shadowMap.updateTransform();
 
@@ -448,35 +365,14 @@ class TestApp extends Base3DApp {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   render(time: number, elapsedTime: number): void {
-    // this.stop();
+    const renderer = this.renderer;
+    const gl = this.renderer.gl;
 
-
-    // const renderer = this.renderer;
-    // const gl = this.renderer.gl;
-
-    // this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
-
-    // this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
-
-    this.wireframes.begin(this.wireframesSS, this._cam);
-    this.wfs.forEach((quad) => quad.draw(this.wireframes));
-    this.wireframes.end();
-
-    // this._quadSS.use();
-    // this._shadowMap.depthTexture.active(0);
-    // // mat4.identity(this._quadSS.mvp);
-    // this._quadSS.syncUniforms();
-    // this._quad.draw();
-    // this._shadowFB.colorTexture.unbind();
+    this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
+    this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
   }
 
   renderElement(renderable: IRenderableInstance3D) {
-    // renderable.render(this._renderer.gl, this._shadowCam as any);
-    // this._shadowFB.unbind();
-    // this._shadowFB.colorTexture.active(0);
-    // mat4.identity(this._quadSS.mvp);
-    // this._quadSS.use();
-    // this._quadSS.syncUniforms();
-    // this._quad.draw();
+    
   }
 }
