@@ -13,7 +13,7 @@ export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> 
   protected _nodes: ASceneInstance<MatT, ITransform<MatT>>[] = [];
   protected _parent: ASceneInstance<MatT, ITransform<MatT>> = null;
 
-  getNodes<T extends ISceneInstance<MatT> = ASceneInstance<MatT, ITransform<MatT>>>():  T[]{
+  getNodes<T extends ISceneInstance<MatT> = ASceneInstance<MatT, ITransform<MatT>>>(): T[] {
     return this._nodes as any;
   }
 
@@ -22,18 +22,22 @@ export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> 
     this.transform = new TransformClass();
   }
 
-  addChild(node: ASceneInstance<MatT, ITransform<MatT>>): void {
-    if (this._nodes.indexOf(node) === -1) {
-      this._nodes.push(node);
-      node._parent = this;
+  addChild(...nodes: Array<ASceneInstance<MatT, ITransform<MatT>>>): void {
+    for (const node of nodes) {
+      if (this._nodes.indexOf(node) === -1) {
+        this._nodes.push(node);
+        node._parent = this;
+      }
     }
   }
 
-  removeChild(node: ASceneInstance<MatT, ITransform<MatT>>): void {
-    const ind = this._nodes.indexOf(node);
-    if (ind !== -1) {
-      this._nodes.splice(ind, 1);
-      node._parent = null;
+  removeChild(...nodes: Array<ASceneInstance<MatT, ITransform<MatT>>>): void {
+    for (const node of nodes) {
+      const ind = this._nodes.indexOf(node);
+      if (ind !== -1) {
+        this._nodes.splice(ind, 1);
+        node._parent = null;
+      }
     }
   }
 
