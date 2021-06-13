@@ -16,10 +16,18 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
   private _isWebGL2: any;
   private _frameBuffer: WebGLFramebuffer;
   private _textures: IGLTexture[];
-  private _depthTexture: IGLTexture;
+  private _depthTexture?: IGLTexture;
   private _depthRenderBuffer: WebGLFramebuffer;
   private _colorsAttachements: GLenum[];
   private _previousViewport: Int32Array = null;
+
+  get textures(): IGLTexture[] {
+    return this._textures;
+  }
+
+  get depthTexture(): IGLTexture {
+    return this._depthTexture;
+  }
 
   constructor(
     gl: AnyWebRenderingGLContext,
@@ -67,8 +75,8 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     if (this._isWebGL2) {
       // WEBGL 2 MRT
       const gl2 = gl as WebGL2RenderingContext;
-
-      gl2.renderbufferStorageMultisample(gl.RENDERBUFFER, this._nbLayers, gl2.RGBA8, this._width, this._height);
+      // gl2.bindRenderbuffer(gl.RENDERBUFFER, this._)
+      // gl2.renderbufferStorageMultisample(gl.RENDERBUFFER, this._nbLayers, gl2.RGBA8, this._width, this._height);
 
       for (let i = 0; i < this._nbLayers; i++) {
         this._colorsAttachements[i] = gl2.COLOR_ATTACHMENT0 + i;
@@ -107,16 +115,24 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
-        (gl as any).depthTextureExt !== undefined ? gl.DEPTH_COMPONENT : gl.DEPTH_COMPONENT16,
+        (gl as any).depthTextureExt !== undefined
+          ? gl.DEPTH_COMPONENT
+          : (gl as WebGL2RenderingContext).DEPTH_COMPONENT24,
         this._width,
         this._height,
         0,
         gl.DEPTH_COMPONENT,
-        gl.UNSIGNED_SHORT,
+        gl.UNSIGNED_INT,
         null,
       );
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this._depthTexture, 0);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this._depthTexture.texture, 0);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+
     }
 
     // setup depth render buffer
@@ -135,12 +151,10 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     const gl = this.gl;
 
     for (const t of this._textures) {
-      t.safeBind((t) => this.gl.texImage2D(t.target,0,gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,null));
+      t.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null));
     }
 
-
-    this._depthTexture.safeBind((t) => this.gl.texImage2D(t.target,0,gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,null));
-    
+    this._depthTexture.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, null));
 
     this.updateSettings();
   }
@@ -181,7 +195,7 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     for (const t of this._textures) {
       gl.deleteTexture(t.texture);
     }
-    if (this._depthTexture !== undefined) gl.deleteTexture(this._depthTexture.texture); 
+    if (this._depthTexture !== undefined) gl.deleteTexture(this._depthTexture.texture);
 
     if (this._depthRenderBuffer !== undefined) this.gl.deleteRenderbuffer(this._depthRenderBuffer);
   }
