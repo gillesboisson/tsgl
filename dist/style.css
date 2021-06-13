@@ -16,8 +16,9 @@ canvas {
   /* image-rendering: -webkit-crisp-edges; */
   image-rendering: pixelated;
   /* image-rendering: crisp-edges; */
-  transform: scale(1, 1);
+  transform: scale(2, 2);
   transform-origin: top left;
+  
 }
 
 *:focus {
