@@ -1,3 +1,4 @@
+#version 300 es
 precision mediump float;
 
 
@@ -6,56 +7,85 @@ float modI(float a,float b) {
     return floor(m+0.5);
 }
 
-vec3 blinnPhongCartoon(vec3 modelPosition,
- vec3 modelNormal,
- vec3 lightDir,
- vec3 lightColor,
- vec3 specularColor,
- float shadowIntensity,
-
- vec3 cameraPosition,
- float shininess){
-      
-      // calculate base vectors
-      vec3 viewDir    = normalize(modelPosition - cameraPosition);
-      vec3 halfwayDir = normalize(lightDir + viewDir);
-      
-      // diffuse
-
-      float diff = max(dot(modelNormal, lightDir), 0.0) * shadowIntensity;
-
-      float intensity = 3.0;
-
-      if(diff > 0.4){
-        intensity = 1.0;
-      }else if(diff > 0.1){
-        intensity = 2.0;
-      }
-
-
-      float lit = modI(gl_FragCoord.x,intensity) == 0.0 || modI(gl_FragCoord.y,intensity) == 0.0 ? 1.0 : 0.3;
-
-
-      vec3 diffuse = lightColor * lit;
-
-      // specular
-      float spec = max(pow(max(dot(modelNormal, halfwayDir), 0.0), shininess),0.0);
-      vec3 specular = specularColor * spec;
-
-
-      #ifndef DEBUG_LIGHT_DIFFUSE_SPEC
-      return specular + diffuse;
-      #endif
-
-      #ifdef DEBUG_LIGHT_DIFFUSE
-      return diffuse;
-      #endif
-
-      #ifdef DEBUG_LIGHT_SPECULAR
-      return specular;
-      #endif
-
+vec3 blinnPhongDiffuse(vec3 modelNormal,
+  vec3 lightDir,
+  vec3 lightColor)
+{
+  float diff = max(dot(modelNormal, lightDir), 0.0);
+  return vec3(diff);
 }
+
+vec3 blinnPhongSpec(vec3 modelPosition,vec3 modelNormal,
+ vec3 lightDir,
+ vec3 specularColor,
+ vec3 cameraPosition,
+ float shininess)
+{
+  // calculate base vectors
+  vec3 viewDir    = normalize(modelPosition - cameraPosition);
+  vec3 halfwayDir = normalize(lightDir + viewDir);
+
+  float spec = max(pow(max(dot(modelNormal, halfwayDir), 0.0), shininess),0.0);
+  return specularColor * spec;
+}
+
+
+// vec3 blinnPhongCartoon(vec3 modelPosition,
+//  vec3 modelNormal,
+//  vec3 lightDir,
+//  vec3 lightColor,
+//  vec3 specularColor,
+//  float shadowIntensity,
+
+//  vec3 cameraPosition,
+//  float shininess){
+      
+//       // calculate base vectors
+//       vec3 viewDir    = normalize(modelPosition - cameraPosition);
+//       vec3 halfwayDir = normalize(lightDir + viewDir);
+      
+//       // diffuse
+
+//       float diff = max(dot(modelNormal, lightDir), 0.0) * shadowIntensity;
+
+//       float intensity = 3.0;
+
+//        float lit;
+      
+//       //  float lit = modI(gl_FragCoord.x,intensity) == 0.0 || modI(gl_FragCoord.y,intensity) == 0.0 ? 1.0 : 0.3;
+//       if(diff > 0.4){
+//         lit = 1.0;
+//         intensity = 1.0;
+//       }else if(diff > 0.1){
+//         lit =  modI(gl_FragCoord.x,2.0) == 0.0 || modI(gl_FragCoord.y,2.0) == 0.0 ? 1.0 : 0.3;
+//       }else{
+//         lit =  modI(gl_FragCoord.x + gl_FragCoord.y,2.0) == 0.0 ? 1.0 : 0.3;
+//       }
+
+
+     
+
+
+//       vec3 diffuse = lightColor * lit;
+
+//       // specular
+//       float spec = max(pow(max(dot(modelNormal, halfwayDir), 0.0), shininess),0.0);
+//       vec3 specular = specularColor * spec;
+
+
+//       #ifndef DEBUG_LIGHT_DIFFUSE_SPEC
+//       return specular + diffuse;
+//       #endif
+
+//       #ifdef DEBUG_LIGHT_DIFFUSE
+//       return diffuse;
+//       #endif
+
+//       #ifdef DEBUG_LIGHT_SPECULAR
+//       return specular;
+//       #endif
+
+// }
 
 #ifdef NORMAL_TBN
 vec3 tbnMatToNormal(
@@ -119,7 +149,7 @@ float pcfShadow(in sampler2D shadowMap,float depth,in vec2 uv,in vec2 pixelSize,
   for(float i = SAMPLE_MIN; i <= SAMPLE_MAX ; i++){
     for(float f = SAMPLE_MIN; f <= SAMPLE_MAX ; f++){
 
-      vec4 shadowD = texture2D( shadowMap, uv + vec2(f * pixelSize.x / 2.0,i * pixelSize.y / 2.0)  );
+      vec4 shadowD = texture( shadowMap, uv + vec2(f * pixelSize.x / 2.0,i * pixelSize.y / 2.0)  );
       if ( shadowD.x  >=  depth - bias ){
        visibility += 1.0 / SAMPLE_FRAC;
       } 
@@ -163,12 +193,12 @@ uniform vec3 u_ambiantColor;
 uniform samplerCube u_irradianceMap;
 #endif
 
-varying vec3 v_position;
+in vec3 v_position;
 
-varying vec2 v_uv;
+in vec2 v_uv;
 
 #ifdef NORMAL_VERTEX
-varying vec3 v_normal;
+in vec3 v_normal;
 #endif
 
 #ifdef NORMAL_MAP
@@ -181,7 +211,7 @@ uniform mat4 u_normalMat;
 uniform sampler2D u_normalMap;
 uniform mat4 u_normalMat;
 
-varying mat3 v_TBN;
+in mat3 v_TBN;
 #endif
 
 // occlusion 
@@ -194,16 +224,22 @@ uniform sampler2D u_pbrMap;
 
 uniform sampler2D u_shadowMap;
 uniform vec2 u_shadowMapPixelSize;
-varying vec3 v_shadowCoord;
+in vec3 v_shadowCoord;
 
 #endif
+
+
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 Normal;
+layout (location = 2) out vec4 DiffuseColor;
+layout (location = 3) out vec4 SpecColor;
 
 
 void main(){
 
     // PBR extra map ------------------------------------------------------
     #ifdef OCCLUSION_PBR_SPEC_MAP
-    vec4 pbrMap =  texture2D(u_pbrMap,v_uv);
+    vec4 pbrMap =  texture(u_pbrMap,v_uv);
     #endif
    
     // normal mapping ------------------------------------------------------
@@ -216,7 +252,7 @@ void main(){
         (
           u_normalMat *
           vec4(
-            texture2D(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0),
+            texture(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0),
             1.0
           )
         ).xyz
@@ -225,7 +261,7 @@ void main(){
     #endif
 
     #ifdef NORMAL_TBN
-     vec3 normal = texture2D(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0);
+     vec3 normal = texture(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0);
      vec3 viewDir    = normalize(u_cameraPosition - v_position);
 
       normal = tbnMatToNormal(v_TBN, normal, viewDir);
@@ -255,13 +291,17 @@ void main(){
       float shadowIntensity = 1.0;
     #endif
 
-    vec3 color = blinnPhongCartoon(
+    vec3 diffuseColor = blinnPhongDiffuse(
+      normal,
+      u_lightDirection,
+      u_lightColor
+    );
+
+    vec3 specColor = blinnPhongSpec(
       v_position,
       normal,
       u_lightDirection,
-      u_lightColor,
       u_specularColor,
-      shadowIntensity,
       u_cameraPosition,
       u_lightShininess
     );
@@ -269,7 +309,7 @@ void main(){
     
     
     #ifdef DIFFUSE_MAP
-    vec4 diffuse = texture2D(u_diffuseMap,v_uv);
+    vec4 diffuse = texture(u_diffuseMap,v_uv);
     #endif
 
     #ifdef DIFFUSE_COLOR
@@ -278,31 +318,35 @@ void main(){
 
 
     #ifndef DEBUG
-    gl_FragColor = diffuse * (vec4(color,1.0)) * diffuse.a;
+    FragColor = diffuse;
+    DiffuseColor = vec4(diffuseColor * shadowIntensity,1.0);
+    SpecColor = vec4(specColor,1.0);
+    Normal = vec4(normal * 0.5 + 0.5,1.0);
+    // FragColor = diffuse * (vec4(color,1.0)) * diffuse.a;
     #endif
 
     #ifdef DEBUG_NORMAL
-    gl_FragColor = vec4( normal * 0.5 + 0.5 ,1.0);
+    FragColor = vec4( normal * 0.5 + 0.5 ,1.0);
     #endif
 
     #ifdef DEBUG_OCCLUSION
     #ifdef OCCLUSION_MAP
-    gl_FragColor = vec4(vec3(pbrMap.r),1.0);
+    FragColor = vec4(vec3(pbrMap.r),1.0);
     #endif
     #endif
 
     #ifdef DEBUG_SHADOW
     #ifdef SHADOW_MAP
-    gl_FragColor = vec4(texture2D(u_shadowMap,v_shadowCoord.xy).xxx,1.0);
+    FragColor = vec4(texture(u_shadowMap,v_shadowCoord.xy).xxx,1.0);
     #endif
     #endif
 
 
     #ifdef DEBUG_LIGHT_DIFFUSE_SPEC
-    gl_FragColor = vec4(color,1.0);
+    FragColor = vec4(color,1.0);
     #endif
 
     #ifdef DEBUG_LIGHT_AMBIANT
-    gl_FragColor = vec4(ambiantColor,1.0);
+    FragColor = vec4(ambiantColor,1.0);
     #endif
 }

@@ -1,5 +1,5 @@
+#version 300 es
 precision mediump float;
-
 
 
 #ifdef NORMAL_TBN
@@ -26,8 +26,8 @@ precision mediump float;
 
 
 
-attribute vec3 a_position;
-attribute vec2 a_uv;
+in vec3 a_position;
+in vec2 a_uv;
 
 
 uniform mat4 u_mvpMat;
@@ -35,26 +35,26 @@ uniform mat4 u_mvpMat;
 uniform mat4 u_modelMat;
 
 
-varying vec2 v_uv;
-varying vec3 v_position;
+out vec2 v_uv;
+out vec3 v_position;
 
 #ifdef NORMAL_VERTEX
-attribute vec3 a_normal;
+in vec3 a_normal;
 uniform mat4 u_normalMat;
-varying vec3 v_normal;
+out vec3 v_normal;
 #endif
 
 #ifdef NORMAL_TBN
-attribute vec3 a_normal;
-attribute vec4 a_tangent;
+in vec3 a_normal;
+in vec4 a_tangent;
 uniform mat4 u_normalMat;
 
-varying mat3 v_TBN;
+out mat3 v_TBN;
 
 #endif
 
 #ifdef SHADOW_MAP
-varying vec3 v_shadowCoord;
+out vec3 v_shadowCoord;
 uniform mat4 u_depthBiasMvpMat;
 #endif
 

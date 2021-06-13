@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { vec3 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
 import { IRenderableInstance3D } from './tsgl/3d/IRenderableInstance3D';
@@ -25,6 +25,13 @@ import { createBoxMesh } from './tsgl/geom/mesh/createBoxMesh';
 import { createCylinderMesh } from './tsgl/geom/mesh/createCylinderMesh';
 import { PhongBlinnCartoonVShader } from './app/shaders/PhongBlinnCartoonVShader';
 import { PhongBlinnCartoonMaterial } from './app/materials/PhongBlinnCartoonMaterial';
+import { GLMRTFrameBuffer } from './tsgl/gl/core/framebuffer/GLMRTFrameBuffer';
+import { CartoonPassShader, CartoonPassShaderState } from './app/shaders/CartoonPassShader';
+import { createQuadMesh } from './tsgl/geom/mesh/createQuadMesh';
+import { CartoonPassMaterial } from './app/materials/CartoonPassMaterial';
+import { Camera } from './tsgl/3d/Camera';
+import { ProcessPass } from './tsgl/helpers/postprocess/PostProcessPass';
+import { GLDefaultTextureLocation } from './tsgl/gl/core/data/GLDefaultAttributesLocation';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -43,6 +50,13 @@ class TestApp extends Base3DApp {
   private _shadowMap: ShadowMap;
   wireframes: WireframeBatch;
   wireframesSS: VertexColorShaderState;
+  private _mrt: GLMRTFrameBuffer;
+  private _postProcessingQuad: import('/home/gillesboisson/Projects/sandbox/TsGL2D/src/tsgl/gl/core/data/GLMesh').GLMesh;
+  private _postProcessingMat: CartoonPassMaterial;
+  private _postProcessingCam = Camera.createOrtho(-1, 1, -1, 1, 0.001, 1);
+  private _postProcessingTransform = mat4.create();
+  private _processPass: ProcessPass<CartoonPassShaderState>;
+
   constructor() {
     super(GLRendererType.WebGL2, { antialias: false });
     this.cubeTransform = new Transform3D();
@@ -55,6 +69,7 @@ class TestApp extends Base3DApp {
   protected async prepare(renderer: WebGL2Renderer, gl: WebGL2RenderingContext): Promise<void> {
     PhongBlinnCartoonVShader.register(renderer);
     DepthOnlyShader.register(renderer);
+    CartoonPassShader.register(renderer);
 
     const brdfLut = await loadTexture2D(gl, './images/lut_test_2.png');
 
@@ -62,8 +77,11 @@ class TestApp extends Base3DApp {
 
     // load scene;
 
+    this.renderer.resize(this.renderer.width / 3, this.renderer.height / 3);
+    this._mrt = new GLMRTFrameBuffer(this.renderer.gl, this.renderer.width, this.renderer.height, 4, true);
+
     await this.loadScene();
-    this.renderer.resize(512, 440);
+    // this.renderer.resize(320, 240);
 
     const hWidth = 10;
     const hHeight = (hWidth * this.renderer.canvas.height) / this.renderer.canvas.width;
@@ -73,6 +91,29 @@ class TestApp extends Base3DApp {
     this._cam.transform.rotateAroundAxes(vec3.fromValues(1, 0, 0), -Math.PI / 4);
 
     this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
+
+    this._processPass = ProcessPass.createFromMRTFrameBuffer(
+      this.renderer,
+      this._mrt,
+      [
+        GLDefaultTextureLocation.COLOR,
+        GLDefaultTextureLocation.NORMAL,
+        GLDefaultTextureLocation.LIGHT_DIFFUSE,
+        GLDefaultTextureLocation.LIGHT_SPEC,
+      ],
+      renderer.getShader('cartoon_pass') as CartoonPassShader,
+    );
+
+    this._processPass.shaderState.resize(this.renderer.width, this.renderer.height);
+
+    // this._postProcessingQuad = createQuadMesh(this.renderer.gl);
+    // this._postProcessingMat = new CartoonPassMaterial(
+    //   this._mrt.textures[0],
+    //   this._mrt.textures[1],
+    //   this._mrt.textures[2],
+    //   this._mrt.textures[3],
+    //   this._mrt.depthTexture,
+    // );
   }
 
   ready() {
@@ -109,8 +150,8 @@ class TestApp extends Base3DApp {
 
     this._sceneRenderables = new SceneInstance3D();
 
-    const mesh = createSphereMesh(this.renderer.gl, 2, 32, 32);
-    // const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 1, 16);
+    // const mesh = createSphereMesh(this.renderer.gl, 2, 32, 32);
+    const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 1, 16);
 
     const sphere = new MeshNode(sphereMat, mesh);
     const sphere2 = new MeshNode(sphereMat, mesh);
@@ -137,7 +178,26 @@ class TestApp extends Base3DApp {
     const gl = this.renderer.gl;
 
     this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
+
+    this._mrt.bind();
+    this.renderer.clear();
     this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
+
+    this._mrt.unbind();
+
+    this._processPass.render(gl);
+
+    // TODO: make a post processing pass system
+
+    // this._postProcessingMat.renderVao(
+    //   gl,
+    //   this._postProcessingCam,
+    //   this._postProcessingTransform,
+    //   this._postProcessingQuad.vao,
+    //   4,
+    //   this._postProcessingQuad.glType,
+    //   gl.TRIANGLES,
+    // );
   }
 
   renderElement(renderable: IRenderableInstance3D) {}

@@ -93,11 +93,19 @@ export enum GLDefaultTextureLocation {
   POST_PROCESS_2 = 22,
   POST_PROCESS_3 = 23,
   POST_PROCESS_4 = 24,
+
+  // deferred map (post processing)
+  LIGHT_DIFFUSE = 40,
+  LIGHT_SPEC = 41,
+  LIGHT_SHADOW = 42,
 }
 
 const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
   u_texture: GLDefaultTextureLocation.COLOR,
-  u_diffuseMap: GLDefaultTextureLocation.COLOR,
+  u_depthMap: GLDefaultTextureLocation.DEPTH,
+  u_lightSpecMap: GLDefaultTextureLocation.LIGHT_SPEC,
+  u_lightDiffuseMap: GLDefaultTextureLocation.LIGHT_DIFFUSE,
+  u_lightShadowMap: GLDefaultTextureLocation.LIGHT_SHADOW,
   u_normalMap: GLDefaultTextureLocation.NORMAL,
   u_skyboxMap: GLDefaultTextureLocation.SKYBOX,
   u_pbrMap: GLDefaultTextureLocation.PBR_0,

@@ -47,6 +47,7 @@ export class GLShaderVariantDeclinaison {
       this._shader.programBuilt(this,this._program);
       // console.log(this._slug, this._uniformsLocations);
     } catch (e) {
+      console.error('Shader variant error',this._slug, e.message);
       throw new Error('Shader variant init failed for ' + this._slug + ' : ' + e.message);
     }
   }
