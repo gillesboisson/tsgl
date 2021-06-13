@@ -6,7 +6,7 @@ import { GLSupport } from '../tsgl/gl/core/GLSupport';
 
 export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebGL2RenderingContext> {
   readonly renderer: GLRenderer<ContextT>;
-  readonly canvas : HTMLCanvasElement;
+  readonly canvas: HTMLCanvasElement;
   protected _t0: number;
   protected _t: number;
   protected _juggler: Juggler;
@@ -14,11 +14,12 @@ export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebG
   protected _active: boolean;
   protected _cam: Camera;
 
-  constructor(readonly rendererType = GLRendererType.WebGL) {
+  protected webGLOptions: any = {};
 
+  constructor(readonly rendererType = GLRendererType.WebGL, webGLOptions?: any) {
     this.canvas = this.getCanvas();
-    const renderer = this.renderer = this.createRenderer(this.canvas);
-    
+    const renderer = (this.renderer = this.createRenderer(this.canvas, webGLOptions));
+
     const gl = renderer.gl;
 
     this._cam = Camera.createPerspective(70, renderer.width / renderer.height, 0.001, 100);
@@ -30,28 +31,22 @@ export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebG
     this.prepare(renderer, gl).then(() => this.ready(renderer, gl));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected async prepare(renderer: GLRenderer<ContextT>, gl: ContextT): Promise<void> {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected async prepare( renderer: GLRenderer<ContextT>, gl: ContextT): Promise<void>{}
+  protected ready(renderer: GLRenderer<ContextT>, gl: ContextT): void {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected ready( renderer: GLRenderer<ContextT>, gl: ContextT): void {
-
-  }
-
-  protected getCanvas(): HTMLCanvasElement{
+  protected getCanvas(): HTMLCanvasElement {
     return document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
   }
 
-  protected createRenderer(canvas: HTMLCanvasElement): GLRenderer<ContextT>{
-    return GLRenderer.createFromCanvas(canvas, this.rendererType) as GLRenderer<ContextT>;
+  protected createRenderer(canvas: HTMLCanvasElement, webGLOptions?: any): GLRenderer<ContextT> {
+    return GLRenderer.createFromCanvas(canvas, this.rendererType, webGLOptions) as GLRenderer<ContextT>;
   }
 
-  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected registerShader(gl: WebGL2RenderingContext, renderer: GLRenderer): void {}
-
- 
 
   // get renderer(): GLRenderer {
   //   return this._renderer;

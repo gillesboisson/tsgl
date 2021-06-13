@@ -48,6 +48,14 @@ export class GLViewportStack {
     if (state.viewportBinded !== undefined) state.viewportBinded(gl);
   }
 
+  resizeMainState(width: number, height: number): void {
+    this._mainViewportState.width = width;
+    this._mainViewportState.height = height;
+    if (this.currentState === this._mainViewportState) {
+      this._gl.viewport(0, 0, width, height);
+    }
+  }
+
   reset(): void {
     this._stack.forEach((s) => {
       if (s.viewportUnbinded !== undefined) s.viewportUnbinded(this._gl);
@@ -62,7 +70,7 @@ export class GLViewportStack {
   }
 
   changeState(state: GLViewportState): void {
-    if (this._stack.length === 0) throw new Error("changeState : Main viewport state can't be replaced");
+    if (this._stack.length === 0) throw new Error('changeState : Main viewport state can\'t be replaced');
     this.changeCurrentState(state);
     this._stack[this._stack.length - 1] = state;
   }

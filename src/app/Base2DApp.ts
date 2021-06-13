@@ -18,10 +18,9 @@ export abstract class Base2DApp {
   protected _active: boolean;
   protected _cam: Camera2D;
 
-  constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement) {
-    const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL));
+  constructor(canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement, webGLOptions?: any) {
+    const renderer = (this._renderer = GLRenderer.createFromCanvas(canvas, GLRendererType.WebGL, webGLOptions));
     GLSupport.VAOSupport(this._renderer.gl, true, true);
-   
 
     const gl = GLSupport.VAOSupport(this._renderer.gl, true, true);
 

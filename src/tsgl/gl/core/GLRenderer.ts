@@ -11,9 +11,14 @@ export enum GLRendererType {
   WebGL2,
 }
 
-export type WebGL2Renderer = GLRenderer<WebGL2RenderingContext>; 
-export type WebGL1Renderer = GLRenderer<WebGLRenderingContext>; 
-export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> extends GLCore<GLContext> {
+export type WebGL2Renderer = GLRenderer<WebGL2RenderingContext>;
+export type WebGL1Renderer = GLRenderer<WebGLRenderingContext>;
+export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> extends GLCore<
+  GLContext
+> {
+  
+
+
   protected _shaders: { [key: string]: IShaderCreateState<IGLShaderState> } = {};
   protected _shadersFactories: {
     [key: string]: (gl: GLContext, name: string) => IShaderCreateState<IGLShaderState>;
@@ -27,6 +32,7 @@ export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRende
   public registerShaderFactory(factory: IShaderRegisterer): void {
     factory.register(this);
   }
+
 
   public registerShaderFactoryFunction(
     name: string,
@@ -44,7 +50,9 @@ export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRende
     if (this._shaders[name] === undefined) {
       if (this._shadersFactories[name] === undefined) throw new Error(`Shader ${name} not found`);
 
-      this._shaders[name] = shader = this._shadersFactories[name](this.gl as GLContext, name) as IShaderCreateState<ShaderStateT>;
+      this._shaders[name] = shader = this._shadersFactories[name](this.gl as GLContext, name) as IShaderCreateState<
+        ShaderStateT
+      >;
     } else {
       shader = this._shaders[name] as IShaderCreateState<ShaderStateT>;
     }
@@ -68,9 +76,11 @@ export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRende
   static createFromCanvas(
     canvas: HTMLCanvasElement,
     type: GLRendererType = GLRendererType.WebGL,
+    webGLOptions: any = {},
+
     rendererClass: any = GLRenderer,
   ): GLRenderer {
-    const gl = canvas.getContext(type === GLRendererType.WebGL ? 'webgl' : 'webgl2');
+    const gl = canvas.getContext(type === GLRendererType.WebGL ? 'webgl' : 'webgl2', webGLOptions);
     return new rendererClass(gl, type, canvas) as GLRenderer;
   }
 
@@ -78,12 +88,15 @@ export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRende
     width: number,
     height: number,
     type: GLRendererType = GLRendererType.WebGL,
+    webGLOptions: any = {},
+
     rendererClass: any = GLRenderer,
+
   ): GLRenderer {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    return this.createFromCanvas(canvas, type, rendererClass);
+    return this.createFromCanvas(canvas, type, rendererClass, webGLOptions);
   }
 
   private _width: number;
@@ -116,6 +129,16 @@ export class GLRenderer<GLContext extends AnyWebRenderingGLContext = AnyWebRende
   set clearColor(clearColor: vec4) {
     vec4.copy(this._clearColor, clearColor);
     this.gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+  }
+
+  resize(width: number, height: number): void {
+    this._width = width;
+    this._height = height;
+
+    this.canvas.width = width;
+    this.canvas.height = height;
+
+    this._viewportStack.resizeMainState(width, height);
   }
 
   setup(): void {
