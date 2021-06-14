@@ -13,7 +13,7 @@ import { GLVao } from './tsgl/gl/core/data/GLVao';
 import { GLFramebuffer } from './tsgl/gl/core/framebuffer/GLFramebuffer';
 import { GLViewportStack } from './tsgl/gl/core/framebuffer/GLViewportState';
 import { GLRendererType, WebGL2Renderer } from './tsgl/gl/core/GLRenderer';
-import { FirstPersonCameraController } from './tsgl/input/CameraController';
+import { TopDownCameraController } from "./tsgl/input/TopDownCameraController";
 import { DepthOnlyShader } from './tsgl/shaders/DepthOnlyShader';
 import { PhongBlinnVShader } from './tsgl/shaders/PhongBlinnVShader';
 
@@ -43,7 +43,7 @@ class TestApp extends Base3DApp {
   // private _modelNode: GLTFNode;
   private _modelSpaceFramebuffer: GLFramebuffer;
 
-  private _camController: FirstPersonCameraController;
+  private _camController: TopDownCameraController;
   fb: GLFramebuffer;
   vps: GLViewportStack;
   private _sceneRenderables: SceneInstance3D;
@@ -90,7 +90,7 @@ class TestApp extends Base3DApp {
 
     this._cam.transform.rotateAroundAxes(vec3.fromValues(1, 0, 0), -Math.PI / 4);
 
-    this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
+    this._camController = new TopDownCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
 
     this._processPass = ProcessPass.createFromMRTFrameBuffer(
       this.renderer,

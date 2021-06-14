@@ -1,11 +1,9 @@
 import { vec3 } from 'gl-matrix';
 import { Camera } from '../3d/Camera';
 
-const __tempVec31 = vec3.create();
-// const __tempVec32 = vec3.create();
-// const __tempVec33 = vec3.create();
+export const __tempVec31 = vec3.create();
 
-export class FirstPersonCameraController {
+export class TopDownCameraController {
   private __mouseMoveHandler: (e: MouseEvent) => void;
   private __mouseUpHandler: (e: MouseEvent) => void;
   private __keyUpHandler: (e: KeyboardEvent) => void;
@@ -44,7 +42,7 @@ export class FirstPersonCameraController {
     readonly cam: Camera,
     readonly dom: HTMLElement,
     readonly translationSpeed: number,
-    readonly rotationSpeed: number,
+    readonly rotationSpeed: number
   ) {
     this.__mouseMoveHandler = (e: MouseEvent) => this.onMouseMove(e);
     this.__mouseDownHandler = (e: MouseEvent) => this.onMouseDown(e);
@@ -63,9 +61,9 @@ export class FirstPersonCameraController {
 
   drag(clientX: number, clientY: number): void {
     const { x, y } = this.inputState.mouse;
-    
-    this._mouseXOffset+=clientX - x;
-    this._mouseYOffset+=clientY - y;
+
+    this._mouseXOffset += clientX - x;
+    this._mouseYOffset += clientY - y;
 
     this.inputState.mouse.x = clientX;
     this.inputState.mouse.y = clientY;
@@ -73,27 +71,27 @@ export class FirstPersonCameraController {
 
   onKeyUpdate(e: KeyboardEvent, state: boolean): void {
     switch (e.code) {
-        case 'KeyQ':
-          this._orientationVec[1] = state ? -1 : 0;
-          break;
-        case 'KeyE':
-          this._orientationVec[1] = state ? 1 : 0;
+      case 'KeyQ':
+        this._orientationVec[2] = state ? 1 : 0;
+        break;
+      case 'KeyE':
+        this._orientationVec[2] = state ? -1 : 0;
 
-          break;
-        case 'KeyA':
-          this._orientationVec[0] = state ? -1 : 0;
-          break;
-        case 'KeyD':
-          this._orientationVec[0] = state ? 1 : 0;
+        break;
+      case 'KeyA':
+        this._orientationVec[0] = state ? -1 : 0;
+        break;
+      case 'KeyD':
+        this._orientationVec[0] = state ? 1 : 0;
 
-          break;
-        case 'KeyW':
-          this._orientationVec[2] = state ? -1 : 0;
-          break;
-        case 'KeyS':
-          this._orientationVec[2] = state ? 1 : 0;
+        break;
+      case 'KeyW':
+        this._orientationVec[1] = state ? 1 : 0;
+        break;
+      case 'KeyS':
+        this._orientationVec[1] = state ? -1 : 0;
 
-          break;
+        break;
     }
   }
   onMouseDown(e: MouseEvent): void {
@@ -120,11 +118,11 @@ export class FirstPersonCameraController {
       this.cam.transform.translate(
         __tempVec31[0] * this.translationSpeed,
         __tempVec31[1] * this.translationSpeed,
-        __tempVec31[2] * this.translationSpeed,
+        __tempVec31[2] * this.translationSpeed
       );
     }
 
-    if(this._mouseXOffset !== 0 || this._mouseYOffset !== 0){
+    if (this._mouseXOffset !== 0 || this._mouseYOffset !== 0) {
       this.cam.transform.rotateEuler(this._mouseYOffset * -this.rotationSpeed, this._mouseXOffset * -this.rotationSpeed, 0);
       this._mouseXOffset = this._mouseYOffset = 0;
     }
