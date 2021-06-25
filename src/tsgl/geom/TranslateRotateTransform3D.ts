@@ -2,7 +2,13 @@ import { mat4, quat, vec3 } from 'gl-matrix';
 import { ITransform } from '../gl/abstract/ITransform';
 import { IDENT_MAT4, __quat1, __lookAtBaseVec, __vec31 } from './Transform3D';
 
+export const unitVectorX = vec3.fromValues(1, 0, 0);
+export const unitVectorY = vec3.fromValues(0, 1, 0);
+export const unitVectorZ = vec3.fromValues(0, 0, 1);
 
+export const unitVectorNegX = vec3.fromValues(-1, 0, 0);
+export const unitVectorNegY = vec3.fromValues(0, -1, 0);
+export const unitVectorNegZ = vec3.fromValues(0, 0, -1);
 
 export class TranslateRotateTransform3D implements ITransform<mat4> {
   protected _rotation: quat;
@@ -19,9 +25,12 @@ export class TranslateRotateTransform3D implements ITransform<mat4> {
   }
 
   getLocalMat(): mat4 {
-    if (this._dirty === true)
-      this.updateLocalMat();
+    if (this._dirty === true) this.updateLocalMat();
     return this._localMat;
+  }
+
+  direction(directionOut: vec3, refVec = unitVectorX): void {
+    vec3.transformQuat(directionOut, refVec, this._rotation);
   }
 
   protected updateLocalMat(): void {
@@ -92,5 +101,4 @@ export class TranslateRotateTransform3D implements ITransform<mat4> {
   public setDirty(): void {
     this._dirty = true;
   }
-
 }

@@ -2,6 +2,11 @@
 precision mediump float;
 
 
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
 float modI(float a,float b) {
     float m=a-floor((a+0.5)/b)*b;
     return floor(m+0.5);
@@ -30,62 +35,6 @@ vec3 blinnPhongSpec(vec3 modelPosition,vec3 modelNormal,
 }
 
 
-// vec3 blinnPhongCartoon(vec3 modelPosition,
-//  vec3 modelNormal,
-//  vec3 lightDir,
-//  vec3 lightColor,
-//  vec3 specularColor,
-//  float shadowIntensity,
-
-//  vec3 cameraPosition,
-//  float shininess){
-      
-//       // calculate base vectors
-//       vec3 viewDir    = normalize(modelPosition - cameraPosition);
-//       vec3 halfwayDir = normalize(lightDir + viewDir);
-      
-//       // diffuse
-
-//       float diff = max(dot(modelNormal, lightDir), 0.0) * shadowIntensity;
-
-//       float intensity = 3.0;
-
-//        float lit;
-      
-//       //  float lit = modI(gl_FragCoord.x,intensity) == 0.0 || modI(gl_FragCoord.y,intensity) == 0.0 ? 1.0 : 0.3;
-//       if(diff > 0.4){
-//         lit = 1.0;
-//         intensity = 1.0;
-//       }else if(diff > 0.1){
-//         lit =  modI(gl_FragCoord.x,2.0) == 0.0 || modI(gl_FragCoord.y,2.0) == 0.0 ? 1.0 : 0.3;
-//       }else{
-//         lit =  modI(gl_FragCoord.x + gl_FragCoord.y,2.0) == 0.0 ? 1.0 : 0.3;
-//       }
-
-
-     
-
-
-//       vec3 diffuse = lightColor * lit;
-
-//       // specular
-//       float spec = max(pow(max(dot(modelNormal, halfwayDir), 0.0), shininess),0.0);
-//       vec3 specular = specularColor * spec;
-
-
-//       #ifndef DEBUG_LIGHT_DIFFUSE_SPEC
-//       return specular + diffuse;
-//       #endif
-
-//       #ifdef DEBUG_LIGHT_DIFFUSE
-//       return diffuse;
-//       #endif
-
-//       #ifdef DEBUG_LIGHT_SPECULAR
-//       return specular;
-//       #endif
-
-// }
 
 #ifdef NORMAL_TBN
 vec3 tbnMatToNormal(
@@ -178,6 +127,7 @@ uniform sampler2D u_diffuseMap;
 
 // cam
 uniform vec3 u_cameraPosition;
+uniform vec3 u_cameraDirection;
 
 // light
 uniform vec3 u_lightDirection;
@@ -291,6 +241,19 @@ void main(){
       float shadowIntensity = 1.0;
     #endif
 
+    float dt = max(dot(normal,u_cameraDirection),0.0);
+    const float outlineRMaxX = 0.05;
+    const float outlineRMinX = 0.0;
+
+    const float outlineMaxX = 1.0;
+    const float outlineMinX = 0.2;
+
+    float outlineRatio = dt / (outlineRMaxX - outlineRMinX) + outlineRMinX;
+
+    float outline = outlineRatio * (outlineMaxX - outlineMinX) + outlineMinX;
+
+
+
     vec3 diffuseColor = blinnPhongDiffuse(
       normal,
       u_lightDirection,
@@ -317,8 +280,11 @@ void main(){
     #endif
 
 
+    
+
     #ifndef DEBUG
-    FragColor = diffuse;
+    FragColor = vec4(diffuse.rgb * outline, diffuse.a);
+    
     DiffuseColor = vec4(diffuseColor * shadowIntensity,1.0);
     SpecColor = vec4(specColor,1.0);
     Normal = vec4(normal * 0.5 + 0.5,1.0);

@@ -9,6 +9,7 @@ export class PhongBlinnCartoonVShadersState extends ShaderVariantsState<PhongBli
   depthBiasMvpMat: mat4 = mat4.create();
 
   cameraPosition: vec3 = vec3.create();
+  cameraDirection: vec3 = vec3.create();
 
   lightDirection: vec3 = vec3.create();
   lightColor: vec3 = vec3.create();
@@ -30,8 +31,9 @@ export class PhongBlinnCartoonVShadersState extends ShaderVariantsState<PhongBli
     gl.uniformMatrix4fv(uniformsLocations.u_normalMat, false, this.normalMat);
     gl.uniformMatrix4fv(uniformsLocations.u_modelMat, false, this.modelMat);
     gl.uniformMatrix4fv(uniformsLocations.u_depthBiasMvpMat, false, this.depthBiasMvpMat);
-
+    
     gl.uniform3fv(uniformsLocations.u_cameraPosition, this.cameraPosition);
+    gl.uniform3fv(uniformsLocations.u_cameraDirection, this.cameraDirection);
 
     // TODO : investigate why light dir has to be inverted
     gl.uniform3f(uniformsLocations.u_lightDirection, -this.lightDirection[0], -this.lightDirection[1], -this.lightDirection[2]);

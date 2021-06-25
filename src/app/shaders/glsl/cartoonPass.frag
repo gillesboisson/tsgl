@@ -67,6 +67,7 @@ void main(){
 
   // Frag_color = color * vec4(diffuse+spec,1.0) * (1.0 - outline(v_uv,u_depthMap));
   Frag_color = color * (lit + specF) * color.a * outline(v_uv,u_depthMap);
+  // Frag_color = color;
   // Frag_color = vec4(outline(v_uv,u_depthMap));
 }
 

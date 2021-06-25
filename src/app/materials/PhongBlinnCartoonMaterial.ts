@@ -2,6 +2,7 @@ import { vec4, mat4, vec3, vec2 } from 'gl-matrix';
 import { Camera } from '../../tsgl/3d/Camera';
 import { AMaterial } from '../../tsgl/3d/Material/Material';
 import { ShadowMap } from '../../tsgl/3d/ShadowMap';
+import { unitVectorNegZ, unitVectorZ } from '../../tsgl/geom/TranslateRotateTransform3D';
 import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
 import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
@@ -172,6 +173,8 @@ export class PhongBlinnCartoonMaterial extends AMaterial<PhongBlinnCartoonVShade
     ss.ambiantColor = light.ambiantColor;
     ss.lightShininess = light.shininess;
     ss.diffuseColor = this._diffuseColor;
+
+    cam.transform.direction(ss.cameraDirection,unitVectorZ);
 
     cam.mvp(ss.mvpMat, transformMat);
     cam.normalMat(ss.normalMat, transformMat);

@@ -151,7 +151,7 @@ class TestApp extends Base3DApp {
     this._sceneRenderables = new SceneInstance3D();
 
     // const mesh = createSphereMesh(this.renderer.gl, 2, 32, 32);
-    const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 1, 16);
+    const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 10, 16);
 
     const sphere = new MeshNode(sphereMat, mesh);
     const sphere2 = new MeshNode(sphereMat, mesh);
