@@ -107,6 +107,7 @@ const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
   u_lightDiffuseMap: GLDefaultTextureLocation.LIGHT_DIFFUSE,
   u_lightShadowMap: GLDefaultTextureLocation.LIGHT_SHADOW,
   u_normalMap: GLDefaultTextureLocation.NORMAL,
+  u_positionMap: GLDefaultTextureLocation.POSITION,
   u_skyboxMap: GLDefaultTextureLocation.SKYBOX,
   u_pbrMap: GLDefaultTextureLocation.PBR_0,
   u_occlusionMap: GLDefaultTextureLocation.AMBIANT_OCCLUSION,

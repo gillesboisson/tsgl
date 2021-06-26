@@ -13,11 +13,11 @@ import { GLVao } from './tsgl/gl/core/data/GLVao';
 import { GLFramebuffer } from './tsgl/gl/core/framebuffer/GLFramebuffer';
 import { GLViewportStack } from './tsgl/gl/core/framebuffer/GLViewportState';
 import { GLRendererType, WebGL2Renderer } from './tsgl/gl/core/GLRenderer';
-import { TopDownCameraController } from "./tsgl/input/TopDownCameraController";
+import { TopDownCameraController } from './tsgl/input/TopDownCameraController';
 import { DepthOnlyShader } from './tsgl/shaders/DepthOnlyShader';
-import { PhongBlinnVShader } from './tsgl/shaders/PhongBlinnVShader';
+import { PhongBlinnShaderDebug, PhongBlinnVShader } from './tsgl/shaders/PhongBlinnVShader';
 
-import { PbrVShader } from './tsgl/shaders/PbrVShader';
+import { PbrShaderDebug, PbrVShader } from './tsgl/shaders/PbrVShader';
 import { loadTexture2D } from './tsgl/helpers/texture/loadTexture2D';
 import { VertexColorShaderState } from './tsgl/shaders/VertexColorShader';
 import { WireframeBatch } from './tsgl/3d/helpers/WireframeBatch';
@@ -32,6 +32,24 @@ import { CartoonPassMaterial } from './app/materials/CartoonPassMaterial';
 import { Camera } from './tsgl/3d/Camera';
 import { ProcessPass } from './tsgl/helpers/postprocess/PostProcessPass';
 import { GLDefaultTextureLocation } from './tsgl/gl/core/data/GLDefaultAttributesLocation';
+import { DeferredPrepassVShader } from './app/shaders/DeferredPrepassVShader';
+import { DeferredFrameBuffer } from './app/DeferredFrameBuffer';
+import { DeferredPrepassMaterial } from './app/materials/DeferredPrepassMaterial';
+import { DeferredDebugPassShader, DeferredDebugPassShaderState } from './app/shaders/DeferredDebugPassShader';
+import { FirstPersonCameraController } from './tsgl/input/FirstPersonCameraController';
+import { PhongBlinnDeferredPass } from './app/materials/PhongBlinnDeferredPass';
+import { PhongBlinnDeferredVShader } from './app/shaders/PhongBlinnDeferredVShader';
+import { BrdfLutShader } from './tsgl/shaders/BrdfLutShader';
+import { DebugSkyboxLodShader } from './app/shaders/DebugSkyboxLodShader';
+import { EquiToCubemapShader } from './tsgl/shaders/EquiToCubemapShader';
+import { IrradianceShader } from './tsgl/shaders/IrradianceShader';
+import { MSDFShader } from './tsgl/shaders/MSDFShader';
+import { PlaneSpaceToModelSpaceNormalShader } from './tsgl/shaders/PlaceSpaceToModelSpaceNormalShader';
+import { ReflectanceShader } from './tsgl/shaders/ReflectanceShader';
+import { SkyboxShader } from './tsgl/shaders/SkyboxShader';
+import { PbrDeferredVShader } from './app/shaders/PbrDeferredVShader';
+import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
+import { PbrDeferredPass } from './app/materials/PbrDeferredPass';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -43,7 +61,7 @@ class TestApp extends Base3DApp {
   // private _modelNode: GLTFNode;
   private _modelSpaceFramebuffer: GLFramebuffer;
 
-  private _camController: TopDownCameraController;
+  private _camController: FirstPersonCameraController;
   fb: GLFramebuffer;
   vps: GLViewportStack;
   private _sceneRenderables: SceneInstance3D;
@@ -55,7 +73,8 @@ class TestApp extends Base3DApp {
   private _postProcessingMat: CartoonPassMaterial;
   private _postProcessingCam = Camera.createOrtho(-1, 1, -1, 1, 0.001, 1);
   private _postProcessingTransform = mat4.create();
-  private _processPass: ProcessPass<CartoonPassShaderState>;
+  private _processPass: PbrDeferredPass;
+  private _deferredMRT: DeferredFrameBuffer;
 
   constructor() {
     super(GLRendererType.WebGL2, { antialias: false });
@@ -74,11 +93,31 @@ class TestApp extends Base3DApp {
     const brdfLut = await loadTexture2D(gl, './images/lut_test_2.png');
 
     PbrVShader.register(renderer, brdfLut);
+    PbrDeferredVShader.register(renderer, brdfLut);
+    DeferredPrepassVShader.register(renderer);
+    DeferredDebugPassShader.register(renderer);
+    PhongBlinnDeferredVShader.register(renderer);
+    MSDFShader.register(renderer);
+    IrradianceShader.register(renderer);
+    SkyboxShader.register(renderer);
+    PlaneSpaceToModelSpaceNormalShader.register(renderer);
+    EquiToCubemapShader.register(renderer);
+    IrradianceShader.register(renderer);
+    ReflectanceShader.register(renderer);
+    DebugSkyboxLodShader.register(renderer);
+    BrdfLutShader.register(renderer);
 
     // load scene;
 
-    this.renderer.resize(this.renderer.width / 3, this.renderer.height / 3);
+    //this.renderer.resize(this.renderer.width, this.renderer.height);
     this._mrt = new GLMRTFrameBuffer(this.renderer.gl, this.renderer.width, this.renderer.height, 4, true);
+
+    this._deferredMRT = new DeferredFrameBuffer(this.renderer.gl as WebGL2RenderingContext, {
+      width: this.renderer.width,
+      height: this.renderer.height,
+      useDepthTexture: true,
+      pbrEnabled: true,
+    });
 
     await this.loadScene();
     // this.renderer.resize(320, 240);
@@ -86,34 +125,24 @@ class TestApp extends Base3DApp {
     const hWidth = 10;
     const hHeight = (hWidth * this.renderer.canvas.height) / this.renderer.canvas.width;
 
-    this._cam.setOrtho(-hWidth, hWidth, -hHeight, hHeight);
+    // this._cam.setOrtho(-hWidth, hWidth, -hHeight, hHeight);
 
     this._cam.transform.rotateAroundAxes(vec3.fromValues(1, 0, 0), -Math.PI / 4);
+    this._cam.transform.setPosition(0, 15, 15);
+    // this._camController = new TopDownCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
+    this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
 
-    this._camController = new TopDownCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
+    gl.viewport(0, 0, this.renderer.width, this.renderer.height);
 
-    this._processPass = ProcessPass.createFromMRTFrameBuffer(
-      this.renderer,
-      this._mrt,
-      [
-        GLDefaultTextureLocation.COLOR,
-        GLDefaultTextureLocation.NORMAL,
-        GLDefaultTextureLocation.LIGHT_DIFFUSE,
-        GLDefaultTextureLocation.LIGHT_SPEC,
-      ],
-      renderer.getShader('cartoon_pass') as CartoonPassShader,
-    );
+    const light = {
+      direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, -0.5)),
+      color: vec3.fromValues(1.0, 1.0, 1.0),
+      specularColor: vec3.fromValues(1, 1, 1),
+      shininess: 100.0,
+      ambiantColor: vec3.fromValues(0.2, 0.2, 0.2),
+    };
 
-    this._processPass.shaderState.resize(this.renderer.width, this.renderer.height);
-
-    // this._postProcessingQuad = createQuadMesh(this.renderer.gl);
-    // this._postProcessingMat = new CartoonPassMaterial(
-    //   this._mrt.textures[0],
-    //   this._mrt.textures[1],
-    //   this._mrt.textures[2],
-    //   this._mrt.textures[3],
-    //   this._mrt.depthTexture,
-    // );
+    this._shadowMap.setLookAtFromLight(light);
   }
 
   ready() {
@@ -129,6 +158,21 @@ class TestApp extends Base3DApp {
       ambiantColor: vec3.fromValues(0.7, 0.7, 0.7),
     };
 
+    const hdrIbl = await bakeHdrIbl(this.renderer as WebGL2Renderer, {
+      source: './images/ballroom_2k.hdr',
+      baseCubemap: {
+        size: 512,
+      },
+      reflectance: {
+        size: 128,
+        // levels: 8
+      },
+
+      irradiance: {
+        size: 128,
+      },
+    });
+
     this._cam.transform.setPosition(0, 5, 5);
 
     const gl = this.renderer.gl;
@@ -137,9 +181,27 @@ class TestApp extends Base3DApp {
     this._shadowMap.setPosition(6, 6, 6);
     this._shadowMap.setLookAtFromLight(light);
 
-    const sphereMat = new PhongBlinnCartoonMaterial(this.renderer, light);
+    const sphereMat = new DeferredPrepassMaterial(this.renderer);
 
-    sphereMat.shadowMap = this._shadowMap;
+    sphereMat.pbrEnabled = true;
+    sphereMat.roughness = 0.7;
+    sphereMat.metallic = 0.1;
+
+    this._processPass = new PbrDeferredPass(
+      this.renderer as WebGL2Renderer,
+      this._deferredMRT,
+      light.direction,
+      hdrIbl.irradiance.cubemap,
+      hdrIbl.reflectance.cubemap,
+    );
+    this._processPass.shadowMap = this._shadowMap;
+    // this._processPass.debug = PbrShaderDebug.ambiant;
+
+    this._processPass.setGammaExposure(2.2, 1.0);
+    this._processPass.enableHDRCorrection();
+    this._processPass.setGammaExposure(1.3, 1.0);
+
+    // sphereMat.shadowMap = this._shadowMap;
 
     const planeMesh = createPlaneMesh(gl);
     const plane = new MeshNode(sphereMat, planeMesh);
@@ -150,8 +212,8 @@ class TestApp extends Base3DApp {
 
     this._sceneRenderables = new SceneInstance3D();
 
-    // const mesh = createSphereMesh(this.renderer.gl, 2, 32, 32);
-    const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 10, 16);
+    const mesh = createSphereMesh(this.renderer.gl, 0.5, 32, 32);
+    // const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 10, 16);
 
     const sphere = new MeshNode(sphereMat, mesh);
     const sphere2 = new MeshNode(sphereMat, mesh);
@@ -159,6 +221,35 @@ class TestApp extends Base3DApp {
     sphere2.transform.setPosition(3, 3, 3);
 
     this._sceneRenderables.addChild(...[plane, sphere, sphere2]);
+    // this._sceneRenderables.addChild(sphere);
+    const step = 10;
+
+    for (let i = 0; i <= step; i++) {
+      for (let f = 0; f <= step; f++) {
+        // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
+
+        const pbrMat = new DeferredPrepassMaterial(this.renderer);
+
+        pbrMat.pbrEnabled = true;
+
+        // pbrMat.setGammaExposure(2.2,1.0);
+        // pbrMat.enableHDRCorrection();
+        // pbrMat.setGammaExposure(1.3, 1.0);
+
+        pbrMat.setDiffuseColor(1, 1, 1);
+
+        pbrMat.metallic = f / step;
+        pbrMat.roughness = (i / step) * 0.99;
+        // pbrMat.roughness = ((pbrMat.roughness + 1.0) * (pbrMat.roughness + 1.0)) / 8;
+
+        const pbrSphere = new MeshNode(pbrMat, mesh);
+        // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
+
+        pbrSphere.transform.translate(i + 3.0, f, 0);
+
+        this._sceneRenderables.addChild(pbrSphere);
+      }
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -179,25 +270,13 @@ class TestApp extends Base3DApp {
 
     this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 
-    this._mrt.bind();
+    this._deferredMRT.bind();
     this.renderer.clear();
     this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
 
-    this._mrt.unbind();
+    this._deferredMRT.unbind();
 
-    this._processPass.render(gl);
-
-    // TODO: make a post processing pass system
-
-    // this._postProcessingMat.renderVao(
-    //   gl,
-    //   this._postProcessingCam,
-    //   this._postProcessingTransform,
-    //   this._postProcessingQuad.vao,
-    //   4,
-    //   this._postProcessingQuad.glType,
-    //   gl.TRIANGLES,
-    // );
+    this._processPass.render(gl, { cam: this._cam });
   }
 
   renderElement(renderable: IRenderableInstance3D) {}

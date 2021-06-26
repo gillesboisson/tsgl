@@ -101,5 +101,11 @@ export class ShadowMap {
     mat4.multiply(out, biasMat, out);
   }
 
+  depthBiasVp(out: mat4): void {
+    this._camera.vp(out);
+    mat4.multiply(out, biasMat, out);
+  }
+
+
   destroy(): void {}
 }

@@ -7,15 +7,16 @@ import { GLRenderer } from '../../gl/core/GLRenderer';
 import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
 import { IShaderCreateState } from '../../gl/core/shader/IShaderProgram';
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
+import { mapMRTTexturesToProcessPassTexturesLocations } from './mapMRTTexturesToProcessPassTexturesLocations';
 
-export interface IPostProcessPass<ShaderStateT extends IGLShaderState = IGLShaderState> {
+export interface IPostProcessPass<ShaderStateT extends IGLShaderState = IGLShaderState, RenderDataT = undefined> {
   unbind(gl: AnyWebRenderingGLContext): void;
-  prepare(gl: AnyWebRenderingGLContext): void;
+  prepare(gl: AnyWebRenderingGLContext, renderData?: RenderDataT): void;
   draw(gl: AnyWebRenderingGLContext, quad?: GLMesh): void;
 }
 
-export abstract class APostProcessPass<ShaderStateT extends IGLShaderState = IGLShaderState>
-  implements IPostProcessPass<ShaderStateT> {
+export abstract class APostProcessPass<ShaderStateT extends IGLShaderState = IGLShaderState, RenderDataT = undefined>
+  implements IPostProcessPass<ShaderStateT, RenderDataT> {
   protected _shaderState: ShaderStateT;
 
   get shaderState(): ShaderStateT {
@@ -24,14 +25,14 @@ export abstract class APostProcessPass<ShaderStateT extends IGLShaderState = IGL
 
   constructor(readonly quad: GLMesh) {}
 
-  abstract prepare(gl: AnyWebRenderingGLContext): void;
+  abstract prepare(gl: AnyWebRenderingGLContext, renderData?: RenderDataT): void;
   abstract unbind(gl: AnyWebRenderingGLContext): void;
   draw(gl: AnyWebRenderingGLContext, quad: GLMesh = this.quad): void {
     quad.draw();
   }
 
-  render(gl: AnyWebRenderingGLContext, quad: GLMesh = this.quad): void {
-    this.prepare(gl);
+  render(gl: AnyWebRenderingGLContext, renderData?: RenderDataT, quad: GLMesh = this.quad): void {
+    this.prepare(gl, renderData);
     this.draw(gl, quad);
     this.unbind(gl);
   }
@@ -42,7 +43,10 @@ export interface ProcessPassTextureLocation {
   location: GLint;
 }
 
-export class ProcessPass<ShaderStateT extends IGLShaderState = IGLShaderState> extends APostProcessPass<ShaderStateT> {
+export class ProcessPass<
+  ShaderStateT extends IGLShaderState = IGLShaderState,
+  RenderDataT = undefined
+> extends APostProcessPass<ShaderStateT, RenderDataT> {
   constructor(
     readonly renderer: GLRenderer,
     readonly inputTextureMap: ProcessPassTextureLocation[],
@@ -55,31 +59,19 @@ export class ProcessPass<ShaderStateT extends IGLShaderState = IGLShaderState> e
 
   static createFromMRTFrameBuffer<ShaderStateT extends IGLShaderState = IGLShaderState>(
     renderer: GLRenderer,
-    mrt: GLMRTFrameBuffer,
+    mrt: { textures: IGLTexture[]; depthTexture?: IGLTexture },
     textureLocation: GLint[],
     shader: IShaderCreateState<ShaderStateT>,
     quad: GLMesh = createQuadMesh(renderer.gl),
   ): ProcessPass<ShaderStateT> {
-    const map = mrt.textures.map<ProcessPassTextureLocation>((t, ind) => ({
-      texture: t.texture,
-      location: textureLocation[ind],
-    }));
-
-    if (mrt.depthTexture) {
-      map.push({
-        texture: mrt.depthTexture.texture,
-        location: GLDefaultTextureLocation.DEPTH,
-      });
-    }
-
-    return new ProcessPass(renderer, map, shader, quad);
+    return new ProcessPass(renderer, mapMRTTexturesToProcessPassTexturesLocations(mrt, textureLocation), shader, quad);
   }
 
-  syncUniforms(gl: AnyWebRenderingGLContext): void {}
+  syncUniforms(gl: AnyWebRenderingGLContext, ss: ShaderStateT, renderData?: RenderDataT): void {}
 
-  prepare(gl: AnyWebRenderingGLContext): void {
+  prepare(gl: AnyWebRenderingGLContext, renderData?: RenderDataT): void {
     this._shaderState.use();
-    this.syncUniforms(gl);
+    this.syncUniforms(gl, this._shaderState, renderData);
     this._shaderState.syncUniforms();
     for (const textureMap of this.inputTextureMap) {
       gl.activeTexture(gl.TEXTURE0 + textureMap.location);

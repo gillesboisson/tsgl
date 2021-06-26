@@ -4,26 +4,8 @@ precision mediump float;
 const float PI = 3.14159265359;
 const float MAX_REFLECTION_LOD = 4.0;
 
-// Helpers ====================================================================================
-
-vec3 tbnMatToNormal(
-  mat3 tbnMat,
-  vec3 normal,
-  vec3 eyeDirection
-){
-
-  vec3 t, b, ng;
-
-  // TBN split
-  t = normalize(tbnMat[0]);
-  b = normalize(tbnMat[1]);
-  ng = normalize(tbnMat[2]);
-
-  return mat3(t, b, ng) * normalize(normal);
-}
-
-
 // Shadows functions ====================================================================================
+
 
 #ifndef SAMPLE_SIZE
 #define SAMPLE_SIZE 5.0
@@ -37,11 +19,12 @@ vec3 tbnMatToNormal(
 #define BASE_BIAS 0.005
 #endif
 
-
 #define SAMPLE_MAX (SAMPLE_SIZE - 1.0) / 2.0
 #define SAMPLE_MIN -SAMPLE_MAX
 
 
+
+// PCF Shadow
 float pcfShadow(in sampler2D shadowMap,float depth,in vec2 uv,in vec2 pixelSize,in vec3 normal,in vec3 lightDirection ){
   
   if(uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0){
@@ -71,7 +54,6 @@ float pcfShadow(in sampler2D shadowMap,float depth,in vec2 uv,in vec2 pixelSize,
 
   return visibility;
 }
-
 
 // PBR functions ============================================================================
 
@@ -121,174 +103,101 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 }  
 
 
-// Shader declaration ============================================================================
-
-
-
-#ifdef DIFFUSE_MAP
-  uniform sampler2D u_textureMap;
-#endif
-
-#ifdef DIFFUSE_COLOR
-  uniform vec4 u_diffuseColor;
-#endif
-
-
-// cam
-uniform vec3 u_cameraPosition;
-
-
 // probes data
 uniform samplerCube u_irradianceMap;
 uniform samplerCube u_reflexionMap;
 uniform sampler2D u_brdfLut;
 
+// cam
+uniform vec3 u_cameraPosition;
 
+// light
 uniform vec3 u_lightDirection;
+// uniform vec3 u_lightColor;
+// uniform vec3 u_specularColor;
+// uniform float u_lightShininess;
 
+// ambiant
+// uniform vec3 u_ambiantColor;
 
-in vec3 v_position;
-in vec2 v_uv;
-
-#ifdef NORMAL_VERTEX
-in vec3 v_normal;
-#endif
-
-#ifdef NORMAL_MAP
-uniform sampler2D u_normalMap;
-uniform mat4 u_normalMat;
-
-#endif
-
-#ifdef NORMAL_TBN
-uniform sampler2D u_normalMap;
-uniform mat4 u_normalMat;
-
-in mat3 v_TBN;
-#endif
-
-// pbr 
-#ifdef PBR_MAP
-uniform sampler2D u_pbrMap;
-#endif
-
-uniform vec4 u_pbr;
-
-#ifdef SHADOW_MAP
-
-uniform sampler2D u_shadowMap;
-uniform vec2 u_shadowMapPixelSize;
-in vec3 v_shadowCoord;
-
-#endif
-
-
-#ifdef OCCLUSION_MAP
-#ifdef OCCLUSION_ONLY
-uniform sampler2D u_occlusionMap;
-#endif
-#endif
-
+// TODO: implement in shader class
 #ifdef EMISSIVE_MAP
-
 uniform sampler2D u_emissiveMap;
 uniform vec3 u_emissive;
 #endif
 
+#ifdef SHADOW_MAP
+uniform sampler2D u_shadowMap;
+uniform vec2 u_shadowMapPixelSize;
+uniform mat4 u_depthBiasMvpMat;
+#endif
+
+// deferred data
+uniform sampler2D u_textureMap;
+uniform sampler2D u_normalMap;
+uniform sampler2D u_positionMap;
+uniform sampler2D u_pbrMap;
+uniform sampler2D u_depthMap;
+
+in vec2 v_uv;
+
 #ifdef GAMMA_CORRECTION
-
 uniform vec2 u_gammaExposure;
-
 #endif
 
 out vec4 FragColor;
 
 
-
-
-
 void main(){
-  vec3 V = normalize(u_cameraPosition - v_position);  // View direction
+  vec4 diffuseColor = texture(u_textureMap, v_uv);
+  vec3 albedo = diffuseColor.rgb;
+
+
+  vec3 position = texture(u_positionMap, v_uv).rgb;
+  
+  float depth = texture(u_depthMap, v_uv).r;
+
+  vec3 N = texture(u_normalMap, v_uv).xyz;
+  vec3 V = normalize(u_cameraPosition - position);    // View direction
   vec3 L = u_lightDirection;                          // Light direction
-  vec3 H = normalize(V + L);                          // Half vector view light
+  vec3 H = normalize(V + L);    
 
-
-  // normal variants ------------------------------------------------------
-
-  #ifdef NORMAL_VERTEX
-  vec3 N = normalize(v_normal); 
-  #endif
-    
-  #ifdef NORMAL_MAP
-  vec3 N = normalize(
-      (
-        u_normalMat *
-        vec4(
-          texture(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0),
-          1.0
-        )
-      ).xyz
-
-    ); 
-  #endif
-
-  #ifdef NORMAL_TBN
-    vec3 N = texture(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0);
-    N = tbnMatToNormal(v_TBN, N, V);
-  #endif
-
+  
   vec3 R = reflect(-V, N); 
 
 
   // Shadow ---------------------------------------------------------------
 
   #ifdef SHADOW_MAP
-  float visibility = pcfShadow(u_shadowMap,v_shadowCoord.z,v_shadowCoord.xy,u_shadowMapPixelSize,N, L);
+  vec3 shadowCoords = (u_depthBiasMvpMat * vec4(position,1.0)).xyz;
+  float visibility = pcfShadow(u_shadowMap,shadowCoords.z,shadowCoords.xy,u_shadowMapPixelSize,N, L);
   #endif
 
   #ifndef SHADOW_MAP
   const float visibility = 1.0;
   #endif 
-  
-  
-  // PBR data variants  ------------------------------------------------------
-  #ifdef PBR_MAP
+
   vec4 pbr =  texture(u_pbrMap,v_uv);
-  #endif
-
-  #ifdef PBR_VAL
-  vec4 pbr =  u_pbr;
-  #endif
-
+  #ifdef OCCLUSION_ENABLED
   #ifdef OCCLUSION_MAP
-  #ifdef OCCLUSION_PBR
-  float ao = pbr.x;
-  #else
-  float ao = texture(u_occlusionMap,v_uv).x;
-  #endif
-  #else
   float ao = u_pbr.x;
   #endif
+  #else
+  float ao = 1.0;
+  #endif
 
-
- 
-  
   float roughness = pbr.y;
   float metallic = pbr.z;
-
-  // albedo data variants  ------------------------------------------------------
   
-  #ifdef DIFFUSE_MAP
-  vec4 diffuseColor =  texture(u_textureMap,v_uv);
-  vec3 albedo = diffuseColor.rgb;
-  #endif
+  // ambiant mapping ------------------------------------------------------
 
-  #ifdef DIFFUSE_COLOR
-  vec4 diffuseColor = u_diffuseColor;
-  vec3 albedo = diffuseColor.rgb;
-  #endif
 
-  // PBR ------------------------------------------------------------------------
+
+  #ifdef OCCLUSION_PBR_SPEC_MAP  
+  #ifdef OCCLUSION_MAP
+  ambiantColor *= pbrMap.r;
+  #endif
+  #endif
 
   // init
   vec3 F0 = vec3(0.04); 
@@ -321,34 +230,27 @@ void main(){
   float NdotL = max(dot(N, L), 0.0);                
   Lo += (kD * albedo / PI + specular) * irradiance * NdotL; 
 
+  vec3 color = ambient + Lo * visibility;  
 
-  vec3 color = ambient + Lo * visibility;
-  // color = color / (color + vec3(1.0));
-  // color = pow(color, vec3(1.0/2.2));  
-
-
+  // TODO implement in shader
   #ifdef EMISSIVE_MAP
   vec3 emissiveColor = texture(u_emissiveMap,v_uv).rgb * u_emissive;
   color += emissiveColor;
   #endif
 
-  // gamme correction
 
   #ifdef GAMMA_CORRECTION
     // exposure tone mapping
     color = vec3(1.0) - exp(-color * u_gammaExposure.x);
-    // gamma correction d
+    // gamma correction 
     color = pow(color, vec3(1.0 / u_gammaExposure.y));
   
   #endif
 
   #ifndef DEBUG 
-  FragColor = vec4(color, 1.0);
+  FragColor = vec4( color ,1.0);
   #endif
-
-
-
-
+  
   #ifdef DEBUG_NORMAL
   FragColor = vec4( N * 0.5 + 0.5 ,1.0);
   #endif
@@ -364,10 +266,6 @@ void main(){
   #ifdef DEBUG_AMBIANT
   FragColor = vec4(ambient ,1.0);
   #endif
-
-
-
-
 
   #ifdef DEBUG_OCCLUSION
   FragColor = vec4(vec3(ao) ,1.0);
