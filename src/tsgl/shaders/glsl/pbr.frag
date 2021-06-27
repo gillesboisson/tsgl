@@ -388,5 +388,11 @@ void main(){
   #endif
   #endif
 
+  #ifdef DEBUG_EMISSIVE
+  #ifdef EMISSIVE_ENABLED
+  FragColor = vec4(emissiveColor,1.0);
+  #endif
+  #endif
+
 
 }

@@ -1,6 +1,22 @@
 #version 300 es
 precision mediump float;
 
+vec3 tbnMatToNormal(
+  mat3 tbnMat,
+  vec3 normal,
+  vec3 eyeDirection
+){
+
+  vec3 t, b, ng;
+
+  // TBN split
+  t = normalize(tbnMat[0]);
+  b = normalize(tbnMat[1]);
+  ng = normalize(tbnMat[2]);
+
+  return mat3(t, b, ng) * normalize(normal);
+}
+
 
 layout (location = 0) out vec4 AlbedoSpec;
 layout (location = 1) out vec4 Position;
@@ -8,6 +24,9 @@ layout (location = 2) out vec4 Normal;
 
 #ifdef PBR_ENABLED
 layout (location = 3) out vec4 Pbr;
+#define EMISSIVE_LOCATION 4
+#else
+#define EMISSIVE_LOCATION 3
 #endif
 
 // layout (location = 3) out vec4 Extra;
@@ -17,6 +36,9 @@ uniform sampler2D texture_specular1;
 
 in vec3 v_position;
 in vec2 v_uv;
+
+uniform vec3 u_cameraPosition;
+
 
 #ifdef DIFFUSE_MAP
 uniform sampler2D u_diffuseMap;
@@ -55,6 +77,16 @@ uniform vec4 u_pbr;
 #ifdef OCCLUSION_MAP
 #ifdef OCCLUSION_ONLY
 uniform sampler2D u_occlusionMap;
+#endif
+#endif
+
+#ifdef EMISSIVE_ENABLED
+layout (location = EMISSIVE_LOCATION) out vec4 Emissive;
+uniform vec3 u_emissiveColor;
+
+#ifdef EMISSIVE_MAP
+uniform sampler2D u_emissiveMap;
+
 #endif
 #endif
 
@@ -114,8 +146,21 @@ void main(){
   #endif
 
   Pbr=vec4(ao,pbr.y ,pbr.z,1.0);
+
+  #endif
+
+    
+  #ifdef EMISSIVE_ENABLED
+  #ifdef EMISSIVE_MAP
+  Emissive = vec4(texture(u_emissiveMap,v_uv).rgb * u_emissiveColor,1.0);
+  #endif
+  
+  #ifdef EMISSIVE_VAL
+  Emissive = vec4(u_emissiveColor, 1.0);
+  #endif
   
   #endif
+
 
   // store the fragment position vector in the first gbuffer texture
   Position = vec4(v_position, 1.0);

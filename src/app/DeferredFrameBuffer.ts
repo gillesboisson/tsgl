@@ -12,12 +12,14 @@ export interface DeferredFrameBufferOptions {
   useDepthTexture?: boolean;
   depthEnabled?: boolean;
   pbrEnabled?: boolean;
+  emissiveEnabled?: boolean;
 }
 
 export interface DeferredFrameBufferSettings extends DeferredFrameBufferOptions {
   useDepthTexture: boolean;
   depthEnabled: boolean;
   pbrEnabled: boolean;
+  emissiveEnabled: boolean;
 }
 
 function deferredFrameBufferDefaultSettings(options: DeferredFrameBufferOptions): DeferredFrameBufferSettings {
@@ -26,6 +28,7 @@ function deferredFrameBufferDefaultSettings(options: DeferredFrameBufferOptions)
     useDepthTexture: options.useDepthTexture !== undefined ? options.useDepthTexture : false,
     depthEnabled: options.depthEnabled !== undefined ? options.depthEnabled : true,
     pbrEnabled: options.pbrEnabled !== undefined ? options.pbrEnabled : false,
+    emissiveEnabled: options.emissiveEnabled !== undefined ? options.emissiveEnabled : false,
   };
 }
 
@@ -34,9 +37,9 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
   private _normalMap: GLTexture2D;
   private _albedo: GLTexture2D;
   readonly pbrEnabled: boolean;
-  private _pbrMap: GLTexture2D<
-    import('/home/gillesboisson/Projects/sandbox/TsGL2D/src/tsgl/gl/core/GLHelpers').AnyWebRenderingGLContext
-  >;
+  private _pbrMap: GLTexture2D;
+  readonly emissiveEnabled: boolean;
+  private _emissiveMap: GLTexture2D;
 
   get albedo(): GLTexture2D {
     return this._albedo;
@@ -52,6 +55,9 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
 
   get pbrMap(): GLTexture2D {
     return this._pbrMap;
+  }
+  get emissiveMap(): GLTexture2D {
+    return this._emissiveMap;
   }
 
   get width(): number {
@@ -69,6 +75,13 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
   private _colorsAttachements: GLenum[];
   private _previousViewport: Int32Array = null;
 
+
+  get frameBuffer():WebGLFramebuffer{
+    return this._frameBuffer;
+  }
+  
+
+
   get textures(): IGLTexture[] {
     return this._textures;
   }
@@ -84,13 +97,21 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
 
   constructor(gl: WebGL2RenderingContext, options: DeferredFrameBufferOptions) {
     super(gl);
-    const { width, height, useDepthTexture, depthEnabled, pbrEnabled } = deferredFrameBufferDefaultSettings(options);
+    const {
+      width,
+      height,
+      useDepthTexture,
+      depthEnabled,
+      pbrEnabled,
+      emissiveEnabled,
+    } = deferredFrameBufferDefaultSettings(options);
 
     this._width = width;
     this._height = height;
     this._useDepthTexture = useDepthTexture;
     this._depthEnabled = depthEnabled;
     this.pbrEnabled = pbrEnabled;
+    this.emissiveEnabled = emissiveEnabled;
 
     GLSupport.MRTFrameBufferSupported(gl, true, true);
 
@@ -120,13 +141,17 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
 
     this._positionMap = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT);
     this._normalMap = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT);
-    this._albedo = createEmptyTextureWithLinearNearestFilter(gl, width, height);
+    this._albedo = createEmptyTextureWithLinearFilter(gl, width, height);
 
     this._textures.push(this._albedo, this._positionMap, this._normalMap);
 
     if (pbrEnabled) {
-      this._pbrMap = createEmptyTextureWithLinearNearestFilter(gl, width, height);
+      this._pbrMap = createEmptyTextureWithLinearFilter(gl, width, height);
       this._textures.push(this._pbrMap);
+    }
+    if (emissiveEnabled) {
+      this._emissiveMap = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT);
+      this._textures.push(this._emissiveMap);
     }
 
     if (useDepthTexture) {
@@ -139,7 +164,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
   }
 
   updateSettings(): void {
-    const gl = this.gl;
+    const gl = this.gl as WebGL2RenderingContext;
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
 
@@ -167,13 +192,13 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
 
     // setup depth texture
     if (this._useDepthTexture) {
+
+
       gl.bindTexture(this.gl.TEXTURE_2D, this._depthTexture.texture);
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
-        (gl as any).depthTextureExt !== undefined
-          ? gl.DEPTH_COMPONENT
-          : (gl as WebGL2RenderingContext).DEPTH_COMPONENT24,
+        gl.DEPTH_COMPONENT24,
         this._width,
         this._height,
         0,
@@ -200,19 +225,21 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
-  resize(width: number, height: number): void {
-    this._width = width;
-    this._height = height;
-    const gl = this.gl;
+  // resize(width: number, height: number): void {
+  //   this._width = width;
+  //   this._height = height;
+  //   const gl = this.gl;
 
-    for (const t of this._textures) {
-      t.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null));
-    }
+    
 
-    this._depthTexture.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, null));
+  //   for (const t of this._textures) {
+  //     t.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null));
+  //   }
 
-    this.updateSettings();
-  }
+  //   this._depthTexture.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, null));
+
+  //   this.updateSettings();
+  // }
 
   bind(): void {
     this._previousViewport = this.gl.getParameter(this.gl.VIEWPORT);

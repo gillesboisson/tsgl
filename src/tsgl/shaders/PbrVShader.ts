@@ -23,17 +23,17 @@ export type PbrVariant = {
 
 export const PbrVShaderID = 'pbr_variant';
 
-export enum PbrShaderDebug {
-  none = 'none',
-  normal = 'normal',
-  diffuse = 'diffuse',
-  specular = 'specular',
-  ambiant = 'ambiant',
-  occlusion = 'occlusion',
-  roughness = 'roughness',
-  metallic = 'metallic',
-  shadow = 'shadow',
-}
+export type PbrShaderDebug =
+  | 'none'
+  | 'normal'
+  | 'diffuse'
+  | 'specular'
+  | 'ambiant'
+  | 'occlusion'
+  | 'roughness'
+  | 'metallic'
+  | 'shadow'
+  | 'emissive';
 
 export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
   protected _ludLoaded: boolean;
@@ -42,64 +42,71 @@ export class PbrVShader extends GLShaderVariants<PbrVShadersState, PbrVariant> {
     const valueDefTest: { [name: string]: GLVariantValueDefinition[] } = {
       debug: [
         {
-          value: PbrShaderDebug.none,
+          value: 'none',
           default: true,
           flags: {},
         },
         {
-          value: PbrShaderDebug.normal,
+          value: 'normal',
           flags: {
             DEBUG: true,
             DEBUG_NORMAL: true,
           },
         },
         {
-          value: PbrShaderDebug.diffuse,
+          value: 'diffuse',
           flags: {
             DEBUG: true,
             DEBUG_DIFFUSE: true,
           },
         },
         {
-          value: PbrShaderDebug.specular,
+          value: 'specular',
           flags: {
             DEBUG: true,
             DEBUG_SPECULAR: true,
           },
         },
         {
-          value: PbrShaderDebug.ambiant,
+          value: 'ambiant',
           flags: {
             DEBUG: true,
             DEBUG_AMBIANT: true,
           },
         },
         {
-          value: PbrShaderDebug.occlusion,
+          value: 'occlusion',
           flags: {
             DEBUG: true,
             DEBUG_OCCLUSION: true,
           },
         },
         {
-          value: PbrShaderDebug.metallic,
+          value: 'metallic',
           flags: {
             DEBUG: true,
             DEBUG_METALLIC: true,
           },
         },
         {
-          value: PbrShaderDebug.roughness,
+          value: 'roughness',
           flags: {
             DEBUG: true,
             DEBUG_ROUGHNESS: true,
           },
         },
         {
-          value: PbrShaderDebug.shadow,
+          value: 'shadow',
           flags: {
             DEBUG: true,
             DEBUG_SHADOW: true,
+          },
+        },
+        {
+          value: 'emissive',
+          flags: {
+            DEBUG: true,
+            DEBUG_EMISSIVE: true,
           },
         },
       ],

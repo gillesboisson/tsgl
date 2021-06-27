@@ -109,7 +109,7 @@ uniform samplerCube u_reflexionMap;
 uniform sampler2D u_brdfLut;
 
 // cam
-uniform vec3 u_cameraPosition;
+// uniform vec3 u_cameraPosition;
 
 // light
 uniform vec3 u_lightDirection;
@@ -123,7 +123,10 @@ uniform vec3 u_lightDirection;
 // TODO: implement in shader class
 #ifdef EMISSIVE_MAP
 uniform sampler2D u_emissiveMap;
-uniform vec3 u_emissive;
+#endif
+
+#ifdef SHADOW_MAP
+uniform sampler2D u_occlusionMap;
 #endif
 
 #ifdef SHADOW_MAP
@@ -158,7 +161,7 @@ void main(){
   float depth = texture(u_depthMap, v_uv).r;
 
   vec3 N = texture(u_normalMap, v_uv).xyz;
-  vec3 V = normalize(u_cameraPosition - position);    // View direction
+  vec3 V = normalize(-position);    // View direction
   vec3 L = u_lightDirection;                          // Light direction
   vec3 H = normalize(V + L);    
 
@@ -178,9 +181,14 @@ void main(){
   #endif 
 
   vec4 pbr =  texture(u_pbrMap,v_uv);
+  
+
   #ifdef OCCLUSION_ENABLED
-  #ifdef OCCLUSION_MAP
-  float ao = u_pbr.x;
+  #ifdef OCCLUSION_PBR
+  float ao = pbr.r;
+  #endif
+  #ifdef OCCLUSION_SSAO
+  float ao = texture(u_occlusionMap, v_uv).r;
   #endif
   #else
   float ao = 1.0;
@@ -191,13 +199,6 @@ void main(){
   
   // ambiant mapping ------------------------------------------------------
 
-
-
-  #ifdef OCCLUSION_PBR_SPEC_MAP  
-  #ifdef OCCLUSION_MAP
-  ambiantColor *= pbrMap.r;
-  #endif
-  #endif
 
   // init
   vec3 F0 = vec3(0.04); 
@@ -227,6 +228,9 @@ void main(){
   // ambiant
   vec3 ambient    = (kD * diffuse + specular) * ao; 
 
+
+
+
   float NdotL = max(dot(N, L), 0.0);                
   Lo += (kD * albedo / PI + specular) * irradiance * NdotL; 
 
@@ -234,7 +238,7 @@ void main(){
 
   // TODO implement in shader
   #ifdef EMISSIVE_MAP
-  vec3 emissiveColor = texture(u_emissiveMap,v_uv).rgb * u_emissive;
+  vec3 emissiveColor = texture(u_emissiveMap,v_uv).rgb;
   color += emissiveColor;
   #endif
 
@@ -249,6 +253,8 @@ void main(){
 
   #ifndef DEBUG 
   FragColor = vec4( color ,1.0);
+  gl_FragDepth = depth; 
+
   #endif
   
   #ifdef DEBUG_NORMAL
@@ -285,6 +291,14 @@ void main(){
   FragColor = vec4(vec3(visibility),1.0);
   #endif
   #endif
+
+  #ifdef DEBUG_EMISSIVE
+  #ifdef EMISSIVE_MAP
+  FragColor = vec4(emissiveColor, 1.0);
+  #endif
+  #endif
+
+  
 
 
 }

@@ -50,10 +50,16 @@ import { SkyboxShader } from './tsgl/shaders/SkyboxShader';
 import { PbrDeferredVShader } from './app/shaders/PbrDeferredVShader';
 import { bakeHdrIbl } from './tsgl/baking/bakeHdrIbl';
 import { PbrDeferredPass } from './app/materials/PbrDeferredPass';
+import { AnyWebRenderingGLContext } from './tsgl/gl/core/GLHelpers';
+import { SSAOShader } from './app/shaders/SSAOShader';
+import { SSAOPass } from './app/SSAOPass';
+import { SSAOBlurPass } from './app/SSAOBlurPass';
+import { SSAOBlurShader } from './app/shaders/SSAOBlurShader';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
 });
+
 
 class TestApp extends Base3DApp {
   meshVao: GLVao;
@@ -75,9 +81,12 @@ class TestApp extends Base3DApp {
   private _postProcessingTransform = mat4.create();
   private _processPass: PbrDeferredPass;
   private _deferredMRT: DeferredFrameBuffer;
+  offDeferredNode: MeshNode<PhongBlinnMaterial>;
+  private _ssaoPass: SSAOPass;
+  private _ssaoBlurPass: SSAOBlurPass;
 
   constructor() {
-    super(GLRendererType.WebGL2, { antialias: false });
+    super(GLRendererType.WebGL2, { antialias: true });
     this.cubeTransform = new Transform3D();
   }
 
@@ -107,17 +116,27 @@ class TestApp extends Base3DApp {
     DebugSkyboxLodShader.register(renderer);
     BrdfLutShader.register(renderer);
 
+    PhongBlinnVShader.register(renderer);
+    SSAOShader.register(renderer);
+    SSAOBlurShader.register(renderer);
+
     // load scene;
 
     //this.renderer.resize(this.renderer.width, this.renderer.height);
-    this._mrt = new GLMRTFrameBuffer(this.renderer.gl, this.renderer.width, this.renderer.height, 4, true);
+    // this._mrt = new GLMRTFrameBuffer(this.renderer.gl, this.renderer.width, this.renderer.height, 4, true);
+
 
     this._deferredMRT = new DeferredFrameBuffer(this.renderer.gl as WebGL2RenderingContext, {
       width: this.renderer.width,
       height: this.renderer.height,
       useDepthTexture: true,
       pbrEnabled: true,
+      emissiveEnabled: true,
     });
+
+    this._ssaoPass = new SSAOPass(this.renderer, this._deferredMRT);
+    this._ssaoBlurPass = new SSAOBlurPass(this.renderer, this._ssaoPass.ssaoTexture);
+
 
     await this.loadScene();
     // this.renderer.resize(320, 240);
@@ -187,6 +206,8 @@ class TestApp extends Base3DApp {
     sphereMat.roughness = 0.7;
     sphereMat.metallic = 0.1;
 
+    sphereMat.setEmissiveColor(vec3.fromValues(0, 0, 0));
+
     this._processPass = new PbrDeferredPass(
       this.renderer as WebGL2Renderer,
       this._deferredMRT,
@@ -194,12 +215,15 @@ class TestApp extends Base3DApp {
       hdrIbl.irradiance.cubemap,
       hdrIbl.reflectance.cubemap,
     );
+
+    this._processPass.enableSSAO(this._ssaoBlurPass.ssaoTexture);
+
     this._processPass.shadowMap = this._shadowMap;
     // this._processPass.debug = PbrShaderDebug.ambiant;
 
-    this._processPass.setGammaExposure(2.2, 1.0);
     this._processPass.enableHDRCorrection();
     this._processPass.setGammaExposure(1.3, 1.0);
+    // this._processPass.debug = 'emissive';
 
     // sphereMat.shadowMap = this._shadowMap;
 
@@ -224,6 +248,9 @@ class TestApp extends Base3DApp {
     // this._sceneRenderables.addChild(sphere);
     const step = 10;
 
+    this.offDeferredNode = new MeshNode(new PhongBlinnMaterial(this.renderer, light), mesh);
+    this.offDeferredNode.transform.setScale(10);
+
     for (let i = 0; i <= step; i++) {
       for (let f = 0; f <= step; f++) {
         // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
@@ -231,6 +258,7 @@ class TestApp extends Base3DApp {
         const pbrMat = new DeferredPrepassMaterial(this.renderer);
 
         pbrMat.pbrEnabled = true;
+        pbrMat.emissiveMode = true;
 
         // pbrMat.setGammaExposure(2.2,1.0);
         // pbrMat.enableHDRCorrection();
@@ -250,6 +278,37 @@ class TestApp extends Base3DApp {
         this._sceneRenderables.addChild(pbrSphere);
       }
     }
+
+
+    const cubeMesh = createBoxMesh(gl);
+
+    for (let i = 0; i <= step; i++) {
+      for (let f = 0; f <= step; f++) {
+        // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
+
+        const pbrMat = new DeferredPrepassMaterial(this.renderer);
+
+        pbrMat.pbrEnabled = true;
+        pbrMat.emissiveMode = true;
+
+        // pbrMat.setGammaExposure(2.2,1.0);
+        // pbrMat.enableHDRCorrection();
+        // pbrMat.setGammaExposure(1.3, 1.0);
+
+        pbrMat.setDiffuseColor(1, 1, 1);
+
+        pbrMat.metallic = Math.random();
+        pbrMat.roughness = Math.random();
+
+        const pbrSphere = new MeshNode(pbrMat, mesh);
+        // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
+
+        pbrSphere.transform.translate(Math.random() * 10 - 5, plane.transform.getRawPosition()[1], Math.random() * 10 - 5);
+        pbrSphere.transform.setScale(Math.random() * 2, Math.random() * 10, Math.random() * 2);
+
+        this._sceneRenderables.addChild(pbrSphere);
+      }
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -261,12 +320,14 @@ class TestApp extends Base3DApp {
     this._shadowMap.updateTransform();
 
     this._sceneRenderables.updateTransform();
+
+    this.offDeferredNode.updateTransform();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   render(time: number, elapsedTime: number): void {
     const renderer = this.renderer;
-    const gl = this.renderer.gl;
+    const gl = this.renderer.gl as WebGL2RenderingContext;
 
     this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 
@@ -275,8 +336,11 @@ class TestApp extends Base3DApp {
     this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
 
     this._deferredMRT.unbind();
-
+    this._ssaoPass.render(gl,{cam: this._cam});
+    this._ssaoBlurPass.render(gl);
     this._processPass.render(gl, { cam: this._cam });
+
+    // this.offDeferredNode.render(gl, this._cam);
   }
 
   renderElement(renderable: IRenderableInstance3D) {}

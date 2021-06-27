@@ -97,7 +97,7 @@ export class PbrMaterial extends AMaterial<PbrVShadersState> {
   protected _emissiveMap: IGLTexture;
   protected _shadowMap: ShadowMap;
   protected _tbnEnabled: boolean;
-  protected _debug = PbrShaderDebug.none;
+  protected _debug = 'none';
 
   get debug(): PbrShaderDebug {
     return this._shaderState.getVariantValue('debug') as PbrShaderDebug;

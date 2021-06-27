@@ -98,6 +98,8 @@ export enum GLDefaultTextureLocation {
   LIGHT_DIFFUSE = 40,
   LIGHT_SPEC = 41,
   LIGHT_SHADOW = 42,
+  SSAO_ROTATION = 50,
+  SSAO_NOISE = 51,
 }
 
 const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
@@ -119,6 +121,7 @@ const defaultTextureLocation: { [name: string]: GLDefaultTextureLocation } = {
   u_shadowMap1: GLDefaultTextureLocation.SHADOW_MAP_1,
   u_shadowMap2: GLDefaultTextureLocation.SHADOW_MAP_2,
   u_emissiveMap: GLDefaultTextureLocation.EMISSIVE,
+  u_ssaoRotationMap: GLDefaultTextureLocation.SSAO_ROTATION,
 };
 
 export function setDefaultTextureLocation(

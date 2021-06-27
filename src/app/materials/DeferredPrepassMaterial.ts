@@ -96,28 +96,6 @@ export class DeferredPrepassMaterial extends AMaterial<DeferredPrepassVShadersSt
     }
   }
 
-  get occlusionMap(): IGLTexture {
-    return this._occlusionMap;
-  }
-
-  set occlusionMap(val: IGLTexture) {
-    if (val !== this._occlusionMap) {
-      this._occlusionMap = val;
-      this.updateOcclusionMode();
-    }
-  }
-
-  get emissiveMap(): IGLTexture {
-    return this._emissiveMap;
-  }
-
-  set emissiveMap(val: IGLTexture) {
-    if (val !== this._emissiveMap) {
-      this._emissiveMap = val;
-      this._shaderState?.setVariantValue('emissiveMap', !!val);
-    }
-  }
-
   get pbrEnabled(): boolean {
     return !!(this._shaderState?.getVariantValue('pbr') !== 'off');
   }
@@ -131,6 +109,67 @@ export class DeferredPrepassMaterial extends AMaterial<DeferredPrepassVShadersSt
 
     this._shaderState?.setVariantValue('pbr', pbrVal);
   }
+
+  get occlusionMap(): IGLTexture {
+    return this._occlusionMap;
+  }
+
+  set occlusionMap(val: IGLTexture) {
+    if (val !== this._occlusionMap) {
+      this._occlusionMap = val;
+      this.updateOcclusionMode();
+    }
+  }
+
+
+  get rawEmissiveColor(): vec3 {
+    return this._shaderState.emissiveColor;
+  }
+
+  setEmissiveColor(color: vec3, emissiveMode?: 'map' | 'off' | 'val'): void {
+    vec3.copy(this._shaderState.emissiveColor, color);
+
+    if (emissiveMode !== undefined) {
+      this._shaderState?.setVariantValue('emissive', emissiveMode);
+    } else {
+      if (this._shaderState?.getVariantValue('emissive') === 'off') {
+        this._shaderState?.setVariantValue('emissive', 'val');
+      }
+    }
+  }
+
+  setEmissiveMap(map: IGLTexture, color?: vec3, emissiveMode?: 'map' | 'off' | 'val'): void {
+    if (map && color) {
+      vec3.copy(this._shaderState.emissiveColor, color);
+    }
+
+    this._emissiveMap = map;
+    if (emissiveMode !== undefined) {
+      this._shaderState?.setVariantValue('emissive', emissiveMode);
+    } else {
+      this._shaderState?.setVariantValue('emissive', map ? 'map' : 'off');
+    }
+  }
+
+  set emissiveMode(val: 'map' | 'off' | 'val' | boolean) {
+    if (val === true) {
+      val = this._emissiveMap ? 'map' : 'val';
+    } else if (val === false) {
+      val = 'off';
+    }
+
+    this._shaderState?.setVariantValue('emissive', val);
+  }
+
+  get emissiveMode(): 'map' | 'off' | 'val' | boolean {
+    return this._shaderState?.getVariantValue('emissive') as any;
+  }
+
+  get emissiveEnabled(): boolean {
+    return this._shaderState?.getVariantValue('emissive') !== 'off';
+
+  }
+
 
   protected updateOcclusionMode(): void {
     switch (true) {
@@ -169,9 +208,11 @@ export class DeferredPrepassMaterial extends AMaterial<DeferredPrepassVShadersSt
     const ss = this._shaderState;
     ss.use();
 
-    cam.normalMat(ss.normalMat, transformMat);
+    cam.modelViewAndNormalMat(ss.modelMat, ss.normalMat, transformMat);
     cam.mvp(ss.mvpMat, transformMat);
-    ss.modelMat = transformMat;
+    // ss.modelMat = transformMat;
+    ss.cameraPosition = cam.transform.getRawPosition();
+
 
     if (this._diffuseMap) {
       this._diffuseMap.active(GLDefaultTextureLocation.COLOR);

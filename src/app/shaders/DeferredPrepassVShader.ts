@@ -113,15 +113,23 @@ export class DeferredPrepassVShader extends GLShaderVariants<DeferredPrepassVSha
           },
         }
       ],
-      emissiveMap: [
+      emissive: [
         {
-          value: true,
+          value: 'map',
           flags: {
             EMISSIVE_MAP: true,
+            EMISSIVE_ENABLED: true,
           },
         },
         {
-          value: false,
+          value: 'val',
+          flags: {
+            EMISSIVE_ENABLED: true,
+            EMISSIVE_VAL: true,
+          },
+        },
+        {
+          value: 'off',
           default: true,
           flags: {
             EMISSIVE_MAP_DISABLED: true,

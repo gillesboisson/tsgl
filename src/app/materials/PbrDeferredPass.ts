@@ -3,7 +3,7 @@ import { Camera } from '../../tsgl/3d/Camera';
 import { ShadowMap } from '../../tsgl/3d/ShadowMap';
 import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { WebGL2Renderer } from '../../tsgl/gl/core/GLRenderer';
-import { IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
+import { GLTexture2D, IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
 import { mapMRTTexturesToProcessPassTexturesLocations } from '../../tsgl/helpers/postprocess/mapMRTTexturesToProcessPassTexturesLocations';
 import { ProcessPass } from '../../tsgl/helpers/postprocess/PostProcessPass';
 import { PbrShaderDebug } from '../../tsgl/shaders/PbrVShader';
@@ -21,6 +21,9 @@ export class PbrDeferredPass extends ProcessPass<PbrDeferredVShadersState, PbrDe
   private _shadowMap: ShadowMap;
   private _gammaCorrectionEnabled: boolean;
   private _emissiveMap: IGLTexture;
+  private _ssaoMap: GLTexture2D<
+    import('/home/gillesboisson/Projects/sandbox/TsGL2D/src/tsgl/gl/core/GLHelpers').AnyWebRenderingGLContext
+  >;
 
   // private _shadowMap: ShadowMap;
 
@@ -32,6 +35,8 @@ export class PbrDeferredPass extends ProcessPass<PbrDeferredVShadersState, PbrDe
     readonly reflectanceMap: IGLTexture,
   ) {
     super(renderer, [], renderer.getShader<PbrDeferredVShadersState>(PbrDeferredVShaderID));
+
+    this._shaderState?.setVariantValue('emissiveMap', framebuffer.emissiveEnabled);
   }
 
   protected _occlusionMapEnabled = false;
@@ -48,14 +53,21 @@ export class PbrDeferredPass extends ProcessPass<PbrDeferredVShadersState, PbrDe
     }
   }
 
-  get oclusionEnabled(): boolean {
-    return this._shaderState.getVariantValue('occlusion') === 'on';
+  get aoEnabled(): boolean {
+    return this._shaderState.getVariantValue('occlusion') !== 'off';
   }
 
-  set oclusionEnabled(val: boolean) {
-    if (val !== this.oclusionEnabled) {
-      this._shaderState.setVariantValue('occlusion', val ? 'on' : 'off');
-    }
+  enablePbrAO(): void {
+    this._shaderState.setVariantValue('occlusion', 'pbr');
+  }
+
+  enableSSAO(ssaoTexture: GLTexture2D): void {
+    this._shaderState.setVariantValue('occlusion', 'ssao');
+    this._ssaoMap = ssaoTexture;
+  }
+
+  disableAO(): void {
+    this._shaderState.setVariantValue('occlusion', 'off');
   }
 
   enableHDRCorrection(): void {
@@ -104,17 +116,6 @@ export class PbrDeferredPass extends ProcessPass<PbrDeferredVShadersState, PbrDe
     }
   }
 
-  get emissiveMap(): IGLTexture {
-    return this._emissiveMap;
-  }
-
-  set emissiveMap(val: IGLTexture) {
-    if (val !== this._emissiveMap) {
-      this._emissiveMap = val;
-      this._shaderState?.setVariantValue('emissiveMap', !!val);
-    }
-  }
-
   get gamma(): number {
     return this._gammaExposure[0];
   }
@@ -133,6 +134,7 @@ export class PbrDeferredPass extends ProcessPass<PbrDeferredVShadersState, PbrDe
 
   prepare(gl: WebGL2RenderingContext, renderData: PbrDeferredPassData): void {
     const ss = this._shaderState;
+    const framebuffer = this.framebuffer;
     ss.use();
 
     ss.lightDirection = this.lightDirection;
@@ -140,21 +142,28 @@ export class PbrDeferredPass extends ProcessPass<PbrDeferredVShadersState, PbrDe
     ss.cameraPosition = renderData.cam.transform.getRawPosition();
 
     // vec3.negate(ss.cameraPosition, renderData.cam.transform.getRawPosition());
-    
+
     gl.activeTexture(gl.TEXTURE0 + GLDefaultTextureLocation.COLOR);
-    gl.bindTexture(gl.TEXTURE_2D, this.framebuffer.albedo.texture);
+    gl.bindTexture(gl.TEXTURE_2D, framebuffer.albedo.texture);
     gl.activeTexture(gl.TEXTURE0 + GLDefaultTextureLocation.NORMAL);
-    gl.bindTexture(gl.TEXTURE_2D, this.framebuffer.normalMap.texture);
+    gl.bindTexture(gl.TEXTURE_2D, framebuffer.normalMap.texture);
     gl.activeTexture(gl.TEXTURE0 + GLDefaultTextureLocation.POSITION);
-    gl.bindTexture(gl.TEXTURE_2D, this.framebuffer.positionMap.texture);
+    gl.bindTexture(gl.TEXTURE_2D, framebuffer.positionMap.texture);
     gl.activeTexture(gl.TEXTURE0 + GLDefaultTextureLocation.PBR_0);
-    gl.bindTexture(gl.TEXTURE_2D, this.framebuffer.pbrMap.texture);
+    gl.bindTexture(gl.TEXTURE_2D, framebuffer.pbrMap.texture);
     gl.activeTexture(gl.TEXTURE0 + GLDefaultTextureLocation.DEPTH);
-    gl.bindTexture(gl.TEXTURE_2D, this.framebuffer.depthTexture.texture);
+    gl.bindTexture(gl.TEXTURE_2D, framebuffer.depthTexture.texture);
+
+    if (this._ssaoMap) {
+      this._ssaoMap.active(GLDefaultTextureLocation.AMBIANT_OCCLUSION);
+    }
+
+    if (framebuffer.emissiveEnabled) {
+      framebuffer.emissiveMap.active(GLDefaultTextureLocation.EMISSIVE);
+    }
 
     this.irradianceMap.active(GLDefaultTextureLocation.IRRADIANCE_BOX);
     this.reflectanceMap.active(GLDefaultTextureLocation.RELEXION_BOX);
-    
 
     if (this._shadowMap) {
       this._shadowMap.depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);

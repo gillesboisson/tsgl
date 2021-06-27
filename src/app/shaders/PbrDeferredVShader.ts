@@ -24,18 +24,6 @@ export type PbrDeferredVariant = {
 
 export const PbrDeferredVShaderID = 'pbr_deferred_variant';
 
-export enum PbrDeferredShaderDebug {
-  none = 'none',
-  normal = 'normal',
-  diffuse = 'diffuse',
-  specular = 'specular',
-  ambiant = 'ambiant',
-  occlusion = 'occlusion',
-  roughness = 'roughness',
-  metallic = 'metallic',
-  shadow = 'shadow',
-}
-
 export class PbrDeferredVShader extends GLShaderVariants<
   PbrDeferredVShadersState,
   PbrDeferredVariant
@@ -46,64 +34,71 @@ export class PbrDeferredVShader extends GLShaderVariants<
     const valueDefTest: { [name: string]: GLVariantValueDefinition[] } = {
       debug: [
         {
-          value: PbrDeferredShaderDebug.none,
+          value: 'none',
           default: true,
           flags: {},
         },
         {
-          value: PbrDeferredShaderDebug.normal,
+          value: 'normal',
           flags: {
             DEBUG: true,
             DEBUG_NORMAL: true,
           },
         },
         {
-          value: PbrDeferredShaderDebug.diffuse,
+          value: 'diffuse',
           flags: {
             DEBUG: true,
             DEBUG_DIFFUSE: true,
           },
         },
         {
-          value: PbrDeferredShaderDebug.specular,
+          value: 'specular',
           flags: {
             DEBUG: true,
             DEBUG_SPECULAR: true,
           },
         },
         {
-          value: PbrDeferredShaderDebug.ambiant,
+          value: 'ambiant',
           flags: {
             DEBUG: true,
             DEBUG_AMBIANT: true,
           },
         },
         {
-          value: PbrDeferredShaderDebug.occlusion,
+          value: 'occlusion',
           flags: {
             DEBUG: true,
             DEBUG_OCCLUSION: true,
           },
         },
         {
-          value: PbrDeferredShaderDebug.metallic,
+          value: 'metallic',
           flags: {
             DEBUG: true,
             DEBUG_METALLIC: true,
           },
         },
         {
-          value: PbrDeferredShaderDebug.roughness,
+          value: 'roughness',
           flags: {
             DEBUG: true,
             DEBUG_ROUGHNESS: true,
           },
         },
         {
-          value: PbrDeferredShaderDebug.shadow,
+          value: 'shadow',
           flags: {
             DEBUG: true,
             DEBUG_SHADOW: true,
+          },
+        },
+        {
+          value: 'emissive',
+          flags: {
+            DEBUG: true,
+            DEBUG_EMISSIVE: true,
           },
         },
       ],
@@ -151,10 +146,18 @@ export class PbrDeferredVShader extends GLShaderVariants<
       ],
       occlusion: [
         {
-          value: 'on',
+          value: 'pbr',
           flags: {
-            OCCLUSION_MAP: true,
             OCCLUSION_ENABLED: true,
+            OCCLUSION_PBR: true,
+          },
+        },
+
+        {
+          value: 'ssao',
+          flags: {
+            OCCLUSION_ENABLED: true,
+            OCCLUSION_SSAO: true,
           },
         },
 
@@ -199,6 +202,7 @@ export class PbrDeferredVShader extends GLShaderVariants<
       'u_emissiveMap',
       'u_pbrMap',
       'u_shadowMap',
+      'u_occlusionMap',
     ]);
   }
 
