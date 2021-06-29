@@ -253,8 +253,14 @@ void main(){
 
   #ifndef DEBUG 
   FragColor = vec4( color ,1.0);
+  
+
+
+  
   gl_FragDepth = depth; 
 
+
+  
   #endif
   
   #ifdef DEBUG_NORMAL

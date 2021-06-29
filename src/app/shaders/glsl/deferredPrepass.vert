@@ -34,7 +34,7 @@ uniform mat4 u_mvpMat;
 
 
 out vec2 v_uv;
-out vec3 v_position;
+out vec4 v_position;
 
 #ifdef NORMAL_VERTEX
 in vec3 a_normal;
@@ -59,7 +59,7 @@ void main(){
       
     v_uv = a_uv;
     
-    v_position = (u_modelMat * vec4(a_position, 1.0)).xyz;
+    v_position = u_modelMat * vec4(a_position, 1.0);
 
     #ifdef NORMAL_VERTEX
     v_normal = (u_normalMat * vec4(a_normal,1.0)).xyz;

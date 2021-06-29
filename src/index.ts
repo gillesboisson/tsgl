@@ -55,11 +55,12 @@ import { SSAOShader } from './app/shaders/SSAOShader';
 import { SSAOPass } from './app/SSAOPass';
 import { SSAOBlurPass } from './app/SSAOBlurPass';
 import { SSAOBlurShader } from './app/shaders/SSAOBlurShader';
+import { SSRShader } from './app/shaders/SSRShader';
+import { SSRPass } from './app/SSRPass';
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
 });
-
 
 class TestApp extends Base3DApp {
   meshVao: GLVao;
@@ -84,6 +85,8 @@ class TestApp extends Base3DApp {
   offDeferredNode: MeshNode<PhongBlinnMaterial>;
   private _ssaoPass: SSAOPass;
   private _ssaoBlurPass: SSAOBlurPass;
+  private _ssrPass: SSRPass;
+  private _pbrFB: GLFramebuffer;
 
   constructor() {
     super(GLRendererType.WebGL2, { antialias: true });
@@ -118,13 +121,13 @@ class TestApp extends Base3DApp {
 
     PhongBlinnVShader.register(renderer);
     SSAOShader.register(renderer);
+    SSRShader.register(renderer);
     SSAOBlurShader.register(renderer);
 
     // load scene;
 
     //this.renderer.resize(this.renderer.width, this.renderer.height);
     // this._mrt = new GLMRTFrameBuffer(this.renderer.gl, this.renderer.width, this.renderer.height, 4, true);
-
 
     this._deferredMRT = new DeferredFrameBuffer(this.renderer.gl as WebGL2RenderingContext, {
       width: this.renderer.width,
@@ -133,6 +136,9 @@ class TestApp extends Base3DApp {
       pbrEnabled: true,
       emissiveEnabled: true,
     });
+
+    this._pbrFB = new GLFramebuffer(gl, this.renderer.width, this.renderer.height, false);
+
 
     this._ssaoPass = new SSAOPass(this.renderer, this._deferredMRT);
     this._ssaoBlurPass = new SSAOBlurPass(this.renderer, this._ssaoPass.ssaoTexture);
@@ -146,8 +152,8 @@ class TestApp extends Base3DApp {
 
     // this._cam.setOrtho(-hWidth, hWidth, -hHeight, hHeight);
 
-    this._cam.transform.rotateAroundAxes(vec3.fromValues(1, 0, 0), -Math.PI / 4);
-    this._cam.transform.setPosition(0, 15, 15);
+    this._cam.transform.rotateAroundAxes(vec3.fromValues(1, 0, 0), 0);
+    this._cam.transform.setPosition(0, 0, 15);
     // this._camController = new TopDownCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
     this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
 
@@ -162,6 +168,8 @@ class TestApp extends Base3DApp {
     };
 
     this._shadowMap.setLookAtFromLight(light);
+    this._ssrPass = new SSRPass(this.renderer, this._deferredMRT,this._pbrFB.colorTexture);
+
   }
 
   ready() {
@@ -192,7 +200,7 @@ class TestApp extends Base3DApp {
       },
     });
 
-    this._cam.transform.setPosition(0, 5, 5);
+    this._cam.transform.setPosition(0, 0, 0);
 
     const gl = this.renderer.gl;
 
@@ -231,7 +239,7 @@ class TestApp extends Base3DApp {
     const plane = new MeshNode(sphereMat, planeMesh);
 
     plane.transform.rotateEuler(-Math.PI / 2, 0, 0);
-    plane.transform.setScale(10);
+    plane.transform.setScale(30);
     plane.transform.setPosition(0, -3, 0);
 
     this._sceneRenderables = new SceneInstance3D();
@@ -246,10 +254,11 @@ class TestApp extends Base3DApp {
 
     this._sceneRenderables.addChild(...[plane, sphere, sphere2]);
     // this._sceneRenderables.addChild(sphere);
-    const step = 10;
+    let step = 10;
 
     this.offDeferredNode = new MeshNode(new PhongBlinnMaterial(this.renderer, light), mesh);
     this.offDeferredNode.transform.setScale(10);
+    const cubeMesh = createBoxMesh(gl,0.5,2,0.5);
 
     for (let i = 0; i <= step; i++) {
       for (let f = 0; f <= step; f++) {
@@ -270,45 +279,50 @@ class TestApp extends Base3DApp {
         pbrMat.roughness = (i / step) * 0.99;
         // pbrMat.roughness = ((pbrMat.roughness + 1.0) * (pbrMat.roughness + 1.0)) / 8;
 
-        const pbrSphere = new MeshNode(pbrMat, mesh);
+        const pbrSphere = new MeshNode(pbrMat, cubeMesh);
+        
         // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
 
-        pbrSphere.transform.translate(i + 3.0, f, 0);
+        pbrSphere.transform.translate(i - 5, -2, f - 5);
 
         this._sceneRenderables.addChild(pbrSphere);
       }
     }
 
 
-    const cubeMesh = createBoxMesh(gl);
+    // step = 0;
 
-    for (let i = 0; i <= step; i++) {
-      for (let f = 0; f <= step; f++) {
-        // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
+    // for (let i = 0; i <= step; i++) {
+    //   for (let f = 0; f <= step; f++) {
+    //     // const pbrMat = new PhongBlinnMaterial(this.renderer, light);
 
-        const pbrMat = new DeferredPrepassMaterial(this.renderer);
+    //     const pbrMat = new DeferredPrepassMaterial(this.renderer);
 
-        pbrMat.pbrEnabled = true;
-        pbrMat.emissiveMode = true;
+    //     pbrMat.pbrEnabled = true;
+    //     pbrMat.emissiveMode = true;
 
-        // pbrMat.setGammaExposure(2.2,1.0);
-        // pbrMat.enableHDRCorrection();
-        // pbrMat.setGammaExposure(1.3, 1.0);
+    //     // pbrMat.setGammaExposure(2.2,1.0);
+    //     // pbrMat.enableHDRCorrection();
+    //     // pbrMat.setGammaExposure(1.3, 1.0);
 
-        pbrMat.setDiffuseColor(1, 1, 1);
+    //     pbrMat.setDiffuseColor(1, 1, 1);
 
-        pbrMat.metallic = Math.random();
-        pbrMat.roughness = Math.random();
+    //     pbrMat.metallic = Math.random();
+    //     pbrMat.roughness = Math.random();
 
-        const pbrSphere = new MeshNode(pbrMat, mesh);
-        // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
+    //     const pbrSphere = new MeshNode(pbrMat, mesh);
+    //     // const pbrSphere = new MeshNode(pbrMat, createBoxMesh(gl,0.5,0.5,0.5));
 
-        pbrSphere.transform.translate(Math.random() * 10 - 5, plane.transform.getRawPosition()[1], Math.random() * 10 - 5);
-        pbrSphere.transform.setScale(Math.random() * 2, Math.random() * 10, Math.random() * 2);
+    //     pbrSphere.transform.translate(
+    //       Math.random() * 10 - 5,
+    //       plane.transform.getRawPosition()[1],
+    //       Math.random() * 10 - 5,
+    //     );
+    //     pbrSphere.transform.setScale(Math.random() * 2, Math.random() * 10, Math.random() * 2);
 
-        this._sceneRenderables.addChild(pbrSphere);
-      }
-    }
+    //     this._sceneRenderables.addChild(pbrSphere);
+    //   }
+    // }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -336,9 +350,15 @@ class TestApp extends Base3DApp {
     this._sceneRenderables.getNodes<IRenderableInstance3D>().forEach((node) => node.render(gl, this._cam));
 
     this._deferredMRT.unbind();
-    this._ssaoPass.render(gl,{cam: this._cam});
+
+    this._ssaoPass.render(gl, { cam: this._cam });
     this._ssaoBlurPass.render(gl);
+
+    this._pbrFB.bind();
     this._processPass.render(gl, { cam: this._cam });
+    this._pbrFB.unbind();
+
+    this._ssrPass.render(gl, { cam: this._cam });
 
     // this.offDeferredNode.render(gl, this._cam);
   }

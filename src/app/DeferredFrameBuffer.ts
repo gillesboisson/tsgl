@@ -70,7 +70,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
   private _isWebGL2: any;
   private _frameBuffer: WebGLFramebuffer;
   private _textures: IGLTexture[];
-  private _depthTexture?: IGLTexture;
+  private _depthTexture?: GLTexture2D;
   private _depthRenderBuffer: WebGLFramebuffer;
   private _colorsAttachements: GLenum[];
   private _previousViewport: Int32Array = null;
@@ -86,7 +86,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
     return this._textures;
   }
 
-  get depthTexture(): IGLTexture {
+  get depthTexture(): GLTexture2D {
     return this._depthTexture;
   }
 
@@ -198,7 +198,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
-        gl.DEPTH_COMPONENT24,
+        (gl as any).depthTextureExt !== undefined ? gl.DEPTH_COMPONENT : (gl as WebGL2RenderingContext).DEPTH_COMPONENT24,
         this._width,
         this._height,
         0,
@@ -206,6 +206,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
         gl.UNSIGNED_INT,
         null,
       );
+
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -218,7 +219,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
     // setup depth render buffer
     if (this._depthRenderBuffer !== undefined) {
       gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, this._width, this._height);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, this._width, this._height);
       gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     }
 

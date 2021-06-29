@@ -34,7 +34,7 @@ layout (location = 3) out vec4 Pbr;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 
-in vec3 v_position;
+in vec4 v_position;
 in vec2 v_uv;
 
 uniform vec3 u_cameraPosition;
@@ -112,7 +112,7 @@ void main(){
 
   #ifdef NORMAL_TBN
     vec3 normal = texture(u_normalMap,v_uv).rgb * vec3(2.0) - vec3(1.0);
-    vec3 viewDir    = normalize(u_cameraPosition - v_position);
+    vec3 viewDir    = normalize(u_cameraPosition - v_position.xyz);
 
     normal = tbnMatToNormal(v_TBN, normal, viewDir);
 
@@ -163,7 +163,7 @@ void main(){
 
 
   // store the fragment position vector in the first gbuffer texture
-  Position = vec4(v_position, 1.0);
+  Position = v_position;
   // also store the per-fragment normals into the gbuffer
   Normal = vec4(normal,1.0);
   // and the diffuse per-fragment color
