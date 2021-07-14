@@ -1,8 +1,12 @@
 import { mat4, vec2, vec3 } from 'gl-matrix';
 import { Camera } from '../tsgl/3d/Camera';
+import { IResize } from '../tsgl/base/IResize';
 import { GLDefaultTextureLocation } from '../tsgl/gl/core/data/GLDefaultAttributesLocation';
-import { WebGL2Renderer } from '../tsgl/gl/core/GLRenderer';
+import { IGLFrameBuffer } from '../tsgl/gl/core/framebuffer/IGLFrameBuffer';
+import { AnyWebRenderingGLContext } from '../tsgl/gl/core/GLHelpers';
+import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/core/GLRenderer';
 import { GLTexture2D, IGLTexture } from '../tsgl/gl/core/texture/GLTexture';
+import { createRawFramebuffer } from '../tsgl/helpers/framebuffer';
 import { PostProcessPass } from '../tsgl/helpers/postprocess/PostProcessPass';
 import { createEmptyTextureWithLinearNearestFilter } from '../tsgl/helpers/texture/createEmptyTextureWithLinearNearestFilter';
 import { DeferredFrameBuffer } from './DeferredFrameBuffer';
@@ -35,7 +39,7 @@ function genSSAOKernel(size: number): Float32Array {
 
 function genSSAORandomRotation(gl: WebGL2RenderingContext, size = 16): WebGLTexture {
   const res = new Float32Array(size * 4);
-  
+
   for (let i = 0; i < size; i++) {
     const v: vec3 = new Float32Array(res.buffer, i * Float32Array.BYTES_PER_ELEMENT * 4, 3) as vec3;
     vec3.set(v, Math.random() * 2 - 1, Math.random() * 2 - 1, 0);
@@ -54,82 +58,128 @@ function genSSAORandomRotation(gl: WebGL2RenderingContext, size = 16): WebGLText
   return texture;
 }
 
-export interface SSAOShaderSettings{
-  bias:number,
-  radius:number,
-  power:number,
+export interface SSAOShaderOptions {
+  bias: number;
+  radius: number;
+  power: number;
 }
+
+export interface SSAOPassOptions {
+  width?: number;
+  height?: number;
+  noiseKernelSize?: number;
+  kernelSize?: number;
+  bias?: number;
+  radius?: number;
+  power?: number;
+}
+
+export type SSAOPassSettings = Required<SSAOPassOptions>;
 
 export interface SSAOPassRenderingData {
   cam: Camera;
 }
 
-export class SSAOPass extends PostProcessPass<SSAOShaderState, SSAOPassRenderingData> {
-  readonly fb: WebGLFramebuffer;
-  private _ssaoTexture: GLTexture2D;
-  private _rotationTexture: WebGLTexture;
-
-  get ssaoTexture():GLTexture2D{
-    return this._ssaoTexture;
-  }
-  
-  
-
-  readonly settings: SSAOShaderSettings = {
+function defaultSSAOPassSettings(renderer: GLRenderer, options: SSAOPassOptions): SSAOPassSettings {
+  return {
+    width: renderer.width,
+    height: renderer.height,
+    noiseKernelSize: 16,
+    kernelSize: 64,
     bias: 0.1,
     radius: 0.5,
     power: 1,
+    ...options,
+  };
+}
+
+function createFramebuffer(
+  gl: AnyWebRenderingGLContext,
+  width: number,
+  height: number,
+): { texture: GLTexture2D; framebuffer: IGLFrameBuffer & IResize } {
+  // create base objects
+  const texture = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE);
+  const rawFB = createRawFramebuffer(gl, width, height);
+
+  // get raw webgl data
+  const fb = rawFB.framebuffer;
+  const tex = texture.texture;
+  const target = gl.TEXTURE_2D;
+
+  // link texture to framebuffer
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  // custom resize function which resize texture and update framebuffer settings
+  function resize(width: number, height: number): void {
+    gl.bindTexture(target, tex);
+    gl.texImage2D(target, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.bindTexture(target, null);
+    rawFB.width = width;
+    rawFB.height = height;
   }
+
+  // create final objects
+  return {
+    framebuffer: {
+      ...rawFB,
+      resize,
+    },
+    texture,
+  };
+}
+export class SSAOPass extends PostProcessPass<SSAOShaderState, SSAOPassRenderingData> {
+  private _ssaoTexture: GLTexture2D;
+  private _rotationTexture: WebGLTexture;
+  readonly noiseKernelSize: number;
+  readonly sourceFramebuffer: DeferredFrameBuffer;
+
+  get ssaoTexture(): GLTexture2D {
+    return this._ssaoTexture;
+  }
+
+  readonly settings: SSAOPassSettings;
   readonly kernelSR: number;
 
-  constructor(
-    renderer: WebGL2Renderer,
-    readonly sourceFramebuffer: DeferredFrameBuffer,
-    readonly noiseKernelSize = 16,
-    kernelSize = 64,
-  ) {
-    super(renderer, [],{
-      viewportX: 0,
-      viewportY: 0,
-      viewportWidth: renderer.width,
-      viewportHeight: renderer.height,
-    }, renderer.getShader<SSAOShaderState>(SSAOShaderID));
+  constructor(renderer: WebGL2Renderer, sourceFramebuffer: DeferredFrameBuffer, options: SSAOPassOptions) {
     const gl = renderer.gl;
+    const settings = defaultSSAOPassSettings(renderer, options);
 
-    this.kernelSR = Math.sqrt(noiseKernelSize);
+    const { framebuffer, texture } = createFramebuffer(gl, settings.width, settings.height);
 
-    const ext = gl.getExtension('EXT_color_buffer_float');
+    super(
+      renderer,
+      [],
+      {
+        viewportX: 0,
+        viewportY: 0,
+        viewportWidth: renderer.width,
+        viewportHeight: renderer.height,
+        framebuffer,
+      },
+      renderer.getShader<SSAOShaderState>(SSAOShaderID),
+    );
 
-    if (!ext) {
-      throw new Error('EXT_color_buffer_float not available but SSAO require it for high precision buffer');
-    }
+    this.sourceFramebuffer = sourceFramebuffer;
+    this.kernelSR = Math.sqrt(settings.noiseKernelSize);
+    this.noiseKernelSize = settings.noiseKernelSize;
+    this.settings = settings;
 
-    this._rotationTexture = genSSAORandomRotation(renderer.gl, noiseKernelSize);
+    this._rotationTexture = genSSAORandomRotation(renderer.gl, settings.noiseKernelSize);
 
-    this._shaderState.updateKernel(genSSAOKernel(kernelSize), kernelSize);
+    this._shaderState.updateKernel(genSSAOKernel(settings.kernelSize), settings.kernelSize);
     this._shaderState.updateSettings(this.settings);
 
-    const fb = (this.fb = gl.createFramebuffer());
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-
-    this._ssaoTexture = createEmptyTextureWithLinearNearestFilter(
-      gl,
-      sourceFramebuffer.width,
-      sourceFramebuffer.height,
-      gl.RGBA,
-      gl.RGBA,
-      gl.UNSIGNED_BYTE,
-    );
-   
-
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._ssaoTexture.texture, 0);
+    this._ssaoTexture = texture;
   }
 
   prepare(gl: WebGL2RenderingContext, shaderState: SSAOShaderState, renderingData: SSAOPassRenderingData): void {
     const sourceFramebuffer = this.sourceFramebuffer;
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.fb);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, this.fb);
+    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     shaderState.use();
 
     gl.activeTexture(gl.TEXTURE0 + GLDefaultTextureLocation.NORMAL);
@@ -144,8 +194,6 @@ export class SSAOPass extends PostProcessPass<SSAOShaderState, SSAOPassRendering
     renderingData.cam.p(shaderState.pMat);
     renderingData.cam.v(shaderState.vMat);
     //mat4.copy(shaderState.vMat, renderingData.cam.transform.getLocalMat());
-
-
 
     shaderState.noiseScale[0] = this.renderer.width / 4;
     shaderState.noiseScale[1] = this.renderer.height / 4;

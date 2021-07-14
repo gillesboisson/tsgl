@@ -7,7 +7,7 @@ import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
 import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
 import { GLShader } from '../../tsgl/gl/core/shader/GLShader';
 import { GLShaderState } from '../../tsgl/gl/core/shader/GLShaderState';
-import { SHADER_KERNEL_BUFFER_SIZE, SSAOShaderSettings } from '../SSAOPass';
+import { SHADER_KERNEL_BUFFER_SIZE, SSAOShaderOptions } from '../SSAOPass';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fragSrc = require('./glsl/ssao.frag').default;
@@ -41,7 +41,7 @@ export class SSAOShaderState extends GLShaderState {
     gl.uniform1i(uniformsLocations.u_kernelSize, kernelSize);
   }
 
-  updateSettings(settings: SSAOShaderSettings, use = true) {
+  updateSettings(settings: SSAOShaderOptions, use = true) {
     if (use) this.use();
     const gl = this.gl;
     const uniformsLocations = this._uniformsLocations;
