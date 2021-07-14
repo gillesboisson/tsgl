@@ -9,9 +9,10 @@ import { IRenderableInstance3D } from './IRenderableInstance3D';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { Camera } from './Camera';
 
-export class SceneInstance3D<TransformT extends ITransform<mat4> = Transform3D> extends ASceneInstance<
+export class SceneInstance3D<TransformT extends ITransform<mat4> = Transform3D, ChilddrenT extends ASceneInstance<mat4, ITransform<mat4>> = any> extends ASceneInstance<
   mat4,
-  TransformT
+  TransformT,
+  ChilddrenT
 > {
   constructor(TransformClass: Type<TransformT> = (Transform3D as unknown) as Type<TransformT>) {
     super(mat4, TransformClass);
@@ -28,7 +29,9 @@ export class SceneInstance3D<TransformT extends ITransform<mat4> = Transform3D> 
   }
 }
 
-export class MeshNode<MaterialT extends IMaterial = IMaterial> extends SceneInstance3D<Transform3D> {
+
+
+export class MeshNode<MaterialT extends IMaterial = IMaterial> extends SceneInstance3D<Transform3D> implements IRenderableInstance3D {
   constructor(public material: MaterialT, public mesh: GLMesh) {
     super(Transform3D);
   }

@@ -5,7 +5,7 @@ import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttri
 import { WebGL2Renderer } from '../../tsgl/gl/core/GLRenderer';
 import { IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
 import { mapMRTTexturesToProcessPassTexturesLocations } from '../../tsgl/helpers/postprocess/mapMRTTexturesToProcessPassTexturesLocations';
-import { ProcessPass } from '../../tsgl/helpers/postprocess/PostProcessPass';
+import { PostProcessPass } from '../../tsgl/helpers/postprocess/PostProcessPass';
 import { PhongBlinnLightInterface, PhongBlinnShaderDebug } from '../../tsgl/shaders/PhongBlinnVShader';
 import { DeferredFrameBuffer } from '../DeferredFrameBuffer';
 import { PhongBlinnDeferredVShaderID } from '../shaders/PhongBlinnDeferredVShader';
@@ -17,7 +17,7 @@ export interface PhongBlinnDeferredPassData {
 
 
 
-export class PhongBlinnDeferredPass extends ProcessPass<PhongBlinnDeferredVShadersState, PhongBlinnDeferredPassData> {
+export class PhongBlinnDeferredPass extends PostProcessPass<PhongBlinnDeferredVShadersState, PhongBlinnDeferredPassData> {
   protected _irradianceMap: IGLTexture;
   protected _extraMap: IGLTexture;
   private _shadowMap: ShadowMap;
@@ -28,7 +28,12 @@ export class PhongBlinnDeferredPass extends ProcessPass<PhongBlinnDeferredVShade
     readonly framebuffer: DeferredFrameBuffer,
     public light: PhongBlinnLightInterface,
   ) {
-    super(renderer, [], renderer.getShader<PhongBlinnDeferredVShadersState>(PhongBlinnDeferredVShaderID));
+    super(renderer, [],{
+      viewportX: 0,
+      viewportY: 0,
+      viewportWidth: renderer.width,
+      viewportHeight: renderer.height,
+    }, renderer.getShader<PhongBlinnDeferredVShadersState>(PhongBlinnDeferredVShaderID));
   }
 
   protected _occlusionMapEnabled = false;
@@ -90,18 +95,17 @@ export class PhongBlinnDeferredPass extends ProcessPass<PhongBlinnDeferredVShade
     this._shaderState?.setVariantValue('occlusionMap', this._extraMap && this._occlusionMapEnabled);
   }
 
-  prepare(gl: WebGL2RenderingContext, renderData: PhongBlinnDeferredPassData): void {
-    const ss = this._shaderState;
+  prepare(gl: WebGL2RenderingContext, shaderState: PhongBlinnDeferredVShadersState ,renderData: PhongBlinnDeferredPassData): void {
     const light = this.light;
-    ss.use();
+    shaderState.use();
 
-    ss.lightDirection = light.direction;
-    ss.lightColor = light.color;
-    ss.specularColor = light.specularColor;
-    ss.ambiantColor = light.ambiantColor;
-    ss.lightShininess = light.shininess;
+    shaderState.lightDirection = light.direction;
+    shaderState.lightColor = light.color;
+    shaderState.specularColor = light.specularColor;
+    shaderState.ambiantColor = light.ambiantColor;
+    shaderState.lightShininess = light.shininess;
 
-    vec3.negate(ss.cameraPosition, renderData.cam.transform.getRawPosition());
+    vec3.negate(shaderState.cameraPosition, renderData.cam.transform.getRawPosition());
 
     gl.activeTexture(gl.TEXTURE0 + GLDefaultTextureLocation.COLOR);
     gl.bindTexture(gl.TEXTURE_2D, this.framebuffer.albedo.texture);
@@ -122,8 +126,8 @@ export class PhongBlinnDeferredPass extends ProcessPass<PhongBlinnDeferredVShade
 
     if (this._shadowMap) {
       this._shadowMap.depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);
-      vec2.set(ss.shadowMapPixelSize,1 / this._shadowMap.depthTexture.width,1 / this._shadowMap.depthTexture.height);
-      this._shadowMap.depthBiasVp(ss.depthBiasMvpMat);
+      vec2.set(shaderState.shadowMapPixelSize,1 / this._shadowMap.depthTexture.width,1 / this._shadowMap.depthTexture.height);
+      this._shadowMap.depthBiasVp(shaderState.depthBiasMvpMat);
 
     }
 

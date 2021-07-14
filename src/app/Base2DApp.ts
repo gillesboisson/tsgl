@@ -88,7 +88,8 @@ export abstract class Base2DApp {
     this.update(time, elapsedTime);
     this._juggler.update(elapsedTime);
     this._renderer.prepareFrame();
-    this._renderer.clear();
+    const gl = this.renderer.gl;
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     const elapsedTimeR = t1 - this._t;
     const timeR = t1 - this._t0;

@@ -21,6 +21,8 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
     return this._height;
   }
 
+  
+
   private _frameBuffer: WebGLFramebuffer;
   private _colorTexture: GLTexture2D;
   private _depthRenderBuffer: WebGLRenderbuffer;
@@ -34,7 +36,7 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
   viewportBinded: () => void;
   viewportUnbinded: () => void;
 
-  get glFrameBuffer(): WebGLFramebuffer{
+  get framebuffer(): WebGLFramebuffer{
     return this._frameBuffer;
     
   }

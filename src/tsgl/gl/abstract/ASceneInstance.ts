@@ -7,13 +7,17 @@ import { MatType } from './MatType';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const IDENT_MAT4 = mat4.create();
 
-export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> implements ISceneInstance<MatT> {
+export abstract class ASceneInstance<
+  MatT,
+  TransformT extends ITransform<MatT>,
+  ChilddrenT extends ASceneInstance<MatT, ITransform<MatT>> = any
+> implements ISceneInstance<MatT> {
   transform: TransformT;
   protected _worldMat: MatT;
-  protected _nodes: ASceneInstance<MatT, ITransform<MatT>>[] = [];
+  protected _nodes: Array<ChilddrenT> = [];
   protected _parent: ASceneInstance<MatT, ITransform<MatT>> = null;
 
-  getNodes<T extends ISceneInstance<MatT> = ASceneInstance<MatT, ITransform<MatT>>>(): T[] {
+  getNodes<T extends ISceneInstance<MatT> = ChilddrenT>(): T[] {
     return this._nodes as any;
   }
 
@@ -22,7 +26,7 @@ export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> 
     this.transform = new TransformClass();
   }
 
-  addChild(...nodes: Array<ASceneInstance<MatT, ITransform<MatT>>>): void {
+  addChild(...nodes: Array<ChilddrenT>): void {
     for (const node of nodes) {
       if (this._nodes.indexOf(node) === -1) {
         this._nodes.push(node);
@@ -31,7 +35,7 @@ export abstract class ASceneInstance<MatT, TransformT extends ITransform<MatT>> 
     }
   }
 
-  removeChild(...nodes: Array<ASceneInstance<MatT, ITransform<MatT>>>): void {
+  removeChild(...nodes: Array<ChilddrenT>): void {
     for (const node of nodes) {
       const ind = this._nodes.indexOf(node);
       if (ind !== -1) {

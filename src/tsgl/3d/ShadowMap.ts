@@ -6,11 +6,14 @@ import { GLFramebuffer } from '../gl/core/framebuffer/GLFramebuffer';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { GLTexture2D, IGLStoredTextureBase, IGLTexture } from '../gl/core/texture/GLTexture';
+import { PostProcessPass } from '../helpers/postprocess/PostProcessPass';
 import { Camera } from './Camera';
 import { IRenderableInstance3D } from './IRenderableInstance3D';
 import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';
 
-const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
+
+
+export const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 
 export class ShadowMap {
   protected _framebuffer: GLFramebuffer;
@@ -69,7 +72,8 @@ export class ShadowMap {
 
   startRenderDepthMap(clear = true): void {
     this._framebuffer.bind();
-    if (clear) this.renderer.clear();
+    const gl = this.renderer.gl;
+    if (clear) gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
   stopRenderDepthMap(): void {
@@ -105,7 +109,6 @@ export class ShadowMap {
     this._camera.vp(out);
     mat4.multiply(out, biasMat, out);
   }
-
 
   destroy(): void {}
 }

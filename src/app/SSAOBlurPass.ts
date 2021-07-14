@@ -3,13 +3,13 @@ import { Camera } from '../tsgl/3d/Camera';
 import { GLDefaultTextureLocation } from '../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { WebGL2Renderer } from '../tsgl/gl/core/GLRenderer';
 import { GLTexture2D, IGLTexture } from '../tsgl/gl/core/texture/GLTexture';
-import { ProcessPass } from '../tsgl/helpers/postprocess/PostProcessPass';
+import { PostProcessPass } from '../tsgl/helpers/postprocess/PostProcessPass';
 import { createEmptyTextureWithLinearNearestFilter } from '../tsgl/helpers/texture/createEmptyTextureWithLinearNearestFilter';
 import { SSAOBlurShaderID, SSAOBlurShaderState } from './shaders/SSAOBlurShader';
 
 
-export class SSAOBlurPass extends ProcessPass<SSAOBlurShaderState> {
-  readonly framebuffer: WebGLFramebuffer;
+export class SSAOBlurPass extends PostProcessPass<SSAOBlurShaderState> {
+  readonly fb: WebGLFramebuffer;
   private _ssaoTexture: GLTexture2D;
   private _rotationTexture: WebGLTexture;
 
@@ -27,12 +27,17 @@ export class SSAOBlurPass extends ProcessPass<SSAOBlurShaderState> {
     renderer: WebGL2Renderer,
     readonly sourceTexture: GLTexture2D,
   ) {
-    super(renderer, [], renderer.getShader<SSAOBlurShaderState>(SSAOBlurShaderID));
+    super(renderer, [],{
+      viewportX: 0,
+      viewportY: 0,
+      viewportWidth: renderer.width,
+      viewportHeight: renderer.height,
+    }, renderer.getShader<SSAOBlurShaderState>(SSAOBlurShaderID));
     const gl = renderer.gl;
 
 
 
-    const fb = (this.framebuffer = gl.createFramebuffer());
+    const fb = (this.fb = gl.createFramebuffer());
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
 
     this._ssaoTexture = createEmptyTextureWithLinearNearestFilter(
@@ -51,7 +56,7 @@ export class SSAOBlurPass extends ProcessPass<SSAOBlurShaderState> {
   prepare(gl: WebGL2RenderingContext): void {
     const ss = this._shaderState;
     
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.fb);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     ss.use();
 

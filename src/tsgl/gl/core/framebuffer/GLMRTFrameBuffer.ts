@@ -29,6 +29,10 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     return this._depthTexture;
   }
 
+  get framebuffer(): WebGLFramebuffer{
+    return this._frameBuffer;
+  }
+
   constructor(
     gl: AnyWebRenderingGLContext,
     protected _width: number,

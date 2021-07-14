@@ -1,5 +1,9 @@
 import { Camera } from '../tsgl/3d/Camera';
+import { IRenderableInstance3D } from '../tsgl/3d/IRenderableInstance3D';
+import { RenderPass3D } from '../tsgl/3d/RenderPass3D';
+import { SceneInstance3D } from '../tsgl/3d/SceneInstance3D';
 import { Juggler } from '../tsgl/animation/Juggler';
+import { Transform3D } from '../tsgl/geom/Transform3D';
 import { AnyWebRenderingGLContext } from '../tsgl/gl/core/GLHelpers';
 import { GLRenderer, GLRendererType } from '../tsgl/gl/core/GLRenderer';
 import { GLSupport } from '../tsgl/gl/core/GLSupport';
@@ -16,6 +20,9 @@ export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebG
 
   protected webGLOptions: any = {};
 
+  readonly renderables = new SceneInstance3D();
+  mainRenderPass: RenderPass3D<AnyWebRenderingGLContext>;
+
   constructor(readonly rendererType = GLRendererType.WebGL, webGLOptions?: any) {
     this.canvas = this.getCanvas();
     const renderer = (this.renderer = this.createRenderer(this.canvas, webGLOptions));
@@ -28,7 +35,22 @@ export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebG
 
     this.__refresh = () => this._refresh();
 
+    this.mainRenderPass = this.renderer.defaultRenderPass = this.createMainRenderPass();
+
     this.prepare(renderer, gl).then(() => this.ready(renderer, gl));
+  }
+
+  protected createMainRenderPass(): RenderPass3D {
+    return new RenderPass3D(
+      this.renderer,
+      {
+        viewportX: 0,
+        viewportY: 0,
+        viewportWidth: this.renderer.width,
+        viewportHeight: this.renderer.height,
+      },
+      this.renderables,
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -90,13 +112,15 @@ export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebG
     const time = t1 - this._t0;
 
     this.update(time, elapsedTime);
+
     this._juggler.update(elapsedTime);
     this.renderer.prepareFrame();
-    this.renderer.clear();
+    // this.renderer.clear();
 
     const elapsedTimeR = t1 - this._t;
     const timeR = t1 - this._t0;
     this.render(timeR, elapsedTimeR);
+
     this._t = t1;
   }
 }

@@ -1,3 +1,4 @@
+import { IResize } from '../tsgl/base/IResize';
 import { createPlaneMesh } from '../tsgl/geom/mesh/createPlaneMesh';
 import { IGLFrameBuffer } from '../tsgl/gl/core/framebuffer/IGLFrameBuffer';
 import { GLCore } from '../tsgl/gl/core/GLCore';
@@ -15,12 +16,8 @@ export interface DeferredFrameBufferOptions {
   emissiveEnabled?: boolean;
 }
 
-export interface DeferredFrameBufferSettings extends DeferredFrameBufferOptions {
-  useDepthTexture: boolean;
-  depthEnabled: boolean;
-  pbrEnabled: boolean;
-  emissiveEnabled: boolean;
-}
+export type DeferredFrameBufferSettings = Required<DeferredFrameBufferOptions>;
+
 
 function deferredFrameBufferDefaultSettings(options: DeferredFrameBufferOptions): DeferredFrameBufferSettings {
   return {
@@ -32,7 +29,7 @@ function deferredFrameBufferDefaultSettings(options: DeferredFrameBufferOptions)
   };
 }
 
-export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
+export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer, IResize {
   private _positionMap: GLTexture2D;
   private _normalMap: GLTexture2D;
   private _albedo: GLTexture2D;
@@ -76,7 +73,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
   private _previousViewport: Int32Array = null;
 
 
-  get frameBuffer():WebGLFramebuffer{
+  get framebuffer():WebGLFramebuffer{
     return this._frameBuffer;
   }
   
@@ -163,6 +160,10 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
     this.updateSettings();
   }
 
+  resize(width: number, height: number): void {
+    throw new Error('Method not implemented.');
+  }
+
   updateSettings(): void {
     const gl = this.gl as WebGL2RenderingContext;
 
@@ -226,28 +227,9 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
-  // resize(width: number, height: number): void {
-  //   this._width = width;
-  //   this._height = height;
-  //   const gl = this.gl;
-
-    
-
-  //   for (const t of this._textures) {
-  //     t.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null));
-  //   }
-
-  //   this._depthTexture.safeBind((t) => this.gl.texImage2D(t.target, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, null));
-
-  //   this.updateSettings();
-  // }
-
   bind(): void {
-    this._previousViewport = this.gl.getParameter(this.gl.VIEWPORT);
 
-    this.gl.viewport(0, 0, this._width, this._height);
 
-    // console.log("> this.gl.viewport",this.width,this.height);
 
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this._frameBuffer);
     if (this._isWebGL2) (this.gl as WebGL2RenderingContext).drawBuffers(this._colorsAttachements);

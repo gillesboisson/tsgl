@@ -19,9 +19,10 @@ void main(){
 
   
   float maxDistance = 9.0;
-  float resolution  = 0.5;
-  int   steps       = 10;
-  float thickness   = 1.0;
+  // float resolution  = 0.2;
+  int   steps       = 16;
+  float thickness   = 2.0;
+  int firstPassSteps  = 16;
 
 
   vec4 uv = vec4(0.0);
@@ -44,8 +45,6 @@ void main(){
   startFrag.xyz /= startFrag.w;
   // Convert the screen-space XY coordinates to UV coordinates.
   startFrag.xy   = startFrag.xy * 0.5 + 0.5;
-  vec2 frag  = startFrag.xy;
-
   // Convert the UV coordinates to fragment/pixel coordnates.
   startFrag.xy  *= u_texSize;
 
@@ -55,17 +54,20 @@ void main(){
   endFrag.xy   = endFrag.xy * 0.5 + 0.5;
   endFrag.xy  *= u_texSize;
 
-
-  // uv.xy = frag / u_texSize;
+  vec2 frag  = startFrag.xy;
+  uv.xy = frag / u_texSize;
 
 
   float deltaX = endFrag.x - startFrag.x;
   float deltaY = endFrag.y - startFrag.y;
 
-  float useX = abs(deltaX) >= abs(deltaY) ? 1.0 : 0.0;
-  float delta = mix(abs(deltaY), abs(deltaX), useX) * clamp(resolution, 0.0, 1.0);
 
-  vec2  increment = vec2(deltaX, deltaY) / max(delta, 0.001);
+  
+  float useX = abs(deltaX) >= abs(deltaY) ? 1.0 : 0.0;
+  float delta = mix(abs(deltaY), abs(deltaX), useX);
+  
+
+  vec2  increment = vec2(deltaX, deltaY) / float(firstPassSteps);
 
   float search0 = 0.0;
   float search1 = 0.0;
@@ -76,7 +78,7 @@ void main(){
   float viewDistance = startView.z;
   float depth = thickness;
 
-  int firstPassSteps = min(int(delta),32);
+  // int firstPassSteps = min(int(delta),16);
 
   for (int i = 0; i < firstPassSteps; ++i) {
     frag      += increment;
@@ -125,32 +127,32 @@ void main(){
     }
   }
 
-  float visibility = float(hit1) 
-    * positionTo.w   // If the reflected scene position's alpha or w component is zero, the visibility is zero
-    * ( 1.0             // compare with camera orientation 
-      - max
-         ( dot(-unitPositionFrom, pivot)
-         , 0.0
-         )
-      )
-    * ( 1.0            
-      - clamp // fade based on depth precision
-          ( depth / thickness
-          , 0.0
-          , 1.0
-          )
-      ) 
-    * ( 1.0 // fade based on ray length (far point are less precise)
-      - clamp
-          (   length(positionTo - positionFrom)
-            / maxDistance
-          , 0.0
-          , 1.0
-          )
-      ) 
+  float visibility = hit1 > 0 ? (
+    positionTo.w   // If the reflected scene position's alpha or w component is zero, the visibility is zero
+    * dot(unitPositionFrom, pivot)
+    * (1.0 - length(positionTo - positionFrom) / maxDistance)
+    * (1.0 - depth / thickness)
+      
+    // * ( 1.0            
+    //   - clamp // fade based on depth precision
+    //       ( depth / thickness
+    //       , 0.0
+    //       , 1.0
+    //       )
+    //   ) 
+    // * ( 1.0 // fade based on ray length (far point are less precise)
+    //   - clamp
+    //       (   length(positionTo - positionFrom)
+    //         / maxDistance
+    //       , 0.0
+    //       , 1.0
+    //       )
+    //   ) 
     // handle out of camera frustrum hitpoint
-    * (uv.x < 0.0 || uv.x > 1.0 ? 0.0 : 1.0)
-    * (uv.y < 0.0 || uv.y > 1.0 ? 0.0 : 1.0)
+    * (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0 ? 0.0 : 1.0)
+  
+
+    ) : 0.0
     ;
     
 
@@ -162,12 +164,14 @@ void main(){
   FragColor = texture(u_texture, v_uv);
   FragColor = vec4(positionTo.xyz / 10.0, 1.0) * visibility;
   FragColor = vec4(positionTo.xyz / 15.0, 1.0) ;
-  FragColor = vec4(delta,0.0,0.0,1.0) ;
+  FragColor = vec4(increment,0.0,1.0) ;
 
   // FragColor = u_pMat * vec4(positionFrom.xyz, 1.0);
   // FragColor = vec4(positionFrom.xyz, 1.0);
   // FragColor = vec4(positionTo.xyz / 20.0, 1.0);
-  // FragColor = texture(u_texture, v_uv.xy) + texture(u_texture, uv.xy) * visibility;
+  FragColor = texture(u_texture, v_uv) + vec4(texture(u_texture, uv.xy).xyz,visibility) * visibility ;
+  
 
+  // FragColor = vec4(visibility);
 } 
 
