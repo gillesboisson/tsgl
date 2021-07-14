@@ -213,9 +213,14 @@ class TestApp extends Base3DApp {
   
 
     const cube = new MeshNode(mat, createBoxMesh(this.renderer.gl));
-    this.renderables.addChild(cube);
+    const plane = new MeshNode(mat, createPlaneMesh(this.renderer.gl));
+    plane.transform.setScale(10);
+    plane.transform.rotateEuler(-Math.PI / 2,0,0);
 
-    
+    this.renderables.addChild(cube, plane);
+
+
+
     
     const deferredMRT = (this.mainRenderPass as DeferredPrepass).deferredFramebuffer;
 
@@ -232,7 +237,7 @@ class TestApp extends Base3DApp {
     this._shadowPass.setPosition(6, 6, 6);
     this._shadowPass.setLookAtFromLight(light);
 
-    this._ssaoPass = new SSAOPass(this.renderer, deferredMRT);
+    this._ssaoPass = new SSAOPass(this.renderer, deferredMRT, {});
    
     this._ssaoBlurPass = new SSAOBlurPass(this.renderer, this._ssaoPass.ssaoTexture);
     this._ssrPass = new SSRPass(this.renderer, deferredMRT, this._pbrFB.colorTexture);
@@ -357,7 +362,8 @@ class TestApp extends Base3DApp {
 
     this._shadowPass.render({cam: this._cam});
     this.mainRenderPass.render({cam: this._cam});
-
+    this._ssaoPass.render({ cam: this._cam });
+    // this._ssaoBlurPass.render(undefined);
     this._processPass.render({cam: this._cam});
 
 
