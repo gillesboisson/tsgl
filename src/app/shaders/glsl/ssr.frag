@@ -169,6 +169,7 @@ void main(){
   // FragColor = u_pMat * vec4(positionFrom.xyz, 1.0);
   // FragColor = vec4(positionFrom.xyz, 1.0);
   // FragColor = vec4(positionTo.xyz / 20.0, 1.0);
+  // FragColor = vec4(texture(u_texture, v_uv).xyz,1.0);
   FragColor = texture(u_texture, v_uv) + vec4(texture(u_texture, uv.xy).xyz,visibility) * visibility ;
   
 

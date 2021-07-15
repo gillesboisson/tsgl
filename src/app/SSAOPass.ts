@@ -2,6 +2,7 @@ import { mat4, vec2, vec3 } from 'gl-matrix';
 import { Camera } from '../tsgl/3d/Camera';
 import { IResize } from '../tsgl/base/IResize';
 import { GLDefaultTextureLocation } from '../tsgl/gl/core/data/GLDefaultAttributesLocation';
+import { createSimpleResizableFramebuffer } from '../tsgl/gl/core/framebuffer/createSimpleResizableFramebuffer';
 import { IGLFrameBuffer } from '../tsgl/gl/core/framebuffer/IGLFrameBuffer';
 import { AnyWebRenderingGLContext } from '../tsgl/gl/core/GLHelpers';
 import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/core/GLRenderer';
@@ -65,6 +66,7 @@ export interface SSAOShaderOptions {
 }
 
 export interface SSAOPassOptions {
+  sourceFramebuffer: DeferredFrameBuffer,
   width?: number;
   height?: number;
   noiseKernelSize?: number;
@@ -93,43 +95,6 @@ function defaultSSAOPassSettings(renderer: GLRenderer, options: SSAOPassOptions)
   };
 }
 
-function createFramebuffer(
-  gl: AnyWebRenderingGLContext,
-  width: number,
-  height: number,
-): { texture: GLTexture2D; framebuffer: IGLFrameBuffer & IResize } {
-  // create base objects
-  const texture = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE);
-  const rawFB = createRawFramebuffer(gl, width, height);
-
-  // get raw webgl data
-  const fb = rawFB.framebuffer;
-  const tex = texture.texture;
-  const target = gl.TEXTURE_2D;
-
-  // link texture to framebuffer
-  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-  // custom resize function which resize texture and update framebuffer settings
-  function resize(width: number, height: number): void {
-    gl.bindTexture(target, tex);
-    gl.texImage2D(target, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    gl.bindTexture(target, null);
-    rawFB.width = width;
-    rawFB.height = height;
-  }
-
-  // create final objects
-  return {
-    framebuffer: {
-      ...rawFB,
-      resize,
-    },
-    texture,
-  };
-}
 export class SSAOPass extends PostProcessPass<SSAOShaderState, SSAOPassRenderingData> {
   private _ssaoTexture: GLTexture2D;
   private _rotationTexture: WebGLTexture;
@@ -143,11 +108,11 @@ export class SSAOPass extends PostProcessPass<SSAOShaderState, SSAOPassRendering
   readonly settings: SSAOPassSettings;
   readonly kernelSR: number;
 
-  constructor(renderer: WebGL2Renderer, sourceFramebuffer: DeferredFrameBuffer, options: SSAOPassOptions) {
+  constructor(renderer: WebGL2Renderer,  options: SSAOPassOptions) {
     const gl = renderer.gl;
     const settings = defaultSSAOPassSettings(renderer, options);
 
-    const { framebuffer, texture } = createFramebuffer(gl, settings.width, settings.height);
+    const { framebuffer, texture } = createSimpleResizableFramebuffer(gl, settings.width, settings.height);
 
     super(
       renderer,
@@ -162,7 +127,7 @@ export class SSAOPass extends PostProcessPass<SSAOShaderState, SSAOPassRendering
       renderer.getShader<SSAOShaderState>(SSAOShaderID),
     );
 
-    this.sourceFramebuffer = sourceFramebuffer;
+    this.sourceFramebuffer = settings.sourceFramebuffer;
     this.kernelSR = Math.sqrt(settings.noiseKernelSize);
     this.noiseKernelSize = settings.noiseKernelSize;
     this.settings = settings;

@@ -103,7 +103,6 @@ class TestApp extends Base3DApp {
     return document.getElementById('test') as HTMLCanvasElement;
   }
 
-
   protected createMainRenderPass(): RenderPass3D {
     return new DeferredPrepass(
       this.renderer,
@@ -113,7 +112,6 @@ class TestApp extends Base3DApp {
       this.renderables,
     );
   }
-
 
   protected async prepare(renderer: WebGL2Renderer, gl: WebGL2RenderingContext): Promise<void> {
     PhongBlinnCartoonVShader.register(renderer);
@@ -155,9 +153,6 @@ class TestApp extends Base3DApp {
     //   emissiveEnabled: true,
     // });
 
-
-
-
     await this.loadScene();
     // this.renderer.resize(320, 240);
 
@@ -170,7 +165,6 @@ class TestApp extends Base3DApp {
     this._cam.transform.setPosition(0, 0, 15);
     // this._camController = new TopDownCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
     this._camController = new FirstPersonCameraController(this._cam, this.renderer.canvas, 0.06, 0.002);
-
   }
 
   ready() {
@@ -206,41 +200,48 @@ class TestApp extends Base3DApp {
     const gl = this.renderer.gl;
 
     // const cube = new MeshNode(new PhongBlinnMaterial(this.renderer, light), createBoxMesh(this.renderer.gl));
-    const mat = new DeferredPrepassMaterial(this.renderer);
-    mat.pbrEnabled = true;
-    mat.roughness = 0.7;
-    mat.metallic = 0.1;
-  
+    const cubeMat = new DeferredPrepassMaterial(this.renderer);
+    cubeMat.pbrEnabled = true;
+    cubeMat.roughness = 0.7;
+    cubeMat.metallic = 0.1;
+    cubeMat.setDiffuseColor(1,0,0,1);
 
-    const cube = new MeshNode(mat, createBoxMesh(this.renderer.gl));
-    const plane = new MeshNode(mat, createPlaneMesh(this.renderer.gl));
+    const planeMat = new DeferredPrepassMaterial(this.renderer);
+    planeMat.pbrEnabled = true;
+    planeMat.roughness = 0.7;
+    planeMat.metallic = 0.1;
+    planeMat.setDiffuseColor(0,0,1,1);
+    
+
+    const cube = new MeshNode(cubeMat, createBoxMesh(this.renderer.gl));
+    const plane = new MeshNode(planeMat, createPlaneMesh(this.renderer.gl));
     plane.transform.setScale(10);
-    plane.transform.rotateEuler(-Math.PI / 2,0,0);
+    plane.transform.rotateEuler(-Math.PI / 2, 0, 0);
 
     this.renderables.addChild(cube, plane);
 
-
-
-    
     const deferredMRT = (this.mainRenderPass as DeferredPrepass).deferredFramebuffer;
 
-    this._pbrFB = new GLFramebuffer(gl, this.renderer.width, this.renderer.height, false);
+    // this._pbrFB = new GLFramebuffer(gl, this.renderer.width, this.renderer.height, false);
 
-
-    this._shadowPass = new ShadowPass(this.renderer, {
-      width: 1024,
-      height: 1024,
-      radius: 10,
-      near: 0.001,
-      far: 30,
-    }, this.renderables);
+    this._shadowPass = new ShadowPass(
+      this.renderer,
+      {
+        width: 1024,
+        height: 1024,
+        radius: 10,
+        near: 0.001,
+        far: 30,
+      },
+      this.renderables,
+    );
     this._shadowPass.setPosition(6, 6, 6);
     this._shadowPass.setLookAtFromLight(light);
 
-    this._ssaoPass = new SSAOPass(this.renderer, deferredMRT, {});
-   
-    this._ssaoBlurPass = new SSAOBlurPass(this.renderer, this._ssaoPass.ssaoTexture);
-    this._ssrPass = new SSRPass(this.renderer, deferredMRT, this._pbrFB.colorTexture);
+    this._ssaoPass = new SSAOPass(this.renderer, { sourceFramebuffer: deferredMRT });
+
+    this._ssaoBlurPass = new SSAOBlurPass(this.renderer, { sourceTexture: this._ssaoPass.ssaoTexture });
+    
 
     this._processPass = new PbrDeferredPass(
       this.renderer as WebGL2Renderer,
@@ -255,7 +256,10 @@ class TestApp extends Base3DApp {
     this._processPass.enableHDRCorrection();
     this._processPass.setGammaExposure(1.3, 1.0);
 
-
+    this._ssrPass = new SSRPass(this.renderer, {
+      sourceFramebuffer: deferredMRT,
+      colorTexture: deferredMRT.albedo,
+    });
     return;
     const mesh = createSphereMesh(this.renderer.gl, 0.5, 32, 32);
     // const mesh = createCylinderMesh(this.renderer.gl, 1, 1, 10, 16);
@@ -360,13 +364,12 @@ class TestApp extends Base3DApp {
     const renderer = this.renderer;
     const gl = this.renderer.gl as WebGL2RenderingContext;
 
-    this._shadowPass.render({cam: this._cam});
-    this.mainRenderPass.render({cam: this._cam});
-    this._ssaoPass.render({ cam: this._cam });
+    this._shadowPass.render({ cam: this._cam });
+    this.mainRenderPass.render({ cam: this._cam });
+    // this._ssaoPass.render({ cam: this._cam });
     // this._ssaoBlurPass.render(undefined);
-    this._processPass.render({cam: this._cam});
-
-
+    this._ssrPass.render({cam: this._cam});
+    // this._processPass.render({ cam: this._cam });
 
     // this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 
