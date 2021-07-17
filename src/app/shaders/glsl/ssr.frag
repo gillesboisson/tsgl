@@ -19,10 +19,10 @@ void main(){
 
   
   float maxDistance = 9.0;
-  // float resolution  = 0.2;
-  int   steps       = 16;
-  float thickness   = 2.0;
-  int firstPassSteps  = 16;
+  
+  float resolution  = 2.0;
+  int   steps       = 8;
+  float thickness   = 0.5;
 
 
   vec4 uv = vec4(0.0);
@@ -64,10 +64,10 @@ void main(){
 
   
   float useX = abs(deltaX) >= abs(deltaY) ? 1.0 : 0.0;
-  float delta = mix(abs(deltaY), abs(deltaX), useX);
+  float delta = mix(abs(deltaY), abs(deltaX), useX) * clamp(resolution, 0.0, 1.0);
   
 
-  vec2  increment = vec2(deltaX, deltaY) / float(firstPassSteps);
+  vec2  increment = vec2(deltaX, deltaY) / max(delta, 0.001);
 
   float search0 = 0.0;
   float search1 = 0.0;
@@ -80,7 +80,7 @@ void main(){
 
   // int firstPassSteps = min(int(delta),16);
 
-  for (int i = 0; i < firstPassSteps; ++i) {
+  for (int i = 0; i < int(delta); ++i) {
     frag      += increment;
     uv.xy      = frag / u_texSize;
     positionTo = texture(u_positionMap, uv.xy);
@@ -105,7 +105,7 @@ void main(){
 
 
   }
-
+  
   steps *= hit0;
   search1 = search0 + ((search1 - search0) / 2.0);
 
@@ -128,29 +128,31 @@ void main(){
   }
 
   float visibility = hit1 > 0 ? (
-    positionTo.w   // If the reflected scene position's alpha or w component is zero, the visibility is zero
-    * dot(unitPositionFrom, pivot)
-    * (1.0 - length(positionTo - positionFrom) / maxDistance)
-    * (1.0 - depth / thickness)
-      
-    // * ( 1.0            
-    //   - clamp // fade based on depth precision
-    //       ( depth / thickness
-    //       , 0.0
-    //       , 1.0
-    //       )
-    //   ) 
-    // * ( 1.0 // fade based on ray length (far point are less precise)
-    //   - clamp
-    //       (   length(positionTo - positionFrom)
-    //         / maxDistance
-    //       , 0.0
-    //       , 1.0
-    //       )
-    //   ) 
-    // handle out of camera frustrum hitpoint
-    * (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0 ? 0.0 : 1.0)
-  
+    
+    positionTo.w
+    * ( 1.0
+      - max
+         ( dot(-unitPositionFrom, pivot)
+         , 0.0
+         )
+      )
+    * ( 1.0
+      - clamp
+          ( depth / thickness
+          , 0.0
+          , 1.0
+          )
+      )
+    * ( 1.0
+      - clamp
+          (   length(positionTo - positionFrom)
+            / maxDistance
+          , 0.0
+          , 1.0
+          )
+      )
+    * (uv.x < 0.0 || uv.x > 1.0 ? 0.0 : 1.0)
+    * (uv.y < 0.0 || uv.y > 1.0 ? 0.0 : 1.0)
 
     ) : 0.0
     ;

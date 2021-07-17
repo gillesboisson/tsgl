@@ -204,21 +204,28 @@ class TestApp extends Base3DApp {
     cubeMat.pbrEnabled = true;
     cubeMat.roughness = 0.7;
     cubeMat.metallic = 0.1;
-    cubeMat.setDiffuseColor(1,0,0,1);
+    cubeMat.setDiffuseColor(1, 0, 0, 1);
 
     const planeMat = new DeferredPrepassMaterial(this.renderer);
     planeMat.pbrEnabled = true;
     planeMat.roughness = 0.7;
     planeMat.metallic = 0.1;
-    planeMat.setDiffuseColor(0,0,1,1);
+    planeMat.setDiffuseColor(0, 0, 1, 1);
+
+    for (let i = 0; i < 5; i++) {
+      const cube = new MeshNode(cubeMat, createBoxMesh(this.renderer.gl));
+      cube.transform.setPosition(0, i * 1.5, 0);
+
+      this.renderables.addChild(cube);
+
+    }
     
-
-    const cube = new MeshNode(cubeMat, createBoxMesh(this.renderer.gl));
     const plane = new MeshNode(planeMat, createPlaneMesh(this.renderer.gl));
-    plane.transform.setScale(10);
+    plane.transform.setScale(50);
     plane.transform.rotateEuler(-Math.PI / 2, 0, 0);
+    plane.transform.setPosition(0, -0.7, 0);
 
-    this.renderables.addChild(cube, plane);
+    this.renderables.addChild(plane);
 
     const deferredMRT = (this.mainRenderPass as DeferredPrepass).deferredFramebuffer;
 
@@ -241,7 +248,6 @@ class TestApp extends Base3DApp {
     this._ssaoPass = new SSAOPass(this.renderer, { sourceFramebuffer: deferredMRT });
 
     this._ssaoBlurPass = new SSAOBlurPass(this.renderer, { sourceTexture: this._ssaoPass.ssaoTexture });
-    
 
     this._processPass = new PbrDeferredPass(
       this.renderer as WebGL2Renderer,
@@ -368,7 +374,7 @@ class TestApp extends Base3DApp {
     this.mainRenderPass.render({ cam: this._cam });
     // this._ssaoPass.render({ cam: this._cam });
     // this._ssaoBlurPass.render(undefined);
-    this._ssrPass.render({cam: this._cam});
+    this._ssrPass.render({ cam: this._cam });
     // this._processPass.render({ cam: this._cam });
 
     // this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
