@@ -20,9 +20,9 @@ void main(){
   
   float maxDistance = 9.0;
   
-  float resolution  = 2.0;
-  int   steps       = 8;
-  float thickness   = 0.5;
+  float resolution  = 0.1;
+  int   steps       = 32;
+  float thickness   = 2.0;
 
 
   vec4 uv = vec4(0.0);
@@ -78,9 +78,9 @@ void main(){
   float viewDistance = startView.z;
   float depth = thickness;
 
-  // int firstPassSteps = min(int(delta),16);
+  int firstPassSteps = min(int(delta), 128);
 
-  for (int i = 0; i < int(delta); ++i) {
+  for (int i = 0; i < firstPassSteps; ++i) {
     frag      += increment;
     uv.xy      = frag / u_texSize;
     positionTo = texture(u_positionMap, uv.xy);

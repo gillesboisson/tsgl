@@ -31,6 +31,8 @@ export class DeferredPrepassMaterial extends AMaterial<DeferredPrepassVShadersSt
     vec4.set(this._diffuseColor, r, g, b, a);
   }
 
+ 
+
   public copyDiffuseColor(sourceColor: vec4): void {
     vec4.copy(this._diffuseColor, sourceColor);
   }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
 import { IRenderableInstance3D } from './tsgl/3d/IRenderableInstance3D';
@@ -200,11 +200,6 @@ class TestApp extends Base3DApp {
     const gl = this.renderer.gl;
 
     // const cube = new MeshNode(new PhongBlinnMaterial(this.renderer, light), createBoxMesh(this.renderer.gl));
-    const cubeMat = new DeferredPrepassMaterial(this.renderer);
-    cubeMat.pbrEnabled = true;
-    cubeMat.roughness = 0.7;
-    cubeMat.metallic = 0.1;
-    cubeMat.setDiffuseColor(1, 0, 0, 1);
 
     const planeMat = new DeferredPrepassMaterial(this.renderer);
     planeMat.pbrEnabled = true;
@@ -212,14 +207,33 @@ class TestApp extends Base3DApp {
     planeMat.metallic = 0.1;
     planeMat.setDiffuseColor(0, 0, 1, 1);
 
-    for (let i = 0; i < 5; i++) {
-      const cube = new MeshNode(cubeMat, createBoxMesh(this.renderer.gl));
-      cube.transform.setPosition(0, i * 1.5, 0);
+    const colors = [
+      vec4.fromValues(1, 0, 0, 1),
+      vec4.fromValues(1, 1, 0, 1),
+      vec4.fromValues(1, 1, 1, 1),
+      vec4.fromValues(1, 0, 1, 1),
+      vec4.fromValues(0, 1, 1, 1),
+      vec4.fromValues(0, 1, 0, 1),
+      vec4.fromValues(0, 0, 0, 1),
+    ];
 
-      this.renderables.addChild(cube);
+    for (let z = 0; z < 5; z++) {
+      for (let x = 0; x < 5; x++) {
+        for (let y = 0; y < 5; y++) {
+          const cubeMat = new DeferredPrepassMaterial(this.renderer);
+          cubeMat.pbrEnabled = true;
+          cubeMat.roughness = 0.7;
+          cubeMat.metallic = 0.1;
+          cubeMat.copyDiffuseColor(colors[(x+y+z) % colors.length]);
 
+          const cube = new MeshNode(cubeMat, createBoxMesh(this.renderer.gl));
+          cube.transform.setPosition(x * 1.5, y * 1.5, z * 1.5);
+
+          this.renderables.addChild(cube);
+        }
+      }
     }
-    
+
     const plane = new MeshNode(planeMat, createPlaneMesh(this.renderer.gl));
     plane.transform.setScale(50);
     plane.transform.rotateEuler(-Math.PI / 2, 0, 0);
