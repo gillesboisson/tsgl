@@ -13,16 +13,17 @@ uniform sampler2D u_texture;
 in vec2 v_uv;
 
 out vec4 FragColor;
+const float edgeSmooth = 16.0;
 
 
 void main(){
 
   
-  float maxDistance = 9.0;
+  float maxDistance = 16.0;
   
-  float resolution  = 0.1;
+  float resolution  = 0.2;
   int   steps       = 32;
-  float thickness   = 2.0;
+  float thickness   = 1.0;
 
 
   vec4 uv = vec4(0.0);
@@ -106,6 +107,8 @@ void main(){
 
   }
   
+  // Pass 2
+
   steps *= hit0;
   search1 = search0 + ((search1 - search0) / 2.0);
 
@@ -127,6 +130,12 @@ void main(){
     }
   }
 
+  // smooth uv edges
+
+  vec2 uvE = (vec2(1.0) - clamp(abs(uv.xy * 2.0 - 1.0),0.0,1.0)) * u_texSize / 400.0;
+
+  // float edgeV = 
+
   float visibility = hit1 > 0 ? (
     
     positionTo.w
@@ -143,6 +152,7 @@ void main(){
           , 1.0
           )
       )
+    * uvE.x * uvE.y
     * ( 1.0
       - clamp
           (   length(positionTo - positionFrom)
@@ -151,8 +161,8 @@ void main(){
           , 1.0
           )
       )
-    * (uv.x < 0.0 || uv.x > 1.0 ? 0.0 : 1.0)
-    * (uv.y < 0.0 || uv.y > 1.0 ? 0.0 : 1.0)
+    // * (uv.x < 0.0 || uv.x > 1.0 ? 0.0 : 1.0)
+    // * (uv.y < 0.0 || uv.y > 1.0 ? 0.0 : 1.0)
 
     ) : 0.0
     ;
@@ -172,8 +182,10 @@ void main(){
   // FragColor = vec4(positionFrom.xyz, 1.0);
   // FragColor = vec4(positionTo.xyz / 20.0, 1.0);
   // FragColor = vec4(texture(u_texture, v_uv).xyz,1.0);
-  FragColor = texture(u_texture, v_uv) + vec4(texture(u_texture, uv.xy).xyz,visibility) * visibility ;
+  FragColor = texture(u_texture, v_uv) + vec4(texture(u_texture, uv.xy).xyz,1.0) * visibility ;
   
+  // FragColor = vec4(uvE.x * uvE.y,0.0, 0.0,1.0);
+  // FragColor = vec4(uv.xy,0.0,1.0);
 
   // FragColor = vec4(visibility);
 } 
