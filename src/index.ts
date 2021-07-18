@@ -173,7 +173,7 @@ class TestApp extends Base3DApp {
 
   protected async loadScene(): Promise<void> {
     const light = {
-      direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, 0)),
+      direction: vec3.normalize(vec3.create(), vec3.fromValues(-1, -1, -1)),
       color: vec3.fromValues(1.0, 1.0, 1.0),
       specularColor: vec3.fromValues(0.3, 0.3, 0.3),
       shininess: 32.0,
@@ -217,16 +217,19 @@ class TestApp extends Base3DApp {
       vec4.fromValues(0, 0, 0, 1),
     ];
 
-    for (let z = 0; z < 5; z++) {
-      for (let x = 0; x < 5; x++) {
-        for (let y = 0; y < 5; y++) {
+    const gridS = 6;
+    // const nodeMesh = createBoxMesh(this.renderer.gl);
+    const nodeMesh = createSphereMesh(this.renderer.gl,0.5,16,16);
+    for (let z = 0; z < gridS; z++) {
+      for (let x = 0; x < gridS; x++) {
+        for (let y = 0; y < gridS; y++) {
           const cubeMat = new DeferredPrepassMaterial(this.renderer);
           cubeMat.pbrEnabled = true;
-          cubeMat.roughness = 0.7;
-          cubeMat.metallic = 0.1;
-          cubeMat.copyDiffuseColor(colors[(x+y+z) % colors.length]);
+          cubeMat.roughness = x / gridS;
+          cubeMat.metallic = y / gridS;
+          cubeMat.copyDiffuseColor(colors[(x + y + z) % colors.length]);
 
-          const cube = new MeshNode(cubeMat, createBoxMesh(this.renderer.gl));
+          const cube = new MeshNode(cubeMat, nodeMesh);
           cube.transform.setPosition(x * 1.5, y * 1.5, z * 1.5);
 
           this.renderables.addChild(cube);
@@ -388,8 +391,8 @@ class TestApp extends Base3DApp {
     this.mainRenderPass.render({ cam: this._cam });
     // this._ssaoPass.render({ cam: this._cam });
     // this._ssaoBlurPass.render(undefined);
-    this._ssrPass.render({ cam: this._cam });
-    // this._processPass.render({ cam: this._cam });
+    // this._ssrPass.render({ cam: this._cam });
+    this._processPass.render({ cam: this._cam });
 
     // this._shadowMap.renderDepthMap(this._sceneRenderables.getNodes<IRenderableInstance3D>());
 

@@ -28,6 +28,8 @@ export abstract class ACameraBaseTargetTransform3D implements ITransform<mat4>{
     return this._localMat;
   }
 
+  
+
   constructor() {
     this._position = vec3.create();
    

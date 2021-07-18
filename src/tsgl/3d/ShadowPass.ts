@@ -13,13 +13,14 @@ import { SceneInstance3D } from './SceneInstance3D';
 
 export const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 
+const tMat = mat4.create();
 
 export interface ShadowPassOptions {
   width?: number;
   height?: number;
-  radius?: number,
-  near?: number,
-  far?: number,
+  radius?: number;
+  near?: number;
+  far?: number;
 }
 
 export type ShadowPassSettings = Required<ShadowPassOptions>;
@@ -27,16 +28,15 @@ export type ShadowPassSettings = Required<ShadowPassOptions>;
 export function shadowSettingsFromOptions(renderer: GLRenderer, options: ShadowPassOptions): ShadowPassSettings {
   return {
     width: renderer.width,
-    height: renderer.height,  
-    radius : 15,
-    near : 0.001,
-    far : 30,
+    height: renderer.height,
+    radius: 15,
+    near: 0.001,
+    far: 30,
     ...options,
   };
 }
 
 export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebuffer> implements ShadowPassSettings {
-
   readonly far: number;
   readonly near: number;
   readonly radius: number;
@@ -58,7 +58,7 @@ export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebu
         viewportWidth: settings.width,
         framebuffer,
       },
-      stage
+      stage,
     );
 
     // setup material and camera
@@ -69,16 +69,14 @@ export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebu
       -settings.radius,
       settings.radius,
       settings.near,
-      settings.far
+      settings.far,
     );
-
 
     // setup texture location
     const textureLocation = GLDefaultTextureLocation.SHADOW_MAP_0;
     (this.framebuffer as GLFramebuffer).depthTexture.active(textureLocation);
 
     // copy settings to object
-
     this.near = settings.near;
     this.far = settings.far;
     this.radius = settings.radius;
@@ -88,11 +86,10 @@ export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebu
     renderer: GLRenderer,
     instance: IRenderableInstance3D,
     settings: RenderPassRenderContext,
-    material?: IMaterial
+    material?: IMaterial,
   ): void {
     instance.render(renderer.gl, this.camera, material);
   }
-
 
   updateCamera(radius: number, near: number, far: number): void {
     this.camera.setOrtho(-radius, radius, -radius, radius, near, far);
@@ -106,7 +103,7 @@ export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebu
     this.camera.transform.setLookAt(x, y, z);
   }
 
-  setLookAtFromLight(light: { direction: vec3; }): void {
+  setLookAtFromLight(light: { direction: vec3 }): void {
     this.setLookAt(light.direction[0], light.direction[1], light.direction[2]);
   }
 
@@ -119,6 +116,15 @@ export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebu
 
   updateTransform(parentMat?: mat4): void {
     this.camera.updateTransform(parentMat);
+    // if(this.viewSpaceCamera !== null){
+    //   const localMat = this.camera.transform.getLocalMat();
+    //   const worldMat = parentMat ? mat4.multiply(tMat, parentMat, localMat) : localMat;
+    //   mat4.multiply(tMat, this.viewSpaceCamera.invertWorldMat, worldMat);
+    //   mat4.invert(tMat,tMat);
+    //   mat4.multiply(this.viewSpaceMat, this.camera.vpMat, tMat);
+    // }else{
+    //   this.camera.vp(this.viewSpaceMat);
+    // }
   }
 
   depthBiasMvp(out: mat4, modelMat: mat4): void {
@@ -126,9 +132,21 @@ export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebu
     mat4.multiply(out, biasMat, out);
   }
 
+  /**
+   *
+   * @param out matrix used to store result
+   */
   depthBiasVp(out: mat4): void {
     this.camera.vp(out);
     mat4.multiply(out, biasMat, out);
   }
 
+  depthBiasVpInForViewSpaceData(out: mat4, viewCamera: Camera): void {
+    const worldMat = this.camera.getWorldMat();
+    mat4.multiply(out, viewCamera.invertWorldMat, worldMat);
+    mat4.invert(out,out);
+    mat4.multiply(out, this.camera.projectionMat, out);
+    mat4.multiply(out, biasMat, out);
+
+  }
 }

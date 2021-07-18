@@ -1,4 +1,4 @@
-import { vec2, vec3, vec4 } from 'gl-matrix';
+import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { Camera } from '../../tsgl/3d/Camera';
 import { ShadowPass } from '../../tsgl/3d/ShadowPass';
 import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
@@ -142,8 +142,8 @@ export class PbrDeferredPass extends PostProcessPass<PbrDeferredVShadersState, P
     shaderState.use();
 
     shaderState.lightDirection = this.lightDirection;
-
-    shaderState.cameraPosition = renderData.cam.transform.getRawPosition();
+    const cam = renderData.cam;
+    shaderState.cameraPosition = cam.transform.getRawPosition();
 
     // vec3.negate(shaderState.cameraPosition, renderData.cam.transform.getRawPosition());
 
@@ -169,11 +169,14 @@ export class PbrDeferredPass extends PostProcessPass<PbrDeferredVShadersState, P
     this.irradianceMap.active(GLDefaultTextureLocation.IRRADIANCE_BOX);
     this.reflectanceMap.active(GLDefaultTextureLocation.RELEXION_BOX);
 
+    // mat4.invert(shaderState.viewInvertedRotationMat, cam.invertWorldMat);
+    mat4.transpose(shaderState.viewInvertedRotationMat, cam.invertWorldMat);
+
     if (this._shadowPass) {
       const depthTexture = this._shadowPass.framebuffer.depthTexture;
       depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);
       vec2.set(shaderState.shadowMapPixelSize, 1 / depthTexture.width, 1 / depthTexture.height);
-      this._shadowPass.depthBiasVp(shaderState.depthBiasMvpMat);
+      this._shadowPass.depthBiasVpInForViewSpaceData(shaderState.depthBiasMvpMat, cam);
     }
 
     vec2.copy(shaderState.gammaExposure, this._gammaExposure);

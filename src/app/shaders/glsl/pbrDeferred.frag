@@ -142,6 +142,8 @@ uniform sampler2D u_positionMap;
 uniform sampler2D u_pbrMap;
 uniform sampler2D u_depthMap;
 
+uniform mat4 u_viewInvertedRotationMat;
+
 in vec2 v_uv;
 
 #ifdef GAMMA_CORRECTION
@@ -217,11 +219,11 @@ void main(){
   kD *= 1.0 - metallic;
 
   // irradiance
-  vec3 irradiance = texture(u_irradianceMap, N).rgb;
+  vec3 irradiance = texture(u_irradianceMap, (u_viewInvertedRotationMat * vec4(N, 1.0)).xyz).rgb;
   vec3 diffuse    = irradiance * albedo;
 
   // reflectance / specular
-  vec3 prefilteredColor = textureLod(u_reflexionMap, R,  roughness * MAX_REFLECTION_LOD).rgb;   
+  vec3 prefilteredColor = textureLod(u_reflexionMap, (u_viewInvertedRotationMat * vec4(R, 1.0)).xyz,  roughness * MAX_REFLECTION_LOD).rgb;   
   vec2 envBRDF  = texture(u_brdfLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
   vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y); 
 
@@ -236,7 +238,7 @@ void main(){
 
   vec3 color = ambient + Lo * visibility;  
 
-  // TODO implement in shader
+  // TODO implement in shadere
   #ifdef EMISSIVE_MAP
   vec3 emissiveColor = texture(u_emissiveMap,v_uv).rgb;
   color += emissiveColor;
@@ -254,7 +256,7 @@ void main(){
   #ifndef DEBUG 
   FragColor = vec4( color ,1.0);
   
-
+  
 
   
   gl_FragDepth = depth; 

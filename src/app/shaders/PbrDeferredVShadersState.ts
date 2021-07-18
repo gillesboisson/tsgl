@@ -17,12 +17,15 @@ export class PbrDeferredVShadersState extends ShaderVariantsState<PbrDeferredVar
   gammaExposure = vec2.create();
 
 
+  viewInvertedRotationMat = mat4.create();
+
 
   syncUniforms(): void {
     const uniformsLocations = this._variantShader.uniformsLocation;
     const gl = this.gl;
 
     gl.uniformMatrix4fv(uniformsLocations.u_depthBiasMvpMat, false, this.depthBiasMvpMat);
+    gl.uniformMatrix4fv(uniformsLocations.u_viewInvertedRotationMat, false, this.viewInvertedRotationMat);
 
     gl.uniform3fv(uniformsLocations.u_cameraPosition, this.cameraPosition);
     // TODO : investigate why light dir has to be inverted

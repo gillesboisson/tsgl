@@ -26,6 +26,10 @@ export abstract class ASceneInstance<
     this.transform = new TransformClass();
   }
 
+  getWorldMat(): MatT{
+    return this._worldMat;
+  }
+
   addChild(...nodes: Array<ChilddrenT>): void {
     for (const node of nodes) {
       if (this._nodes.indexOf(node) === -1) {
