@@ -1,50 +1,92 @@
+import { mat4 } from 'gl-matrix';
 import { Camera } from '../3d/Camera';
 
 export class Camera2D extends Camera {
-  protected _viewportWidth: number;
-  protected _viewportHeight: number;
+  protected _near: number;
+  protected _far: number;
+  protected _width: number;
+  protected _height: number;
+  private _dirtyProjection: boolean;
+
+  get near(): number {
+    return this._near;
+  }
+
+  set near(val: number) {
+    if (val !== this._near) {
+      this._near = val;
+      this._dirtyProjection = true;
+    }
+  }
+
+  get far(): number {
+    return this._far;
+  }
+
+  set far(val: number) {
+    if (val !== this._far) {
+      this._far = val;
+      this._dirtyProjection = true;
+    }
+  }
 
   get viewportWidth(): number {
-    return this._viewportWidth;
+    return this._width;
+  }
+
+  set viewportWidth(val: number) {
+    if (val !== this._width) {
+      this._width = val;
+      this._dirtyProjection = true;
+    }
   }
 
   get viewportHeight(): number {
-    return this._viewportHeight;
+    return this._height;
   }
 
-  get x(): number {
-    return this.transform.getRawPosition()[0];
+  set viewportHeight(val: number) {
+    if (val !== this._height) {
+      this._height = val;
+      this._dirtyProjection = true;
+    }
   }
 
-  get y(): number {
-    return this.transform.getRawPosition()[1];
-  }
 
-  constructor(viewportWidth: number, viewportHeight: number) {
+  constructor(width: number,  height: number, near = 0.0001, far = 100) {
     super();
-    this.setViewport(viewportWidth, viewportHeight);
-    this.setPosition(0, 0);
+
+    this._width = width;
+    this._height = height;
+    this._near = near;
+    this._far = far;
+    this._dirtyProjection = true;
   }
 
-  setClampedPosition(x: number, y: number, minX: number, maxX: number, minY: number, maxY: number): void {
+  setClampedPosition(x: number, y: number, minX: number, maxX: number, minY: number, maxY: number, z = 1.0 ): void {
     if (x < minX) x = minX;
-    else if (x + this.viewportWidth > maxX) x = maxX - this.viewportWidth;
+    else if (x + this._width > maxX) x = maxX - this._width;
 
     if (y < minY) y = minY;
-    else if (y + this.viewportHeight > maxY) y = maxY - this.viewportHeight;
+    else if (y + this._height > maxY) y = maxY - this._height;
 
-    this.setPosition(x, y);
+    this.transform.setPosition(x, y, z);
   }
 
-  setPosition(x: number, y: number): void {
-    this.transform.setPosition(x, y, 1.0);
-    this.updateWorldMat();
+  setViewport(width: number, height: number): void {
+    this._width = width;
+    this._height = height;
+    this._dirtyProjection = true;
   }
 
-  setViewport(viewportWidth: number, viewportHeight: number): void {
-    this.setDimension2d(viewportWidth, viewportHeight);
-    this._viewportWidth = viewportWidth;
-    this._viewportHeight = viewportHeight;
-    this.updateWorldMat();
+  updateTransform(parentMat?: mat4): void {
+    if (this._dirtyProjection === true) {
+      this.setDimension2d(this._width, this._height, this._near, this._far);
+      this._dirtyProjection = false;
+    }
+
+    return super.updateTransform(parentMat);
   }
 }
+
+

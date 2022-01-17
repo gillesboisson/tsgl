@@ -8,6 +8,7 @@ import { TranslateRotateTransform3D } from '../geom/TranslateRotateTransform3D';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tmat4 = mat4.create();
 
+
 export class Camera<TransformT extends ITransform<mat4> = CameraTransform3D> extends SceneInstance3D<TransformT> {
   readonly projectionMat: mat4 = mat4.create();
   readonly vpMat: mat4 = mat4.create();
