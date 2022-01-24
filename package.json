@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --watch",
-    "build": "webpack --production",
-    "serve": "webpack serve"
+    "clean": "rm -fr build",
+    "copy-content": "mkdir -p build/ && cp -fr content/* build/",
+    "build": "yarn copy-content && webpack",
+    "start": "yarn copy-content && webpack serve"
   },
   "author": "",
   "license": "ISC",

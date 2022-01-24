@@ -2,7 +2,7 @@
   "exclude": ["node_modules", "archive"],
   "include": ["src"],
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./build/",
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "es6",

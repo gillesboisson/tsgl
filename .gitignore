@@ -1,8 +1,5 @@
 node_modules
-dist/bundle
-dist/lib/gli.all.css
-dist/lib/gli.all.js
-dist/lib/assets/*
+build
 .DS_Store
 .idea
 .vscode

@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: path.join(__dirname, 'build'),
     compress: false,
     port: 8080,
   },
@@ -33,8 +33,8 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist/bundle'),
-    publicPath: '/bundle', 
+    path: path.resolve(__dirname, 'build/'),
+    publicPath: '/', 
   },
   // devServer: {
   //   stats: "errors-only",
