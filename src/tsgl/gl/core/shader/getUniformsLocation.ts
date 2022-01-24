@@ -3,7 +3,7 @@ import { AnyWebRenderingGLContext } from '../GLHelpers';
 export function getUniformsLocation(
   gl: AnyWebRenderingGLContext,
   program: WebGLProgram,
-  nullIfUndefined = true // set a null value even id uniform location doesn't exists
+  nullIfUndefined = true, // set a null value even id uniform location doesn't exists
 ): {
   [name: string]: WebGLUniformLocation;
 } {
@@ -14,7 +14,7 @@ export function getUniformsLocation(
   for (let i = 0; i < nbUniforms; i++) {
     const uniform = gl.getActiveUniform(program, i);
     res[uniform.name] = <WebGLUniformLocation>gl.getUniformLocation(program, uniform.name);
-    if(nullIfUndefined === false){
+    if (nullIfUndefined === false) {
       delete res[uniform.name];
     }
   }

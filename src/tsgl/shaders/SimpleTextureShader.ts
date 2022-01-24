@@ -11,8 +11,7 @@ const fragSrc = require('./glsl/flatTexture.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/simpleMVP.vert').default;
 
-
-export class SimpleTextureShaderState extends GLShaderState{
+export class SimpleTextureShaderState extends GLShaderState {
   syncUniforms(): void {
     const gl = this.gl;
     const uniformsLocations = this._uniformsLocations;
@@ -36,7 +35,7 @@ export class SimpleTextureShader extends GLShader<SimpleTextureShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, SimpleTextureShaderState,getDefaultAttributeLocation(['a_position']));
-    setDefaultTextureLocation(this,['u_texture']);
+    super(gl, vertSrc, fragSrc, SimpleTextureShaderState, getDefaultAttributeLocation(['a_position']));
+    setDefaultTextureLocation(this, ['u_texture']);
   }
 }

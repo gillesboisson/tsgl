@@ -1,7 +1,6 @@
 import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
 import { GLTexture2D, IGLTexture } from '../../gl/core/texture/GLTexture';
 
-
 export function createEmptyMipmapTexture(
   gl: WebGL2RenderingContext,
   width: number,
@@ -12,8 +11,6 @@ export function createEmptyMipmapTexture(
 ): GLTexture2D {
   const texture = gl.createTexture();
   const target = gl.TEXTURE_2D;
-  
-  
 
   gl.bindTexture(target, texture);
   gl.texImage2D(target, 0, internalFormat, width, height, 0, format, type, null);

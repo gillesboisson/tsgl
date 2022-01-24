@@ -67,7 +67,6 @@ export class SimpleLamberianShader extends GLShader<SimpleLamberianShaderState> 
       getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv']),
     );
 
-    setDefaultTextureLocation(this,['u_diffuseMap','u_normalMap','u_pbrMap']);
-
+    setDefaultTextureLocation(this, ['u_diffuseMap', 'u_normalMap', 'u_pbrMap']);
   }
 }

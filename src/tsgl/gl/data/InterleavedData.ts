@@ -62,7 +62,7 @@ export class InterleavedDataArray<DataT extends IInterleavedData> {
 
     for (let i = 0; i < _length; i++) {
       this.buildData(i);
-    } 
+    }
   }
 
   buildData(index: number): void {

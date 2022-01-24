@@ -51,7 +51,11 @@ export class GLTFNode
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render<MaterialT extends IMaterial = IMaterial>(gl: AnyWebRenderingGLContext, cam: Camera, material?: MaterialT): void {
+  render<MaterialT extends IMaterial = IMaterial>(
+    gl: AnyWebRenderingGLContext,
+    cam: Camera,
+    material?: MaterialT,
+  ): void {
     // cam.mvp(this._material.shaderState.mvp, this._worldMat);
 
     const primitives = this._mesh.primitives;
@@ -60,7 +64,7 @@ export class GLTFNode
 
     for (const primitive of primitives) {
       // material.drawVao(gl, primitive.vao, primitive.nbElements, primitive.indicesType);
-      primitive.render(gl, cam, this._worldMat,material);
+      primitive.render(gl, cam, this._worldMat, material);
     }
 
     // material.unbind(gl);

@@ -52,8 +52,7 @@ export class Camera2D extends Camera {
     }
   }
 
-
-  constructor(width: number,  height: number, near = 0.0001, far = 100) {
+  constructor(width: number, height: number, near = 0.0001, far = 100) {
     super();
 
     this._width = width;
@@ -63,7 +62,7 @@ export class Camera2D extends Camera {
     this._dirtyProjection = true;
   }
 
-  setClampedPosition(x: number, y: number, minX: number, maxX: number, minY: number, maxY: number, z = 1.0 ): void {
+  setClampedPosition(x: number, y: number, minX: number, maxX: number, minY: number, maxY: number, z = 1.0): void {
     if (x < minX) x = minX;
     else if (x + this._width > maxX) x = maxX - this._width;
 
@@ -88,5 +87,3 @@ export class Camera2D extends Camera {
     return super.updateTransform(parentMat);
   }
 }
-
-

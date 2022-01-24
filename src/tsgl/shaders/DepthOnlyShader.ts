@@ -31,8 +31,7 @@ export const DepthOnlyShaderID = 'depth_only';
 
 export class DepthOnlyShader extends GLShader<DepthOnlyShaderState> {
   static register(renderer: GLRenderer): void {
-
-    GLSupport.depthTextureSupported(renderer.gl,true,true);
+    GLSupport.depthTextureSupported(renderer.gl, true, true);
 
     renderer.registerShaderFactoryFunction(
       DepthOnlyShaderID,

@@ -16,11 +16,8 @@ const VERTEX_BUFFER_SIZE = VERTEX_BATCH_SIZE * VERTEX_STRIDE;
 
 const INDICES_BUFFER_SIZE = INDICES_BATCH_SIZE * Uint16Array.BYTES_PER_ELEMENT;
 
-
 export interface ISpriteBatchPullable
-  extends IBatchPullable<IGLSpriteShaderState, SpriteBatch, SpriteBatchData, Uint16Array> {
-}
-
+  extends IBatchPullable<IGLSpriteShaderState, SpriteBatch, SpriteBatchData, Uint16Array> {}
 
 export class SpriteBatchData {
   pos: vec2;

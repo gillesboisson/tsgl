@@ -25,7 +25,10 @@ export function compileShader(
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     //console.log(gl.getShaderInfoLog(shader));
 
-    const srcLineN =  src.split("\n").map((val,ind) => `${ind+1} ${val}`).join("\n");
+    const srcLineN = src
+      .split('\n')
+      .map((val, ind) => `${ind + 1} ${val}`)
+      .join('\n');
 
     console.warn('shader src', srcLineN);
     throw new Error(gl.getShaderInfoLog(shader));

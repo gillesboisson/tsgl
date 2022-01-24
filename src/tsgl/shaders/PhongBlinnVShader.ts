@@ -7,7 +7,7 @@ import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { GLShaderVariantDeclinaison } from '../gl/core/shader/variants/GLShaderVariantDeclinaison';
 import { GLShaderVariants } from '../gl/core/shader/variants/GLShaderVariants';
-import {  GLVariantValueDefinition } from '../gl/core/shader/variants/GLVariantShaderTypes';
+import { GLVariantValueDefinition } from '../gl/core/shader/variants/GLVariantShaderTypes';
 import { PhongBlinnVShadersState } from './PhongBlinnVShadersState';
 
 export interface PhongBlinnLightInterface {
@@ -29,14 +29,14 @@ export type PhongBlinnVariant = {
 
 export const PhongBlinnVShaderID = 'phong_blinn_variant';
 
-export enum PhongBlinnShaderDebug{
-  none =  'none',
-  normal =  'normal',
-  diffuse =  'diffuse',
-  specular =  'specular',
-  ambiant =  'ambiant',
-  occlusion =  'occlusion',
-  shadow =  'shadow',
+export enum PhongBlinnShaderDebug {
+  none = 'none',
+  normal = 'normal',
+  diffuse = 'diffuse',
+  specular = 'specular',
+  ambiant = 'ambiant',
+  occlusion = 'occlusion',
+  shadow = 'shadow',
 }
 
 export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState, PhongBlinnVariant> {
@@ -52,7 +52,7 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           value: PhongBlinnShaderDebug.normal,
           flags: {
             DEBUG: true,
-            DEBUG_NORMAL: true, 
+            DEBUG_NORMAL: true,
           },
         },
         {
@@ -60,7 +60,7 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           flags: {
             DEBUG: true,
             DEBUG_LIGHT_DIFFUSE_SPEC: true,
-            DEBUG_LIGHT_DIFFUSE: true, 
+            DEBUG_LIGHT_DIFFUSE: true,
           },
         },
         {
@@ -68,7 +68,7 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           flags: {
             DEBUG: true,
             DEBUG_LIGHT_DIFFUSE_SPEC: true,
-            DEBUG_LIGHT_SPECULAR: true, 
+            DEBUG_LIGHT_SPECULAR: true,
           },
         },
         {
@@ -103,7 +103,7 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           value: 'pcf',
           default: true,
           flags: {
-            SHADOW_MAP: true
+            SHADOW_MAP: true,
           },
         },
       ],
@@ -136,7 +136,6 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           default: true,
           flags: {
             AMBIANT_COLOR: true,
-            
           },
         },
         {
@@ -164,22 +163,22 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
           },
         },
       ],
-      diffuse:[
+      diffuse: [
         {
           value: 'color',
           default: true,
           flags: {
             DIFFUSE_COLOR: true,
-          }
+          },
         },
         {
           value: 'texture',
-          
+
           flags: {
             DIFFUSE_MAP: true,
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     super(
@@ -188,17 +187,23 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
       fragSrc,
       PhongBlinnVShadersState,
       valueDefTest,
-      getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv','a_tangent']),
+      getDefaultAttributeLocation(['a_position', 'a_normal', 'a_uv', 'a_tangent']),
     );
-    
+
     // if(BOOSTRAP_BUILD_MODE === false){
     //   setDefaultTextureLocationForAllShaderVariants(this, ['u_textureMap', 'u_normalMap', 'u_irradianceMap', 'u_pbrMap']);
     // }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  programBuilt(declinaison: GLShaderVariantDeclinaison,program: WebGLProgram): void{
-    setDefaultTextureLocationForVariantShader(declinaison,  ['u_textureMap', 'u_normalMap', 'u_irradianceMap', 'u_pbrMap','u_shadowMap']);
+  programBuilt(declinaison: GLShaderVariantDeclinaison, program: WebGLProgram): void {
+    setDefaultTextureLocationForVariantShader(declinaison, [
+      'u_textureMap',
+      'u_normalMap',
+      'u_irradianceMap',
+      'u_pbrMap',
+      'u_shadowMap',
+    ]);
   }
 
   static register(renderer: GLRenderer): void {
@@ -209,5 +214,3 @@ export class PhongBlinnVShader extends GLShaderVariants<PhongBlinnVShadersState,
     );
   }
 }
-
-

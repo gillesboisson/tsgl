@@ -70,7 +70,7 @@ export class GLViewportStack {
   }
 
   changeState(state: GLViewportState): void {
-    if (this._stack.length === 0) throw new Error('changeState : Main viewport state can\'t be replaced');
+    if (this._stack.length === 0) throw new Error("changeState : Main viewport state can't be replaced");
     this.changeCurrentState(state);
     this._stack[this._stack.length - 1] = state;
   }

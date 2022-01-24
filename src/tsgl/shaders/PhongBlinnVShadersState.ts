@@ -20,8 +20,6 @@ export class PhongBlinnVShadersState extends ShaderVariantsState<PhongBlinnVaria
 
   shadowMapPixelSize: vec2 = vec2.create();
 
-
-
   syncUniforms(): void {
     const uniformsLocations = this._variantShader.uniformsLocation;
     const gl = this.gl;
@@ -34,7 +32,12 @@ export class PhongBlinnVShadersState extends ShaderVariantsState<PhongBlinnVaria
     gl.uniform3fv(uniformsLocations.u_cameraPosition, this.cameraPosition);
 
     // TODO : investigate why light dir has to be inverted
-    gl.uniform3f(uniformsLocations.u_lightDirection, -this.lightDirection[0], -this.lightDirection[1], -this.lightDirection[2]);
+    gl.uniform3f(
+      uniformsLocations.u_lightDirection,
+      -this.lightDirection[0],
+      -this.lightDirection[1],
+      -this.lightDirection[2],
+    );
     gl.uniform3fv(uniformsLocations.u_lightColor, this.lightColor);
     gl.uniform3fv(uniformsLocations.u_specularColor, this.specularColor);
 
@@ -43,6 +46,5 @@ export class PhongBlinnVShadersState extends ShaderVariantsState<PhongBlinnVaria
     gl.uniform2fv(uniformsLocations.u_shadowMapPixelSize, this.shadowMapPixelSize);
 
     gl.uniform1f(uniformsLocations.u_lightShininess, this.lightShininess);
-
   }
 }

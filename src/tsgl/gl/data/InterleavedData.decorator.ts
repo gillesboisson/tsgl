@@ -42,20 +42,20 @@ export function interleavedData() {
           const get =
             prop.length > 1
               ? function () {
-                return this[propName];
-              }
+                  return this[propName];
+                }
               : function () {
-                return this[propName][0];
-              };
+                  return this[propName][0];
+                };
 
           const set =
             prop.length > 1
               ? function (val: ArrayBufferView) {
-                this[propName].set(val);
-              }
+                  this[propName].set(val);
+                }
               : function (val: number) {
-                this[propName][0] = val;
-              };
+                  this[propName][0] = val;
+                };
 
           Object.defineProperty(prototype, prop.name, { get, set });
         }

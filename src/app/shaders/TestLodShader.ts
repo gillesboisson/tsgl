@@ -37,6 +37,6 @@ export class TestLodShader extends GLShader<TestLodShaderState> {
 
   constructor(gl: AnyWebRenderingGLContext) {
     super(gl, vertSrc, fragSrc, TestLodShaderState,getDefaultAttributeLocation(['a_position','a_uv']));
-    setDefaultTextureLocation(this,['u_texture'])
+    setDefaultTextureLocation(this,['u_texture']);
   }
 }

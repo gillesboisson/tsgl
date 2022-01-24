@@ -1,9 +1,6 @@
 import { GLShader } from '../gl/core/shader/GLShader';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import {
-  getDefaultAttributeLocation,
-  setDefaultTextureLocation,
-} from '../gl/core/data/GLDefaultAttributesLocation';
+import { getDefaultAttributeLocation, setDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { mat4 } from 'gl-matrix';
 import { GLShaderState } from '../gl/core/shader/GLShaderState';
 import { GLRenderer } from '../gl/core/GLRenderer';

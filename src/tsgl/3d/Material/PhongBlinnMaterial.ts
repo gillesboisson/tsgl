@@ -9,7 +9,6 @@ import { PhongBlinnVShadersState } from '../../shaders/PhongBlinnVShadersState';
 import { PhongBlinnLightInterface, PhongBlinnShaderDebug, PhongBlinnVShaderID } from '../../shaders/PhongBlinnVShader';
 import { ShadowMap } from '../ShadowMap';
 
-
 export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
   private _debug: PhongBlinnShaderDebug;
   private _shadowMap: ShadowMap;
@@ -23,11 +22,9 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
   protected _irradianceMap: IGLTexture;
   protected _extraMap: IGLTexture;
 
-
   protected _diffuseMap: IGLTexture;
 
   protected _diffuseColor: vec4 = vec4.fromValues(1, 1, 1, 1);
-
 
   public setDiffuseColor(r: number, g = r, b = r, a = 1): void {
     vec4.set(this._diffuseColor, r, g, b, a);
@@ -45,9 +42,6 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     return vec4.clone(this._diffuseColor);
   }
 
-
-
-
   // occlusion map enabled (extra map need to be provided)
   protected _occlusionMapEnabled = false;
 
@@ -64,7 +58,7 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
       this._shaderState?.setVariantValue('diffuse', val ? 'texture' : 'color');
     }
   }
-  
+
   get shadowMap(): ShadowMap {
     return this._shadowMap;
   }
@@ -131,13 +125,13 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     }
   }
 
-  get debug():PhongBlinnShaderDebug{
+  get debug(): PhongBlinnShaderDebug {
     return this._shaderState.getVariantValue('debug') as PhongBlinnShaderDebug;
   }
-  
-  set debug(val:PhongBlinnShaderDebug){
-    if(val !== this._debug){
-      this._shaderState.setVariantValue('debug',val);
+
+  set debug(val: PhongBlinnShaderDebug) {
+    if (val !== this._debug) {
+      this._shaderState.setVariantValue('debug', val);
     }
   }
 
@@ -150,7 +144,7 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
         this._shaderState?.setVariantValue('normal', 'map');
         break;
       default:
-        this._shaderState?.setVariantValue('normal' , 'vertex');
+        this._shaderState?.setVariantValue('normal', 'vertex');
         break;
     }
   }
@@ -178,9 +172,9 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     ss.modelMat = transformMat;
     vec3.negate(ss.cameraPosition, cam.transform.getRawPosition());
 
-    if(this._shadowMap){
-      this._shadowMap.depthBiasMvp(ss.depthBiasMvpMat,transformMat);
-      vec2.set(ss.shadowMapPixelSize,1 / this.shadowMap.depthTexture.width,1 / this.shadowMap.depthTexture.height);
+    if (this._shadowMap) {
+      this._shadowMap.depthBiasMvp(ss.depthBiasMvpMat, transformMat);
+      vec2.set(ss.shadowMapPixelSize, 1 / this.shadowMap.depthTexture.width, 1 / this.shadowMap.depthTexture.height);
       this._shadowMap.depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);
     }
 
@@ -201,12 +195,10 @@ export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
     }
 
     ss.syncUniforms();
-
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   unbind(gl: AnyWebRenderingGLContext): void {
-
     if (this._diffuseMap) {
       this._diffuseMap.unbind();
     }

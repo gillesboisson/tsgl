@@ -12,6 +12,6 @@ export interface IShaderProgram extends IUse {
   getProgram(): WebGLProgram;
 }
 
-export interface IShaderCreateState<ShaderStateT extends IGLShaderState>{
+export interface IShaderCreateState<ShaderStateT extends IGLShaderState> {
   createState(): ShaderStateT;
 }

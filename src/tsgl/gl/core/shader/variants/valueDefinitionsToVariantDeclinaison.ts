@@ -1,15 +1,13 @@
 import { GLVariantValueDefinition, GLShaderVariantKeyValue, GLVariantDeclinaison } from './GLVariantShaderTypes';
 
-
-
 export function valueDefinitionsToVariantDeclinaison(
-  definitions: { [name: string]: GLVariantValueDefinition[]; },
+  definitions: { [name: string]: GLVariantValueDefinition[] },
 
   definitionNames: string[] = Object.keys(definitions),
   currentRec = 0,
   values: GLShaderVariantKeyValue = {},
   flags: GLShaderVariantKeyValue = {},
-  declinaisons: GLVariantDeclinaison[] = []
+  declinaisons: GLVariantDeclinaison[] = [],
 ): GLVariantDeclinaison[] {
   const currentDefinitionName = definitionNames[currentRec];
   const isLastRec = currentRec === definitionNames.length - 1;
@@ -32,7 +30,7 @@ export function valueDefinitionsToVariantDeclinaison(
         currentRec + 1,
         declinaisonValues,
         declinaisonFlags,
-        declinaisons
+        declinaisons,
       );
     }
   });

@@ -8,8 +8,8 @@ import { IGLFrameBuffer } from './IGLFrameBuffer';
 /**
  * Create a resizable framebuffer atteched to a single RGBD / UNSIGNED_BYTE color texture
  * @param gl Rendering Context
- * @param width 
- * @param height 
+ * @param width
+ * @param height
  * @returns structured object with framebuffer and texture
  */
 export function createSimpleResizableFramebuffer(

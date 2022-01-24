@@ -5,7 +5,6 @@ import { GLShaderVariantStateType } from './GLShaderVariantStateType';
 import { GLVariantDeclinaison, GLVariantValueDefinition } from './GLVariantShaderTypes';
 import { valueDefinitionsToVariantDeclinaison } from './valueDefinitionsToVariantDeclinaison';
 
-
 // define if all declinaison is prebuild on construct
 // or build separatly when declinaison is requested the first time
 // eslint-disable-next-line prefer-const
@@ -27,7 +26,10 @@ export class GLShaderVariants<ShaderStateT extends IGLShaderState, ValuesT> {
     this._declinaisons = valueDefinitionsToVariantDeclinaison(this.valueDefinitions);
     this._shaders = {};
     this._declinaisons
-      .map((dcl) => new GLShaderVariantDeclinaison(this.gl, dcl, this.vertexSrc, this.fragmentSrc,this, attributesLocations))
+      .map(
+        (dcl) =>
+          new GLShaderVariantDeclinaison(this.gl, dcl, this.vertexSrc, this.fragmentSrc, this, attributesLocations),
+      )
       .forEach((shader) => (this._shaders[shader.slug] = shader));
   }
 
@@ -43,7 +45,7 @@ export class GLShaderVariants<ShaderStateT extends IGLShaderState, ValuesT> {
 
   // program build hook called from GLShaderVariantDeclinaison when it is build, it can overriden in order to set common v shader uniform settings (eg. texture location)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  programBuilt(declinaison: GLShaderVariantDeclinaison,program: WebGLProgram): void{}
+  programBuilt(declinaison: GLShaderVariantDeclinaison, program: WebGLProgram): void {}
 
   getProgramFromSlug(slug: string): WebGLProgram {
     return this._shaders[slug]?.program;

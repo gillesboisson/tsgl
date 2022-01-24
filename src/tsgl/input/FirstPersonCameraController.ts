@@ -42,7 +42,7 @@ export class FirstPersonCameraController {
     readonly cam: Camera,
     readonly dom: HTMLElement,
     readonly translationSpeed: number,
-    readonly rotationSpeed: number
+    readonly rotationSpeed: number,
   ) {
     this.__mouseMoveHandler = (e: MouseEvent) => this.onMouseMove(e);
     this.__mouseDownHandler = (e: MouseEvent) => this.onMouseDown(e);
@@ -118,12 +118,16 @@ export class FirstPersonCameraController {
       this.cam.transform.translate(
         __tempVec31[0] * this.translationSpeed,
         __tempVec31[1] * this.translationSpeed,
-        __tempVec31[2] * this.translationSpeed
+        __tempVec31[2] * this.translationSpeed,
       );
     }
 
     if (this._mouseXOffset !== 0 || this._mouseYOffset !== 0) {
-      this.cam.transform.rotateEuler(this._mouseYOffset * -this.rotationSpeed, this._mouseXOffset * -this.rotationSpeed, 0);
+      this.cam.transform.rotateEuler(
+        this._mouseYOffset * -this.rotationSpeed,
+        this._mouseXOffset * -this.rotationSpeed,
+        0,
+      );
       this._mouseXOffset = this._mouseYOffset = 0;
     }
   }

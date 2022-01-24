@@ -33,7 +33,7 @@ export class plane extends Float32Array {
     return new Float32Array([vec[0], vec[1], vec[2], w]);
   }
 
-  static copy(out: plane, source: plane): plane{
+  static copy(out: plane, source: plane): plane {
     out[0] = source[0];
     out[1] = source[1];
     out[2] = source[2];
@@ -73,7 +73,6 @@ export class plane extends Float32Array {
   }
 
   static coplanarVec(outVec: vec3, source: plane): plane {
-
     vec3.copy(outVec, source as any);
 
     vec3.scale(outVec, outVec, -source[3]);
@@ -81,7 +80,7 @@ export class plane extends Float32Array {
     return outVec;
   }
 
-   static applyMat4(out: plane, mat: mat4, normalMat: mat3): plane {
+  static applyMat4(out: plane, mat: mat4, normalMat: mat3): plane {
     if (normalMat === undefined) {
       normalMat = __m3_1;
       mat3.normalFromMat4(normalMat, mat);
@@ -108,7 +107,7 @@ export class plane extends Float32Array {
     return out;
   }
 
-  static equals (plane1: plane, plane2: plane): boolean {
+  static equals(plane1: plane, plane2: plane): boolean {
     return plane1[0] === plane2[0] && plane1[1] === plane2[1] && plane1[2] === plane2[2] && plane1[3] === plane2[3];
 
     // return plane.normal.equals( this.normal ) && ( plane.constant === this.constant );
@@ -123,4 +122,4 @@ export class plane extends Float32Array {
 
   // TODO:implement
   // static intersectsLine(sourcePlane, lineVec1, lineVec2) {}
-};
+}

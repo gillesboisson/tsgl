@@ -5,11 +5,10 @@ import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttribu
 import { GLMesh } from '../../gl/core/data/GLMesh';
 import { QuadSettings, defaultQuadSettings } from './MeshHelpers';
 
-
 export function createQuadMesh(
   gl: AnyWebRenderingGLContext,
   settings?: Partial<QuadSettings>,
-  drawType: GLenum = gl.STATIC_DRAW
+  drawType: GLenum = gl.STATIC_DRAW,
 ): GLMesh {
   const { quadLeft, quadTop, quadRight, quadBottom, quadDepth, uvLeft, uvRight, uvTop, uvBottom } = {
     ...settings,
@@ -40,7 +39,6 @@ export function createQuadMesh(
     uvTop,
   ]);
 
-  
   quadB.bufferData(new Float32Array(bData));
 
   const quadIndex = new Uint16Array([0, 1, 2, 1, 3, 2]);

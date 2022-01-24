@@ -170,7 +170,7 @@ export function createBoxMesh(
         // groupCount += 6;
       }
     }
-    
+
     numberOfVertices += vertexCounter;
   }
 

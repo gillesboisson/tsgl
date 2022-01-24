@@ -5,7 +5,6 @@ export class GLSupport {
     if ((gl as WebGL2RenderingContext).createVertexArray) {
       return gl as WebGLRenderingContextWithVao;
     } else if (useExtension) {
-
       const _vaoExt =
         gl.getExtension('OES_vertex_array_object') ||
         gl.getExtension('MOZ_OES_vertex_array_object') ||
@@ -13,8 +12,10 @@ export class GLSupport {
 
       if (_vaoExt) {
         (gl as WebGLRenderingContextWithVao).createVertexArray = () => _vaoExt.createVertexArrayOES();
-        (gl as WebGLRenderingContextWithVao).deleteVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.deleteVertexArrayOES(vao);
-        (gl as WebGLRenderingContextWithVao).bindVertexArray = (vao: WebGLVertexArrayObject) => _vaoExt.bindVertexArrayOES(vao);
+        (gl as WebGLRenderingContextWithVao).deleteVertexArray = (vao: WebGLVertexArrayObject) =>
+          _vaoExt.deleteVertexArrayOES(vao);
+        (gl as WebGLRenderingContextWithVao).bindVertexArray = (vao: WebGLVertexArrayObject) =>
+          _vaoExt.bindVertexArrayOES(vao);
         return gl as WebGLRenderingContextWithVao;
       }
     }

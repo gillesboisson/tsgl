@@ -11,7 +11,6 @@ import { GLTFPrimitive } from '../gltf/GLTFPrimitive';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
 
-
 export class PbrMaterial extends AMaterial<PbrVShadersState> {
   static matchGTFMaterialData(material: GLTFDataMaterial): boolean {
     return !!material.pbrMetallicRoughness;

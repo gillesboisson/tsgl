@@ -52,7 +52,7 @@ export class PbrVShadersState extends ShaderVariantsState<PbrVariant> {
   }
 
   setPbr(ambiantOcclusion: number, roughness: number, metallic: number, extra = 0): void {
-    vec4.set(this._pbr,ambiantOcclusion,roughness, metallic, extra);
+    vec4.set(this._pbr, ambiantOcclusion, roughness, metallic, extra);
   }
 
   syncUniforms(): void {

@@ -16,7 +16,6 @@ export function createCylinderMesh(
   thetaStart = 0,
   thetaLength = Math.PI * 2,
 ): GLMesh {
-  
   radialSegments = Math.floor(radialSegments);
   heightSegments = Math.floor(heightSegments);
 
@@ -118,7 +117,6 @@ export function createCylinderMesh(
         // groupCount += 6;
       }
     }
-
   }
 
   function generateCap(top: boolean) {
@@ -209,7 +207,6 @@ export function createCylinderMesh(
     }
 
     // add a group to the geometry. this will ensure multi material support
-    
   }
 
   const positionsB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(vertices));

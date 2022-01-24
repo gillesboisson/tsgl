@@ -6,7 +6,6 @@ import { GLShaderVariantDeclinaison } from './GLShaderVariantDeclinaison';
 import { GLShaderVariants } from './GLShaderVariants';
 import { GLShaderVariantKeyValue } from './GLVariantShaderTypes';
 
-
 export abstract class ShaderVariantsState<ValuesT> extends GLCore implements IGLShaderState {
   protected _variantValues: GLShaderVariantKeyValue;
   private _dirtyVariant: boolean;

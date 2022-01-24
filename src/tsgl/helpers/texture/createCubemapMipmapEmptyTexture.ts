@@ -54,9 +54,8 @@ export function createCubemapMipmapEmptyTexture(
   const texture = gl.createTexture();
   const target = gl.TEXTURE_CUBE_MAP;
 
-  
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-  
+
   gl.texStorage2D(gl.TEXTURE_CUBE_MAP, levels, internalFormat, size, size);
   // create empty space in all faces (RGB / FLOAT)
   // for (let i = 0; i < 6; i++) {
@@ -69,8 +68,6 @@ export function createCubemapMipmapEmptyTexture(
   //gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  
-
 
   return bindableTexture({
     gl,

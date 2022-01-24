@@ -1100,5 +1100,3 @@ export enum WebGL2Enum /* ClearBufferMask */ {
 }
 
 export type AnyWebGLEnum = WebGL1Enum | WebGL2Enum | GLenum;
-
-

@@ -6,9 +6,6 @@ import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
 import { Camera } from '../Camera';
 import { IMaterial } from './IMaterial';
 
-
-
-
 export abstract class AMaterial<ShaderStateT extends IGLShaderState = IGLShaderState>
   implements IMaterial<ShaderStateT> {
   protected _shaderState: ShaderStateT;

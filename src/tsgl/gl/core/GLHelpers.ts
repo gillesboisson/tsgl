@@ -4,4 +4,4 @@ export type WebGLRenderingContextWithVao = AnyWebRenderingGLContext & {
   createVertexArray(): WebGLVertexArrayObject | null;
   deleteVertexArray(vertexArray: WebGLVertexArrayObject | null): void;
   bindVertexArray(array: WebGLVertexArrayObject | null): void;
-}
+};

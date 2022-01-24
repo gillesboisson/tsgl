@@ -7,4 +7,3 @@ export const tv = vec3.create();
 export const __lookAtBaseVec = vec3.fromValues(0, 0, -1);
 
 export type CameraTransform3D = TranslateRotateTransform3D;
-

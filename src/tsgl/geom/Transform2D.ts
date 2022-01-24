@@ -1,7 +1,7 @@
 import { mat2d, vec2 } from 'gl-matrix';
 import { ITransform } from '../gl/abstract/ITransform';
 import { IReset } from '../base/IReset';
-import { IDestroy as IDestroy } from "../base/IDestroy";
+import { IDestroy } from '../base/IDestroy';
 
 const __ident: mat2d = mat2d.create();
 

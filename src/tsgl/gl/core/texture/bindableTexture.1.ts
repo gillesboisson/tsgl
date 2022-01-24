@@ -1,7 +1,5 @@
 import { IGLTexture, IGLTextureBase } from './GLTexture';
 
-
-
 export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
   // gl: AnyWebRenderingGLContext,
   sourceTexture: T,
@@ -20,7 +18,6 @@ export function bindableTexture<T extends IGLTextureBase = IGLTextureBase>(
     active,
     safeBind,
     activeSafe,
-    
   };
 
   function bind(): void {

@@ -33,7 +33,7 @@ export interface WireframeBatchRenderable {
   draw(batch: WireframeBatch): void;
 }
 
-export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColorShaderState>, IDestroy {
+export class WireframeBatch implements IBatch<IWireframeBatchPullable, VertexColorShaderState>, IDestroy {
   private vao: WebGLVertexArrayObject;
   private verticesBuffer: WebGLBuffer;
   private indicesBuffer: WebGLBuffer;
@@ -75,10 +75,10 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
     // setup vao
     gl.bindVertexArray(this.vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
-    
+
     gl.vertexAttribPointer(GLDefaultAttributesLocation.POSITION, 3, gl.FLOAT, false, VERTEX_STRIDE, 0);
     gl.enableVertexAttribArray(GLDefaultAttributesLocation.POSITION);
-    
+
     gl.vertexAttribPointer(
       GLDefaultAttributesLocation.COLOR,
       4,
@@ -88,7 +88,7 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
       3 * Float32Array.BYTES_PER_ELEMENT,
     );
     gl.enableVertexAttribArray(GLDefaultAttributesLocation.COLOR);
-    
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer);
     gl.bindVertexArray(null);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -119,7 +119,6 @@ export class WireframeBatch implements IBatch<IWireframeBatchPullable,VertexColo
   }
 
   // private render() {}
-
 
   push(nbIndices: number, nbVertex: number, pullable: IWireframeBatchPullable): void {
     if (this.indicesInd + nbIndices > INDICES_BATCH_SIZE || this.verticesInd + nbVertex > VERTEX_BATCH_SIZE) {

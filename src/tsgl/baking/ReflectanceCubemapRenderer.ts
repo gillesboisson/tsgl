@@ -15,8 +15,6 @@ export class ReflectanceCubemapRenderer {
     readonly levels = 5,
     readonly framebuffer: WebGLFramebuffer = renderer.gl.createFramebuffer(),
   ) {
-    
-
     this._reflectanceST = renderer.getShader<ReflectanceShaderState>(ReflectanceShaderID).createState();
     this._skybox = createSkyBoxMesh(renderer.gl);
   }
@@ -39,7 +37,7 @@ export class ReflectanceCubemapRenderer {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, source);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-    
+
     this._reflectanceST.use();
 
     for (let level = 0; level < levels; level++) {

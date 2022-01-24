@@ -29,7 +29,7 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
     return this._depthTexture;
   }
 
-  get framebuffer(): WebGLFramebuffer{
+  get framebuffer(): WebGLFramebuffer {
     return this._frameBuffer;
   }
 
@@ -136,7 +136,6 @@ export class GLMRTFrameBuffer extends GLCore implements IGLFrameBuffer {
 
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this._depthTexture.texture, 0);
       gl.bindTexture(gl.TEXTURE_2D, null);
-
     }
 
     // setup depth render buffer

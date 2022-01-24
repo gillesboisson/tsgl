@@ -78,7 +78,6 @@ export enum GLDefaultTextureLocation {
   AMBIANT_OCCLUSION = 7,
   EMISSIVE = 8,
 
-
   PLANAR_REFLECTION = 10,
   SKYBOX = 11,
   IRRADIANCE_BOX = 12,
@@ -194,7 +193,6 @@ export function setDefaultTextureLocationForAllVariantShader(
       const uniformLocation = uniformsLocations[name];
 
       gl.uniform1i(uniformLocation, location);
-
     });
   });
 }

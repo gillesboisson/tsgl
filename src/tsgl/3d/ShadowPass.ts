@@ -144,9 +144,8 @@ export class ShadowPass extends RenderPass3D<AnyWebRenderingGLContext, GLFramebu
   depthBiasVpInForViewSpaceData(out: mat4, viewCamera: Camera): void {
     const worldMat = this.camera.getWorldMat();
     mat4.multiply(out, viewCamera.invertWorldMat, worldMat);
-    mat4.invert(out,out);
+    mat4.invert(out, out);
     mat4.multiply(out, this.camera.projectionMat, out);
     mat4.multiply(out, biasMat, out);
-
   }
 }

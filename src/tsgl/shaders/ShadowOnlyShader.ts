@@ -22,7 +22,6 @@ export class ShadowOnlyShaderState extends GLShaderState {
     gl.uniformMatrix4fv(uniformsLocations.u_normalMat, false, this.normalMat);
     gl.uniform3fv(uniformsLocations.u_lightDirection, this.lightDirection);
     gl.uniform2fv(uniformsLocations.u_pixelSize, this.pixelSize);
-    
   }
 
   mvpMat: mat4 = mat4.create();
@@ -43,8 +42,6 @@ export class ShadowOnlyShader extends GLShader<ShadowOnlyShaderState> {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (gl: AnyWebRenderingGLContext, name: string) => new ShadowOnlyShader(gl),
     );
-
-    
   }
 
   constructor(gl: AnyWebRenderingGLContext) {

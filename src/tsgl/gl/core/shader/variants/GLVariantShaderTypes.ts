@@ -1,4 +1,3 @@
-
 export type GLShaderVariantKeyValue = { [name: string]: string | boolean };
 
 export type GLVariantValueDefinition = {

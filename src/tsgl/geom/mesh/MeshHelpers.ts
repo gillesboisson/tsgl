@@ -1,4 +1,3 @@
-
 export interface QuadSettings {
   quadLeft: number;
   quadTop: number;
@@ -48,5 +47,3 @@ export default function generateDefaultQuadIndices(nbQuads: number): Uint16Array
 
   return result;
 }
-
-

@@ -55,7 +55,7 @@ export function createConvolutionGridIndexMapper(
   kernelHeight: number,
   compare: KernelCompare = KernelCompareFuncs.base,
 ): GridIndexMapper {
-  if (kernel.length !== kernelWidth * kernelHeight) throw new Error('Kernel data doesn\' match provides dimensions');
+  if (kernel.length !== kernelWidth * kernelHeight) throw new Error("Kernel data doesn' match provides dimensions");
   const kernelLength = kernel.length;
   return function (ind: number, x: number, y: number, data: number[], gridWidth: number, gridHeight: number): number {
     let base = 0;
@@ -97,7 +97,7 @@ export class SimpleGrid extends SimpleElement implements ISpriteBatchPullable {
     cam: Camera2D,
   ) {
     if (textures.length === 0) throw new Error('Empty subtexture collection');
-    if (grid.length !== nbElementX * nbElementY) throw new Error('Grid size doesn\'t have nb elements');
+    if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
 
     super(textures[0].glTexture);
     this._grid = grid;

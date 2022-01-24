@@ -34,7 +34,7 @@ export class SimpleGridDebugger extends SimpleElement implements ISpriteBatchPul
     tileHeight: number,
     cam: Camera2D,
   ) {
-    if (grid.length !== nbElementX * nbElementY) throw new Error('Grid size doesn\'t have nb elements');
+    if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
 
     super(font.texture.glTexture);
     this._grid = grid;

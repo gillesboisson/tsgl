@@ -8,15 +8,14 @@ import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 
 export class SkyboxMaterial extends AMaterial<SkyboxShaderState> {
-
   /**
-   * 
-   * @param renderer renderer 
+   *
+   * @param renderer renderer
    * @param texture Cubemap texture
    */
   constructor(renderer: GLRenderer, public texture: IGLTexture) {
     super();
-    
+
     this._shaderState = renderer.getShader(SkyboxShaderID).createState() as SkyboxShaderState;
   }
 

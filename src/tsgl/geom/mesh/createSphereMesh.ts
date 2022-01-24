@@ -5,8 +5,6 @@ import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttribu
 import { GLMesh } from '../../gl/core/data/GLMesh';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 
-
-
 export function createSphereMesh(
   gl: AnyWebRenderingGLContext,
   radius = 1,
@@ -16,7 +14,6 @@ export function createSphereMesh(
   phiLength = Math.PI * 2,
   thetaStart = 0,
   thetaLength = Math.PI,
-  
 ): GLMesh {
   widthSegments = Math.max(3, Math.floor(widthSegments));
   heightSegments = Math.max(2, Math.floor(heightSegments));
@@ -95,15 +92,20 @@ export function createSphereMesh(
 
   // build geometry
 
-  const positionsB = new GLBuffer(gl,gl.ARRAY_BUFFER,gl.STATIC_DRAW, new Float32Array(vertices));
-  const normalsB = new GLBuffer(gl,gl.ARRAY_BUFFER,gl.STATIC_DRAW, new Float32Array(normals));
-  const uvsB = new GLBuffer(gl,gl.ARRAY_BUFFER,gl.STATIC_DRAW, new Float32Array(uvs));
-  const indexB = new GLBuffer(gl,gl.ELEMENT_ARRAY_BUFFER,gl.STATIC_DRAW, new Uint16Array(indices));
+  const positionsB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(vertices));
+  const normalsB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(normals));
+  const uvsB = new GLBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(uvs));
+  const indexB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW, new Uint16Array(indices));
 
-  return new GLMesh(gl,vertices.length / 3, indices.length / 3, [
-    new GLAttribute(gl, positionsB,GLDefaultAttributesLocation.POSITION,'a_position',3,12),
-    new GLAttribute(gl, normalsB,GLDefaultAttributesLocation.NORMAL,'a_normal',3,12),
-    new GLAttribute(gl, uvsB ,GLDefaultAttributesLocation.UV,'a_uv',2,8),
-  ],indexB);
-
+  return new GLMesh(
+    gl,
+    vertices.length / 3,
+    indices.length / 3,
+    [
+      new GLAttribute(gl, positionsB, GLDefaultAttributesLocation.POSITION, 'a_position', 3, 12),
+      new GLAttribute(gl, normalsB, GLDefaultAttributesLocation.NORMAL, 'a_normal', 3, 12),
+      new GLAttribute(gl, uvsB, GLDefaultAttributesLocation.UV, 'a_uv', 2, 8),
+    ],
+    indexB,
+  );
 }

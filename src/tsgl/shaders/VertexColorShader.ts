@@ -11,8 +11,7 @@ const fragSrc = require('./glsl/vertex_color.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/vertex_color.vert').default;
 
-
-export class VertexColorShaderState extends GLShaderState  {
+export class VertexColorShaderState extends GLShaderState {
   syncUniforms(): void {
     const gl = this.gl;
     const uniformsLocations = this._uniformsLocations;

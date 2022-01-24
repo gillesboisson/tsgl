@@ -26,7 +26,7 @@ export abstract class ASceneInstance<
     this.transform = new TransformClass();
   }
 
-  getWorldMat(): MatT{
+  getWorldMat(): MatT {
     return this._worldMat;
   }
 

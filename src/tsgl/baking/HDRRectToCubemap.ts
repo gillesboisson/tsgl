@@ -9,7 +9,6 @@ import { IrradianceShaderState } from '../shaders/IrradianceShader';
 import { createFramebufferWithDepthStorage } from '../helpers/framebuffer';
 import { ACubemapRenderer } from '../helpers/texture/CubemapRenderer';
 
-
 export class HDRToCubemap extends ACubemapRenderer<WebGL2RenderingContext> implements IDestroy {
   private _framebuffer: WebGLFramebuffer;
   private _skybox: GLMesh;
@@ -23,7 +22,6 @@ export class HDRToCubemap extends ACubemapRenderer<WebGL2RenderingContext> imple
     const gl = this.gl;
     this._skybox = createSkyBoxMesh(gl);
     this._framebuffer = framebuffer || gl.createFramebuffer();
-    
 
     this._shaderState = renderer.getShader<EquiToCubemapShaderState>(EquiToCubemapShaderID).createState();
   }

@@ -8,7 +8,6 @@ import { TranslateRotateTransform3D } from '../geom/TranslateRotateTransform3D';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tmat4 = mat4.create();
 
-
 export class Camera<TransformT extends ITransform<mat4> = CameraTransform3D> extends SceneInstance3D<TransformT> {
   readonly projectionMat: mat4 = mat4.create();
   readonly vpMat: mat4 = mat4.create();
@@ -36,9 +35,6 @@ export class Camera<TransformT extends ITransform<mat4> = CameraTransform3D> ext
   constructor(TransformClass: Type<TransformT> = (TranslateRotateTransform3D as unknown) as Type<TransformT>) {
     super(TransformClass);
   }
-
-
-  
 
   setOrtho(left: number, right: number, bottom: number, top: number, near = 0.001, far = 100): Camera<TransformT> {
     mat4.ortho(this.projectionMat, left, right, bottom, top, near, far);

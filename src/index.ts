@@ -294,7 +294,7 @@ class TestApp extends Base3DApp {
 
     // this.renderables.addChild(...[plane, sphere, sphere2]);
     // this._sceneRenderables.addChild(sphere);
-    let step = 10;
+    const step = 10;
 
     this.offDeferredNode = new MeshNode(new PhongBlinnMaterial(this.renderer, light), mesh);
     this.offDeferredNode.transform.setScale(10);

@@ -17,12 +17,9 @@ export class QuadCopyShaderState extends GLShaderState implements IGLShaderState
     const uniformsLocations = this._uniformsLocations;
 
     gl.uniform2fv(uniformsLocations.u_gammaExposure, this.gammaExposure);
-    
-
-
   }
 
-  gammaExposure = vec2.fromValues(2.2,0.5);
+  gammaExposure = vec2.fromValues(2.2, 0.5);
   textureLod = 0;
 }
 
@@ -38,8 +35,7 @@ export class QuadCopyShader extends GLShader<QuadCopyShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, QuadCopyShaderState,getDefaultAttributeLocation(['a_position','a_uv']));
-    setDefaultTextureLocation(this,['u_texture']);
-    
+    super(gl, vertSrc, fragSrc, QuadCopyShaderState, getDefaultAttributeLocation(['a_position', 'a_uv']));
+    setDefaultTextureLocation(this, ['u_texture']);
   }
 }

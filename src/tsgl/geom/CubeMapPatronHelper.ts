@@ -25,7 +25,6 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
   }
 
   createMesh(gl: AnyWebRenderingGLContext): void {
-    
     // canvas uv map is
     //    +--+
     //    |ny|
@@ -37,8 +36,8 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
     //
 
     // create grid based on canvas
-    const xS = new Array(5);  // 4 blocks in X
-    const yS = new Array(4);  // 3 blocks in Y
+    const xS = new Array(5); // 4 blocks in X
+    const yS = new Array(4); // 3 blocks in Y
 
     for (let i = 0; i < xS.length; i++) {
       xS[i] = i / 4;
@@ -56,9 +55,8 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
     const quadIndexB = new GLBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW);
     quadIndexB.bufferData(indices);
 
-
     // mesh order  posx.*, negx.*, posy.*, negy.*, posz.* and negz.*
-    // !! uvY is inverted from flat patron to cubemap 
+    // !! uvY is inverted from flat patron to cubemap
     // create separate uv data for each face using grid position
     const uvPosX = new Float32Array([xS[2], yS[2], xS[3], yS[2], xS[2], yS[1], xS[3], yS[1]]);
     const uvNegX = new Float32Array([xS[0], yS[2], xS[1], yS[2], xS[0], yS[1], xS[1], yS[1]]);
@@ -66,7 +64,6 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
     const uvNegY = new Float32Array([xS[1], yS[1], xS[2], yS[1], xS[1], yS[0], xS[2], yS[0]]);
     const uvPosZ = new Float32Array([xS[1], yS[2], xS[2], yS[2], xS[1], yS[1], xS[2], yS[1]]);
     const uvNegZ = new Float32Array([xS[3], yS[2], xS[4], yS[2], xS[3], yS[1], xS[4], yS[1]]);
-
 
     // gen mesh sub function
     function genMesh(uv: Float32Array): GLMesh {
@@ -93,7 +90,6 @@ export class CubeMapPatronHelper extends CubeMapFramebuffer {
     ];
   }
 
-  
   unwrap(patron: GLTexture2D, resizeFramebufferFromTextureSize = true): void {
     if (resizeFramebufferFromTextureSize) {
       const size = patron.width / 4;

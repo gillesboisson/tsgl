@@ -10,15 +10,13 @@ const fragSrc = require('./glsl/basicColor.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const vertSrc = require('./glsl/basicColor.vert').default;
 
-
-export class BasicColorShaderState extends GLShaderState{
+export class BasicColorShaderState extends GLShaderState {
   syncUniforms(): void {
     const gl = this.gl;
     const uniformsLocations = this._uniformsLocations;
 
     gl.uniformMatrix4fv(uniformsLocations.u_mvpMat, false, this.mvp);
     gl.uniform4fv(uniformsLocations.u_color, this.color);
-
   }
 
   mvp: mat4 = mat4.create();
@@ -37,6 +35,6 @@ export class BasicColorShader extends GLShader<BasicColorShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, BasicColorShaderState,getDefaultAttributeLocation(['a_position']));
+    super(gl, vertSrc, fragSrc, BasicColorShaderState, getDefaultAttributeLocation(['a_position']));
   }
 }

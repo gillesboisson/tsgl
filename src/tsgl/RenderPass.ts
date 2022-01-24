@@ -54,7 +54,9 @@ export interface GLRenderPassAlphaViewportState {
   viewportHeight: number;
 }
 
-export type GLRenderPassState<FramebufferT extends IGLFrameBuffer & IResize> = Required<GLRenderPassOptions<FramebufferT>>;
+export type GLRenderPassState<FramebufferT extends IGLFrameBuffer & IResize> = Required<
+  GLRenderPassOptions<FramebufferT>
+>;
 
 export function renderPassOptionsToSettings<FramebufferT extends IGLFrameBuffer & IResize>(
   gl: AnyWebRenderingGLContext,
@@ -156,7 +158,7 @@ export class GLBaseRenderPass<
 export abstract class ARenderPass<
     RenderContextT = null,
     GLContext extends AnyWebRenderingGLContext = AnyWebRenderingGLContext,
-    FramebufferT extends IGLFrameBuffer & IResize = IGLFrameBuffer & IResize,
+    FramebufferT extends IGLFrameBuffer & IResize = IGLFrameBuffer & IResize
   >
   extends GLBaseRenderPass<GLContext, FramebufferT>
   implements IRenderPass<RenderContextT, GLContext> {

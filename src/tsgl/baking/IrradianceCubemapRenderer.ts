@@ -8,7 +8,6 @@ import { createFramebufferWithDepthStorage } from '../helpers/framebuffer';
 import { ACubemapRenderer } from '../helpers/texture/CubemapRenderer';
 import { IrradianceShaderState, IrradianceShaderID } from '../shaders/IrradianceShader';
 
-
 export class IrradianceCubemapRenderer extends ACubemapRenderer<WebGL2RenderingContext> implements IDestroy {
   private _framebuffer: WebGLFramebuffer;
   private _skybox: GLMesh;
@@ -31,7 +30,6 @@ export class IrradianceCubemapRenderer extends ACubemapRenderer<WebGL2RenderingC
   }
 
   destroy(destroyFramebuffer = true): void {
-    
     if (destroyFramebuffer) {
       this.gl.deleteFramebuffer(this._framebuffer);
     }

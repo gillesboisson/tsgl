@@ -8,20 +8,18 @@ import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
 
 export class ShadowOnlyMaterial extends AMaterial<ShadowOnlyShaderState> {
-
   /**
-   * 
-   * @param renderer renderer 
+   *
+   * @param renderer renderer
    * @param texture Cubemap texture
    */
   constructor(renderer: GLRenderer, protected _shadowMap: ShadowMap) {
     super();
-    
+
     this._shaderState = renderer.getShader(ShadowOnlyShaderID).createState() as ShadowOnlyShaderState;
     // this._shaderState.lightDirection = _shadowMap.getRawLookAt();
 
     // shadowMap.depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0 + shadowIndex);
-
   }
 
   lightDirection = vec3.create();
@@ -35,12 +33,12 @@ export class ShadowOnlyMaterial extends AMaterial<ShadowOnlyShaderState> {
     cam.mvp(ss.mvpMat, transformMat);
     cam.normalMat(ss.normalMat, transformMat);
 
-    vec2.set(ss.pixelSize,1 / depthTexture.width, 1 / depthTexture.height);
+    vec2.set(ss.pixelSize, 1 / depthTexture.width, 1 / depthTexture.height);
     // ss.lightDirection = this.lightDirection;
-    
+
     vec3.negate(ss.lightDirection, shadowMap.getRawLookAt());
 
-    shadowMap.depthBiasMvp(ss.depthBiasMvpMat,transformMat);
+    shadowMap.depthBiasMvp(ss.depthBiasMvpMat, transformMat);
     depthTexture.active(GLDefaultTextureLocation.SHADOW_MAP_0);
     ss.syncUniforms();
   }

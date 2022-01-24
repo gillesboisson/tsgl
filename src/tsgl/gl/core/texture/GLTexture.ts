@@ -11,15 +11,11 @@ export interface ImageSource {
 export interface IGLLodTexture {
   levels: number;
 }
-export interface IGLTextureBase<
-  ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
-> {
+export interface IGLTextureBase<ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> {
   gl: ContextT;
   target: GLenum;
   readonly texture: WebGLTexture;
 }
-
-
 
 export interface IGLStoredTextureBase {
   type?: GLenum;
@@ -28,47 +24,46 @@ export interface IGLStoredTextureBase {
   mipmap?: boolean;
 }
 
-
 export interface IGLTexture2DBase {
   width: number;
   height: number;
 }
 
 export interface IGLTextureLodBase {
-  levels: number,
+  levels: number;
 }
 
-export interface IGLTextureLevelBase{
+export interface IGLTextureLevelBase {
   level: number;
 }
 
-export type GLTexture2DBase<
-ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
-> = IGLTextureBase<ContextT> & IGLTexture2DBase & IGLStoredTextureBase & IGLTexture2DBase
+export type GLTexture2DBase<ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> = IGLTextureBase<
+  ContextT
+> &
+  IGLTexture2DBase &
+  IGLStoredTextureBase &
+  IGLTexture2DBase;
 
-export type GLTexture2D<
-ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
->  = IGLTexture<ContextT> & IGLStoredTextureBase & IGLTexture2DBase;
+export type GLTexture2D<ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> = IGLTexture<ContextT> &
+  IGLStoredTextureBase &
+  IGLTexture2DBase;
 
-
-export type GLTextureCubemap<
-ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
->  = IGLTexture<ContextT> & IGLStoredTextureBase & {size: number};
-
+export type GLTextureCubemap<ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext> = IGLTexture<
+  ContextT
+> &
+  IGLStoredTextureBase & { size: number };
 
 export interface IGLTextureCubemapSize {
   size: number;
 }
 
-export interface IGLTexture<
-ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext
-> extends IGLTextureBase<ContextT> {
+export interface IGLTexture<ContextT extends AnyWebRenderingGLContext = AnyWebRenderingGLContext>
+  extends IGLTextureBase<ContextT> {
   bind: () => void;
   unbind: () => void;
   active: (index?: number) => void;
   safeBind: (bindExec: (texture: IGLTexture) => void) => void;
   activeSafe: (index?: number) => void;
-  
 }
 
 // const EXT_DEFAULT_ALPHA = ['png', 'gif'];

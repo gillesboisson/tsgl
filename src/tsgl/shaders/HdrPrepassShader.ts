@@ -17,12 +17,9 @@ export class HDRPrepassShaderState extends GLShaderState implements IGLShaderSta
     const uniformsLocations = this._uniformsLocations;
 
     gl.uniform2fv(uniformsLocations.u_gammaExposure, this.gammaExposure);
-    
-
-
   }
 
-  gammaExposure = vec2.fromValues(2.2,0.5);
+  gammaExposure = vec2.fromValues(2.2, 0.5);
   textureLod = 0;
 }
 
@@ -38,8 +35,7 @@ export class HDRPrepassShader extends GLShader<HDRPrepassShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, HDRPrepassShaderState,getDefaultAttributeLocation(['a_position','a_uv']));
-    setDefaultTextureLocation(this,['u_texture']);
-    
+    super(gl, vertSrc, fragSrc, HDRPrepassShaderState, getDefaultAttributeLocation(['a_position', 'a_uv']));
+    setDefaultTextureLocation(this, ['u_texture']);
   }
 }

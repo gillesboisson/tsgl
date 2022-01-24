@@ -8,7 +8,12 @@ import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 
 export class SimpleLamberianMaterial extends AMaterial<SimpleLamberianShaderState> {
-  constructor(renderer: GLRenderer, public diffuseMap: IGLTexture, public normalMap: IGLTexture, public pbrMap: IGLTexture) {
+  constructor(
+    renderer: GLRenderer,
+    public diffuseMap: IGLTexture,
+    public normalMap: IGLTexture,
+    public pbrMap: IGLTexture,
+  ) {
     super();
 
     this._shaderState = renderer.getShader('simple_lamberian').createState() as SimpleLamberianShaderState;
@@ -21,7 +26,7 @@ export class SimpleLamberianMaterial extends AMaterial<SimpleLamberianShaderStat
     this.diffuseMap.active(GLDefaultTextureLocation.COLOR);
     this.normalMap.active(GLDefaultTextureLocation.NORMAL);
     this.pbrMap.active(GLDefaultTextureLocation.PBR_0);
-    
+
     cam.mvp(ss.mvpMat, transformMat);
     cam.normalMat(ss.normalMat, transformMat);
     ss.modelMat = transformMat;

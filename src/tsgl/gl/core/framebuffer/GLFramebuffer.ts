@@ -21,8 +21,6 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
     return this._height;
   }
 
-  
-
   private _frameBuffer: WebGLFramebuffer;
   private _colorTexture: GLTexture2D;
   private _depthRenderBuffer: WebGLRenderbuffer;
@@ -36,9 +34,8 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
   viewportBinded: () => void;
   viewportUnbinded: () => void;
 
-  get framebuffer(): WebGLFramebuffer{
+  get framebuffer(): WebGLFramebuffer {
     return this._frameBuffer;
-    
   }
 
   constructor(
@@ -48,13 +45,13 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
     protected _useDepthTexture: boolean = false,
     protected _useColorTexture: boolean = true,
     protected _depthEnabled: boolean = false,
-    // protected _useMipmap: boolean = false,
-  ) {
+  ) // protected _useMipmap: boolean = false,
+  {
     super(gl);
     this._frameBuffer = gl.createFramebuffer();
 
     if (_useColorTexture) {
-      this._colorTexture = createEmptyTextureWithLinearFilter(gl,_width, _height);
+      this._colorTexture = createEmptyTextureWithLinearFilter(gl, _width, _height);
       // this._colorTexture.setEmpty(gl.RGBA);
     } else {
       this._colorRenderBuffer = gl.createRenderbuffer();
@@ -62,7 +59,7 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
 
     if (_useDepthTexture) {
       GLSupport.depthTextureSupported(gl, true, true);
-      this._depthTexture = createEmptyTextureWithLinearFilter(gl,_width, _height);
+      this._depthTexture = createEmptyTextureWithLinearFilter(gl, _width, _height);
       // this._depthTexture.setEmpty(gl.RGBA);
     }
 
@@ -120,7 +117,9 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
-        (gl as any).depthTextureExt !== undefined ? gl.DEPTH_COMPONENT : (gl as WebGL2RenderingContext).DEPTH_COMPONENT24,
+        (gl as any).depthTextureExt !== undefined
+          ? gl.DEPTH_COMPONENT
+          : (gl as WebGL2RenderingContext).DEPTH_COMPONENT24,
         this._width,
         this._height,
         0,
@@ -153,10 +152,14 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
     const gl = this.gl;
 
     if (this._colorTexture !== undefined) {
-      this._colorTexture.safeBind(() =>  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null));
+      this._colorTexture.safeBind(() =>
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null),
+      );
     }
     if (this._depthTexture !== undefined) {
-      this._depthTexture.safeBind(() =>  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null));
+      this._depthTexture.safeBind(() =>
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null),
+      );
     }
 
     this.updateSettings();
@@ -181,10 +184,9 @@ export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportS
   }
 
   destroy(destroyFramebuffer = true, destroyRenderBuffer = true, destroyTexture = true): void {
-    if(destroyFramebuffer) this.gl.deleteFramebuffer(this._frameBuffer);
+    if (destroyFramebuffer) this.gl.deleteFramebuffer(this._frameBuffer);
     if (this._useColorTexture && destroyTexture) this.gl.deleteTexture(this._colorTexture.texture);
     if (this._useDepthTexture && destroyTexture) this.gl.deleteTexture(this._depthTexture.texture);
-   
 
     if (this._depthRenderBuffer !== undefined && destroyRenderBuffer) {
       this.gl.deleteRenderbuffer(this._depthRenderBuffer);

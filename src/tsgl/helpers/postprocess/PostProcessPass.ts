@@ -34,7 +34,11 @@ export abstract class APostProcessPass<
     return this._shaderState;
   }
 
-  constructor(readonly renderer: GLRenderer<GLContext>, options: GLRenderPassOptions<FramebufferT>, readonly quad: GLMesh) {
+  constructor(
+    readonly renderer: GLRenderer<GLContext>,
+    options: GLRenderPassOptions<FramebufferT>,
+    readonly quad: GLMesh,
+  ) {
     super(renderer, options);
   }
 

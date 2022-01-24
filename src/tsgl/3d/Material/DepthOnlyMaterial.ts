@@ -6,15 +6,14 @@ import { Camera } from '../Camera';
 import { AMaterial } from './Material';
 
 export class DepthOnlyMaterial extends AMaterial<DepthOnlyShaderState> {
-
   /**
-   * 
-   * @param renderer renderer 
+   *
+   * @param renderer renderer
    * @param texture Cubemap texture
    */
   constructor(renderer: GLRenderer) {
     super();
-    
+
     this._shaderState = renderer.getShader(DepthOnlyShaderID).createState() as DepthOnlyShaderState;
   }
 

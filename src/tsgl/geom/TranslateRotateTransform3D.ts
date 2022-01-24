@@ -17,7 +17,7 @@ export class TranslateRotateTransform3D implements ITransform<mat4> {
   protected _rotMat: mat4;
   protected _dirty = true;
 
-  get dirty(): boolean{
+  get dirty(): boolean {
     return this._dirty;
   }
 

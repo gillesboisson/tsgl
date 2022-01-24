@@ -36,6 +36,6 @@ export class BrdfLutShader extends GLShader<BrdfLutShaderState> {
   }
 
   constructor(gl: AnyWebRenderingGLContext) {
-    super(gl, vertSrc, fragSrc, BrdfLutShaderState,getDefaultAttributeLocation(['a_position','a_uv']));
+    super(gl, vertSrc, fragSrc, BrdfLutShaderState, getDefaultAttributeLocation(['a_position', 'a_uv']));
   }
 }

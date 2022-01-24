@@ -2,10 +2,9 @@ import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributes
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { ProcessPassTextureLocation } from './PostProcessPass';
 
-
 export function mapMRTTexturesToProcessPassTexturesLocations(
-  mrt: { textures: IGLTexture[]; depthTexture?: IGLTexture; },
-  textureLocation: GLint[]
+  mrt: { textures: IGLTexture[]; depthTexture?: IGLTexture },
+  textureLocation: GLint[],
 ): ProcessPassTextureLocation[] {
   const map = mrt.textures.map<ProcessPassTextureLocation>((t, ind) => ({
     texture: t.texture,

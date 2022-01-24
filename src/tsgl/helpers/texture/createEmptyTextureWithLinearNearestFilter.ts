@@ -2,14 +2,13 @@ import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { bindableTexture } from '../../gl/core/texture/bindableTexture.1';
 import { GLTexture2D } from '../../gl/core/texture/GLTexture';
 
-
 export function createEmptyTextureWithLinearNearestFilter(
   gl: AnyWebRenderingGLContext,
   width: number,
   height: number,
   internalFormat = gl.RGBA,
   format = internalFormat,
-  type = gl.UNSIGNED_BYTE
+  type = gl.UNSIGNED_BYTE,
 ): GLTexture2D {
   const texture = gl.createTexture();
   const target = gl.TEXTURE_2D;

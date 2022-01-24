@@ -1,4 +1,3 @@
-
 import { GLAttribute } from '../../gl/core/data/GLAttribute';
 import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
@@ -18,10 +17,9 @@ export function createUVCropMesh(
   positions: Float32Array,
   uvs: Float32Array,
   indices?: Uint16Array,
-  drawType = gl.STATIC_DRAW
+  drawType = gl.STATIC_DRAW,
 ): GLMesh {
-  if (!indices)
-    indices = generateDefaultQuadIndices(positions.length / 8);
+  if (!indices) indices = generateDefaultQuadIndices(positions.length / 8);
 
   const positionBuffer = new GLBuffer(gl, gl.ARRAY_BUFFER, drawType);
   positionBuffer.bufferData(positions);
