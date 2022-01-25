@@ -1,5 +1,5 @@
 import { vec2, vec3, vec4 } from 'gl-matrix';
-import { IDestroy } from '../../base/IDestroy';
+import { IDestroy } from '../../common/IDestroy';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { WebGLRenderingContextWithVao } from '../../gl/core/GLHelpers';
 import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';

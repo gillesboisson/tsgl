@@ -1,4 +1,4 @@
-import { AnyTypedArray, AnyTypedArrayContructor } from '../base/Type';
+import { AnyTypedArray, AnyTypedArrayContructor } from '../common/Type';
 
 export type Vertices<T extends AnyTypedArray> = T[] & {
   buffer: T;

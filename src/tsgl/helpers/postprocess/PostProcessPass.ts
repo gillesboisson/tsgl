@@ -1,4 +1,4 @@
-import { IResize } from '../../base/IResize';
+import { IResize } from '../../common/IResize';
 import { createQuadMesh } from '../../geom/mesh/createQuadMesh';
 import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLMesh } from '../../gl/core/data/GLMesh';

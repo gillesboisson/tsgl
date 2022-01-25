@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { plane } from './plane';
+import { plane } from './';
 
 const __v1 = vec3.create();
 

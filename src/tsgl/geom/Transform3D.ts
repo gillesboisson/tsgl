@@ -1,14 +1,8 @@
 import { mat4, quat, vec3 } from 'gl-matrix';
-import { ITransform } from '../gl/abstract/ITransform';
+import { ITransform } from '../helpers/ITransform';
 import { TranslateRotateTransform3D } from './TranslateRotateTransform3D';
 
-export const IDENT_MAT4 = mat4.create();
-export const __quat1: quat = quat.create();
-
-export const __vec31: vec3 = vec3.create();
-// const __vec32: vec3 = vec3.create();
-// const __vec33: vec3 = vec3.create();
-export const __lookAtBaseVec = vec3.fromValues(0, 0, 1);
+const IDENT_MAT4 = mat4.create();
 
 export class Transform3D extends TranslateRotateTransform3D implements ITransform<mat4> {
   static translateScaleRotateQuat(out: mat4, scale: vec3, rotQuat: quat, position: vec3, rotMat: mat4): mat4 {

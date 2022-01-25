@@ -1,8 +1,8 @@
 import { mat4 } from 'gl-matrix';
-import { Type } from '../../base/Type';
+import { Type } from '../common/Type';
 import { ISceneInstance } from './ISceneInstance';
 import { ITransform } from './ITransform';
-import { MatType } from './MatType';
+import { MatType } from '../gl/abstract/MatType';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const IDENT_MAT4 = mat4.create();

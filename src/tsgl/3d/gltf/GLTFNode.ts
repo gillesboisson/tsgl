@@ -10,7 +10,7 @@ import { GLTFMesh } from './GLTFMesh';
 import { fontDataStride } from '../../2d/text/BitmapFontRaw';
 import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
 import { mat4 } from 'gl-matrix';
-import { ITransform } from '../../gl/abstract/ITransform';
+import { ITransform } from '../../helpers/ITransform';
 
 export class GLTFNode
   extends SceneInstance3D

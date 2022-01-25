@@ -1,4 +1,4 @@
-import { IResize } from '../tsgl/base/IResize';
+import { IResize } from '../tsgl/common/IResize';
 import { createPlaneMesh } from '../tsgl/geom/mesh/createPlaneMesh';
 import { IGLFrameBuffer } from '../tsgl/gl/core/framebuffer/IGLFrameBuffer';
 import { GLCore } from '../tsgl/gl/core/GLCore';

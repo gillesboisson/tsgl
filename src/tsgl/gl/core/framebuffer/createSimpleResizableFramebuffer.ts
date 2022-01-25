@@ -1,4 +1,4 @@
-import { IResize } from '../../../base/IResize';
+import { IResize } from '../../../common/IResize';
 import { createRawFramebuffer } from '../../../helpers/framebuffer';
 import { createEmptyTextureWithLinearNearestFilter } from '../../../helpers/texture/createEmptyTextureWithLinearNearestFilter';
 import { AnyWebRenderingGLContext } from '../GLHelpers';

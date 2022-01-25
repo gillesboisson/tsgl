@@ -1,12 +1,13 @@
 import { SceneInstance3D } from './SceneInstance3D';
 import { mat4 } from 'gl-matrix';
-import { CameraTransform3D } from '../geom/CameraTransform3D';
-import { Type } from '../base/Type';
-import { ITransform } from '../gl/abstract/ITransform';
+import { Type } from '../common/Type';
+import { ITransform } from '../helpers/ITransform';
 import { TranslateRotateTransform3D } from '../geom/TranslateRotateTransform3D';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tmat4 = mat4.create();
+
+export type CameraTransform3D = TranslateRotateTransform3D;
 
 export class Camera<TransformT extends ITransform<mat4> = CameraTransform3D> extends SceneInstance3D<TransformT> {
   readonly projectionMat: mat4 = mat4.create();

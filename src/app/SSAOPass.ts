@@ -1,6 +1,6 @@
 import { mat4, vec2, vec3 } from 'gl-matrix';
 import { Camera } from '../tsgl/3d/Camera';
-import { IResize } from '../tsgl/base/IResize';
+import { IResize } from '../tsgl/common/IResize';
 import { GLDefaultTextureLocation } from '../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { createSimpleResizableFramebuffer } from '../tsgl/gl/core/framebuffer/createSimpleResizableFramebuffer';
 import { IGLFrameBuffer } from '../tsgl/gl/core/framebuffer/IGLFrameBuffer';

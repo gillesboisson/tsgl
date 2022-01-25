@@ -1,8 +1,8 @@
 import { mat4 } from 'gl-matrix';
-import { IResize } from '../base/IResize';
+import { IResize } from '../common/IResize';
 import { Transform3D } from '../geom/Transform3D';
-import { ASceneInstance } from '../gl/abstract/ASceneInstance';
-import { ITransform } from '../gl/abstract/ITransform';
+import { ASceneInstance } from '../helpers/ASceneInstance';
+import { ITransform } from '../helpers/ITransform';
 import { IGLFrameBuffer } from '../gl/core/framebuffer/IGLFrameBuffer';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';

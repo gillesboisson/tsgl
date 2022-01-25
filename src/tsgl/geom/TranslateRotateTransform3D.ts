@@ -1,6 +1,11 @@
 import { mat4, quat, vec3 } from 'gl-matrix';
-import { ITransform } from '../gl/abstract/ITransform';
-import { IDENT_MAT4, __quat1, __lookAtBaseVec, __vec31 } from './Transform3D';
+import { ITransform } from '../helpers/ITransform';
+
+
+const IDENT_MAT4 = mat4.create();
+const __quat1: quat = quat.create();
+const __vec31: vec3 = vec3.create();
+const __lookAtBaseVec = vec3.fromValues(0, 0, 1);
 
 export const unitVectorX = vec3.fromValues(1, 0, 0);
 export const unitVectorY = vec3.fromValues(0, 1, 0);

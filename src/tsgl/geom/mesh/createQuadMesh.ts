@@ -3,7 +3,8 @@ import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLAttribute } from '../../gl/core/data/GLAttribute';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLMesh } from '../../gl/core/data/GLMesh';
-import { QuadSettings, defaultQuadSettings } from './MeshHelpers';
+import { QuadSettings } from "./QuadSettings";
+import { defaultQuadSettings } from "./defaultQuadSettings";
 
 export function createQuadMesh(
   gl: AnyWebRenderingGLContext,

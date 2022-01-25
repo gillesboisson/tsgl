@@ -3,7 +3,7 @@ import { GLBuffer } from '../../gl/core/data/GLBuffer';
 import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
 import { GLMesh } from '../../gl/core/data/GLMesh';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import generateDefaultQuadIndices from './MeshHelpers';
+import generateDefaultQuadIndices from "./generateDefaultQuadIndices";
 
 /**
  *

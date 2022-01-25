@@ -1,8 +1,6 @@
 import { vec3, vec4, mat4 } from 'gl-matrix';
-import { box } from './box';
-import { CollisionType } from './Collision';
-import { plane } from './plane';
-import { createVertices, Vertices } from './vertices';
+import { box, CollisionType, createVertices, plane, Vertices } from '.';
+
 
 const _vmax = vec3.create();
 const _vmin = vec3.create();

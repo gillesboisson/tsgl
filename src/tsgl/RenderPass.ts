@@ -1,4 +1,4 @@
-import { IResize } from './base/IResize';
+import { IResize } from './common/IResize';
 import { IGLFrameBuffer } from './gl/core/framebuffer/IGLFrameBuffer';
 import { GLCore } from './gl/core/GLCore';
 import { AnyWebRenderingGLContext } from './gl/core/GLHelpers';

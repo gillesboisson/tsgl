@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { ITransform } from '../gl/abstract/ITransform';
+import { ITransform } from '../helpers/ITransform';
 
 export const IDENT_MAT4 = mat4.create();
 export const tv = vec3.create();

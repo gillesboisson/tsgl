@@ -1,13 +1,12 @@
 import { vec4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from './GLHelpers';
 import { GLCore } from './GLCore';
-import { GLShader, IShaderRegisterer } from './shader/GLShader';
+import { IShaderRegisterer } from './shader/GLShader';
 import { IGLShaderState } from './shader/IGLShaderState';
-import { GLViewportState, GLViewportStack } from './framebuffer/GLViewportState';
 import { IShaderCreateState } from './shader/IShaderProgram';
 import { IGLFrameBuffer } from './framebuffer/IGLFrameBuffer';
 import { GLBaseRenderPass, GLRenderPassState } from '../../RenderPass';
-import { IResize } from '../../base/IResize';
+import { IResize } from '../../common/IResize';
 
 export enum GLRendererType {
   WebGL,
