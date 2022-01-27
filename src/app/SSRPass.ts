@@ -1,15 +1,11 @@
 import { vec2 } from 'gl-matrix';
 import { Camera } from '../tsgl/3d/Camera';
-import { IResize } from '../tsgl/common/IResize';
-import { GLDefaultTextureLocation } from '../tsgl/gl/core/data/GLDefaultAttributesLocation';
-import { createSimpleResizableFramebuffer } from '../tsgl/gl/core/framebuffer/createSimpleResizableFramebuffer';
-import { IGLFrameBuffer } from '../tsgl/gl/core/framebuffer/IGLFrameBuffer';
-import { AnyWebRenderingGLContext } from '../tsgl/gl/core/GLHelpers';
-import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/core/GLRenderer';
-import { GLTexture2D } from '../tsgl/gl/core/texture/GLTexture';
-import { createRawFramebuffer } from '../tsgl/helpers/framebuffer';
-import { PostProcessPass } from '../tsgl/helpers/postprocess/PostProcessPass';
-import { createEmptyTextureWithLinearNearestFilter } from '../tsgl/helpers/texture/createEmptyTextureWithLinearNearestFilter';
+import { GLDefaultTextureLocation } from '../tsgl/gl/';
+import { createSimpleResizableFramebuffer } from '../tsgl/gl/';
+import { AnyWebRenderingGLContext } from '../tsgl/gl/';
+import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/';
+import { GLTexture2D } from '../tsgl/gl/';
+import { PostProcessPass } from '../tsgl/utils/postprocess/PostProcessPass';
 import { DeferredFrameBuffer } from './DeferredFrameBuffer';
 import { SSRShaderID, SSRShaderState } from './shaders/SSRShader';
 

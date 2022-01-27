@@ -2,11 +2,11 @@ import { vec4, mat4, vec3, vec2 } from 'gl-matrix';
 import { Camera } from '../../tsgl/3d/Camera';
 import { AMaterial } from '../../tsgl/3d/Material/Material';
 import { ShadowMap } from '../../tsgl/3d/ShadowMap';
-import { unitVectorNegZ, unitVectorZ } from '../../tsgl/geom/TranslateRotateTransform3D';
 import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
 import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
 import { IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
+import { unitVectorZ } from '../../tsgl/utils';
 import { PhongBlinnCartoonShaderDebug, PhongBlinnCartoonLightInterface, PhongBlinnCartoonVShaderID } from '../shaders/PhongBlinnCartoonVShader';
 import { PhongBlinnCartoonVShadersState } from '../shaders/PhongBlinnCartoonVShadersState';
 

@@ -1,13 +1,12 @@
 import { mat4 } from 'gl-matrix';
 import { Camera } from '../../tsgl/3d/Camera';
 import { AMaterial } from '../../tsgl/3d/Material/Material';
-import { TranslateRotateTransform3D } from '../../tsgl/geom/TranslateRotateTransform3D';
+import { TranslateRotateTransform3D } from '../../tsgl/utils';
 import {
-  GLDefaultAttributesLocation,
   GLDefaultTextureLocation,
 } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
-import { GLTexture2D, IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
+import { IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
 import { CartoonPassShaderState } from '../shaders/CartoonPassShader';
 
 export class CartoonPassMaterial extends AMaterial<CartoonPassShaderState> {

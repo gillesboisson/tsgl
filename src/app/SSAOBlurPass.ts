@@ -1,11 +1,8 @@
-import { mat4, vec2, vec3 } from 'gl-matrix';
-import { Camera } from '../tsgl/3d/Camera';
-import { GLDefaultTextureLocation } from '../tsgl/gl/core/data/GLDefaultAttributesLocation';
-import { createSimpleResizableFramebuffer } from '../tsgl/gl/core/framebuffer/createSimpleResizableFramebuffer';
-import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/core/GLRenderer';
-import { GLTexture2D, IGLTexture } from '../tsgl/gl/core/texture/GLTexture';
-import { PostProcessPass } from '../tsgl/helpers/postprocess/PostProcessPass';
-import { createEmptyTextureWithLinearNearestFilter } from '../tsgl/helpers/texture/createEmptyTextureWithLinearNearestFilter';
+import { GLDefaultTextureLocation } from '../tsgl/gl/';
+import { createSimpleResizableFramebuffer } from '../tsgl/gl/';
+import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/';
+import { GLTexture2D } from '../tsgl/gl/';
+import { PostProcessPass } from '../tsgl/utils/postprocess/PostProcessPass';
 import { SSAOBlurShaderID, SSAOBlurShaderState } from './shaders/SSAOBlurShader';
 
 export interface SSAOBlurPassOptions {
