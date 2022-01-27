@@ -5,8 +5,9 @@ import { IShaderRegisterer } from './shader/GLShader';
 import { IGLShaderState } from './shader/IGLShaderState';
 import { IShaderCreateState } from './shader/IShaderProgram';
 import { IGLFrameBuffer } from './framebuffer/IGLFrameBuffer';
-import { GLBaseRenderPass, GLRenderPassState } from '../../RenderPass';
 import { IResize } from '../../common/IResize';
+import { GLBaseRenderPass } from "../renderPass/GLBaseRenderPass";
+import { GLRenderPassState } from "../renderPass/GLRenderPassState";
 
 export enum GLRendererType {
   WebGL,

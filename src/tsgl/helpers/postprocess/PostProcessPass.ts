@@ -9,7 +9,9 @@ import { GLRenderer } from '../../gl/core/GLRenderer';
 import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
 import { IShaderCreateState } from '../../gl/core/shader/IShaderProgram';
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
-import { ARenderPass, GLRenderPassOptions, IRenderPass } from '../../RenderPass';
+import { ARenderPass } from "../../gl/renderPass/ARenderPass";
+import { IRenderPass } from "../../gl/renderPass/IRenderPass";
+import { GLRenderPassOptions } from "../../gl/renderPass/GLRenderPassOptions";
 import { mapMRTTexturesToProcessPassTexturesLocations } from './mapMRTTexturesToProcessPassTexturesLocations';
 
 export interface IPostProcessPass<

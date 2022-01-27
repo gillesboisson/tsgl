@@ -57,7 +57,7 @@ import { SSAOBlurPass } from './app/SSAOBlurPass';
 import { SSAOBlurShader } from './app/shaders/SSAOBlurShader';
 import { SSRShader } from './app/shaders/SSRShader';
 import { SSRPass } from './app/SSRPass';
-import { GLBaseRenderPass } from './tsgl/RenderPass';
+import { GLBaseRenderPass } from "./tsgl/gl/renderPass/GLBaseRenderPass";
 import { ReflectanceCubemapRenderer } from './tsgl/baking/ReflectanceCubemapRenderer';
 import { RenderPass3D } from './tsgl/3d/RenderPass3D';
 import { ShadowPass } from './tsgl/3d/ShadowPass';
