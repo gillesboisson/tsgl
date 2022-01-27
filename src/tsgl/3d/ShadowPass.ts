@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { CameraLookAtTransform3D } from '../geom/CameraTargetTransform3D';
+import { CameraLookAtTransform3D } from '../utils/transform/CameraTargetTransform3D';
 import { GLDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { GLFramebuffer } from '../gl/core/framebuffer/GLFramebuffer';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';

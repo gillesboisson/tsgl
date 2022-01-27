@@ -3,9 +3,9 @@
  * @class
  */
 
-import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { GLTexture2D } from '../gl/core/texture/GLTexture';
-import { loadTexture2D } from '../helpers/texture/loadTexture2D';
+import { loadTexture2D } from '../gl';
+import { AnyWebRenderingGLContext } from '../gl/';
+import { GLTexture2D } from '../gl';
 import { SubTexture } from './SubTexture';
 
 type TexturePackerFrame = {

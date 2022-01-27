@@ -1,12 +1,12 @@
-import { ASceneInstance } from '../helpers/ASceneInstance';
+import { ASceneInstance } from '../utils';
 import { mat4 } from 'gl-matrix';
 import { Type } from '../common/Type';
-import { ITransform } from '../helpers/ITransform';
-import { Transform3D } from '../geom/Transform3D';
+import { ITransform } from '../utils';
+import { Transform3D } from '../utils';
 import { IMaterial } from './Material/IMaterial';
-import { GLMesh } from '../gl/core/data/GLMesh';
+import { GLMesh } from '../gl/';
 import { IRenderableInstance3D } from './IRenderableInstance3D';
-import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
+import { AnyWebRenderingGLContext } from '../gl/';
 import { Camera } from './Camera';
 
 export class SceneInstance3D<

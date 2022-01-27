@@ -4,7 +4,7 @@ import { GLTexture2D, IGLStoredTextureBase, IGLTexture } from '../texture/GLText
 import { GLSupport } from '../GLSupport';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 import { GLViewportState } from './GLViewportState';
-import { createEmptyTextureWithLinearFilter } from '../../../helpers/texture/createEmptyTextureWithLinearFilter';
+import { createEmptyTextureWithLinearFilter } from '../texture/createEmptyTextureWithLinearFilter';
 
 export class GLFramebuffer extends GLCore implements IGLFrameBuffer, GLViewportState {
   get depthTexture(): GLTexture2D {

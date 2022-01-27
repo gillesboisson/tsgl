@@ -1,11 +1,6 @@
-import { IAnimated } from './Juggler';
+import { IAnimated } from './IAnimated';
 import { GridIndexMapper } from '../2d/simpleSprite/SimpleGrid';
-
-export interface AnimatedMapData {
-  nbFrame: number;
-  firstFrame: number;
-  fps: number;
-}
+import { AnimatedMapData } from './AnimatedMapData';
 
 export class AnimatedMap implements IAnimated {
   protected _frames: number[] = [];

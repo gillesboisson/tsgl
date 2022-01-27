@@ -1,7 +1,7 @@
-import { createEmptyTextureWithLinearFilter } from '../../../helpers/texture/createEmptyTextureWithLinearFilter';
 import { GLCore } from '../GLCore';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { GLSupport } from '../GLSupport';
+import { createEmptyTextureWithLinearFilter } from '../texture/createEmptyTextureWithLinearFilter';
 import { IGLTexture } from '../texture/GLTexture';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 

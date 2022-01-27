@@ -1,5 +1,4 @@
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLMVPShaderState } from '../../gl/core/shader/IGLMVPShaderState';
+import { AnyWebRenderingGLContext } from '../../gl/';
 import { Camera } from '../Camera';
 import { IMaterial } from '../Material/IMaterial';
 import { IRenderableInstance3D } from '../IRenderableInstance3D';
@@ -7,10 +6,8 @@ import { SceneInstance3D } from '../SceneInstance3D';
 import { GLTFDataNode } from './GLFTSchema';
 import { IGLTFCore } from './GLTFCore';
 import { GLTFMesh } from './GLTFMesh';
-import { fontDataStride } from '../../2d/text/BitmapFontRaw';
-import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
 import { mat4 } from 'gl-matrix';
-import { ITransform } from '../../helpers/ITransform';
+import { ITransform } from '../../utils';
 
 export class GLTFNode
   extends SceneInstance3D

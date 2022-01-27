@@ -1,10 +1,10 @@
 import { vec2, vec3, vec4 } from 'gl-matrix';
 import { IDestroy } from '../../common/IDestroy';
-import { GLDefaultAttributesLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { WebGLRenderingContextWithVao } from '../../gl/core/GLHelpers';
-import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
-import { IBatch } from '../../helpers/IBatch';
-import { IBatchPullable } from '../../helpers/IBatchPullable';
+import { GLDefaultAttributesLocation } from '../../gl/';
+import { WebGLRenderingContextWithVao } from '../../gl/';
+import { IGLShaderState } from '../../gl/';
+import { IBatch } from '../../utils';
+import { IBatchPullable } from '../../utils';
 import { VertexColorShaderState } from '../../shaders/VertexColorShader';
 import { Camera } from '../Camera';
 

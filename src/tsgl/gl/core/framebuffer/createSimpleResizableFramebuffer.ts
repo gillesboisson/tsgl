@@ -1,8 +1,8 @@
 import { IResize } from '../../../common/IResize';
-import { createRawFramebuffer } from '../../../helpers/framebuffer';
-import { createEmptyTextureWithLinearNearestFilter } from '../../../helpers/texture/createEmptyTextureWithLinearNearestFilter';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
+import { createEmptyTextureWithLinearNearestFilter } from '../texture/createEmptyTextureWithLinearNearestFilter';
 import { GLTexture2D } from '../texture/GLTexture';
+import { createRawFramebuffer } from './createRawFramebuffer';
 import { IGLFrameBuffer } from './IGLFrameBuffer';
 
 /**

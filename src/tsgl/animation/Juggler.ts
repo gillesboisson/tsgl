@@ -1,17 +1,5 @@
-export interface IAnimated {
-  animationStart(): void;
-  animationEnd(time: number): void;
-  animationUpdate(time: number, elapsedTime: number): void;
-}
-
-export interface IStartStop {
-  start(): void;
-  stop(): void;
-}
-
-export interface IStartStopPause extends IStartStop {
-  pause(): void;
-}
+import { IAnimated } from './IAnimated';
+import { IStartStop } from './IStartStop';
 
 export class Juggler implements IStartStop {
   protected _t: number;

@@ -1,10 +1,10 @@
 import { mat4 } from 'gl-matrix';
-import { Transform3D } from '../geom/Transform3D';
-import { ITransform } from '../helpers/ITransform';
-import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
+import { Transform3D } from '../utils';
+import { ITransform } from '../utils';
+import { AnyWebRenderingGLContext } from '../gl/';
 import { Camera } from './Camera';
 import { IMaterial } from './Material/IMaterial';
-import { ISceneInstance } from '../helpers/ISceneInstance';
+import { ISceneInstance } from '../utils';
 
 export interface IRenderableInstance3D<
   TransformT extends ITransform<mat4> = Transform3D,

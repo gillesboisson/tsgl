@@ -1,12 +1,9 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { CameraLookAtTransform3D } from '../geom/CameraTargetTransform3D';
-import { ITransform } from '../helpers/ITransform';
-import { GLDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLocation';
-import { GLFramebuffer } from '../gl/core/framebuffer/GLFramebuffer';
-import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
-import { GLRenderer } from '../gl/core/GLRenderer';
-import { GLTexture2D, IGLStoredTextureBase, IGLTexture } from '../gl/core/texture/GLTexture';
-import { PostProcessPass } from '../helpers/postprocess/PostProcessPass';
+import { CameraLookAtTransform3D } from '../utils/transform/CameraTargetTransform3D';
+import { GLDefaultTextureLocation } from '../gl/';
+import { GLFramebuffer } from '../gl/';
+import { GLRenderer } from '../gl/';
+import { GLTexture2D } from '../gl/';
 import { Camera } from './Camera';
 import { IRenderableInstance3D } from './IRenderableInstance3D';
 import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';

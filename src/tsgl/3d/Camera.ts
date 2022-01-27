@@ -1,8 +1,8 @@
 import { SceneInstance3D } from './SceneInstance3D';
 import { mat4 } from 'gl-matrix';
 import { Type } from '../common/Type';
-import { ITransform } from '../helpers/ITransform';
-import { TranslateRotateTransform3D } from '../geom/TranslateRotateTransform3D';
+import { ITransform } from '../utils';
+import { TranslateRotateTransform3D } from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tmat4 = mat4.create();
