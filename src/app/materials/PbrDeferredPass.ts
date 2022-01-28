@@ -1,10 +1,10 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { Camera } from '../../tsgl/common';
-import { ShadowPass } from '../../tsgl/3d/ShadowPass';
-import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
-import { WebGL2Renderer } from '../../tsgl/gl/core/GLRenderer';
-import { GLTexture2D, IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
-import { PostProcessPass } from '../../tsgl/common/postprocess/PostProcessPass';
+import { ShadowPass } from '../../tsgl/3d';
+import { GLDefaultTextureLocation } from '../../tsgl/gl';
+import { WebGL2Renderer } from '../../tsgl/gl';
+import { GLTexture2D, IGLTexture } from '../../tsgl/gl';
+import { PostProcessPass } from '../../tsgl/common';
 import { PbrShaderDebug } from '../../tsgl/shaders/PbrVShader';
 import { DeferredFrameBuffer } from '../DeferredFrameBuffer';
 import { PbrDeferredVShaderID } from '../shaders/PbrDeferredVShader';
@@ -21,7 +21,7 @@ export class PbrDeferredPass extends PostProcessPass<PbrDeferredVShadersState, P
   private _gammaCorrectionEnabled: boolean;
   private _emissiveMap: IGLTexture;
   private _ssaoMap: GLTexture2D<
-    import('/home/gillesboisson/Projects/sandbox/TsGL2D/src/tsgl/gl/core/GLHelpers').AnyWebRenderingGLContext
+    import('/home/gillesboisson/Projects/sandbox/TsGL2D/src/tsgl/gl').AnyWebRenderingGLContext
   >;
 
   // private _shadowPass: ShadowPass;

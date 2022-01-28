@@ -5,7 +5,7 @@ import { createSimpleResizableFramebuffer } from '../tsgl/gl/';
 import { AnyWebRenderingGLContext } from '../tsgl/gl/';
 import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/';
 import { GLTexture2D } from '../tsgl/gl/';
-import { PostProcessPass } from '../tsgl/common/postprocess/PostProcessPass';
+import { PostProcessPass } from '../tsgl/common';
 import { DeferredFrameBuffer } from './DeferredFrameBuffer';
 import { SSRShaderID, SSRShaderState } from './shaders/SSRShader';
 

@@ -1,9 +1,9 @@
-import { Camera2D } from '../tsgl/2d/Camera2D';
-import { SpriteBatch } from '../tsgl/2d/SpriteBatch';
-import { SpriteLayer } from '../tsgl/2d/Stage2D';
-import { Juggler } from '../tsgl/animation/Juggler';
-import { GLRenderer, GLRendererType } from '../tsgl/gl/core/GLRenderer';
-import { GLSupport } from '../tsgl/gl/core/GLSupport';
+import { Camera2D } from '../tsgl/2d';
+import { SpriteBatch } from '../tsgl/2d';
+import { SpriteLayer } from '../tsgl/2d';
+import { Juggler } from '../tsgl/animation';
+import { GLRenderer, GLRendererType } from '../tsgl/gl';
+import { GLSupport } from '../tsgl/gl';
 import { SimpleSpriteShader } from '../tsgl/shaders/SimpleSpriteShader';
 import { SpriteShader } from '../tsgl/shaders/SpriteShader';
 

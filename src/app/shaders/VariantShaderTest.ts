@@ -1,11 +1,11 @@
 import { vec3, vec4, mat4 } from 'gl-matrix';
-import { AMaterial } from '../../tsgl/3d/Material/Material';
-import { getDefaultAttributeLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
-import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
-import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
-import { GLShaderVariants } from '../../tsgl/gl/core/shader/variants/GLShaderVariants';
-import { GLVariantValueDefinition } from '../../tsgl/gl/core/shader/variants/GLVariantShaderTypes';
-import { ShaderVariantsState } from '../../tsgl/gl/core/shader/variants/ShaderVariantsState';
+import { AMaterial } from '../../tsgl/3d';
+import { getDefaultAttributeLocation } from '../../tsgl/gl';
+import { AnyWebRenderingGLContext } from '../../tsgl/gl';
+import { GLRenderer } from '../../tsgl/gl';
+import { GLShaderVariants } from '../../tsgl/gl';
+import { GLVariantValueDefinition } from '../../tsgl/gl';
+import { ShaderVariantsState } from '../../tsgl/gl';
 import { Camera } from '../../tsgl/common';
 
 

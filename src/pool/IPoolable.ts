@@ -1,4 +1,4 @@
-import { IDestroy } from '../tsgl/core/IDestroy';
+import { IDestroy } from '../tsgl/core';
 
 
 export interface IPoolable extends IDestroy {

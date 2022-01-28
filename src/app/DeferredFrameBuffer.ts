@@ -1,4 +1,4 @@
-import { IResize } from '../tsgl/core/IResize';
+import { IResize } from '../tsgl/core';
 import { createPlaneMesh } from '../tsgl/gl/';
 import { createEmptyTextureWithLinearFilter, createEmptyTextureWithLinearNearestFilter } from '../tsgl/gl';
 import { IGLFrameBuffer } from '../tsgl/gl/';

@@ -1,8 +1,8 @@
 import { mat4 } from 'gl-matrix';
-import { AMaterial } from '../../tsgl/3d/Material/Material';
-import { AnyWebRenderingGLContext } from '../../tsgl/gl/core/GLHelpers';
-import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
-import { IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
+import { AMaterial } from '../../tsgl/3d';
+import { AnyWebRenderingGLContext } from '../../tsgl/gl';
+import { GLRenderer } from '../../tsgl/gl';
+import { IGLTexture } from '../../tsgl/gl';
 import { Camera } from '../../tsgl/common';
 import { TestFlatShaderState, TestFlatID } from '../shaders/TestFlatShader';
 

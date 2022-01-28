@@ -10,9 +10,7 @@ import { RenderPass3D, RenderPassRenderContext } from './RenderPass3D';
 import { SceneInstance3D } from '../common/primitive/SceneInstance3D';
 import { Camera, IRenderableInstance3D } from '../common';
 
-export const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
-
-const tMat = mat4.create();
+const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 
 export interface ShadowPassOptions {
   width?: number;
