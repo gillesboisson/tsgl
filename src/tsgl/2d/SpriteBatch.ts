@@ -2,7 +2,7 @@ import { vec2, vec4 } from 'gl-matrix';
 import { GLDefaultAttributesLocation } from '../gl/';
 import { IGLSpriteShaderState } from '../shaders/SpriteShader';
 import { Camera } from '../common';
-import { IDestroy } from '../core/IDestroy';
+import { IDestroy } from '../core';
 import { WebGLRenderingContextWithVao } from '../gl/';
 import { IBatchPullable } from '../common';
 import { IBatch } from '../common';

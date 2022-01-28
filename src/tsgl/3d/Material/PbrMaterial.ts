@@ -1,8 +1,8 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { WebGL2Renderer } from '../../gl/core/GLRenderer';
-import { IGLTexture } from '../../gl/core/texture/GLTexture';
+import { GLDefaultTextureLocation } from '../../gl';
+import { AnyWebRenderingGLContext } from '../../gl';
+import { WebGL2Renderer } from '../../gl';
+import { IGLTexture } from '../../gl';
 import { PbrShaderDebug, PbrVShaderID } from '../../shaders/PbrVShader';
 import { PbrVShadersState } from '../../shaders/PbrVShadersState';
 import { Camera } from '../../common';

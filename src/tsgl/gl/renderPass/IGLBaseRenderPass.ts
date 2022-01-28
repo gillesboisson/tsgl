@@ -1,6 +1,6 @@
-import { IResize } from '../../core/IResize';
-import { AnyWebRenderingGLContext } from '../core/GLHelpers';
-import { IGLCore } from '../core/IGLCore';
+import { IResize } from '../../core';
+import { AnyWebRenderingGLContext } from '../core';
+import { IGLCore } from '../core';
 
 
 export interface IGLBaseRenderPass<GLContext extends AnyWebRenderingGLContext> extends IGLCore<GLContext>, IResize {

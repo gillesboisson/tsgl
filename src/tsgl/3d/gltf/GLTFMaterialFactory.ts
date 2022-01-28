@@ -1,7 +1,7 @@
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLRenderer } from '../../gl/core/GLRenderer';
-import { IGLTexture } from '../../gl/core/texture/GLTexture';
-import { IMaterial } from '../../common/primitive/IMaterial';
+import { AnyWebRenderingGLContext } from '../../gl';
+import { GLRenderer } from '../../gl';
+import { IGLTexture } from '../../gl';
+import { IMaterial } from '../../common';
 import { PhongBlinnMaterial } from '../Material/PhongBlinnMaterial';
 import { GLTFDataMaterial, GLTFDataMeshPrimitive } from './GLFTSchema';
 

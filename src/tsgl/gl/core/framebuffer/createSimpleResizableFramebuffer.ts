@@ -1,4 +1,4 @@
-import { IResize } from '../../../core/IResize';
+import { IResize } from '../../../core';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { createEmptyTextureWithLinearNearestFilter } from '../texture/createEmptyTextureWithLinearNearestFilter';
 import { GLTexture2D } from '../texture/GLTexture';

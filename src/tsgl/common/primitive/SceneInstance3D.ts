@@ -1,6 +1,6 @@
 import { ASceneInstance } from './ASceneInstance';
 import { mat4 } from 'gl-matrix';
-import { Type } from '../../core/Type';
+import { Type } from '../../core';
 import { IMaterial } from './IMaterial';
 import { GLMesh } from '../../gl';
 import { IRenderableInstance3D } from './IRenderableInstance3D';

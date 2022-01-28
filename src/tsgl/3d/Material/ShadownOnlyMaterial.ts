@@ -1,7 +1,7 @@
 import { mat4, vec2, vec3 } from 'gl-matrix';
-import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributesLocation';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLRenderer } from '../../gl/core/GLRenderer';
+import { GLDefaultTextureLocation } from '../../gl';
+import { AnyWebRenderingGLContext } from '../../gl';
+import { GLRenderer } from '../../gl';
 import { ShadowOnlyShaderState, ShadowOnlyShaderID } from '../../shaders/ShadowOnlyShader';
 import { Camera } from '../../common';
 import { ShadowMap } from '../ShadowMap';

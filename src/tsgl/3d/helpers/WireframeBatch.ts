@@ -1,5 +1,5 @@
 import { vec3, vec4 } from 'gl-matrix';
-import { IDestroy } from '../../core/IDestroy';
+import { IDestroy } from '../../core';
 import { GLDefaultAttributesLocation } from '../../gl/';
 import { WebGLRenderingContextWithVao } from '../../gl/';
 import { Camera, IBatch } from '../../common';

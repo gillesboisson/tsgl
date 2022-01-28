@@ -1,7 +1,7 @@
 import { DeferredFrameBuffer } from '../../app/DeferredFrameBuffer';
 import { GLRenderer } from '../gl';
 import { RenderPass3D } from './RenderPass3D';
-import { SceneInstance3D } from '../common/primitive/SceneInstance3D';
+import { SceneInstance3D } from '../common';
 
 export interface DeferredPrepassOptions {
   width?: number;

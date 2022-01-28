@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { Type } from '../../core/Type';
+import { Type } from '../../core';
 import { ISceneInstance } from './ISceneInstance';
 import { ITransform } from '../transform/ITransform';
 import { MatType } from '../../gl';

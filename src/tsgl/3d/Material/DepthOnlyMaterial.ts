@@ -1,6 +1,6 @@
 import { mat4 } from 'gl-matrix';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { GLRenderer } from '../../gl/core/GLRenderer';
+import { AnyWebRenderingGLContext } from '../../gl';
+import { GLRenderer } from '../../gl';
 import { DepthOnlyShaderState, DepthOnlyShaderID } from '../../shaders/DepthOnlyShader';
 import { Camera } from '../../common';
 import { AMaterial } from './Material';

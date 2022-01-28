@@ -1,5 +1,5 @@
-import { IResize } from '../../core/IResize';
-import { IGLFrameBuffer } from '../core/framebuffer/IGLFrameBuffer';
+import { IResize } from '../../core';
+import { IGLFrameBuffer } from '../core';
 import { GLRenderPassOptions } from './GLRenderPassOptions';
 
 

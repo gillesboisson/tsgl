@@ -1,6 +1,6 @@
-import { IResize } from '../../core/IResize';
-import { IGLFrameBuffer } from '../core/framebuffer/IGLFrameBuffer';
-import { AnyWebRenderingGLContext } from '../core/GLHelpers';
+import { IResize } from '../../core';
+import { IGLFrameBuffer } from '../core';
+import { AnyWebRenderingGLContext } from '../core';
 import { GLRenderPassOptions } from './GLRenderPassOptions';
 import { GLRenderPassState } from './GLRenderPassState';
 

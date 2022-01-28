@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { IDestroy } from '../../core/IDestroy';
+import { IDestroy } from '../../core';
 import { createSkyBoxMesh } from '../../gl';
 import { GLMesh } from '../../gl';
 import { AnyWebRenderingGLContext } from '../../gl';

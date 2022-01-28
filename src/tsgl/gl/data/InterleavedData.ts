@@ -1,8 +1,8 @@
-import { AnyWebRenderingGLContext } from '../core/GLHelpers';
+import { AnyWebRenderingGLContext } from '../core';
 import { vec2, vec3, vec4 } from 'gl-matrix';
-import { Type } from '../../core/Type';
-import { GLBuffer } from '../core/data/GLBuffer';
-import { GLAttribute } from '../core/data/GLAttribute';
+import { Type } from '../../core';
+import { GLBuffer } from '../core';
+import { GLAttribute } from '../core';
 
 export interface InterleavedProp {
   name?: string;

@@ -5,7 +5,7 @@ import { IShaderRegisterer } from './shader/GLShader';
 import { IGLShaderState } from './shader/IGLShaderState';
 import { IShaderCreateState } from './shader/IShaderProgram';
 import { IGLFrameBuffer } from './framebuffer/IGLFrameBuffer';
-import { IResize } from '../../core/IResize';
+import { IResize } from '../../core';
 import { GLBaseRenderPass } from "../renderPass/GLBaseRenderPass";
 import { GLRenderPassState } from "../renderPass/GLRenderPassState";
 

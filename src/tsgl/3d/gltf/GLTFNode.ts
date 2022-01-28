@@ -1,6 +1,6 @@
 import { AnyWebRenderingGLContext } from '../../gl/';
-import { IMaterial } from '../../common/primitive/IMaterial';
-import { SceneInstance3D } from '../../common/primitive/SceneInstance3D';
+import { IMaterial } from '../../common';
+import { SceneInstance3D } from '../../common';
 import { GLTFDataNode } from './GLFTSchema';
 import { IGLTFCore } from './GLTFCore';
 import { GLTFMesh } from './GLTFMesh';
