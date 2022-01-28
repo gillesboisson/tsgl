@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { Camera } from '../utils';
+import { Camera } from '../common';
 
 export class OrthographicCamera extends Camera {
   protected _near: number;

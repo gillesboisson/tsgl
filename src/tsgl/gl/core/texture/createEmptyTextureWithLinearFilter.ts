@@ -1,4 +1,4 @@
-import { IResize } from '../../../common';
+import { IResize } from '../../../core';
 import { AnyWebRenderingGLContext } from '../GLHelpers';
 import { bindableTexture } from './bindableTexture.1';
 import { GLTexture2D } from './GLTexture';

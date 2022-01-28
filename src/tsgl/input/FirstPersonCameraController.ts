@@ -1,7 +1,7 @@
 import { vec3 } from 'gl-matrix';
-import { Camera } from '../utils';
+import { Camera } from '../common';
 
-export const __tempVec31 = vec3.create();
+const __tempVec31 = vec3.create();
 
 export class FirstPersonCameraController {
   private __mouseMoveHandler: (e: MouseEvent) => void;

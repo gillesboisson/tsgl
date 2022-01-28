@@ -4,7 +4,7 @@ import { GLRenderer } from '../gl/';
 import { IGLShaderState } from '../gl/';
 import { ISpriteBatchPullable, SpriteBatch } from './SpriteBatch';
 import { IGLSpriteShaderState } from '../shaders/SpriteShader';
-import { IBatch } from '../utils';
+import { IBatch } from '../common';
 
 export interface IStage {
   readonly cam: Camera2D;

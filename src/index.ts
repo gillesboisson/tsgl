@@ -2,12 +2,12 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
-import { IRenderableInstance3D } from './tsgl/utils';
+import { IRenderableInstance3D } from './tsgl/common';
 import { PhongBlinnMaterial } from './tsgl/3d/Material/PhongBlinnMaterial';
-import { MeshNode } from './tsgl/utils/primitive/SceneInstance3D';
+import { MeshNode } from './tsgl/common/primitive/SceneInstance3D';
 import { createPlaneMesh } from './tsgl/gl/';
 import { createSphereMesh } from './tsgl/gl/';
-import { Camera, Transform3D } from './tsgl/utils';
+import { Camera, Transform3D } from './tsgl/common';
 import { GLVao, loadTexture2D } from './tsgl/gl';
 import { GLFramebuffer } from './tsgl/gl';
 import { GLViewportStack } from './tsgl/gl';
@@ -37,7 +37,7 @@ import { PlaneSpaceToModelSpaceNormalShader } from './tsgl/shaders/PlaceSpaceToM
 import { ReflectanceShader } from './tsgl/shaders/ReflectanceShader';
 import { SkyboxShader } from './tsgl/shaders/SkyboxShader';
 import { PbrDeferredVShader } from './app/shaders/PbrDeferredVShader';
-import { bakeHdrIbl } from './tsgl/utils/baking/bakeHdrIbl';
+import { bakeHdrIbl } from './tsgl/common/baking/bakeHdrIbl';
 import { PbrDeferredPass } from './app/materials/PbrDeferredPass';
 import { SSAOShader } from './app/shaders/SSAOShader';
 import { SSAOPass } from './app/SSAOPass';

@@ -1,5 +1,5 @@
 import { mat2d, vec2 } from 'gl-matrix';
-import { IReset, IDestroy } from '../../common';
+import { IReset, IDestroy } from '../../core';
 import { ITransform } from './ITransform';
 
 

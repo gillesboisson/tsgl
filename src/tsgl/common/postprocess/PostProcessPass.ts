@@ -1,4 +1,4 @@
-import { IResize } from '../../common/IResize';
+import { IResize } from '../../core/IResize';
 import { createQuadMesh } from '../../gl';
 import { GLMesh } from '../../gl';
 import { IGLFrameBuffer } from '../../gl';

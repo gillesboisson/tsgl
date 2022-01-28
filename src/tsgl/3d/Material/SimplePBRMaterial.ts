@@ -4,7 +4,7 @@ import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { SimplePBRShaderID, SimplePBRShaderState } from '../../shaders/SimplePBRShader';
-import { Camera } from '../../utils';
+import { Camera } from '../../common';
 import { AMaterial } from './Material';
 
 export interface SimplePBRLightInterface {

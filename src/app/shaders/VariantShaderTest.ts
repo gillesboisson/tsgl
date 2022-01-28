@@ -6,7 +6,7 @@ import { GLRenderer } from '../../tsgl/gl/core/GLRenderer';
 import { GLShaderVariants } from '../../tsgl/gl/core/shader/variants/GLShaderVariants';
 import { GLVariantValueDefinition } from '../../tsgl/gl/core/shader/variants/GLVariantShaderTypes';
 import { ShaderVariantsState } from '../../tsgl/gl/core/shader/variants/ShaderVariantsState';
-import { Camera } from '../../tsgl/utils';
+import { Camera } from '../../tsgl/common';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

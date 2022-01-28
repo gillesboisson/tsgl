@@ -1,4 +1,4 @@
-import { IResize } from '../../common/IResize';
+import { IResize } from '../../core/IResize';
 import { AnyWebRenderingGLContext } from '../core/GLHelpers';
 import { IGLCore } from '../core/IGLCore';
 

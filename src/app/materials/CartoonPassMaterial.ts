@@ -1,7 +1,7 @@
 import { mat4 } from 'gl-matrix';
-import { Camera } from '../../tsgl/utils';
+import { Camera } from '../../tsgl/common';
 import { AMaterial } from '../../tsgl/3d/Material/Material';
-import { TranslateRotateTransform3D } from '../../tsgl/utils';
+import { TranslateRotateTransform3D } from '../../tsgl/common';
 import {
   GLDefaultTextureLocation,
 } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';

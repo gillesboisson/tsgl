@@ -3,7 +3,7 @@ import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { SimpleTextureShaderID, SimpleTextureShaderState } from '../../shaders/SimpleTextureShader';
-import { Camera } from '../../utils';
+import { Camera } from '../../common';
 import { AMaterial } from './Material';
 
 export class SimpleTextureMaterial extends AMaterial<SimpleTextureShaderState> {

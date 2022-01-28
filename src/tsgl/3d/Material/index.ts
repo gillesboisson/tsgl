@@ -1,4 +1,4 @@
-export * from '../../utils/primitive/IMaterial';
+export * from '../../common/primitive/IMaterial';
 export * from './Material';
 export * from './DepthOnlyMaterial';
 export * from './PbrMaterial';

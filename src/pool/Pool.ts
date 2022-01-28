@@ -1,4 +1,4 @@
-import { IDestroy } from '../tsgl/common/IDestroy';
+import { IDestroy } from '../tsgl/core/IDestroy';
 import { IPoolable } from './IPoolable';
 import { PoolableType } from './PoolableType';
 

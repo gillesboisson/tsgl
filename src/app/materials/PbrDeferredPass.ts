@@ -1,10 +1,10 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import { Camera } from '../../tsgl/utils';
+import { Camera } from '../../tsgl/common';
 import { ShadowPass } from '../../tsgl/3d/ShadowPass';
 import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { WebGL2Renderer } from '../../tsgl/gl/core/GLRenderer';
 import { GLTexture2D, IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
-import { PostProcessPass } from '../../tsgl/utils/postprocess/PostProcessPass';
+import { PostProcessPass } from '../../tsgl/common/postprocess/PostProcessPass';
 import { PbrShaderDebug } from '../../tsgl/shaders/PbrVShader';
 import { DeferredFrameBuffer } from '../DeferredFrameBuffer';
 import { PbrDeferredVShaderID } from '../shaders/PbrDeferredVShader';

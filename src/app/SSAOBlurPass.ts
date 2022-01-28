@@ -2,7 +2,7 @@ import { GLDefaultTextureLocation } from '../tsgl/gl/';
 import { createSimpleResizableFramebuffer } from '../tsgl/gl/';
 import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/';
 import { GLTexture2D } from '../tsgl/gl/';
-import { PostProcessPass } from '../tsgl/utils/postprocess/PostProcessPass';
+import { PostProcessPass } from '../tsgl/common/postprocess/PostProcessPass';
 import { SSAOBlurShaderID, SSAOBlurShaderState } from './shaders/SSAOBlurShader';
 
 export interface SSAOBlurPassOptions {

@@ -5,7 +5,7 @@ import { WebGL2Renderer } from '../../gl/core/GLRenderer';
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { PbrShaderDebug, PbrVShaderID } from '../../shaders/PbrVShader';
 import { PbrVShadersState } from '../../shaders/PbrVShadersState';
-import { Camera } from '../../utils';
+import { Camera } from '../../common';
 import { GLTFDataMaterial, GLTFDataMeshPrimitive } from '../gltf/GLFTSchema';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';

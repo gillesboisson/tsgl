@@ -1,10 +1,10 @@
 import { vec2, vec3 } from 'gl-matrix';
-import { Camera } from '../../tsgl/utils';
+import { Camera } from '../../tsgl/common';
 import { ShadowMap } from '../../tsgl/3d/ShadowMap';
 import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
 import { WebGL2Renderer } from '../../tsgl/gl/core/GLRenderer';
 import { IGLTexture } from '../../tsgl/gl/core/texture/GLTexture';
-import { PostProcessPass } from '../../tsgl/utils/postprocess/PostProcessPass';
+import { PostProcessPass } from '../../tsgl/common/postprocess/PostProcessPass';
 import { PhongBlinnLightInterface, PhongBlinnShaderDebug } from '../../tsgl/shaders/PhongBlinnVShader';
 import { DeferredFrameBuffer } from '../DeferredFrameBuffer';
 import { PhongBlinnDeferredVShaderID } from '../shaders/PhongBlinnDeferredVShader';

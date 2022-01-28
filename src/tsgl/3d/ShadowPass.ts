@@ -1,14 +1,14 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { CameraLookAtTransform3D } from '../utils/transform/CameraTargetTransform3D';
+import { CameraLookAtTransform3D } from '../common/transform/CameraTargetTransform3D';
 import { GLDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLocation';
 import { GLFramebuffer } from '../gl/core/framebuffer/GLFramebuffer';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';
-import { IMaterial } from '../utils/primitive/IMaterial';
+import { IMaterial } from '../common/primitive/IMaterial';
 import { RenderPass3D, RenderPassRenderContext } from './RenderPass3D';
-import { SceneInstance3D } from '../utils/primitive/SceneInstance3D';
-import { Camera, IRenderableInstance3D } from '../utils';
+import { SceneInstance3D } from '../common/primitive/SceneInstance3D';
+import { Camera, IRenderableInstance3D } from '../common';
 
 export const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 

@@ -1,11 +1,11 @@
 import { vec2 } from 'gl-matrix';
-import { Camera } from '../tsgl/utils';
+import { Camera } from '../tsgl/common';
 import { GLDefaultTextureLocation } from '../tsgl/gl/';
 import { createSimpleResizableFramebuffer } from '../tsgl/gl/';
 import { AnyWebRenderingGLContext } from '../tsgl/gl/';
 import { GLRenderer, WebGL2Renderer } from '../tsgl/gl/';
 import { GLTexture2D } from '../tsgl/gl/';
-import { PostProcessPass } from '../tsgl/utils/postprocess/PostProcessPass';
+import { PostProcessPass } from '../tsgl/common/postprocess/PostProcessPass';
 import { DeferredFrameBuffer } from './DeferredFrameBuffer';
 import { SSRShaderID, SSRShaderState } from './shaders/SSRShader';
 
