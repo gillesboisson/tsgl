@@ -1,13 +1,13 @@
-import { ASceneInstance } from '../utils';
+import { ASceneInstance } from './ASceneInstance';
 import { mat4 } from 'gl-matrix';
-import { Type } from '../common/Type';
-import { ITransform } from '../utils';
-import { Transform3D } from '../utils';
-import { IMaterial } from './Material/IMaterial';
-import { GLMesh } from '../gl/';
+import { Type } from '../../common/Type';
+import { IMaterial } from './IMaterial';
+import { GLMesh } from '../../gl';
 import { IRenderableInstance3D } from './IRenderableInstance3D';
-import { AnyWebRenderingGLContext } from '../gl/';
+import { AnyWebRenderingGLContext } from '../../gl';
 import { Camera } from './Camera';
+import { ITransform } from '../transform/ITransform';
+import { Transform3D } from '../transform/Transform3D';
 
 export class SceneInstance3D<
   TransformT extends ITransform<mat4> = Transform3D,

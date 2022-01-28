@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { DepthOnlyShaderState, DepthOnlyShaderID } from '../../shaders/DepthOnlyShader';
-import { Camera } from '../Camera';
+import { Camera } from '../../utils';
 import { AMaterial } from './Material';
 
 export class DepthOnlyMaterial extends AMaterial<DepthOnlyShaderState> {

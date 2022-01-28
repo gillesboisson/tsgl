@@ -1,12 +1,10 @@
-import { vec2, vec3, vec4 } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { IDestroy } from '../../common/IDestroy';
 import { GLDefaultAttributesLocation } from '../../gl/';
 import { WebGLRenderingContextWithVao } from '../../gl/';
-import { IGLShaderState } from '../../gl/';
-import { IBatch } from '../../utils';
+import { Camera, IBatch } from '../../utils';
 import { IBatchPullable } from '../../utils';
 import { VertexColorShaderState } from '../../shaders/VertexColorShader';
-import { Camera } from '../Camera';
 
 const VERTEX_BATCH_SIZE = 10448;
 const INDICES_BATCH_SIZE = 10448;

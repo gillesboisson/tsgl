@@ -1,5 +1,5 @@
 import { vec2 } from 'gl-matrix';
-import { Camera } from '../tsgl/3d/Camera';
+import { Camera } from '../tsgl/utils';
 import { GLDefaultTextureLocation } from '../tsgl/gl/';
 import { createSimpleResizableFramebuffer } from '../tsgl/gl/';
 import { AnyWebRenderingGLContext } from '../tsgl/gl/';

@@ -1,13 +1,11 @@
 import { AnyWebRenderingGLContext } from '../../gl/';
-import { Camera } from '../Camera';
-import { IMaterial } from '../Material/IMaterial';
-import { IRenderableInstance3D } from '../IRenderableInstance3D';
-import { SceneInstance3D } from '../SceneInstance3D';
+import { IMaterial } from '../../utils/primitive/IMaterial';
+import { SceneInstance3D } from '../../utils/primitive/SceneInstance3D';
 import { GLTFDataNode } from './GLFTSchema';
 import { IGLTFCore } from './GLTFCore';
 import { GLTFMesh } from './GLTFMesh';
 import { mat4 } from 'gl-matrix';
-import { ITransform } from '../../utils';
+import { Camera, IRenderableInstance3D, ITransform } from '../../utils';
 
 export class GLTFNode
   extends SceneInstance3D

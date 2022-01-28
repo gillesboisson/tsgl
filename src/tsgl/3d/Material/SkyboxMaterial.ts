@@ -4,7 +4,7 @@ import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { IGLTexture } from '../../gl/core/texture/GLTexture';
 import { SkyboxShaderID, SkyboxShaderState } from '../../shaders/SkyboxShader';
-import { Camera } from '../Camera';
+import { Camera } from '../../utils';
 import { AMaterial } from './Material';
 
 export class SkyboxMaterial extends AMaterial<SkyboxShaderState> {

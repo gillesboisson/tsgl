@@ -2,12 +2,12 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import { Base3DApp } from './app/Base3DApp';
-import { IRenderableInstance3D } from './tsgl/3d/IRenderableInstance3D';
+import { IRenderableInstance3D } from './tsgl/utils';
 import { PhongBlinnMaterial } from './tsgl/3d/Material/PhongBlinnMaterial';
-import { MeshNode } from './tsgl/3d/SceneInstance3D';
+import { MeshNode } from './tsgl/utils/primitive/SceneInstance3D';
 import { createPlaneMesh } from './tsgl/gl/';
 import { createSphereMesh } from './tsgl/gl/';
-import { Transform3D } from './tsgl/utils';
+import { Camera, Transform3D } from './tsgl/utils';
 import { GLVao, loadTexture2D } from './tsgl/gl';
 import { GLFramebuffer } from './tsgl/gl';
 import { GLViewportStack } from './tsgl/gl';
@@ -23,7 +23,6 @@ import { PhongBlinnCartoonVShader } from './app/shaders/PhongBlinnCartoonVShader
 import { GLMRTFrameBuffer } from './tsgl/gl';
 import { CartoonPassShader } from './app/shaders/CartoonPassShader';
 import { CartoonPassMaterial } from './app/materials/CartoonPassMaterial';
-import { Camera } from './tsgl/3d/Camera';
 import { DeferredPrepassVShader } from './app/shaders/DeferredPrepassVShader';
 import { DeferredPrepassMaterial } from './app/materials/DeferredPrepassMaterial';
 import { DeferredDebugPassShader } from './app/shaders/DeferredDebugPassShader';

@@ -3,7 +3,7 @@ import { GLDefaultTextureLocation } from '../../gl/core/data/GLDefaultAttributes
 import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
 import { GLRenderer } from '../../gl/core/GLRenderer';
 import { ShadowOnlyShaderState, ShadowOnlyShaderID } from '../../shaders/ShadowOnlyShader';
-import { Camera } from '../Camera';
+import { Camera } from '../../utils';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
 

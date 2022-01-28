@@ -1,9 +1,9 @@
-import { Camera } from '../tsgl/3d/Camera';
 import { RenderPass3D } from '../tsgl/3d/RenderPass3D';
-import { SceneInstance3D } from '../tsgl/3d/SceneInstance3D';
+import { SceneInstance3D } from '../tsgl/utils/primitive/SceneInstance3D';
 import { Juggler } from '../tsgl/animation';
 import { AnyWebRenderingGLContext } from '../tsgl/gl/core/GLHelpers';
 import { GLRenderer, GLRendererType } from '../tsgl/gl/core/GLRenderer';
+import { Camera } from '../tsgl/utils';
 
 export abstract class Base3DApp<ContextT extends AnyWebRenderingGLContext = WebGL2RenderingContext> {
   readonly renderer: GLRenderer<ContextT>;

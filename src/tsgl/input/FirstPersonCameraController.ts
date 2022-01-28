@@ -1,5 +1,5 @@
 import { vec3 } from 'gl-matrix';
-import { Camera } from '../3d/Camera';
+import { Camera } from '../utils';
 
 export const __tempVec31 = vec3.create();
 

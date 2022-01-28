@@ -4,12 +4,11 @@ import { GLDefaultTextureLocation } from '../gl/core/data/GLDefaultAttributesLoc
 import { GLFramebuffer } from '../gl/core/framebuffer/GLFramebuffer';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
-import { Camera } from './Camera';
-import { IRenderableInstance3D } from './IRenderableInstance3D';
 import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';
-import { IMaterial } from './Material/IMaterial';
+import { IMaterial } from '../utils/primitive/IMaterial';
 import { RenderPass3D, RenderPassRenderContext } from './RenderPass3D';
-import { SceneInstance3D } from './SceneInstance3D';
+import { SceneInstance3D } from '../utils/primitive/SceneInstance3D';
+import { Camera, IRenderableInstance3D } from '../utils';
 
 export const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 

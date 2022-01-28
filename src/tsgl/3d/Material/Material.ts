@@ -1,13 +1,11 @@
 import { mat4 } from 'gl-matrix';
-import { GLVao } from '../../gl/core/data/GLVao';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLMVPShaderState } from '../../gl/core/shader/IGLMVPShaderState';
-import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
-import { Camera } from '../Camera';
-import { IMaterial } from './IMaterial';
+import { GLVao } from '../../gl';
+import { AnyWebRenderingGLContext } from '../../gl';
+import { IGLShaderState } from '../../gl';
+import { Camera, IMaterial } from '../../utils';
 
 export abstract class AMaterial<ShaderStateT extends IGLShaderState = IGLShaderState>
-  implements IMaterial<ShaderStateT> {
+implements IMaterial<ShaderStateT> {
   protected _shaderState: ShaderStateT;
 
   get shaderState(): ShaderStateT {

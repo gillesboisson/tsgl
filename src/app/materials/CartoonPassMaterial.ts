@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { Camera } from '../../tsgl/3d/Camera';
+import { Camera } from '../../tsgl/utils';
 import { AMaterial } from '../../tsgl/3d/Material/Material';
 import { TranslateRotateTransform3D } from '../../tsgl/utils';
 import {

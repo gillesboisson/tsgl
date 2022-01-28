@@ -1,15 +1,13 @@
 import { mat4 } from 'gl-matrix';
 import { IResize } from '../common/IResize';
-import { Transform3D } from '../utils';
+import { Camera, IRenderableInstance3D, Transform3D } from '../utils';
 import { ASceneInstance } from '../utils';
 import { ITransform } from '../utils';
 import { ARenderPass, GLRenderPassOptions, GLRenderPassState, IGLFrameBuffer, renderPassOptionsToSettings } from '../gl';
 import { AnyWebRenderingGLContext } from '../gl';
 import { GLRenderer } from '../gl';
-import { Camera } from './Camera';
-import { IRenderableInstance3D } from './IRenderableInstance3D';
-import { IMaterial } from './Material/IMaterial';
-import { SceneInstance3D } from './SceneInstance3D';
+import { IMaterial } from '../utils/primitive/IMaterial';
+import { SceneInstance3D } from '../utils/primitive/SceneInstance3D';
 
 export interface RenderPassRenderContext {
   cam: Camera;

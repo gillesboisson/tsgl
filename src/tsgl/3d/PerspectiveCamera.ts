@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { Camera } from './Camera';
+import { Camera } from '../utils';
 
 export class PerspectiveCamera extends Camera {
   protected _near: number;

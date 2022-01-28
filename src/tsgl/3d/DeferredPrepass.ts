@@ -1,15 +1,7 @@
-import { mat4, vec3 } from 'gl-matrix';
 import { DeferredFrameBuffer } from '../../app/DeferredFrameBuffer';
-import { CameraLookAtTransform3D } from '../utils/transform/CameraTargetTransform3D';
-import { GLDefaultTextureLocation } from '../gl';
-import { GLFramebuffer } from '../gl';
 import { GLRenderer } from '../gl';
-import { Camera } from './Camera';
-import { IRenderableInstance3D } from './IRenderableInstance3D';
-import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';
-import { IMaterial } from './Material/IMaterial';
-import { RenderPass3D, RenderPassRenderContext } from './RenderPass3D';
-import { SceneInstance3D } from './SceneInstance3D';
+import { RenderPass3D } from './RenderPass3D';
+import { SceneInstance3D } from '../utils/primitive/SceneInstance3D';
 
 export interface DeferredPrepassOptions {
   width?: number;

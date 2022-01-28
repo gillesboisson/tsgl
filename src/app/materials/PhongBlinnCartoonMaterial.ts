@@ -1,5 +1,5 @@
 import { vec4, mat4, vec3, vec2 } from 'gl-matrix';
-import { Camera } from '../../tsgl/3d/Camera';
+import { Camera } from '../../tsgl/utils';
 import { AMaterial } from '../../tsgl/3d/Material/Material';
 import { ShadowMap } from '../../tsgl/3d/ShadowMap';
 import { GLDefaultTextureLocation } from '../../tsgl/gl/core/data/GLDefaultAttributesLocation';
