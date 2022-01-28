@@ -49,6 +49,9 @@ import { SSRPass } from './app/SSRPass';
 import { RenderPass3D } from './tsgl/3d/RenderPass3D';
 import { ShadowPass } from './tsgl/3d/ShadowPass';
 import { DeferredPrepass } from './tsgl/3d/DeferredPrepass';
+import { SpriteGroup, SpriteStage2D } from './tsgl/2d';
+
+
 
 window.addEventListener('load', async () => {
   const app = new TestApp();
@@ -84,6 +87,8 @@ class TestApp extends Base3DApp {
   constructor() {
     super(GLRendererType.WebGL2, { antialias: true });
     this.cubeTransform = new Transform3D();
+
+    const _st2DTest = new SpriteGroup();
   }
 
   getCanvas(): HTMLCanvasElement {

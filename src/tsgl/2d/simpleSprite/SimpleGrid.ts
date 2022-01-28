@@ -4,7 +4,6 @@ import { SimpleElement } from './SimpleSpriteElement';
 import { Camera2D } from '../Camera2D';
 import { SimpleWorldCoords } from './SimpleElementData';
 import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
-// import { SpriteBatch, SpriteBatchPullable, SpriteBatchData } from './SpriteBatch';
 
 export type GridIndexMapper = (
   ind: number,

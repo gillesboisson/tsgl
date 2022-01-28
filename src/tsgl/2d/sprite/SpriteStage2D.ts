@@ -4,7 +4,7 @@ import { GLRenderer } from '../../gl/core/GLRenderer';
 import { SpriteBatch } from '../SpriteBatch';
 import { SpriteLayer } from '../Stage2D';
 
-export class SimpleStage2D extends SpriteLayer {
+export class SpriteStage2D extends SpriteLayer {
   readonly gui: SpriteGroup;
   readonly guiCam: Camera2D;
 

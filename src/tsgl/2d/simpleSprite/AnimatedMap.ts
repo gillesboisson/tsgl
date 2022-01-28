@@ -1,5 +1,5 @@
-import { IAnimated } from './IAnimated';
-import { GridIndexMapper } from '../2d/simpleSprite/SimpleGrid';
+import { IAnimated } from '../../animation';
+import { GridIndexMapper } from './SimpleGrid';
 import { AnimatedMapData } from './AnimatedMapData';
 
 export class AnimatedMap implements IAnimated {

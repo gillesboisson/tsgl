@@ -3,15 +3,9 @@ import { Camera2D } from '../Camera2D';
 import { SimpleWorldCoords } from './SimpleElementData';
 import { SimpleTextFont } from './SimpleText';
 import { ISpriteBatchPullable, SpriteBatch, SpriteBatchData } from '../SpriteBatch';
+import { GridIndexMapper } from './SimpleGrid';
 
-export type GridIndexMapper = (
-  ind: number,
-  x: number,
-  y: number,
-  data: number[],
-  gridWidth: number,
-  gridHeight: number,
-) => number;
+
 
 export class SimpleGridDebugger extends SimpleElement implements ISpriteBatchPullable {
   protected _grid: number[];
@@ -34,7 +28,7 @@ export class SimpleGridDebugger extends SimpleElement implements ISpriteBatchPul
     tileHeight: number,
     cam: Camera2D,
   ) {
-    if (grid.length !== nbElementX * nbElementY) throw new Error("Grid size doesn't have nb elements");
+    if (grid.length !== nbElementX * nbElementY) throw new Error('Grid size doesn\'t have nb elements');
 
     super(font.texture.glTexture);
     this._grid = grid;
