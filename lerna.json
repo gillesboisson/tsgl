@@ -1,0 +1,9 @@
+{
+  "packages": [
+    "app/**",
+    "tsgl/**"
+  ],
+  "version": "0.0.1",
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}
