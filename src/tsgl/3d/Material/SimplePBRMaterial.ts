@@ -3,9 +3,9 @@ import { GLDefaultTextureLocation } from '../../gl';
 import { AnyWebRenderingGLContext } from '../../gl';
 import { GLRenderer } from '../../gl';
 import { IGLTexture } from '../../gl';
-import { SimplePBRShaderID, SimplePBRShaderState } from '../../shaders/SimplePBRShader';
 import { Camera } from '../../common';
 import { AMaterial } from './Material';
+import { SimplePBRShaderState, SimplePBRShaderID } from '../shaders';
 
 export interface SimplePBRLightInterface {
   direction: vec3;

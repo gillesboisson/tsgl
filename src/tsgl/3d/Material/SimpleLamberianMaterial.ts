@@ -3,9 +3,9 @@ import { GLDefaultTextureLocation } from '../../gl';
 import { AnyWebRenderingGLContext } from '../../gl';
 import { GLRenderer } from '../../gl';
 import { IGLTexture } from '../../gl';
-import { SimpleLamberianShaderState } from '../../shaders/SimpleLamberianShader';
 import { Camera } from '../../common';
 import { AMaterial } from './Material';
+import { SimpleLamberianShaderState } from '../shaders';
 
 export class SimpleLamberianMaterial extends AMaterial<SimpleLamberianShaderState> {
   constructor(

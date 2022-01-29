@@ -1,11 +1,11 @@
 import { vec2, vec4 } from 'gl-matrix';
 import { GLDefaultAttributesLocation } from '../gl/';
-import { IGLSpriteShaderState } from '../shaders/SpriteShader';
 import { Camera } from '../common';
 import { IDestroy } from '../core';
 import { WebGLRenderingContextWithVao } from '../gl/';
 import { IBatchPullable } from '../common';
 import { IBatch } from '../common';
+import { SpriteShaderState } from './shaders/sprite/SpriteShaderState';
 
 const VERTEX_BATCH_SIZE = 10448;
 const INDICES_BATCH_SIZE = 10448;
@@ -17,7 +17,7 @@ const VERTEX_BUFFER_SIZE = VERTEX_BATCH_SIZE * VERTEX_STRIDE;
 const INDICES_BUFFER_SIZE = INDICES_BATCH_SIZE * Uint16Array.BYTES_PER_ELEMENT;
 
 export interface ISpriteBatchPullable
-  extends IBatchPullable<IGLSpriteShaderState, SpriteBatch, SpriteBatchData, Uint16Array> {}
+  extends IBatchPullable<SpriteShaderState, SpriteBatch, SpriteBatchData, Uint16Array> {}
 
 export class SpriteBatchData {
   pos: vec2;
@@ -34,7 +34,7 @@ export interface SpriteBatchRenderable<WorldCoordsT> {
   draw(batch: SpriteBatch, parentWorldCoords?: WorldCoordsT): void;
 }
 
-export class SpriteBatch implements IBatch<ISpriteBatchPullable, IGLSpriteShaderState>, IDestroy {
+export class SpriteBatch implements IBatch<ISpriteBatchPullable, SpriteShaderState>, IDestroy {
   private vao: WebGLVertexArrayObject;
   private verticesBuffer: WebGLBuffer;
   private indicesBuffer: WebGLBuffer;
@@ -48,7 +48,7 @@ export class SpriteBatch implements IBatch<ISpriteBatchPullable, IGLSpriteShader
   private indices = new Uint16Array(INDICES_BATCH_SIZE);
   private verticesSlice: Uint8Array;
   private vertices: SpriteBatchData[];
-  private currentShaderState: IGLSpriteShaderState;
+  private currentShaderState: SpriteShaderState;
   private currentPassCam: Camera;
 
   constructor(gl: WebGLRenderingContextWithVao) {
@@ -102,7 +102,7 @@ export class SpriteBatch implements IBatch<ISpriteBatchPullable, IGLSpriteShader
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   }
 
-  begin<SS extends IGLSpriteShaderState>(shaderState: SS, cam?: Camera): void {
+  begin<SS extends SpriteShaderState>(shaderState: SS, cam?: Camera): void {
     this.indicesInd = 0;
     this.verticesInd = 0;
     this.currentTexture = null;
@@ -122,7 +122,7 @@ export class SpriteBatch implements IBatch<ISpriteBatchPullable, IGLSpriteShader
     this.verticesInd -= nbVertex;
   }
 
-  changeShader<SS extends IGLSpriteShaderState>(shaderState: SS): void {
+  changeShader<SS extends SpriteShaderState>(shaderState: SS): void {
     this.end();
     this.begin(shaderState);
   }

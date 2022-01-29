@@ -2,10 +2,10 @@ import { mat4, vec2, vec3 } from 'gl-matrix';
 import { GLDefaultTextureLocation } from '../../gl';
 import { AnyWebRenderingGLContext } from '../../gl';
 import { GLRenderer } from '../../gl';
-import { ShadowOnlyShaderState, ShadowOnlyShaderID } from '../../shaders/ShadowOnlyShader';
 import { Camera } from '../../common';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
+import { ShadowOnlyShaderState, ShadowOnlyShaderID } from '../shaders';
 
 export class ShadowOnlyMaterial extends AMaterial<ShadowOnlyShaderState> {
   /**

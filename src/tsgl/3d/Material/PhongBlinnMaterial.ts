@@ -5,17 +5,16 @@ import { GLDefaultTextureLocation } from '../../gl';
 import { AnyWebRenderingGLContext } from '../../gl';
 import { GLRenderer } from '../../gl';
 import { IGLTexture } from '../../gl';
-import { PhongBlinnVShadersState } from '../../shaders/PhongBlinnVShadersState';
-import { PhongBlinnLightInterface, PhongBlinnShaderDebug, PhongBlinnVShaderID } from '../../shaders/PhongBlinnVShader';
 import { ShadowMap } from '../ShadowMap';
+import { PhongBlinnVShaderState, PhongBlinnShaderDebug, PhongBlinnLightInterface, PhongBlinnVShaderID } from '../shaders';
 
-export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShadersState> {
+export class PhongBlinnMaterial extends AMaterial<PhongBlinnVShaderState> {
   private _debug: PhongBlinnShaderDebug;
   private _shadowMap: ShadowMap;
   constructor(renderer: GLRenderer, public light: PhongBlinnLightInterface) {
     super();
 
-    this._shaderState = renderer.getShader(PhongBlinnVShaderID).createState() as PhongBlinnVShadersState;
+    this._shaderState = renderer.getShader(PhongBlinnVShaderID).createState() as PhongBlinnVShaderState;
   }
 
   protected _normalMap: IGLTexture;

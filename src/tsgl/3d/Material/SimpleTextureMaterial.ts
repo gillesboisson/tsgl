@@ -2,7 +2,8 @@ import { mat4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from '../../gl';
 import { GLRenderer } from '../../gl';
 import { IGLTexture } from '../../gl';
-import { SimpleTextureShaderID, SimpleTextureShaderState } from '../../shaders/SimpleTextureShader';
+import { SimpleTextureShaderID } from '../shaders/simpleTexture/SimpleTextureShader';
+import { SimpleTextureShaderState } from "../shaders/simpleTexture/SimpleTextureShaderState";
 import { Camera } from '../../common';
 import { AMaterial } from './Material';
 

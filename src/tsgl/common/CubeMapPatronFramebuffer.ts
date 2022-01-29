@@ -5,8 +5,8 @@ import { GLMesh } from '../gl/core/data/GLMesh';
 import { AnyWebRenderingGLContext } from '../gl/core/GLHelpers';
 import { GLRenderer } from '../gl/core/GLRenderer';
 import { GLTexture2D } from '../gl/core/texture/GLTexture';
-import { SimpleSpriteShaderState } from '../shaders/SimpleSpriteShader';
 import { CubeMapFramebuffer } from '../gl/core/framebuffer/CubeMapFramebuffer';
+import { SimpleSpriteShaderState } from './shaders/simpleSprite/SimpleSpriteShaderState';
 
 export class CubeMapPatronFramebuffer extends CubeMapFramebuffer {
   private _meshes: GLMesh[];

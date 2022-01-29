@@ -4,7 +4,7 @@ import { GLDefaultAttributesLocation } from '../../gl/';
 import { WebGLRenderingContextWithVao } from '../../gl/';
 import { Camera, IBatch } from '../../common';
 import { IBatchPullable } from '../../common';
-import { VertexColorShaderState } from '../../shaders/VertexColorShader';
+import { VertexColorShaderState } from "../shaders/vertexColor/VertexColorShaderState";
 
 const VERTEX_BATCH_SIZE = 10448;
 const INDICES_BATCH_SIZE = 10448;

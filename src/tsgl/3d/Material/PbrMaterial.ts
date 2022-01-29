@@ -3,12 +3,11 @@ import { GLDefaultTextureLocation } from '../../gl';
 import { AnyWebRenderingGLContext } from '../../gl';
 import { WebGL2Renderer } from '../../gl';
 import { IGLTexture } from '../../gl';
-import { PbrShaderDebug, PbrVShaderID } from '../../shaders/PbrVShader';
-import { PbrVShadersState } from '../../shaders/PbrVShadersState';
 import { Camera } from '../../common';
 import { GLTFDataMaterial, GLTFDataMeshPrimitive } from '../gltf/GLFTSchema';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
+import { PbrVShadersState, PbrVShaderID, PbrShaderDebug } from '../shaders';
 
 export class PbrMaterial extends AMaterial<PbrVShadersState> {
   static matchGTFMaterialData(material: GLTFDataMaterial): boolean {

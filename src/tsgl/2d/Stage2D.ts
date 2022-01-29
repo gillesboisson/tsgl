@@ -3,8 +3,8 @@ import { Camera2D } from './Camera2D';
 import { GLRenderer } from '../gl/';
 import { IGLShaderState } from '../gl/';
 import { ISpriteBatchPullable, SpriteBatch } from './SpriteBatch';
-import { IGLSpriteShaderState } from '../shaders/SpriteShader';
 import { IBatch } from '../common';
+import { SpriteShaderState } from './shaders/sprite/SpriteShaderState';
 
 export interface IStage {
   readonly cam: Camera2D;
@@ -21,7 +21,7 @@ interface IRenderLayer<ShaderStateT extends IGLShaderState, BatchT extends IBatc
   render(cam?: Camera2D): void;
 }
 
-export class SpriteLayer implements IRenderLayer<IGLSpriteShaderState, SpriteBatch> {
+export class SpriteLayer implements IRenderLayer<SpriteShaderState, SpriteBatch> {
   readonly cam: Camera2D;
 
   readonly mainGroup: Group = new Group();
@@ -31,7 +31,7 @@ export class SpriteLayer implements IRenderLayer<IGLSpriteShaderState, SpriteBat
     readonly width: number,
     readonly height: number,
     readonly batch: SpriteBatch = new SpriteBatch(renderer.gl as WebGL2RenderingContext),
-    readonly renderState: IGLSpriteShaderState = renderer.createShaderState('sprite'),
+    readonly renderState: SpriteShaderState = renderer.createShaderState('sprite'),
   ) {
     this.cam = new Camera2D(width, height);
   }

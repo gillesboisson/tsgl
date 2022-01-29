@@ -1,54 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { mat4, vec3, vec4 } from 'gl-matrix';
-
 import { Base3DApp } from './app/Base3DApp';
-import { IRenderableInstance3D } from './tsgl/common';
-import { PhongBlinnMaterial } from './tsgl/3d';
-import { MeshNode } from './tsgl/common';
-import { createPlaneMesh } from './tsgl/gl/';
-import { createSphereMesh } from './tsgl/gl/';
-import { Camera, Transform3D } from './tsgl/common';
-import { GLVao, loadTexture2D } from './tsgl/gl';
-import { GLFramebuffer } from './tsgl/gl';
-import { GLViewportStack } from './tsgl/gl';
-import { GLRendererType, WebGL2Renderer } from './tsgl/gl';
-import { DepthOnlyShader } from './tsgl/shaders/DepthOnlyShader';
-import { PhongBlinnVShader } from './tsgl/shaders/PhongBlinnVShader';
+import { CartoonPassMaterial } from './tsgl/3d/Material/CartoonPassMaterial';
+import { SSAOBlurPass } from './tsgl/3d/postprocess/SSAOBlurPass';
 
-import { PbrVShader } from './tsgl/shaders/PbrVShader';
-import { VertexColorShaderState } from './tsgl/shaders/VertexColorShader';
-import { WireframeBatch } from './tsgl/3d';
-import { createBoxMesh } from './tsgl/gl/';
-import { PhongBlinnCartoonVShader } from './app/shaders/PhongBlinnCartoonVShader';
-import { GLMRTFrameBuffer } from './tsgl/gl';
-import { CartoonPassShader } from './app/shaders/CartoonPassShader';
-import { CartoonPassMaterial } from './app/materials/CartoonPassMaterial';
-import { DeferredPrepassVShader } from './app/shaders/DeferredPrepassVShader';
-import { DeferredPrepassMaterial } from './app/materials/DeferredPrepassMaterial';
-import { DeferredDebugPassShader } from './app/shaders/DeferredDebugPassShader';
+import { SpriteGroup } from './tsgl/2d';
+import { WireframeBatch, PhongBlinnMaterial, ShadowPass, RenderPass3D, DeferredPrepass, SSAOPass, SSRPass, bakeHdrIbl } from './tsgl/3d';
+import { PbrVShader, SkyboxShader, ReflectanceShader, PhongBlinnVShader, BrdfLutShader, IrradianceShader, DepthOnlyShader } from './tsgl/3d';
+import { Transform3D, Camera, MeshNode,  IRenderableInstance3D, EquiToCubemapShader, PlaneSpaceToModelSpaceNormalShader } from './tsgl/common';
+import { GLVao, GLFramebuffer, GLViewportStack, GLMRTFrameBuffer, GLRendererType, WebGL2Renderer, loadTexture2D } from './tsgl/gl/core';
+import { createSphereMesh, createPlaneMesh, createBoxMesh } from './tsgl/gl/mesh';
 import { FirstPersonCameraController } from './tsgl/input';
-import { PhongBlinnDeferredVShader } from './app/shaders/PhongBlinnDeferredVShader';
-import { BrdfLutShader } from './tsgl/shaders/BrdfLutShader';
-import { DebugSkyboxLodShader } from './app/shaders/DebugSkyboxLodShader';
-import { EquiToCubemapShader } from './tsgl/shaders/EquiToCubemapShader';
-import { IrradianceShader } from './tsgl/shaders/IrradianceShader';
-import { MSDFShader } from './tsgl/shaders/MSDFShader';
-import { PlaneSpaceToModelSpaceNormalShader } from './tsgl/shaders/PlaceSpaceToModelSpaceNormalShader';
-import { ReflectanceShader } from './tsgl/shaders/ReflectanceShader';
-import { SkyboxShader } from './tsgl/shaders/SkyboxShader';
-import { PbrDeferredVShader } from './app/shaders/PbrDeferredVShader';
-import { bakeHdrIbl } from './tsgl/common';
-import { PbrDeferredPass } from './app/materials/PbrDeferredPass';
-import { SSAOShader } from './app/shaders/SSAOShader';
-import { SSAOPass } from './app/SSAOPass';
-import { SSAOBlurPass } from './app/SSAOBlurPass';
-import { SSAOBlurShader } from './app/shaders/SSAOBlurShader';
-import { SSRShader } from './app/shaders/SSRShader';
-import { SSRPass } from './app/SSRPass';
-import { RenderPass3D } from './tsgl/3d';
-import { ShadowPass } from './tsgl/3d';
-import { DeferredPrepass } from './tsgl/3d';
-import { SpriteGroup, SpriteStage2D } from './tsgl/2d';
+import { VertexColorShaderState } from './tsgl/3d/shaders/vertexColor/VertexColorShaderState';
+import { MSDFShader } from './tsgl/2d/shaders';
+import { DeferredPrepassMaterial } from './tsgl/3d/Material/DeferredPrepassMaterial';
+import { PbrDeferredPass } from './tsgl/3d/Material/PbrDeferredPass';
+import { CartoonPassShader } from './tsgl/3d/shaders/cartoonPass';
+import { DebugSkyboxLodShader } from './tsgl/3d/shaders/debugSkyboxLod';
+import { DeferredDebugPassShader } from './tsgl/3d/shaders/deferredDebugPass';
+import { DeferredPrepassVShader } from './tsgl/3d/shaders/deferredPrepass-v';
+import { PbrDeferredVShader } from './tsgl/3d/shaders/pbrDeferred-v';
+import { PhongBlinnCartoonVShader } from './tsgl/3d/shaders/phongBlinnCartoon-v';
+import { PhongBlinnDeferredVShader } from './tsgl/3d/shaders/phongBlinnDeferred-v';
+import { SSAOShader } from './tsgl/3d/shaders/ssao';
+import { SSAOBlurShader } from './tsgl/3d/shaders/ssaoBlur';
+import { SSRShader } from './tsgl/3d/shaders/ssr';
+
 
 
 

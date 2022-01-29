@@ -3,9 +3,10 @@ import { GLDefaultTextureLocation } from '../../gl';
 import { AnyWebRenderingGLContext } from '../../gl';
 import { GLRenderer } from '../../gl';
 import { IGLTexture } from '../../gl';
-import { SkyboxShaderID, SkyboxShaderState } from '../../shaders/SkyboxShader';
+
 import { Camera } from '../../common';
 import { AMaterial } from './Material';
+import { SkyboxShaderState, SkyboxShaderID } from '../shaders';
 
 export class SkyboxMaterial extends AMaterial<SkyboxShaderState> {
   /**
