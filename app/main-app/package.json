@@ -53,6 +53,8 @@
     "spectorjs": "^0.9.17",
     "@tsgl/core": "0.0.1",
     "@tsgl/animation": "0.0.1",
-    "@tsgl/common": "0.0.1"
+    "@tsgl/common": "0.0.1",
+    "@tsgl/input": "0.0.1",
+    "@tsgl/3d": "0.0.1"
   }
 }

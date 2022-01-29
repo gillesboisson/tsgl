@@ -1,4 +1,4 @@
-import { RenderPass3D } from '../tsgl/3d';
+import { RenderPass3D } from '@tsgl/3d';
 import { Juggler } from '@tsgl/animation';
 import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { GLRenderer, GLRendererType } from '@tsgl/gl';

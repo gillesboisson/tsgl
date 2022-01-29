@@ -1,29 +1,17 @@
+import { WireframeBatch, VertexColorShaderState, PhongBlinnMaterial, SSAOPass, SSAOBlurPass, ShadowPass, SSRPass, RenderPass3D, DeferredPrepass, DepthOnlyShader, PbrVShader, IrradianceShader, SkyboxShader, ReflectanceShader, BrdfLutShader, PhongBlinnVShader, bakeHdrIbl, CartoonPassMaterial, DeferredPrepassMaterial, PbrDeferredPass, SSAOBlurShader, CartoonPassShader, DebugSkyboxLodShader } from '@tsgl/3d';
+import { SSAOShader } from '@tsgl/3d';
+import { SSRShader } from '@tsgl/3d';
+import { DeferredPrepassVShader } from '@tsgl/3d/build/shaders/deferredPrepass-v/DeferredPrepassVShader';
+import { PbrDeferredVShader } from '@tsgl/3d/build/shaders/pbrDeferred-v/PbrDeferredVShader';
+import { PhongBlinnCartoonVShader } from '@tsgl/3d/build/shaders/phongBlinnCartoon-v/PhongBlinnCartoonVShader';
+import { PhongBlinnDeferredVShader } from '@tsgl/3d/build/shaders/phongBlinnDeferred-v';
+import { Transform3D, Camera, MeshNode, PlaneSpaceToModelSpaceNormalShader, EquiToCubemapShader, IRenderableInstance3D } from '@tsgl/common';
+import { GLVao, GLFramebuffer, GLViewportStack, GLMRTFrameBuffer, GLMesh, GLRendererType, WebGL2Renderer, loadTexture2D, createSphereMesh, createPlaneMesh, createBoxMesh } from '@tsgl/gl';
+import { FirstPersonCameraController } from '@tsgl/input';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Base3DApp } from './app/Base3DApp';
-import { CartoonPassMaterial } from './tsgl/3d/Material/CartoonPassMaterial';
-import { SSAOBlurPass } from './tsgl/3d/postprocess/SSAOBlurPass';
+import { SpriteGroup, MSDFShader } from './tsgl/2d';
 
-import { SpriteGroup } from './tsgl/2d';
-import { WireframeBatch, PhongBlinnMaterial, ShadowPass, RenderPass3D, DeferredPrepass, SSAOPass, SSRPass, bakeHdrIbl } from './tsgl/3d';
-import { PbrVShader, SkyboxShader, ReflectanceShader, PhongBlinnVShader, BrdfLutShader, IrradianceShader, DepthOnlyShader } from './tsgl/3d';
-import { Transform3D, Camera, MeshNode,  IRenderableInstance3D, EquiToCubemapShader, PlaneSpaceToModelSpaceNormalShader } from '@tsgl/common';
-import { GLVao, GLFramebuffer, GLViewportStack, GLMRTFrameBuffer, GLRendererType, WebGL2Renderer, loadTexture2D, GLMesh } from '@tsgl/gl';
-import { createSphereMesh, createPlaneMesh, createBoxMesh } from '@tsgl/gl';
-import { FirstPersonCameraController } from './tsgl/input';
-import { VertexColorShaderState } from './tsgl/3d/shaders/vertexColor/VertexColorShaderState';
-import { MSDFShader } from './tsgl/2d/shaders';
-import { DeferredPrepassMaterial } from './tsgl/3d/Material/DeferredPrepassMaterial';
-import { PbrDeferredPass } from './tsgl/3d/Material/PbrDeferredPass';
-import { CartoonPassShader } from './tsgl/3d/shaders/cartoonPass';
-import { DebugSkyboxLodShader } from './tsgl/3d/shaders/debugSkyboxLod';
-import { DeferredDebugPassShader } from './tsgl/3d/shaders/deferredDebugPass';
-import { DeferredPrepassVShader } from './tsgl/3d/shaders/deferredPrepass-v';
-import { PbrDeferredVShader } from './tsgl/3d/shaders/pbrDeferred-v';
-import { PhongBlinnCartoonVShader } from './tsgl/3d/shaders/phongBlinnCartoon-v';
-import { PhongBlinnDeferredVShader } from './tsgl/3d/shaders/phongBlinnDeferred-v';
-import { SSAOShader } from './tsgl/3d/shaders/ssao';
-import { SSAOBlurShader } from './tsgl/3d/shaders/ssaoBlur';
-import { SSRShader } from './tsgl/3d/shaders/ssr';
 
 
 
@@ -90,7 +78,7 @@ class TestApp extends Base3DApp {
     PbrVShader.register(renderer, brdfLut);
     PbrDeferredVShader.register(renderer, brdfLut);
     DeferredPrepassVShader.register(renderer);
-    DeferredDebugPassShader.register(renderer);
+    DeferredPrepassVShader.register(renderer);
     PhongBlinnDeferredVShader.register(renderer);
     MSDFShader.register(renderer);
     IrradianceShader.register(renderer);
