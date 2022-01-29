@@ -1,5 +1,5 @@
 import { vec3, vec4, mat4 } from 'gl-matrix';
-import { ShaderVariantsState } from '../../../tsgl/gl';
+import { ShaderVariantsState } from '../../../../tsgl/gl';
 import { LambertVariant } from './LambertVShader';
 
 export class LambertVShadersState extends ShaderVariantsState<LambertVariant> {

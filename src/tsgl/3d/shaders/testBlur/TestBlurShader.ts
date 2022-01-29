@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { GLShaderState, GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '../../../tsgl/gl';
+import { GLShaderState, GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '../../../../tsgl/gl';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

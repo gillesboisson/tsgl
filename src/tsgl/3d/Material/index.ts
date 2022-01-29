@@ -1,4 +1,3 @@
-export * from '../../common';
 export * from './Material';
 export * from './DepthOnlyMaterial';
 export * from './PbrMaterial';

@@ -4,8 +4,8 @@ import { AnyWebRenderingGLContext } from '../../gl';
 import { GLRenderer } from '../../gl';
 import { IGLTexture } from '../../gl';
 import { Camera } from '../../common';
-import { TestFlatID } from '../../../app/shaders/testFlat/TestFlatShader';
-import { TestFlatShaderState } from "../../../app/shaders/testFlat/TestFlatShaderState";
+import { TestFlatShaderState } from '../shaders/testFlat/TestFlatShaderState';
+import { TestFlatID } from '../shaders/testFlat/TestFlatShader';
 
 export class TestFlatMaterial extends AMaterial<TestFlatShaderState> {
   constructor(renderer: GLRenderer, public texture: IGLTexture) {

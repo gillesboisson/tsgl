@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { GLShaderState } from '../../../tsgl/gl';
+import { GLShaderState } from '../../../gl';
 
 
 
