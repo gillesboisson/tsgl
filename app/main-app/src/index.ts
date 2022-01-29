@@ -6,7 +6,7 @@ import { SSAOBlurPass } from './tsgl/3d/postprocess/SSAOBlurPass';
 import { SpriteGroup } from './tsgl/2d';
 import { WireframeBatch, PhongBlinnMaterial, ShadowPass, RenderPass3D, DeferredPrepass, SSAOPass, SSRPass, bakeHdrIbl } from './tsgl/3d';
 import { PbrVShader, SkyboxShader, ReflectanceShader, PhongBlinnVShader, BrdfLutShader, IrradianceShader, DepthOnlyShader } from './tsgl/3d';
-import { Transform3D, Camera, MeshNode,  IRenderableInstance3D, EquiToCubemapShader, PlaneSpaceToModelSpaceNormalShader } from './tsgl/common';
+import { Transform3D, Camera, MeshNode,  IRenderableInstance3D, EquiToCubemapShader, PlaneSpaceToModelSpaceNormalShader } from '@tsgl/common';
 import { GLVao, GLFramebuffer, GLViewportStack, GLMRTFrameBuffer, GLRendererType, WebGL2Renderer, loadTexture2D, GLMesh } from '@tsgl/gl';
 import { createSphereMesh, createPlaneMesh, createBoxMesh } from '@tsgl/gl';
 import { FirstPersonCameraController } from './tsgl/input';

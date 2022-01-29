@@ -1,5 +1,5 @@
 import { vec4, mat4, vec3, vec2 } from 'gl-matrix';
-import { Camera, unitVectorZ } from '../../common';
+import { Camera, unitVectorZ } from '@tsgl/common';
 import { GLRenderer, IGLTexture, AnyWebRenderingGLContext, GLDefaultTextureLocation } from '@tsgl/gl';
 import { PhongBlinnCartoonLightInterface, PhongBlinnCartoonShaderDebug, PhongBlinnCartoonVShaderID } from '../shaders/phongBlinnCartoon-v/PhongBlinnCartoonVShader';
 import { PhongBlinnCartoonVShaderState } from '../shaders/phongBlinnCartoon-v/PhongBlinnCartoonVShaderState';

@@ -3,9 +3,9 @@ import { BasicTextureShaderState } from './BasicTextureShaderState';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./basicTexture.frag').default;
+const fragSrc = require('../glsl/basicTexture.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./basicTexture.vert').default;
+const vertSrc = require('../glsl/basicTexture.vert').default;
 
 export const BasicTextureShaderID = 'basic_texture';
 

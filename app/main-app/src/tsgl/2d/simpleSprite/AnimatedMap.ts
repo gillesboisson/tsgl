@@ -1,4 +1,4 @@
-import { IAnimated } from '../../animation';
+import { IAnimated } from '@tsgl/animation';
 import { GridIndexMapper } from './SimpleGrid';
 import { AnimatedMapData } from './AnimatedMapData';
 

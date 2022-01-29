@@ -1,13 +1,12 @@
 import { mat4 } from 'gl-matrix';
-import { Camera } from '../../common';
 import { AMaterial } from '..';
-import { TranslateRotateTransform3D } from '../../common';
 import {
   GLDefaultTextureLocation,
 } from '@tsgl/gl';
 import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { IGLTexture } from '@tsgl/gl';
 import { CartoonPassShaderState } from '../shaders/cartoonPass/CartoonPassShaderState';
+import { Camera, TranslateRotateTransform3D } from '@tsgl/common';
 
 export class CartoonPassMaterial extends AMaterial<CartoonPassShaderState> {
   constructor(

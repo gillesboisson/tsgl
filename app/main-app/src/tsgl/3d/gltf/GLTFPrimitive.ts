@@ -1,8 +1,8 @@
 import { mat4 } from 'gl-matrix';
 import { GLVao } from '@tsgl/gl';
 import { AnyWebRenderingGLContext } from '@tsgl/gl';
-import { Camera } from '../../common';
-import { IMaterial } from '../../common';
+import { Camera } from '@tsgl/common';
+import { IMaterial } from '@tsgl/common';
 import { GLTFDataAccessor, GLTFDataMeshPrimitive } from './GLFTSchema';
 import { GLTFCore } from './GLTFCore';
 

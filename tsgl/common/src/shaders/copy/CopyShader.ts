@@ -3,9 +3,9 @@ import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLoca
 import { CopyShaderState } from './CopyShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./copy.frag').default;
+const fragSrc = require('../glsl/copy.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./copy.vert').default;
+const vertSrc = require('../glsl/copy.vert').default;
 
 export const CopyShaderID = 'copy';
 

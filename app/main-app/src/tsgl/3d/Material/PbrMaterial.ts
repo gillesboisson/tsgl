@@ -3,7 +3,7 @@ import { GLDefaultTextureLocation } from '@tsgl/gl';
 import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { WebGL2Renderer } from '@tsgl/gl';
 import { IGLTexture } from '@tsgl/gl';
-import { Camera } from '../../common';
+import { Camera } from '@tsgl/common';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
 import { PbrVShadersState, PbrVShaderID, PbrShaderDebug } from '../shaders';

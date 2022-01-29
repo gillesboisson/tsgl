@@ -1,11 +1,11 @@
 import { AnyWebRenderingGLContext } from '@tsgl/gl';
-import { IMaterial } from '../../common';
-import { SceneInstance3D } from '../../common';
+import { IMaterial } from '@tsgl/common';
+import { SceneInstance3D } from '@tsgl/common';
 import { GLTFDataNode } from './GLFTSchema';
 import { IGLTFCore } from './GLTFCore';
 import { GLTFMesh } from './GLTFMesh';
 import { mat4 } from 'gl-matrix';
-import { Camera, IRenderableInstance3D, ITransform } from '../../common';
+import { Camera, IRenderableInstance3D, ITransform } from '@tsgl/common';
 
 export class GLTFNode
   extends SceneInstance3D

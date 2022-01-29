@@ -3,7 +3,7 @@ import { Camera2D } from './Camera2D';
 import { GLRenderer } from '@tsgl/gl';
 import { IGLShaderState } from '@tsgl/gl';
 import { ISpriteBatchPullable, SpriteBatch } from './SpriteBatch';
-import { IBatch } from '../common';
+import { IBatch } from '@tsgl/common';
 import { SpriteShaderState } from './shaders/sprite/SpriteShaderState';
 
 export interface IStage {

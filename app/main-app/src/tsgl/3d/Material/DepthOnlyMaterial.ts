@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { GLRenderer } from '@tsgl/gl';
 import { DepthOnlyShaderID } from '../shaders/depthOnly/DepthOnlyShader';
-import { Camera } from '../../common';
+import { Camera } from '@tsgl/common';
 import { AMaterial } from './Material';
 import { DepthOnlyShaderState } from '../shaders';
 

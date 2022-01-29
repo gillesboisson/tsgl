@@ -51,6 +51,8 @@
     "prettier": "^2.1.2",
     "raw-loader": "^4.0.1",
     "spectorjs": "^0.9.17",
-    "@tsgl/core": "0.0.1"
+    "@tsgl/core": "0.0.1",
+    "@tsgl/animation": "0.0.1",
+    "@tsgl/common": "0.0.1"
   }
 }

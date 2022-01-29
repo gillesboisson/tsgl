@@ -7,8 +7,8 @@ import {  WebGL2Renderer } from '@tsgl/gl';
 import { ACubemapRenderer } from '@tsgl/gl';
 
 import { IrradianceShaderState } from '../shaders/irradiance';
-import { EquiToCubemapShaderState } from '../../common/shaders/equiToCubemap/EquiToCubemapShaderState';
-import { EquiToCubemapShaderID } from '../../common/shaders/equiToCubemap/EquiToCubemapShader';
+import { EquiToCubemapShaderState } from '@tsgl/common';
+import { EquiToCubemapShaderID } from '@tsgl/common';
 
 
 export class HDRToCubemap extends ACubemapRenderer<WebGL2RenderingContext> implements IDestroy {

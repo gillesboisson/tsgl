@@ -1,11 +1,8 @@
 import { vec2, vec4 } from 'gl-matrix';
-import { GLDefaultAttributesLocation } from '@tsgl/gl';
-import { Camera } from '../common';
 import { IDestroy } from '@tsgl/core';
-import { WebGLRenderingContextWithVao } from '@tsgl/gl';
-import { IBatchPullable } from '../common';
-import { IBatch } from '../common';
 import { SpriteShaderState } from './shaders/sprite/SpriteShaderState';
+import { IBatchPullable, IBatch, Camera } from '@tsgl/common';
+import { WebGLRenderingContextWithVao, GLDefaultAttributesLocation } from '@tsgl/gl';
 
 const VERTEX_BATCH_SIZE = 10448;
 const INDICES_BATCH_SIZE = 10448;

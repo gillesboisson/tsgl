@@ -1,5 +1,5 @@
 import { vec2 } from 'gl-matrix';
-import { Camera, PostProcessPass } from '../../common';
+import { Camera, PostProcessPass } from '@tsgl/common';
 import { GLTexture2D, GLRenderer, AnyWebRenderingGLContext, WebGL2Renderer, createSimpleResizableFramebuffer, GLDefaultTextureLocation } from '@tsgl/gl';
 import { DeferredFrameBuffer } from '../deferred/DeferredFrameBuffer';
 import { SSRShaderState, SSRShaderID } from '../shaders/ssr';

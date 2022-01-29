@@ -3,7 +3,7 @@ import { DeferredFrameBuffer } from '../deferred/DeferredFrameBuffer';
 import { PbrDeferredVShadersState } from '../shaders/pbrDeferred-v/PbrDeferredVShadersState';
 import { PbrDeferredVShaderID } from '../shaders/pbrDeferred-v/PbrDeferredVShader';
 import { IGLTexture, GLTexture2D, WebGL2Renderer, GLDefaultTextureLocation, AnyWebRenderingGLContext } from '@tsgl/gl';
-import { Camera, PostProcessPass } from '../../common';
+import { Camera, PostProcessPass } from '@tsgl/common';
 import { ShadowPass } from '../ShadowPass';
 import { PbrShaderDebug } from '../shaders/pbr-v/PbrVShader';
 

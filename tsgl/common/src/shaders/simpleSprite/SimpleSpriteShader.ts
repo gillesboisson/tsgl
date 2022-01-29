@@ -2,9 +2,9 @@ import {  GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLoc
 import { SimpleSpriteShaderState } from './SimpleSpriteShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./simple_sprite.frag').default;
+const fragSrc = require('../glsl/simple_sprite.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./simple_sprite.vert').default;
+const vertSrc = require('../glsl/simple_sprite.vert').default;
 
 
 export class SimpleSpriteShader extends GLShader<SimpleSpriteShaderState> {

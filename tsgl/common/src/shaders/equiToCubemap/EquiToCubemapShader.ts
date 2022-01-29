@@ -3,9 +3,9 @@ import { EquiToCubemapShaderState } from './EquiToCubemapShaderState';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./equiToCubeMap.frag').default;
+const fragSrc = require('../glsl/equiToCubeMap.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./equiToCubeMap.vert').default;
+const vertSrc = require('../glsl/equiToCubeMap.vert').default;
 
 export const EquiToCubemapShaderID = 'equi_to_cubemap';
 

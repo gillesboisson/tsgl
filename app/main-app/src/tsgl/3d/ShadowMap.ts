@@ -1,8 +1,7 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { CameraLookAtTransform3D } from '../common';
 import { DepthOnlyMaterial } from './Material/DepthOnlyMaterial';
-import { Camera, IRenderableInstance3D } from '../common';
 import { GLFramebuffer, GLRenderer, GLDefaultTextureLocation, GLTexture2D } from '@tsgl/gl';
+import { Camera, CameraLookAtTransform3D, IRenderableInstance3D } from '@tsgl/common';
 
 export const biasMat = mat4.fromValues(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
 

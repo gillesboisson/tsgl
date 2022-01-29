@@ -1,6 +1,6 @@
 {
   "exclude": ["node_modules", "archive"],
-  "include": ["src"],
+  "include": ["src", "../../tsgl/math/src/box.ts"],
   "compilerOptions": {
     "moduleResolution": "node",
     "outDir": "./build/",

@@ -3,9 +3,9 @@ import { BasicColorShaderState } from './BasicColorShaderState';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./basicColor.frag').default;
+const fragSrc = require('../glsl/basicColor.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./basicColor.vert').default;
+const vertSrc = require('../glsl/basicColor.vert').default;
 
 export const BasicColorShaderID = 'basic_color';
 

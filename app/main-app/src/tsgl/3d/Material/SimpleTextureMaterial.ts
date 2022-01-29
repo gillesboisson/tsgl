@@ -4,7 +4,7 @@ import { GLRenderer } from '@tsgl/gl';
 import { IGLTexture } from '@tsgl/gl';
 import { SimpleTextureShaderID } from '../shaders/simpleTexture/SimpleTextureShader';
 import { SimpleTextureShaderState } from "../shaders/simpleTexture/SimpleTextureShaderState";
-import { Camera } from '../../common';
+import { Camera } from '@tsgl/common';
 import { AMaterial } from './Material';
 
 export class SimpleTextureMaterial extends AMaterial<SimpleTextureShaderState> {

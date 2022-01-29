@@ -4,7 +4,7 @@ import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { GLRenderer } from '@tsgl/gl';
 import { IGLTexture } from '@tsgl/gl';
 
-import { Camera } from '../../common';
+import { Camera } from '@tsgl/common';
 import { AMaterial } from './Material';
 import { SkyboxShaderState, SkyboxShaderID } from '../shaders';
 

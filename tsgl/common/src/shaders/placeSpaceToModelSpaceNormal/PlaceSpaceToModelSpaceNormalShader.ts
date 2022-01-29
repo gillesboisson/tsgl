@@ -3,9 +3,9 @@ import { PlaneSpaceToModelSpaceNormalShaderState } from './PlaneSpaceToModelSpac
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./plane_space_to_model_space_normal.frag').default;
+const fragSrc = require('../glsl/plane_space_to_model_space_normal.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./plane_space_to_model_space_normal.vert').default;
+const vertSrc = require('../glsl/plane_space_to_model_space_normal.vert').default;
 
 export const PlaneSpaceToModelSpaceNormalShaderID = 'plane_space_to_model_space_normal';
 

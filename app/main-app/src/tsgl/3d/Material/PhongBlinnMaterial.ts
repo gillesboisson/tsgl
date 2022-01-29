@@ -1,5 +1,5 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import { Camera } from '../../common';
+import { Camera } from '@tsgl/common';
 import { AMaterial } from './Material';
 import { GLDefaultTextureLocation } from '@tsgl/gl';
 import { AnyWebRenderingGLContext } from '@tsgl/gl';

@@ -1,7 +1,6 @@
 import { SimpleSprite } from './SimpleSprite';
 import { SubTexture } from '../SubTexture';
-import { IAnimated } from '../../animation';
-import { IStartStopPause } from '../../animation';
+import {IAnimated, IStartStopPause} from '@tsgl/animation';
 
 export class SimpleAnimatedSprite extends SimpleSprite implements IAnimated, IStartStopPause {
   protected _currentFrame: number;

@@ -1,5 +1,5 @@
 import { vec3, vec4, mat4 } from 'gl-matrix';
-import { Camera } from '../../../common';
+import { Camera } from '@tsgl/common';
 import { GLShaderVariants, AnyWebRenderingGLContext, GLVariantValueDefinition, getDefaultAttributeLocation, GLRenderer } from '@tsgl/gl';
 import { AMaterial } from '../../Material';
 import { LambertVShadersState } from './LambertVShadersState';

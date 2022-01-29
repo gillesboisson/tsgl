@@ -1,5 +1,5 @@
 import { vec2, vec3 } from 'gl-matrix';
-import { Camera, PostProcessPass } from '../../common';
+import { Camera, PostProcessPass } from '@tsgl/common';
 import { IGLTexture, WebGL2Renderer, GLDefaultTextureLocation } from '@tsgl/gl';
 import { DeferredFrameBuffer } from '../deferred/DeferredFrameBuffer';
 import { PhongBlinnLightInterface, PhongBlinnShaderDebug } from '../shaders/phongBlinn-v/PhongBlinnVShader';

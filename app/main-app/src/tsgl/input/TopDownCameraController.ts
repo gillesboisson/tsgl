@@ -1,5 +1,5 @@
 import { vec3 } from 'gl-matrix';
-import { Camera } from '../common';
+import { Camera } from '@tsgl/common';
 
 export const __tempVec31 = vec3.create();
 

@@ -1,5 +1,5 @@
 import { GLRenderer, IGLTexture } from '@tsgl/gl';
-import { IMaterial } from '../../common';
+import { IMaterial } from '@tsgl/common';
 import { GLTFDataMaterial, GLTFDataMeshPrimitive } from './GLFTSchema';
 
 export interface UseForGLTF<SettingsT = any> {
