@@ -1,4 +1,4 @@
-import { IGLShaderState } from '../../gl';
+import { IGLShaderState } from '@tsgl/gl';
 import { Camera } from '../primitive/Camera';
 
 export interface IBatch<PullableT, MainShaderStateT extends IGLShaderState = IGLShaderState> {

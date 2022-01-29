@@ -1,4 +1,4 @@
-import { GLShader, GLRenderer, AnyWebRenderingGLContext, setDefaultTextureLocation } from '../../../../tsgl/gl';
+import { GLShader, GLRenderer, AnyWebRenderingGLContext, setDefaultTextureLocation } from '@tsgl/gl';
 import { TestFlatShaderState } from './TestFlatShaderState';
 
 

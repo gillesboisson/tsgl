@@ -1,6 +1,5 @@
-import { AnyWebRenderingGLContext } from '../../gl';
-import { IGLShaderState } from '../../gl';
-import { IRenderPass } from '../../gl';
+import { IGLShaderState, AnyWebRenderingGLContext, IRenderPass } from '@tsgl/gl';
+
 
 
 export interface IPostProcessPass<

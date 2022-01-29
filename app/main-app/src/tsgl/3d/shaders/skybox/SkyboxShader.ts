@@ -1,5 +1,5 @@
 
-import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '../../../gl';
+import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '@tsgl/gl';
 import { SkyboxShaderState } from './SkyboxShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

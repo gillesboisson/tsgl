@@ -3,9 +3,9 @@ import { IResize } from '@tsgl/core';
 import { Camera, IRenderableInstance3D, Transform3D } from '../common';
 import { ASceneInstance } from '../common';
 import { ITransform } from '../common';
-import { ARenderPass, GLRenderPassOptions, GLRenderPassState, IGLFrameBuffer, renderPassOptionsToSettings } from '../gl';
-import { AnyWebRenderingGLContext } from '../gl';
-import { GLRenderer } from '../gl';
+import { ARenderPass, GLRenderPassOptions, GLRenderPassState, IGLFrameBuffer, renderPassOptionsToSettings } from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { GLRenderer } from '@tsgl/gl';
 import { IMaterial } from '../common';
 import { SceneInstance3D } from '../common';
 

@@ -1,6 +1,6 @@
 import { vec3 } from 'gl-matrix';
 import { Camera, PostProcessPass } from '../../common';
-import { GLRenderer, GLTexture2D, WebGL2Renderer, createSimpleResizableFramebuffer, GLDefaultTextureLocation } from '../../gl';
+import { GLRenderer, GLTexture2D, WebGL2Renderer, createSimpleResizableFramebuffer, GLDefaultTextureLocation } from '@tsgl/gl';
 import { DeferredFrameBuffer } from '../deferred/DeferredFrameBuffer';
 import { SSAOShaderState, SSAOShaderID } from '../shaders/ssao';
 

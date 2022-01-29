@@ -1,4 +1,4 @@
-import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '../../../gl';
+import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '@tsgl/gl';
 import { VertexColorShaderState } from './VertexColorShaderState';
 
 

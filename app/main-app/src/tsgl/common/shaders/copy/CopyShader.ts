@@ -1,5 +1,5 @@
 
-import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '../../../gl';
+import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '@tsgl/gl';
 import { CopyShaderState } from './CopyShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

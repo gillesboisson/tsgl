@@ -1,6 +1,4 @@
-import { GLTexture2D } from '../gl';
-import { AnyWebRenderingGLContext } from '../gl';
-import { loadTexture2D } from '../gl';
+import { GLTexture2D, AnyWebRenderingGLContext, loadTexture2D } from '@tsgl/gl';
 
 export function createSubTextureGrid(
   texture: GLTexture2D,

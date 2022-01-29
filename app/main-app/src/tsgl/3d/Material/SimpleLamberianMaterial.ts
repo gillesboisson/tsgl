@@ -1,8 +1,8 @@
 import { mat4 } from 'gl-matrix';
-import { GLDefaultTextureLocation } from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { GLRenderer } from '../../gl';
-import { IGLTexture } from '../../gl';
+import { GLDefaultTextureLocation } from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { GLRenderer } from '@tsgl/gl';
+import { IGLTexture } from '@tsgl/gl';
 import { Camera } from '../../common';
 import { AMaterial } from './Material';
 import { SimpleLamberianShaderState } from '../shaders';

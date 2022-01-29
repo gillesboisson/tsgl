@@ -1,7 +1,5 @@
+import { IGLShaderState, AnyWebRenderingGLContext, GLVao } from '@tsgl/gl';
 import { mat4 } from 'gl-matrix';
-import { GLVao } from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { IGLShaderState } from '../../gl';
 import { Camera, IMaterial } from '../../common';
 
 export abstract class AMaterial<ShaderStateT extends IGLShaderState = IGLShaderState>

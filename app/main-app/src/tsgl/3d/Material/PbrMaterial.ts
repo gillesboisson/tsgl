@@ -1,13 +1,13 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import { GLDefaultTextureLocation } from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { WebGL2Renderer } from '../../gl';
-import { IGLTexture } from '../../gl';
+import { GLDefaultTextureLocation } from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { WebGL2Renderer } from '@tsgl/gl';
+import { IGLTexture } from '@tsgl/gl';
 import { Camera } from '../../common';
-import { GLTFDataMaterial, GLTFDataMeshPrimitive } from '../gltf/GLFTSchema';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';
 import { PbrVShadersState, PbrVShaderID, PbrShaderDebug } from '../shaders';
+import { GLTFDataMaterial, GLTFDataMeshPrimitive } from '../gltf/GLFTSchema';
 
 export class PbrMaterial extends AMaterial<PbrVShadersState> {
   static matchGTFMaterialData(material: GLTFDataMaterial): boolean {

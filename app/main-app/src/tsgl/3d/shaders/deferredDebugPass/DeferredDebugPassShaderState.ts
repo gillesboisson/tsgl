@@ -1,5 +1,5 @@
 import { vec2 } from 'gl-matrix';
-import { GLShaderState, IGLShaderState } from '../../../../tsgl/gl';
+import { GLShaderState, IGLShaderState } from '@tsgl/gl';
 
 
 export class DeferredDebugPassShaderState extends GLShaderState implements IGLShaderState {

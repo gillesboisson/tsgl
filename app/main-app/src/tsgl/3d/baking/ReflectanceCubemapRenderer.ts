@@ -1,5 +1,5 @@
 
-import { GLMesh, WebGL2Renderer, createSkyBoxMesh, createCubemapMipmapEmptyTexture, renderFaces } from '../../gl';
+import { GLMesh, WebGL2Renderer, createSkyBoxMesh, createCubemapMipmapEmptyTexture, renderFaces } from '@tsgl/gl';
 import { ReflectanceShaderState, ReflectanceShaderID } from '../shaders';
 
 export class ReflectanceCubemapRenderer {

@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { GLShaderState } from '../../../gl';
+import { GLShaderState } from '@tsgl/gl';
 
 
 export class SimplePBRShaderState extends GLShaderState {

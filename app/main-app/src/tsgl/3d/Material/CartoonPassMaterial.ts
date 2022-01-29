@@ -4,9 +4,9 @@ import { AMaterial } from '..';
 import { TranslateRotateTransform3D } from '../../common';
 import {
   GLDefaultTextureLocation,
-} from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { IGLTexture } from '../../gl';
+} from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { IGLTexture } from '@tsgl/gl';
 import { CartoonPassShaderState } from '../shaders/cartoonPass/CartoonPassShaderState';
 
 export class CartoonPassMaterial extends AMaterial<CartoonPassShaderState> {

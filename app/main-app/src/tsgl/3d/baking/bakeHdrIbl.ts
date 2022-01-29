@@ -1,11 +1,7 @@
-import { WebGL2Renderer } from '../../gl';
-import { IGLTexture } from '../../gl';
-import { wrapTexture } from '../../gl';
-import { createCubemapEmptyTexture } from '../../gl';
+import { IGLTexture, WebGL2Renderer, loadHDR, rgbeToFloat, loadHDRToFloatTexture, createCubemapEmptyTexture, wrapTexture } from '@tsgl/gl';
 import { HDRToCubemap } from './HDRRectToCubemap';
 import { IrradianceCubemapRenderer } from './IrradianceCubemapRenderer';
 import { ReflectanceCubemapRenderer } from './ReflectanceCubemapRenderer';
-import { loadHDR, loadHDRToFloatTexture, rgbeToFloat } from '../../gl';
 
 export interface HdrIblSettings {
   source: string | { data: Float32Array; width: number; height: number };
@@ -37,7 +33,7 @@ export interface HdrIbl {
 }
 
 export async function bakeHdrIbl(renderer: WebGL2Renderer, settings: HdrIblSettings): Promise<HdrIbl> {
-  const { source, irradiance, reflectance, lut, baseCubemap } = settings;
+  const { source, irradiance, reflectance,  baseCubemap } = settings;
 
   // load HDR into a planar texture
   const gl = renderer.gl as WebGL2RenderingContext;

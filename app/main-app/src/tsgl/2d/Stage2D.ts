@@ -1,7 +1,7 @@
 import { Group } from './Group';
 import { Camera2D } from './Camera2D';
-import { GLRenderer } from '../gl/';
-import { IGLShaderState } from '../gl/';
+import { GLRenderer } from '@tsgl/gl';
+import { IGLShaderState } from '@tsgl/gl';
 import { ISpriteBatchPullable, SpriteBatch } from './SpriteBatch';
 import { IBatch } from '../common';
 import { SpriteShaderState } from './shaders/sprite/SpriteShaderState';

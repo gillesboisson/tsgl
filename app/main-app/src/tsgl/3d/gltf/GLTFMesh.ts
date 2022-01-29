@@ -1,4 +1,4 @@
-import { GLVao } from '../../gl/core/data/GLVao';
+import { GLVao } from '@tsgl/gl';
 import { GLTFDataMesh } from './GLFTSchema';
 import { GLTFCore } from './GLTFCore';
 import { GLTFPrimitive } from './GLTFPrimitive';

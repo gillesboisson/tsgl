@@ -1,5 +1,5 @@
 
-import { GLShaderVariants, AnyWebRenderingGLContext, GLVariantValueDefinition, getDefaultAttributeLocation, IGLTexture, GLDefaultTextureLocation, GLShaderVariantDeclinaison, setDefaultTextureLocationForVariantShader, GLRenderer } from '../../../gl';
+import { GLShaderVariants, AnyWebRenderingGLContext, GLVariantValueDefinition, getDefaultAttributeLocation, IGLTexture, GLDefaultTextureLocation, GLShaderVariantDeclinaison, setDefaultTextureLocationForVariantShader, GLRenderer } from '@tsgl/gl';
 import { PbrVShadersState } from './PbrVShadersState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

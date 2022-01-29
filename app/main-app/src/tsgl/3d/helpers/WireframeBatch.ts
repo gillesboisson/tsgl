@@ -1,7 +1,7 @@
 import { vec3, vec4 } from 'gl-matrix';
 import { IDestroy } from '@tsgl/core';
-import { GLDefaultAttributesLocation } from '../../gl/';
-import { WebGLRenderingContextWithVao } from '../../gl/';
+import { GLDefaultAttributesLocation } from '@tsgl/gl';
+import { WebGLRenderingContextWithVao } from '@tsgl/gl';
 import { Camera, IBatch } from '../../common';
 import { IBatchPullable } from '../../common';
 import { VertexColorShaderState } from "../shaders/vertexColor/VertexColorShaderState";

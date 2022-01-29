@@ -1,11 +1,11 @@
 import { IResize } from '@tsgl/core';
-import { GLMesh } from '../../gl';
-import { IGLFrameBuffer } from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { GLRenderer } from '../../gl';
-import { IGLShaderState } from '../../gl';
-import { ARenderPass } from '../../gl';
-import { GLRenderPassOptions } from '../../gl';
+import { GLMesh } from '@tsgl/gl';
+import { IGLFrameBuffer } from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { GLRenderer } from '@tsgl/gl';
+import { IGLShaderState } from '@tsgl/gl';
+import { ARenderPass } from '@tsgl/gl';
+import { GLRenderPassOptions } from '@tsgl/gl';
 import { IPostProcessPass } from './IPostProcessPass';
 
 

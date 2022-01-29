@@ -1,8 +1,5 @@
-import { AnyWebRenderingGLContext } from '../../gl';
-import { GLRenderer } from '../../gl';
-import { IGLTexture } from '../../gl';
+import { GLRenderer, IGLTexture } from '@tsgl/gl';
 import { IMaterial } from '../../common';
-import { PhongBlinnMaterial } from '../Material/PhongBlinnMaterial';
 import { GLTFDataMaterial, GLTFDataMeshPrimitive } from './GLFTSchema';
 
 export interface UseForGLTF<SettingsT = any> {

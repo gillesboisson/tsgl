@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '../../../gl';
+import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '@tsgl/gl';
 import { HDRPrepassShaderState } from './HDRPrepassShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

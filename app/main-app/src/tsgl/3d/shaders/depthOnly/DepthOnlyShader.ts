@@ -1,4 +1,4 @@
-import { GLShader, GLRenderer, GLSupport, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '../../../gl';
+import { GLShader, GLRenderer, GLSupport, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '@tsgl/gl';
 import { DepthOnlyShaderState } from './DepthOnlyShaderState';
 
 

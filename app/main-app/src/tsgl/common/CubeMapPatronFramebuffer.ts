@@ -1,5 +1,5 @@
 
-import { GLMesh, CubeMapFramebuffer, AnyWebRenderingGLContext, GLRenderer, GLBuffer, GLAttribute, GLDefaultAttributesLocation, GLTexture2D } from '../gl';
+import { GLMesh, CubeMapFramebuffer, AnyWebRenderingGLContext, GLRenderer, GLBuffer, GLAttribute, GLDefaultAttributesLocation, GLTexture2D } from '@tsgl/gl';
 import { SimpleSpriteShaderState } from './shaders/simpleSprite/SimpleSpriteShaderState';
 
 type NewType = CubeMapFramebuffer;

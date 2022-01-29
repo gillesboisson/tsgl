@@ -1,5 +1,5 @@
 import { vec3 } from 'gl-matrix';
-import { GLShaderVariants, AnyWebRenderingGLContext, GLVariantValueDefinition, getDefaultAttributeLocation, GLShaderVariantDeclinaison, setDefaultTextureLocationForVariantShader, GLRenderer } from '../../../../tsgl/gl';
+import { GLShaderVariants, AnyWebRenderingGLContext, GLVariantValueDefinition, getDefaultAttributeLocation, GLShaderVariantDeclinaison, setDefaultTextureLocationForVariantShader, GLRenderer } from '@tsgl/gl';
 
 import { PhongBlinnCartoonVShaderState } from './PhongBlinnCartoonVShaderState';
 

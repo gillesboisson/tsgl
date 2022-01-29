@@ -1,7 +1,5 @@
 import { SpriteElement } from './SpriteElement';
-import { SpriteBatch } from '../SpriteBatch';
-import { WorldCoords } from './ElementData';
-import { IGLTexture } from '../../gl/core/texture/GLTexture';
+import { IGLTexture } from '@tsgl/gl';
 
 export abstract class Poly extends SpriteElement {
   constructor(texture: IGLTexture, readonly nbTriangles: number, readonly nbPoints: number) {

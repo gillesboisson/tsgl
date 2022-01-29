@@ -1,4 +1,4 @@
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { SubTexture } from '../SubTexture';
 import { BitmapFontCommon, BitmapFontInfo, BitmapFontRaw, fontDataStride, kerningDataStride } from './BitmapFontRaw';
 import { MSDFFontJSON } from './MSDFFontJSON';

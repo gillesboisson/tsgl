@@ -1,8 +1,8 @@
 import { mat4 } from 'gl-matrix';
 import { AMaterial } from '..';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { GLRenderer } from '../../gl';
-import { IGLTexture } from '../../gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { GLRenderer } from '@tsgl/gl';
+import { IGLTexture } from '@tsgl/gl';
 import { Camera } from '../../common';
 import { TestFlatShaderState } from '../shaders/testFlat/TestFlatShaderState';
 import { TestFlatID } from '../shaders/testFlat/TestFlatShader';

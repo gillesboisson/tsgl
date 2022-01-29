@@ -1,5 +1,5 @@
 import { DeferredFrameBuffer } from './DeferredFrameBuffer';
-import { GLRenderer } from '../../gl';
+import { GLRenderer } from '@tsgl/gl';
 import { RenderPass3D } from '../RenderPass3D';
 import { SceneInstance3D } from '../../common';
 

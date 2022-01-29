@@ -2,7 +2,7 @@ import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { DeferredFrameBuffer } from '../deferred/DeferredFrameBuffer';
 import { PbrDeferredVShadersState } from '../shaders/pbrDeferred-v/PbrDeferredVShadersState';
 import { PbrDeferredVShaderID } from '../shaders/pbrDeferred-v/PbrDeferredVShader';
-import { IGLTexture, GLTexture2D, WebGL2Renderer, GLDefaultTextureLocation, AnyWebRenderingGLContext } from '../../gl';
+import { IGLTexture, GLTexture2D, WebGL2Renderer, GLDefaultTextureLocation, AnyWebRenderingGLContext } from '@tsgl/gl';
 import { Camera, PostProcessPass } from '../../common';
 import { ShadowPass } from '../ShadowPass';
 import { PbrShaderDebug } from '../shaders/pbr-v/PbrVShader';

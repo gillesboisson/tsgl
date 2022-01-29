@@ -1,7 +1,6 @@
+import { IGLShaderState, AnyWebRenderingGLContext, GLVao } from '@tsgl/gl';
 import { mat4 } from 'gl-matrix';
-import { GLVao } from '../../gl/core/data/GLVao';
-import { AnyWebRenderingGLContext } from '../../gl/core/GLHelpers';
-import { IGLShaderState } from '../../gl/core/shader/IGLShaderState';
+
 import { Camera } from './Camera';
 
 export interface IMaterial<ShaderStateT extends IGLShaderState = IGLShaderState> {

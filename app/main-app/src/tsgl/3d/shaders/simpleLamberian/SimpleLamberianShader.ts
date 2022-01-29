@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { IGLShaderState, GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '../../../gl';
+import { IGLShaderState, GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '@tsgl/gl';
 import { SimpleLamberianShaderState } from './SimpleLamberianShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

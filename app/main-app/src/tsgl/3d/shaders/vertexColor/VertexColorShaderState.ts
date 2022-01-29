@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { GLShaderState } from '../../../gl';
+import { GLShaderState } from '@tsgl/gl';
 
 
 export class VertexColorShaderState extends GLShaderState {

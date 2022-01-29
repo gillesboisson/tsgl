@@ -1,0 +1,26 @@
+{
+  "name": "@tsgl/gl",
+  "version": "0.0.1",
+  "private": true,
+  "contributors": [
+    "Gilles Boisson <gilles@scopopop.com>"
+  ],
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "copy-shaders": "mkdir -p build/core/shader/glsl && cp -fr src/core/shader/glsl/** build/core/shader/glsl/",
+    "start:dev": "yarn copy-shaders && tsc -p ./tsconfig.dev.json -w",
+    "build:dev": "yarn copy-shaders && tsc -p ./tsconfig.dev.json",
+    "build:production": "yarn copy-shaders && tsc",
+    "clean": "rm -fr build"
+  },
+  "peerDependencies": {
+    "@tsgl/core": "0.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.2"
+  }
+}

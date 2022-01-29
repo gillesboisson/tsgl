@@ -1,7 +1,7 @@
-import { GLDefaultTextureLocation } from '../../gl';
-import { createSimpleResizableFramebuffer } from '../../gl';
-import { GLRenderer, WebGL2Renderer } from '../../gl';
-import { GLTexture2D } from '../../gl';
+import { GLDefaultTextureLocation } from '@tsgl/gl';
+import { createSimpleResizableFramebuffer } from '@tsgl/gl';
+import { GLRenderer, WebGL2Renderer } from '@tsgl/gl';
+import { GLTexture2D } from '@tsgl/gl';
 import { PostProcessPass } from '../../common';
 import { SSAOBlurShaderID } from '../shaders/ssaoBlur/SSAOBlurShader';
 import { SSAOBlurShaderState } from "../shaders/ssaoBlur/SSAOBlurShaderState";

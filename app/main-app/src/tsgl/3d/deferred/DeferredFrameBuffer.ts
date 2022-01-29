@@ -1,10 +1,10 @@
 import { IResize } from '@tsgl/core';
-import { createPlaneMesh } from '../../gl';
-import { createEmptyTextureWithLinearFilter, createEmptyTextureWithLinearNearestFilter } from '../../gl';
-import { IGLFrameBuffer } from '../../gl';
-import { GLCore } from '../../gl';
-import { GLSupport } from '../../gl';
-import { GLTexture2D, IGLTexture } from '../../gl';
+import { createPlaneMesh } from '@tsgl/gl';
+import { createEmptyTextureWithLinearFilter, createEmptyTextureWithLinearNearestFilter } from '@tsgl/gl';
+import { IGLFrameBuffer } from '@tsgl/gl';
+import { GLCore } from '@tsgl/gl';
+import { GLSupport } from '@tsgl/gl';
+import { GLTexture2D, IGLTexture } from '@tsgl/gl';
 
 export interface DeferredFrameBufferOptions {
   width: number;

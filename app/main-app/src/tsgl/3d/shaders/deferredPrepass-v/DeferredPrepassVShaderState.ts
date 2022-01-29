@@ -1,5 +1,5 @@
 import { mat4,  vec3, vec4 } from 'gl-matrix';
-import { ShaderVariantsState } from '../../../gl';
+import { ShaderVariantsState } from '@tsgl/gl';
 import { DeferredPrepassVariant } from './DeferredPrepassVShader';
 
 export class DeferredPrepassVShaderState extends ShaderVariantsState<DeferredPrepassVariant> {

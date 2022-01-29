@@ -1,4 +1,4 @@
-import { IGLShaderState } from '../../gl';
+import { IGLShaderState } from '@tsgl/gl';
 import { IBatch } from './IBatch';
 
 export interface IBatchPullable<

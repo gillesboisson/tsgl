@@ -5,7 +5,6 @@ export * from './OrthographicCamera';
 export * from './RenderPass3D';
 export * from './deferred/DeferredPrepass';
 export * from './Material';
-export * from './gltf';
 export * from './helpers';
 export * from './baking';
 export * from './postprocess';

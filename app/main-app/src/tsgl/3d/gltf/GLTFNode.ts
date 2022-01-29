@@ -1,4 +1,4 @@
-import { AnyWebRenderingGLContext } from '../../gl/';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { IMaterial } from '../../common';
 import { SceneInstance3D } from '../../common';
 import { GLTFDataNode } from './GLFTSchema';

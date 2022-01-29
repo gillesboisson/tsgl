@@ -1,5 +1,5 @@
 import { mat4, vec2 } from 'gl-matrix';
-import { GLShaderState } from '../../../../tsgl/gl';
+import { GLShaderState } from '@tsgl/gl';
 
 
 export class SSRShaderState extends GLShaderState {

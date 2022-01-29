@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { AnyWebRenderingGLContext } from '../../gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
 import { ITransform } from '../transform/ITransform';
 import { Transform3D } from '../transform/Transform3D';
 import { Camera } from './Camera';

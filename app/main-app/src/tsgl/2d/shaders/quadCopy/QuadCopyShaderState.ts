@@ -1,5 +1,5 @@
 import { vec2 } from 'gl-matrix';
-import { GLShaderState, IGLShaderState } from '../../../gl';
+import { GLShaderState, IGLShaderState } from '@tsgl/gl';
 
 
 export class QuadCopyShaderState extends GLShaderState implements IGLShaderState {

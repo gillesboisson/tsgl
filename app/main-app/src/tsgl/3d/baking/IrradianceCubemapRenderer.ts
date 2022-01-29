@@ -1,10 +1,10 @@
 import { mat4, vec3 } from 'gl-matrix';
 import { IDestroy } from '@tsgl/core';
-import { createSkyBoxMesh } from '../../gl';
-import { GLMesh } from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { WebGL2Renderer } from '../../gl';
-import { ACubemapRenderer } from '../../gl';
+import { createSkyBoxMesh } from '@tsgl/gl';
+import { GLMesh } from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { WebGL2Renderer } from '@tsgl/gl';
+import { ACubemapRenderer } from '@tsgl/gl';
 import { IrradianceShaderState, IrradianceShaderID } from '../shaders/irradiance';
 
 export class IrradianceCubemapRenderer extends ACubemapRenderer<WebGL2RenderingContext> implements IDestroy {

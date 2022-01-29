@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 import { Type } from '@tsgl/core';
 import { ISceneInstance } from './ISceneInstance';
 import { ITransform } from '../transform/ITransform';
-import { MatType } from '../../gl';
+import { MatType } from '@tsgl/gl';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const IDENT_MAT4 = mat4.create();

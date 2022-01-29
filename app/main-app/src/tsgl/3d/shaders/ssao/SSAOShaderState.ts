@@ -1,5 +1,5 @@
 import { mat4, vec4, vec2 } from 'gl-matrix';
-import { GLShaderState } from '../../../../tsgl/gl';
+import { GLShaderState } from '@tsgl/gl';
 import { SHADER_KERNEL_BUFFER_SIZE, SSAOShaderOptions } from '../../postprocess/SSAOPass';
 
 

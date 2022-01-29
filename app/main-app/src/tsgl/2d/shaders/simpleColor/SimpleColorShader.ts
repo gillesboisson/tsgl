@@ -1,4 +1,4 @@
-import { GLShader, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '../../../gl';
+import { GLShader, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '@tsgl/gl';
 import { SimpleColorShaderState } from './SimpleColorShaderState';
 
 

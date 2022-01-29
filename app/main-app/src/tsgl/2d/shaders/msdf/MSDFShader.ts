@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { IGLShaderState, GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '../../../gl';
+import { IGLShaderState, GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '@tsgl/gl';
 import { MSDFShaderState } from './MSDFShaderState';
 
 

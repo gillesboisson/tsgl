@@ -3,9 +3,7 @@
  * @class
  */
 
-import { loadTexture2D } from '../gl';
-import { AnyWebRenderingGLContext } from '../gl/';
-import { GLTexture2D } from '../gl';
+import { loadTexture2D, GLTexture2D } from '@tsgl/gl';
 import { SubTexture } from './SubTexture';
 
 type TexturePackerFrame = {
@@ -127,7 +125,7 @@ type AseSpriteData = {
 };
 
 export default class SubTextureAtlas {
-  static async load(gl: AnyWebRenderingGLContext, path: string): Promise<SubTextureAtlas> {
+  static async load(gl: WebGL2RenderingContext, path: string): Promise<SubTextureAtlas> {
     const jsonPath = path + '.json';
     const imgPath = path + '.png';
 

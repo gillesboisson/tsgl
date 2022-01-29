@@ -1,11 +1,4 @@
-import { loadTexture2D } from '../../gl';
-import { GLAttribute } from '../../gl/';
-import { GLBuffer } from '../../gl/';
-import { GLDefaultAttributesLocation } from '../../gl/';
-import { GLVao } from '../../gl/';
-import { AnyWebRenderingGLContext } from '../../gl/';
-import { GLRenderer } from '../../gl/';
-import { IGLTexture } from '../../gl/';
+import { AnyWebRenderingGLContext, IGLTexture, loadTexture2D, GLBuffer, GLDefaultAttributesLocation, GLAttribute, GLRenderer, GLVao } from '@tsgl/gl';
 import { GLTFData, GLTFDataAccessor, GLTFDataBufferView, GLTFDataMesh, GLTFDataMeshPrimitive } from './GLFTSchema';
 import { GLTFMaterialFactory } from './GLTFMaterialFactory';
 import { GLTFMesh } from './GLTFMesh';

@@ -1,10 +1,10 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { Camera } from '../../common';
 import { AMaterial } from './Material';
-import { GLDefaultTextureLocation } from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { GLRenderer } from '../../gl';
-import { IGLTexture } from '../../gl';
+import { GLDefaultTextureLocation } from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { GLRenderer } from '@tsgl/gl';
+import { IGLTexture } from '@tsgl/gl';
 import { ShadowMap } from '../ShadowMap';
 import { PhongBlinnVShaderState, PhongBlinnShaderDebug, PhongBlinnLightInterface, PhongBlinnVShaderID } from '../shaders';
 

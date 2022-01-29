@@ -1,5 +1,5 @@
 
-import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '../../../gl';
+import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLocation } from '@tsgl/gl';
 import { SpriteShaderState } from './SpriteShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

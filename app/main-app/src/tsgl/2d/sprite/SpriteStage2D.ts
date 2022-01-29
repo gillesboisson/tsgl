@@ -1,6 +1,6 @@
 import { SpriteGroup } from './SpriteGroup';
 import { Camera2D } from '../Camera2D';
-import { GLRenderer } from '../../gl/core/GLRenderer';
+import { GLRenderer } from '@tsgl/gl';
 import { SpriteBatch } from '../SpriteBatch';
 import { SpriteLayer } from '../Stage2D';
 

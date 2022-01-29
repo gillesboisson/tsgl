@@ -1,6 +1,6 @@
 import { vec4, mat4, vec3, vec2 } from 'gl-matrix';
 import { Camera } from '../../common';
-import { GLRenderer, IGLTexture, AnyWebRenderingGLContext, GLDefaultTextureLocation } from '../../gl';
+import { GLRenderer, IGLTexture, AnyWebRenderingGLContext, GLDefaultTextureLocation } from '@tsgl/gl';
 
 import { DeferredPrepassVShaderID } from '../shaders/deferredPrepass-v/DeferredPrepassVShader';
 import { DeferredPrepassVShaderState } from '../shaders/deferredPrepass-v/DeferredPrepassVShaderState';

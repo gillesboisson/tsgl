@@ -1,7 +1,7 @@
 import { mat4, vec2, vec3 } from 'gl-matrix';
-import { GLDefaultTextureLocation } from '../../gl';
-import { AnyWebRenderingGLContext } from '../../gl';
-import { GLRenderer } from '../../gl';
+import { GLDefaultTextureLocation } from '@tsgl/gl';
+import { AnyWebRenderingGLContext } from '@tsgl/gl';
+import { GLRenderer } from '@tsgl/gl';
 import { Camera } from '../../common';
 import { ShadowMap } from '../ShadowMap';
 import { AMaterial } from './Material';

@@ -4,8 +4,8 @@ import { SpriteLayer } from '../tsgl/2d';
 import { SpriteShader } from '../tsgl/2d/shaders';
 import { Juggler } from '../tsgl/animation';
 import { SimpleSpriteShader } from '../tsgl/common/shaders';
-import { GLRenderer, GLRendererType } from '../tsgl/gl';
-import { GLSupport } from '../tsgl/gl';
+import { GLRenderer, GLRendererType } from '@tsgl/gl';
+import { GLSupport } from '@tsgl/gl';
 
 export abstract class Base2DApp {
   protected _renderer: GLRenderer;

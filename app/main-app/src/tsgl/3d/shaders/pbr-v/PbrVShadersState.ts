@@ -1,5 +1,5 @@
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import { ShaderVariantsState } from '../../../gl';
+import { ShaderVariantsState } from '@tsgl/gl';
 import { PbrVariant } from './PbrVShader';
 
 export class PbrVShadersState extends ShaderVariantsState<PbrVariant> {

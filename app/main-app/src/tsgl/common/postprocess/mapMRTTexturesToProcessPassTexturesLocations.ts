@@ -1,5 +1,5 @@
-import { GLDefaultTextureLocation } from '../../gl';
-import { IGLTexture } from '../../gl';
+import { GLDefaultTextureLocation } from '@tsgl/gl';
+import { IGLTexture } from '@tsgl/gl';
 import { ProcessPassTextureLocation } from "./ProcessPassTextureLocation";
 
 export function mapMRTTexturesToProcessPassTexturesLocations(

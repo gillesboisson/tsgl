@@ -1,4 +1,4 @@
-import { GLShader, GLRenderer, GLSupport, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '../../../gl';
+import { GLShader, GLRenderer, GLSupport, AnyWebRenderingGLContext, getDefaultAttributeLocation, setDefaultTextureLocation } from '@tsgl/gl';
 import { ShadowOnlyShaderState } from './ShadowOnlyShaderState';
 
 
