@@ -26,7 +26,8 @@
   "dependencies": {
     "@tsgl/core" : "0.0.1",
     "@tsgl/gl" : "0.0.1",
-    "@tsgl/common" : "0.0.1"
+    "@tsgl/common" : "0.0.1",
+    "@tsgl/2d" : "0.0.1"
   }
 
 }

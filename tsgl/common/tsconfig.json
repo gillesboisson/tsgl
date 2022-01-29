@@ -1,5 +1,5 @@
 {
-  "exclude": [ "**/node_modules", "archive", "**/*.spec.ts"],
+  "exclude": [ "**/node_modules", "archive","build", "**/*.spec.ts"],
   "include": [
     "src",
     "types"

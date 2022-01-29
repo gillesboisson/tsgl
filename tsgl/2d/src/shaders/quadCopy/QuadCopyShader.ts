@@ -4,9 +4,9 @@ import { QuadCopyShaderState } from './QuadCopyShaderState';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./quad.frag').default;
+const fragSrc = require('../glsl/quad.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./quad.vert').default;
+const vertSrc = require('../glsl/quad.vert').default;
 
 export const QuadCopyShaderID = 'quad_copy';
 

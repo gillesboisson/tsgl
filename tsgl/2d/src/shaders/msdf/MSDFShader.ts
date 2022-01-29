@@ -4,9 +4,9 @@ import { MSDFShaderState } from './MSDFShaderState';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./msdf.frag').default;
+const fragSrc = require('../glsl/msdf.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./msdf.vert').default;
+const vertSrc = require('../glsl/msdf.vert').default;
 
 export const MSDFShaderID = 'msdf';
 

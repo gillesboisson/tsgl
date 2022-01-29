@@ -1,7 +1,5 @@
-import { Camera2D } from '../tsgl/2d';
-import { SpriteBatch } from '../tsgl/2d';
-import { SpriteLayer } from '../tsgl/2d';
-import { SpriteShader } from '../tsgl/2d';
+
+import { SpriteBatch, SpriteLayer, Camera2D, SpriteShader } from '@tsgl/2d';
 import { Juggler } from '@tsgl/animation';
 import { SimpleSpriteShader } from '@tsgl/common';
 import { GLRenderer, GLRendererType } from '@tsgl/gl';

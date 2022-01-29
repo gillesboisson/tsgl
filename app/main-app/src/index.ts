@@ -10,7 +10,7 @@ import { GLVao, GLFramebuffer, GLViewportStack, GLMRTFrameBuffer, GLMesh, GLRend
 import { FirstPersonCameraController } from '@tsgl/input';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Base3DApp } from './app/Base3DApp';
-import { SpriteGroup, MSDFShader } from './tsgl/2d';
+import { SpriteGroup, MSDFShader } from '@tsgl/2d';
 
 
 

@@ -3,9 +3,9 @@ import { SimpleColorShaderState } from './SimpleColorShaderState';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./simpleColor.frag').default;
+const fragSrc = require('../glsl/simpleColor.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./simpleColor.vert').default;
+const vertSrc = require('../glsl/simpleColor.vert').default;
 
 export class SimpleColorShader extends GLShader<SimpleColorShaderState> {
   constructor(gl: AnyWebRenderingGLContext) {

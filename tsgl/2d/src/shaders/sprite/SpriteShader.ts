@@ -3,9 +3,9 @@ import { GLShader, GLRenderer, AnyWebRenderingGLContext, getDefaultAttributeLoca
 import { SpriteShaderState } from './SpriteShaderState';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fragSrc = require('./sprite.frag').default;
+const fragSrc = require('../glsl/sprite.frag').default;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vertSrc = require('./sprite.vert').default;
+const vertSrc = require('../glsl/sprite.vert').default;
 
 export class SpriteShader extends GLShader<SpriteShaderState> {
   static register(renderer: GLRenderer): void {
