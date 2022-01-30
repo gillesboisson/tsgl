@@ -20,5 +20,8 @@
   },
   "devDependencies": {
     "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "@tsgl/config":"0.0.1"
   }
 }

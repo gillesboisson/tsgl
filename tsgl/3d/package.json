@@ -24,6 +24,7 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "@tsgl/config":"0.0.1",
     "@tsgl/core" : "0.0.1",
     "@tsgl/gl" : "0.0.1",
     "@tsgl/common" : "0.0.1",

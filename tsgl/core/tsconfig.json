@@ -1,23 +1,12 @@
 {
   "exclude": [ "node_modules", "build"],
+  "extends": "@tsgl/config/tsconfig.base.json",
   "include": [
     "src",
     "types"
   ],
   "compilerOptions": {
-    "declaration": true,
-    "module": "esnext",
-    "lib": [
-      "webworker", 
-      "es2019",
-      "dom",
-      "esnext"
-    ],
-    "moduleResolution": "node",
-    "skipLibCheck": true,
     "outDir": "build",
-    "target": "es5",
-    "allowJs": true,
-    "experimentalDecorators": true,
   }
+  
 }

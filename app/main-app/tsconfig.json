@@ -1,15 +1,12 @@
 {
-  "exclude": [ "node_modules", "build"],
-  "include": ["src"],
+  "exclude": [ "node_modules", "build","content"],
+  "extends": "@tsgl/config/tsconfig.base.json",
+  "include": [
+    "src",
+    "types"
+  ],
   "compilerOptions": {
-    "moduleResolution": "node",
-    "outDir": "./build/",
-    "sourceMap": true,
-    "noImplicitAny": true,
-    "module": "es6",
-    "target": "es5",
-    "allowJs": true,
-    "experimentalDecorators": true,
-    "lib": ["webworker", "es2019", "dom"]
+    "outDir": "build",
   }
+  
 }

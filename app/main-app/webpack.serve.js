@@ -1,11 +1,11 @@
 const path = require('path');
-const { commonWebpackConfig } = require('@tsgl/config/webpack-helpers');
-const { entries, production } = require('./webpack.part');
+const { commonWebpackConfig, serverPartConfig } = require('@tsgl/config/webpack-helpers');
+const { entries, development } = require('./webpack.part');
 
 
 
 
-module.exports = commonWebpackConfig(__dirname,entries,production);
+module.exports = commonWebpackConfig(__dirname,entries,development,serverPartConfig(__dirname));
 
 
 

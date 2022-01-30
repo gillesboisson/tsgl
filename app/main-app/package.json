@@ -19,10 +19,13 @@
     "clean": "rm -fr build",
     "copy-content": "mkdir -p build/ && cp -fr content/* build/",
     "build:production": "yarn copy-content && webpack",
-    "start:dev": "yarn copy-content && webpack serve"
+    "build:dev": "yarn copy-content && webpack --config webpack.dev.js",
+    "start:dev": "yarn copy-content && webpack --watch --config webpack.dev.js",
+    "serve": "yarn copy-content && webpack serve --config webpack.serve.js"
   },
   "license": "ISC",
   "devDependencies": {
+    "@tsgl/config": "0.0.1",
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "babel-loader": "^8.1.0",
@@ -51,6 +54,7 @@
     "prettier": "^2.1.2",
     "raw-loader": "^4.0.1",
     "spectorjs": "^0.9.17",
+ 
     "@tsgl/core": "0.0.1",
     "@tsgl/animation": "0.0.1",
     "@tsgl/common": "0.0.1",
