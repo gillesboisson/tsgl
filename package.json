@@ -10,7 +10,9 @@
   "scripts": {
     "clean": "lerna clean && rm -rf ./node_modules && lerna run clean",
     "build:production": "lerna run build:production",
-    "build:dev": "lerna run build:dev"
+    "build:dev": "lerna run build:dev",
+    "build:tsgl:dev": "lerna run --scope '@tsgl/*' build:dev",
+    "build:tsgl:production": "lerna run --scope '@tsgl/*' build:production"
   },
   "devDependencies": {
     "lerna": "^4.0.0"
