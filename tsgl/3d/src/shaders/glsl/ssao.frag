@@ -77,10 +77,10 @@ void main(){
   occlusion = min(1.0 - (occlusion / 64.0), 1.0);
 
 
-  // FragColor = vec4(pow(occlusion, power));
+  FragColor = vec4(pow(occlusion, power));
   // FragColor = texture(u_normalMap, v_uv);
 
-  FragColor = vec4(1.0,1.0,0.0,1.0);
+  // FragColor = vec4(1.0,1.0,0.0,1.0);
   // FragColor = vec4(tangent / 2.0 + 0.5,1.0);
 
 }

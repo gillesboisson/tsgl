@@ -1,5 +1,5 @@
 import { IResize } from '@tsgl/core';
-import { createPlaneMesh } from '@tsgl/gl';
+import { createPlaneMesh, resizableTexture } from '@tsgl/gl';
 import { createEmptyTextureWithLinearFilter, createEmptyTextureWithLinearNearestFilter } from '@tsgl/gl';
 import { IGLFrameBuffer } from '@tsgl/gl';
 import { GLCore } from '@tsgl/gl';
@@ -29,13 +29,13 @@ function deferredFrameBufferDefaultSettings(options: DeferredFrameBufferOptions)
 }
 
 export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer, IResize {
-  private _positionMap: GLTexture2D;
-  private _normalMap: GLTexture2D;
-  private _albedo: GLTexture2D;
-  readonly pbrEnabled: boolean;
-  private _pbrMap: GLTexture2D;
+  private _positionMap: IResize & GLTexture2D;
+  private _normalMap: IResize & GLTexture2D;
+  private _albedo: IResize & GLTexture2D;
+  private _pbrEnabled: boolean;
+  private _pbrMap: IResize & GLTexture2D;
   readonly emissiveEnabled: boolean;
-  private _emissiveMap: GLTexture2D;
+  private _emissiveMap: IResize & GLTexture2D;
 
   get albedo(): GLTexture2D {
     return this._albedo;
@@ -44,6 +44,20 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer, IResi
   get normalMap(): GLTexture2D {
     return this._normalMap;
   }
+
+  get pbrEnabled(){
+    return this._pbrEnabled;
+  }
+
+  
+  set pbrEnabled(val :boolean){
+    if(this._pbrEnabled !== val){
+      this._pbrEnabled = val;
+      this._updatePbrSettings()
+    }
+  }
+
+  
 
   get positionMap(): GLTexture2D {
     return this._positionMap;
@@ -65,8 +79,8 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer, IResi
 
   private _isWebGL2: any;
   private _frameBuffer: WebGLFramebuffer;
-  private _textures: IGLTexture[];
-  private _depthTexture?: GLTexture2D;
+  private _textures: Array<IGLTexture & IResize>;
+  private _depthTexture?: IResize & GLTexture2D;
   private _depthRenderBuffer: WebGLFramebuffer;
   private _colorsAttachements: GLenum[];
   private _previousViewport: Int32Array = null;
@@ -106,7 +120,7 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer, IResi
     this._height = height;
     this._useDepthTexture = useDepthTexture;
     this._depthEnabled = depthEnabled;
-    this.pbrEnabled = pbrEnabled;
+    this._pbrEnabled = pbrEnabled;
     this.emissiveEnabled = emissiveEnabled;
 
     GLSupport.MRTFrameBufferSupported(gl, true, true);
@@ -135,32 +149,54 @@ export class DeferredFrameBuffer extends GLCore implements IGLFrameBuffer, IResi
 
     // create rendering layers
 
-    this._positionMap = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT);
-    this._normalMap = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT);
-    this._albedo = createEmptyTextureWithLinearFilter(gl, width, height);
+    this._positionMap = resizableTexture(createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT));
+    this._normalMap = resizableTexture(createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT));
+    this._albedo = resizableTexture(createEmptyTextureWithLinearFilter(gl, width, height));
 
     this._textures.push(this._albedo, this._positionMap, this._normalMap);
 
-    if (pbrEnabled) {
-      this._pbrMap = createEmptyTextureWithLinearFilter(gl, width, height);
-      this._textures.push(this._pbrMap);
-    }
+    this._updatePbrSettings(width, height, false);
+
     if (emissiveEnabled) {
-      this._emissiveMap = createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT);
+      this._emissiveMap = resizableTexture(createEmptyTextureWithLinearNearestFilter(gl, width, height, gl.RGBA16F, gl.RGBA, gl.FLOAT));
       this._textures.push(this._emissiveMap);
     }
 
     if (useDepthTexture) {
-      this._depthTexture = createEmptyTextureWithLinearFilter(gl, width, height, gl.RGBA);
+      this._depthTexture = resizableTexture(createEmptyTextureWithLinearFilter(gl, width, height, gl.RGBA));
     } else if (this._depthEnabled) {
       this._depthRenderBuffer = gl.createRenderbuffer();
     }
 
     this.updateSettings();
   }
+  private _updatePbrSettings(width = this.width, height = this.height, updateSettings = true) {
+    if (this._pbrEnabled) {
+      this._pbrMap = resizableTexture(createEmptyTextureWithLinearFilter(this.gl, width, height));
+      this._textures.push(this._pbrMap);
+    }else if(this._pbrMap){
+      const ind = this._textures.indexOf(this._pbrMap);
+      if(ind !== -1){
+        this._textures.splice(ind,1);
+      }
+      this._pbrMap = undefined;
+    }
+    if(updateSettings){
+      this.updateSettings();
+    }
+  }
 
   resize(width: number, height: number): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Not implemented')
+    // for (let i = 0; i < this._textures.length; i++) {
+    //   this._textures[i].resize(width, height);
+    // }
+    
+    // this._depthTexture?.resize(width, height);
+
+    // this._width = width;
+    // this._height = height;
+
   }
 
   updateSettings(): void {

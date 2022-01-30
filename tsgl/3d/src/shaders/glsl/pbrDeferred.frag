@@ -125,7 +125,7 @@ uniform vec3 u_lightDirection;
 uniform sampler2D u_emissiveMap;
 #endif
 
-#ifdef SHADOW_MAP
+#ifdef OCCLUSION_SSAO
 uniform sampler2D u_occlusionMap;
 #endif
 

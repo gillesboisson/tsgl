@@ -21,9 +21,10 @@ vec3 tbnMatToNormal(
 layout (location = 0) out vec4 AlbedoSpec;
 layout (location = 1) out vec4 Position;
 layout (location = 2) out vec4 Normal;
+layout (location = 3) out vec4 Pbr;
 
 #ifdef PBR_ENABLED
-layout (location = 3) out vec4 Pbr;
+
 #define EMISSIVE_LOCATION 4
 #else
 #define EMISSIVE_LOCATION 3
@@ -146,7 +147,6 @@ void main(){
   #endif
 
   Pbr=vec4(ao,pbr.y ,pbr.z,1.0);
-
   #endif
 
     

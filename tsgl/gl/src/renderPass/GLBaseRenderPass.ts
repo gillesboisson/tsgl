@@ -58,9 +58,9 @@ export class GLBaseRenderPass<
   }
 
   end(): void {
-    if (this.framebuffer !== null) {
-      this.framebuffer.unbind;
-    }
+    // if (this.framebuffer !== null) {
+    //   this.framebuffer.unbind();
+    // }
   }
 
   resize(width: number, height: number): void {

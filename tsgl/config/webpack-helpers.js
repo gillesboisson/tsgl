@@ -21,7 +21,7 @@ function basePartConfig(dirname){
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: ['ts-loader'],
           exclude: /node_modules/,
         },
         {

@@ -110,8 +110,8 @@ export class SSAOPass extends PostProcessPass<SSAOShaderState, SSAOPassRendering
       {
         viewportX: 0,
         viewportY: 0,
-        viewportWidth: renderer.width,
-        viewportHeight: renderer.height,
+        viewportWidth: options.width,
+        viewportHeight: options.height,
         framebuffer,
       },
       renderer.getShader<SSAOShaderState>(SSAOShaderID),

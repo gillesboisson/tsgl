@@ -9,7 +9,7 @@ import { Transform3D, Camera, MeshNode, PlaneSpaceToModelSpaceNormalShader, Equi
 import { GLVao, GLFramebuffer, GLViewportStack, GLMRTFrameBuffer, GLMesh, GLRendererType, WebGL2Renderer, loadTexture2D, createSphereMesh, createPlaneMesh, createBoxMesh } from '@tsgl/gl';
 import { FirstPersonCameraController } from '@tsgl/input';
 import { mat4, vec3, vec4 } from 'gl-matrix';
-import { Base3DApp } from './app/Base3DApp';
+import { Base3DApp } from '@app/helpers';
 import { SpriteGroup, MSDFShader } from '@tsgl/2d';
 
 
@@ -175,22 +175,29 @@ class TestApp extends Base3DApp {
     const gridS = 6;
     // const nodeMesh = createBoxMesh(this.renderer.gl);
     const nodeMesh = createSphereMesh(this.renderer.gl,0.5,16,16);
-    for (let z = 0; z < gridS; z++) {
-      for (let x = 0; x < gridS; x++) {
-        for (let y = 0; y < gridS; y++) {
-          const cubeMat = new DeferredPrepassMaterial(this.renderer);
-          cubeMat.pbrEnabled = true;
-          cubeMat.roughness = x / gridS;
-          cubeMat.metallic = y / gridS;
-          cubeMat.copyDiffuseColor(colors[(x + y + z) % colors.length]);
 
-          const cube = new MeshNode(cubeMat, nodeMesh);
-          cube.transform.setPosition(x * 1.1, y * 1.1, z * 1.1);
+    // create sphere grid
+    // for (let z = 0; z < gridS; z++) {
+    //   for (let x = 0; x < gridS; x++) {
+    //     for (let y = 0; y < gridS; y++) {
+    //       const cubeMat = new DeferredPrepassMaterial(this.renderer);
+    //       cubeMat.pbrEnabled = true;
+    //       cubeMat.roughness = x / gridS;
+    //       cubeMat.metallic = y / gridS;
+    //       cubeMat.copyDiffuseColor(colors[(x + y + z) % colors.length]);
 
-          this.renderables.addChild(cube);
-        }
-      }
-    }
+    //       const cube = new MeshNode(cubeMat, nodeMesh);
+    //       cube.transform.setPosition(x * 1.1, y * 1.1, z * 1.1);
+
+    //       this.renderables.addChild(cube);
+    //     }
+    //   }
+    // }
+
+
+    // create central sphere
+
+    
 
     const plane = new MeshNode(planeMat, createPlaneMesh(this.renderer.gl));
     plane.transform.setScale(50);

@@ -1,0 +1,34 @@
+{
+  "name": "@app/helpers",
+  "version": "0.0.1",
+  "private": true,
+  "contributors": [
+    "Gilles Boisson <gilles@scopopop.com>"
+  ],
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "start:dev": "tsc -p ./tsconfig.dev.json -w",
+    "build:dev": "tsc -p ./tsconfig.dev.json",
+    "build:production": "tsc",
+    "clean": "rm -fr build"
+  },
+  "peerDependencies": {
+    "@tsgl/core": "0.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "@tsgl/core": "0.0.1",
+    "@tsgl/animation": "0.0.1",
+    "@tsgl/common": "0.0.1",
+    "@tsgl/input": "0.0.1",
+    "@tsgl/3d": "0.0.1",
+    "@tsgl/2d": "0.0.1"
+  }
+
+}

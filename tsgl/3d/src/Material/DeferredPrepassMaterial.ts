@@ -232,15 +232,11 @@ export class DeferredPrepassMaterial extends AMaterial<DeferredPrepassVShaderSta
       this._occlusionMap.active(GLDefaultTextureLocation.AMBIANT_OCCLUSION);
     }
 
-    if (this._pbrMap) {
-      this._pbrMap.active(GLDefaultTextureLocation.PBR_0);
-    }
+    // if (this._pbrMap) {
+    //   this._pbrMap.active(GLDefaultTextureLocation.PBR_0);
+    // }
 
     ss.setPbr(this.ambiantOcclusion, this.roughness, this.metallic);
-
-    // if (this._extraMap) {
-    //   this._extraMap.active(GLDefaultTextureLocation.PBR_0);
-    // }
 
     ss.syncUniforms();
   }
@@ -254,9 +250,5 @@ export class DeferredPrepassMaterial extends AMaterial<DeferredPrepassVShaderSta
     if (this._normalMap) {
       this._normalMap.unbind();
     }
-
-    // if (this._extraMap) {
-    //   this._extraMap.unbind();
-    // }
   }
 }
